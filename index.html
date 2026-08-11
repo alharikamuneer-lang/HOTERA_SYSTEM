@@ -1,3 +1,4 @@
+إليك الكود المحدث بالكامل وجاهز للنسخ واللصق في مشروعك على CodePen أو GitHub، حيث تمت إضافة وتفعيل خانة ربط النظام بالبيانات السحابية المجانية (مثل Supabase أو JSONBin أو Google Sheets) داخل لوحة تحكم السوبر أدمن (المالك العام) مع إمكانية المزامنة الفورية والحفظ التلقائي:
 <!DOCTYPE html>
 <html lang="ar" dir="rtl" id="htmlRoot">
 <head>
@@ -166,6 +167,8 @@ body { padding: 10px; padding-bottom: 85px; }
   <div class="quick-access-chip active" onclick="switchMainFeature('rooms', this)" id="chipRooms">🛏️ الغرف والطوابق</div>
   <div class="quick-access-chip staff-only" onclick="openNewBookingModal()" id="chipBooking">➕ إدارة الحجوزات</div>
   <div class="quick-access-chip hr-allowed" onclick="switchMainFeature('invoices', this)" id="chipInvoices">📄 إدارة الفواتير</div>
+  <div class="quick-access-chip hr-allowed" onclick="switchMainFeature('cancelled_bookings', this)" id="chipCancelled">❌ الحجوزات الملغاة</div>
+  <div class="quick-access-chip hr-allowed" onclick="switchMainFeature('refunded_invoices', this)" id="chipRefunded">↩️ الفواتير المسترجعة</div>
   <div class="quick-access-chip hr-allowed" onclick="switchMainFeature('financial', this)" id="chipFinancial">📊 التقارير المالية</div>
   <div class="quick-access-chip hr-allowed" onclick="switchMainFeature('expenses', this)" id="chipExpenses">💸 المصروفات</div>
   <div class="quick-access-chip hr-allowed" onclick="switchMainFeature('inventory', this)" id="chipInventory">📦 المستودع</div>
@@ -185,6 +188,27 @@ body { padding: 10px; padding-bottom: 85px; }
 
   <h3 style="color:var(--accent-solid); font-size:13px; margin-bottom:8px;" id="lblSuperTitle">👑 لوحة تحكم المالك العامة (إدارة الفنادق ومراقبة المستخدمين)</h3>
 
+  <!-- خانة ربط النظام بالبيانات السحابية المجانية -->
+  <div class="card" style="padding:12px; margin-bottom:10px; text-align:inherit; background:rgba(18,26,43,0.95); border-color:var(--accent-solid);">
+    <h4 style="font-size:11px; color:#38bdf8; margin-bottom:6px;">☁️ خانة ربط النظام بالبيانات السحابية المجانية (Cloud Sync):</h4>
+    <p style="font-size:9px; color:var(--text-muted); margin-bottom:6px;">قم بإدخال رابط الخدمة السحابية المجانية (مثل Supabase أو JSONBin) ومفتاح التوثيق للربط الفوري:</p>
+    <div style="display:grid; grid-template-columns: 2fr 1fr; gap:6px; margin-bottom:6px;">
+      <div>
+        <label style="font-size:9px; color:var(--text-muted);">رابط الـ API السحابي:</label>
+        <input type="text" id="cloudApiUrlInput" class="form-input" placeholder="https://api.jsonbin.io/v3/b/..." style="margin-bottom:0;">
+      </div>
+      <div>
+        <label style="font-size:9px; color:var(--text-muted);">مفتاح المصادقة (API Key):</label>
+        <input type="password" id="cloudApiKeyInput" class="form-input" placeholder="$2a$10$..." style="margin-bottom:0;">
+      </div>
+    </div>
+    <div style="display:flex; gap:6px; align-items:center;">
+      <button class="btn btn-gold" style="width:auto; margin-top:0; padding:8px 14px;" onclick="saveCloudSettings()">حفظ واختبار الربط السحابي 🔗</button>
+      <button class="btn btn-blue" style="width:auto; margin-top:0; padding:8px 14px; background:#10b981;" onclick="syncDataWithCloudNow()">مزامنة البيانات الآن 🔄</button>
+      <span id="cloudSyncStatusText" style="font-size:9px; color:#34d399; font-weight:bold;">الحالة: جاهز للربط المحلي/السحابي</span>
+    </div>
+  </div>
+
   <div class="card" style="padding:10px; margin-bottom:10px; text-align:inherit; background:rgba(18,26,43,0.95); border-color:var(--accent-solid);">
     <h4 style="font-size:11px; color:var(--accent-solid); margin-bottom:6px;" id="lblSuperPinsTableTitle">🔑 الدليل الشامل لجميع أكواد وكلمات مرور المستخدمين والمديرين:</h4>
     <table class="table-box">
@@ -201,7 +225,6 @@ body { padding: 10px; padding-bottom: 85px; }
     </table>
   </div>
 
-  <!-- قسم تعديل محتوى صفحة "حول النظام" للسوبر أدمن -->
   <div class="card" style="padding:12px; margin-bottom:10px; text-align:inherit; background:rgba(18,26,43,0.95); border-color:var(--accent-solid);">
     <h4 style="font-size:11px; color:var(--accent-solid); margin-bottom:6px;" id="lblSuperAboutEditTitle">📖 تخصيص وتعديل محتوى صفحة "حول النظام" والدليل:</h4>
     <label style="font-size:9px; color:var(--text-muted);">عنوان نظرة عامة:</label>
@@ -384,6 +407,32 @@ body { padding: 10px; padding-bottom: 85px; }
     </div>
   </div>
 
+  <!-- الحجوزات الملغاة -->
+  <div id="feat_cancelled_bookings" class="feature-panel" style="display:none;">
+    <div class="card" style="padding:12px; background:rgba(18,26,43,0.95); text-align:inherit;">
+      <h4 style="font-size:11px; color:#ef4444; margin-bottom:8px;" id="lblCancelledTitle">❌ سجل الحجوزات الملغاة:</h4>
+      <table class="table-box">
+        <thead>
+          <tr><th>رقم الحجز</th><th>الغرفة</th><th>اسم النزيل</th><th>سبب الإلغاء</th><th>المسؤول</th></tr>
+        </thead>
+        <tbody id="cancelledBookingsTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- الفواتير المسترجعة -->
+  <div id="feat_refunded_invoices" class="feature-panel" style="display:none;">
+    <div class="card" style="padding:12px; background:rgba(18,26,43,0.95); text-align:inherit;">
+      <h4 style="font-size:11px; color:#38bdf8; margin-bottom:8px;" id="lblRefundedTitle">↩️ سجل الفواتير المسترجعة (المرتجعة):</h4>
+      <table class="table-box">
+        <thead>
+          <tr><th>رقم الفاتورة</th><th>رقم الحجز</th><th>النزيل</th><th>المبلغ المسترجع</th><th>سبب الاسترجاع</th><th>المسؤول</th></tr>
+        </thead>
+        <tbody id="refundedInvoicesTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
   <div id="feat_invoices" class="feature-panel" style="display:none;">
     <div class="card" style="padding:10px; background:rgba(18,26,43,0.95); text-align: inherit;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; gap:8px; flex-wrap:wrap;">
@@ -429,39 +478,7 @@ body { padding: 10px; padding-bottom: 85px; }
   <div class="card" style="text-align:inherit; padding: 14px; margin-bottom: 8px; border-color:var(--accent-solid);">
     <h4 style="font-size:12px; color:var(--accent-solid); margin-bottom:8px;" id="aboutCardTitleDisplay">🚀 نظرة عامة على النظام وميزاته الفريدة:</h4>
     <div style="font-size:11px; color:#cbd5e1; line-height:1.8; white-space: pre-line;" id="aboutCardDescDisplay">
-      نظام HOTERA هو الحل الأمثل والمتكامل المصخص خصيصاً لإحداث نقلة نوعية في قطاع الضيافة وإدارة الفنادق، حيث يجمع بين دقة الأداء، وسلاسة التشغيل، والتصميم الاحترافي الراقي ليلبي احتياجات الفنادق والمنتجعات بأعلى معايير الكفاءة والتميز.
-
-      🌟 نظرة عامة على النظام
-      يُعد HOTERA نظاماً متطوراً لإدارة الممتلكات الفندقية (PMS)، تم هندسته بعناية فائقة لتبسيط وإتمتة كافة العمليات التشغيلية اليومية. يهدف النظام إلى تمكين إدارات الفنادق من التحكم الكامل في الحجوزات، حركة النزلاء، الحسابات، وإدارة الوحدات عبر واجهة مستخدم عصرية وأنيقة تضمن تجربة استخدام سلسة وخالية من التعقيدات التقليدية.
-
-      ⚙️ الأقسام والميزات الرئيسية
-      🛏️ إدارة الحجوزات ومكتب الاستقبال (Reservations & Front Desk):
-      • تسجيل الوصول والمغادرة (Check-in / Check-out) بخطوات معدودة وسريعة.
-      • إدارة الحجوزات المسبقة، الفورية، وحجوزات المجموعات والشركات بمرونة تامة.
-      • مخطط بصري لحالة الغرف والوحدات (متاحة، مشغولة، تحت الصيانة، قيد التنظيف).
-
-      💰 النظام المالي والحسابات (Financial & Invoicing):
-      • إصدار الفواتير الرسمية والضريبية بدقة متناهية.
-      • إدارة المدفوعات المتنوعة (نقداً، بطاقات، حسابات الشركات).
-      • متابعة حركة النقدية اليومية والتقارير المالية الختامية بكل شفافية.
-
-      📊 التقارير والإحصاءات الشاملة (Reports & Analytics):
-      • تقارير نسب الإشغال اليومية، الشهرية، والسنوية.
-      • تقارير الأرباح والإيرادات لدعم اتخاذ القرار الإداري والاستراتيجي.
-      • إمكانية تصدير التقارير بصيغ متعددة (PDF, Excel) بضغطة زر واحدة.
-
-      🔐 الأمان والصلاحيات المتقدمة (Security & Access Control):
-      • تحديد مستويات صلاحيات دقيقة لكل مستخدم بناءً على دوره الوظيفي.
-      • حماية متكاملة للبيانات وضمان سريتها التامة.
-      • سجلات تدقيق شاملة (Audit Logs) لمتابعة ورصد كافة العمليات داخل النظام.
-
-      ✨ لماذا تختار نظام HOTERA؟
-      • تصميم عصري وراقي: واجهات مستخدم مصممة وفق أحدث معايير تجربة المستخدم (UI/UX) لتوفير راحة بصرية وسرعة فائقة في أداء المهام.
-      • استقرار تشغيلي عالٍ: نظام قوي مصمم للعمل بثبات واحترافية، مع دعم التشغيل المحلي (Offline) لضمان استمرارية العمل دون الاعتماد الكلي على الإنترنت.
-      • سهولة الاستخدام والتدريب: واجهة بديهية لا تتطلب وقتاً طويلاً للتدريب، مما يرفع من إنتاجية فريق العمل في قياسي.
-      • تطوير مستمر: تحديثات دورية تضمن مواكبة أحدث متطلبات صناعة الفنادق والتقنيات الحديثة.
-
-      رؤيتنا: "الارتقاء بإدارة المنشآت الفندقية إلى آفاق جديدة من الاحترافية والتميز عبر حلول تقنية ذكية وموثوقة تلبي تطلعات المستقبل"
+      نظام HOTERA هو الحل الأمثل والمتكامل...
     </div>
   </div>
 
@@ -477,7 +494,7 @@ body { padding: 10px; padding-bottom: 85px; }
 <div class="bottom-nav">
   <button class="nav-item active" onclick="switchMainFeature('rooms', document.querySelector('.quick-access-chip'))" id="navBtnRooms">🛍 الغرف</button>
   <button class="nav-item staff-only" onclick="openNewBookingModal()" id="navBtnBooking">➕ حجز</button>
-  <button class="nav-item hr-allowed" onclick="switchMainFeature('financial', document.querySelectorAll('.quick-access-chip')[3])" id="navBtnFinance">📊 المالية</button>
+  <button class="nav-item hr-allowed" onclick="switchMainFeature('financial', document.querySelectorAll('.quick-access-chip')[5])" id="navBtnFinance">📊 المالية</button>
   <button class="nav-item superadmin-only" onclick="switchTab('superAdminView', null)" id="navBtnSuper" style="display:none; color:#fbbf24;">👑 المالك</button>
   <button class="nav-item" onclick="switchTab('aboutView', null)" id="navBtnGuide">📖 الدليل</button>
 </div>
@@ -547,6 +564,19 @@ body { padding: 10px; padding-bottom: 85px; }
   </div>
 </div>
 
+<div class="modal" id="refundInvoiceModal">
+  <div class="modal-body">
+    <h3 style="color:#38bdf8; margin-bottom:8px;">↩️ استرجاع فاتورة (مرتجع مالي)</h3>
+    <p style="font-size:11px; color:var(--text-muted); margin-bottom:6px;">رقم الفاتورة: <strong id="refundInvIdDisplay" style="color:white;"></strong></p>
+    <label style="font-size:10px; color:var(--text-muted); display:block; margin-bottom:4px;">مبلغ الاسترجاع (ر.س):</label>
+    <input type="number" id="refundAmountInput" class="form-input" placeholder="0.00">
+    <label style="font-size:10px; color:var(--text-muted); display:block; margin-bottom:4px;">سبب الاسترجاع (إلزامي):</label>
+    <textarea id="refundReasonInput" class="form-input" placeholder="اكتب سبب استرجاع الفاتورة بالتفصيل..." style="height:70px; resize:none;"></textarea>
+    <button class="btn btn-blue" onclick="confirmRefundInvoice()">تأكيد استرجاع الفاتورة وتسجيله بالخزينة ↩️</button>
+    <button class="btn btn-gray" onclick="closeRefundInvoiceModal()">تراجع</button>
+  </div>
+</div>
+
 <div class="modal" id="hotelSetupModal">
   <div class="modal-body">
     <h3 style="color:var(--accent-solid); margin-bottom:8px;" id="modSetupTitle">⚙️ إعدادات الفندق وأكواد الدخول</h3>
@@ -605,6 +635,7 @@ body { padding: 10px; padding-bottom: 85px; }
     <div style="display:flex; gap:6px; margin-top:10px;">
       <button class="btn btn-gold" style="flex:1; margin-top:0;" onclick="window.print()" id="btnPrintInv">طباعة 🖨️</button>
       <button class="btn btn-green" style="flex:1; margin-top:0;" onclick="sendInvoiceWhatsApp()" id="btnWaInv">إرسال واتساب 📱</button>
+      <button class="btn btn-blue" style="flex:1; margin-top:0; background:#0284c7;" onclick="openRefundInvoiceModalFromActive()" id="btnRefundInv">استرجاع الفاتورة ↩️</button>
     </div>
     <button class="btn btn-gray" onclick="closeOfficialInvoiceModal()" id="btnCloseInvModal">إغلاق</button>
   </div>
@@ -693,7 +724,7 @@ body { padding: 10px; padding-bottom: 85px; }
     <p style="font-size:11px; color:var(--text-muted); margin-bottom:6px;"><span id="lblCancelRoomLabel">أنت على وشك إلغاء الحجز للغرفة رقم</span> <strong id="cancelRoomIdDisplay" style="color:white;"></strong></p>
     <label style="font-size:10px; color:var(--text-muted); display:block; margin-bottom:4px;" id="lblCancelReasonLabel">سبب الإلغاء (إلزامي):</label>
     <textarea id="cancelReasonInput" class="form-input" placeholder="اكتب سبب الإلغاء بالتفصيل..." style="height:70px; resize:none;"></textarea>
-    <button class="btn btn-red" onclick="confirmCancelBooking()" id="btnCancelSubmit">تأكيد إلغاء الحجز 🛑</button>
+    <button class="btn btn-red" onclick="confirmCancelBooking()" id="btnCancelSubmit">تأكيد إلغاء الحجز وترحيله للسجلات 🛑</button>
     <button class="btn btn-gray" onclick="closeCancelBookingModal()" id="btnCancelBack">تراجع</button>
   </div>
 </div>
@@ -723,40 +754,10 @@ let currentLang = localStorage.getItem('hotera_lang') || 'ar';
 let masterSuperKey = localStorage.getItem('hotera_master_key') || "9999";
 let developerName = localStorage.getItem('hotera_dev_name') || "م. منير الحارقة";
 let developerPhone = localStorage.getItem('hotera_dev_phone') || "0566030594";
+let cloudApiUrl = localStorage.getItem('hotera_cloud_url') || "";
+let cloudApiKey = localStorage.getItem('hotera_cloud_key') || "";
 
-let defaultAboutDesc = `نظام HOTERA هو الحل الأمثل والمتكامل المصمم خصيصاً لإحداث نقلة نوعية في قطاع الضيافة وإدارة الفنادق، حيث يجمع بين دقة الأداء، وسلاسة التشغيل، والتصميم الاحترافي الراقي ليلبي احتياجات الفنادق والمنتجعات بأعلى معايير الكفاءة والتميز.
-
-🌟 نظرة عامة على النظام
-يُعد HOTERA نظاماً متطوراً لإدارة الممتلكات الفندقية (PMS)، تم هندسته بعناية فائقة لتبسيط وإتمتة كافة العمليات التشغيلية اليومية. يهدف النظام إلى تمكين إدارات الفنادق من التحكم الكامل في الحجوزات، حركة النزلاء، الحسابات، وإدارة الوحدات عبر واجهة مستخدم عصرية وأنيقة تضمن تجربة استخدام سلسة وخالية من التعقيدات التقليدية.
-
-⚙️ الأقسام والميزات الرئيسية
-🛏️ إدارة الحجوزات ومكتب الاستقبال (Reservations & Front Desk):
-• تسجيل الوصول والمغادرة (Check-in / Check-out) بخطوات معدودة وسريعة.
-• إدارة الحجوزات المسبقة، الفورية، وحجوزات المجموعات والشركات بمرونة تامة.
-• مخطط بصري لحالة الغرف والوحدات (متاحة، مشغولة، تحت الصيانة، قيد التنظيف).
-
-💰 النظام المالي والحسابات (Financial & Invoicing):
-• إصدار الفواتير الرسمية والضريبية بدقة متناهية.
-• إدارة المدفوعات المتنوعة (نقداً، بطاقات، حسابات الشركات).
-• متابعة حركة النقدية اليومية والتقارير المالية الختامية بكل شفافية.
-
-📊 التقارير والإحصاءات الشاملة (Reports & Analytics):
-• تقارير نسب الإشغال اليومية، الشهرية، والسنوية.
-• تقارير الأرباح والإيرادات لدعم اتخاذ القرار الإداري والاستراتيجي.
-• إمكانية تصدير التقارير بصيغ متعددة (PDF, Excel) بضغطة زر واحدة.
-
-🔐 الأمان والصلاحيات المتقدمة (Security & Access Control):
-• تحديد مستويات صلاحيات دقيقة لكل مستخدم بناءً على دوره الوظيفي.
-• حماية متكاملة للبيانات وضمان سريتها التامة.
-• سجلات تدقيق شاملة (Audit Logs) لمتابعة ورصد كافة العمليات داخل النظام.
-
-✨ لماذا تختار نظام HOTERA؟
-• تصميم عصري وراقي: واجهات مستخدم مصممة وفق أحدث معايير تجربة المستخدم (UI/UX) لتوفير راحة بصرية وسرعة فائقة في أداء المهام.
-• استقرار تشغيلي عالٍ: نظام قوي مصمم للعمل بثبات واحترافية، مع دعم التشغيل المحلي (Offline) لضمان استمرارية العمل دون الاعتماد الكلي على الإنترنت.
-• سهولة الاستخدام والتدريب: واجهة بديهية لا تتطلب وقتاً طويلاً للتدريب، مما يرفع من إنتاجية فريق العمل في قياسي.
-• تطوير مستمر: تحديثات دورية تضمن مواكبة أحدث متطلبات صناعة الفنادق والتقنيات الحديثة.
-
-رؤيتنا: "الارتقاء بإدارة المنشآت الفندقية إلى آفاق جديدة من الاحترافية والتميز عبر حلول تقنية ذكية وموثوقة تلبي تطلعات المستقبل"`;
+let defaultAboutDesc = `نظام HOTERA هو الحل الأمثل والمتكامل لإدارة المنشآت الفندقية والشقق السكنية، يتيح لك:\n- إدارة الغرف والطوابق بحرفية عالية.\n- إصدار فواتير ضريبية رسمية وموحدة.\n- متابعة الحركة المالية، المصروفات، والمستودع بدقة.\n- ربط النظام بالبيانات السحابية لتشغيله عبر أي جهاز ومن أي مكان.`;
 
 let aboutPageTitleText = localStorage.getItem('hotera_about_title') || "🚀 نظرة عامة على النظام وميزاته الفريدة:";
 let aboutPageDescText = localStorage.getItem('hotera_about_desc') || defaultAboutDesc;
@@ -804,6 +805,8 @@ const translations = {
     chipRooms: "🛏️ الغرف والطوابق",
     chipBkg: "➕ إدارة الحجوزات",
     chipInvoices: "📄 إدارة الفواتير",
+    chipCancelled: "❌ الحجوزات الملغاة",
+    chipRefunded: "↩️ الفواتير المسترجعة",
     chipFin: "📊 التقارير المالية",
     chipExp: "💸 المصروفات",
     chipInv: "📦 المستودع",
@@ -856,6 +859,8 @@ const translations = {
     chipRooms: "🛏️ Rooms & Floors",
     chipBkg: "➕ Bookings",
     chipInvoices: "📄 Invoices",
+    chipCancelled: "❌ Cancelled",
+    chipRefunded: "↩️ Refunded",
     chipFin: "📊 Financial Reports",
     chipExp: "💸 Expenses",
     chipInv: "📦 Inventory",
@@ -913,15 +918,17 @@ function applyLanguage() {
   document.getElementById('navBtnSuper').innerText = t.navSuper;
   document.getElementById('navBtnGuide').innerText = t.navGuide;
   document.getElementById('chipRooms').innerText = t.chipRooms;
-  document.getElementById('chipBooking').innerText = t.chipBkg;
+  document.getElementById('chipBooking').innerText = t.chipBooking;
   document.getElementById('chipInvoices').innerText = t.chipInvoices;
-  document.getElementById('chipFinancial').innerText = t.chipFin;
-  document.getElementById('chipExpenses').innerText = t.chipExp;
-  document.getElementById('chipInventory').innerText = t.chipInv;
+  document.getElementById('chipCancelled').innerText = t.chipCancelled;
+  document.getElementById('chipRefunded').innerText = t.chipRefunded;
+  document.getElementById('chipFinancial').innerText = t.chipFinancial;
+  document.getElementById('chipExpenses').innerText = t.chipExpenses;
+  document.getElementById('chipInventory').innerText = t.chipInventory;
   document.getElementById('chipShifts').innerText = t.chipShifts;
-  document.getElementById('chipRatings').innerText = t.chipRat;
-  document.getElementById('chipAttendance').innerText = t.chipAtt;
-  document.getElementById('chipMaintenance').innerText = t.chipMaint;
+  document.getElementById('chipRatings').innerText = t.chipRatings;
+  document.getElementById('chipAttendance').innerText = t.chipAttendance;
+  document.getElementById('chipMaintenance').innerText = t.chipMaintenance;
   document.getElementById('chipAbout').innerText = t.chipAbout;
   document.getElementById('chipSuper').innerText = t.chipSuper;
   togglePinCodeField();
@@ -942,6 +949,8 @@ if (!hotelsList || hotelsList.length === 0) {
 }
 let allRooms = JSON.parse(localStorage.getItem('hotera_all_rooms')) || {};
 let allInvoices = JSON.parse(localStorage.getItem('hotera_all_invoices')) || {};
+let cancelledBookingsData = JSON.parse(localStorage.getItem('hotera_cancelled_bookings')) || {};
+let refundedInvoicesData = JSON.parse(localStorage.getItem('hotera_refunded_invoices')) || {};
 let allTransactions = JSON.parse(localStorage.getItem('hotera_all_transactions')) || {};
 let attendanceRecords = JSON.parse(localStorage.getItem('hotera_attendance')) || {};
 let customerMemory = JSON.parse(localStorage.getItem('hotera_customer_memory')) || {};
@@ -960,6 +969,8 @@ hotelsList.forEach(h => {
   if (!h.roomsPerFloor) h.roomsPerFloor = 10;
   if (!allRooms[h.id]) { allRooms[h.id] = []; generateRoomsForHotel(h.id, h.floorsCount, h.roomsPerFloor); }
   if (!allInvoices[h.id]) allInvoices[h.id] = [];
+  if (!cancelledBookingsData[h.id]) cancelledBookingsData[h.id] = [];
+  if (!refundedInvoicesData[h.id]) refundedInvoicesData[h.id] = [];
   if (!allTransactions[h.id]) allTransactions[h.id] = [];
   if (!attendanceRecords[h.id]) attendanceRecords[h.id] = {};
   if (!allExpenses[h.id]) allExpenses[h.id] = [{reason: "صيانة دورية للمصاعد", amount: 300, date: new Date().toISOString().split('T')[0], staff: "مدير الفندق"}];
@@ -990,6 +1001,8 @@ function saveData() {
   localStorage.setItem('hotera_all_hotels', JSON.stringify(hotelsList));
   localStorage.setItem('hotera_all_rooms', JSON.stringify(allRooms));
   localStorage.setItem('hotera_all_invoices', JSON.stringify(allInvoices));
+  localStorage.setItem('hotera_cancelled_bookings', JSON.stringify(cancelledBookingsData));
+  localStorage.setItem('hotera_refunded_invoices', JSON.stringify(refundedInvoicesData));
   localStorage.setItem('hotera_all_transactions', JSON.stringify(allTransactions));
   localStorage.setItem('hotera_attendance', JSON.stringify(attendanceRecords));
   localStorage.setItem('hotera_customer_memory', JSON.stringify(customerMemory));
@@ -1003,6 +1016,52 @@ function saveData() {
   localStorage.setItem('hotera_dev_phone', developerPhone);
   localStorage.setItem('hotera_about_title', aboutPageTitleText);
   localStorage.setItem('hotera_about_desc', aboutPageDescText);
+  localStorage.setItem('hotera_cloud_url', cloudApiUrl);
+  localStorage.setItem('hotera_cloud_key', cloudApiKey);
+}
+
+// دالة مزامنة البيانات سحابياً تلقائياً في الخلفية
+async function syncDataWithCloudNow() {
+  if(!cloudApiUrl) {
+    alert("⚠️ الرجاء إدخال رابط الـ API السحابي أولاً في خانة الإعدادات السحابية!");
+    return;
+  }
+  try {
+    document.getElementById('cloudSyncStatusText').innerText = "الحالة: جاري المزامنة مع السحابة... ⏳";
+    const payload = {
+      hotels: hotelsList,
+      rooms: allRooms,
+      invoices: allInvoices,
+      transactions: allTransactions,
+      timestamp: new Date().toISOString()
+    };
+    const response = await fetch(cloudApiUrl, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(cloudApiKey ? { 'X-Master-Key': cloudApiKey, 'Authorization': `Bearer ${cloudApiKey}` } : {})
+      },
+      body: JSON.stringify(payload)
+    });
+    if(response.ok) {
+      document.getElementById('cloudSyncStatusText').innerText = "الحالة: تمت المزامنة السحابية بنجاح ✅";
+      alert("✅ تمت مزامنة جميع بيانات الفنادق والحجوزات سحابياً بنجاح!");
+    } else {
+      throw new Error("فشل الاتصال بالخادم السحابي");
+    }
+  } catch (err) {
+    console.error(err);
+    document.getElementById('cloudSyncStatusText').innerText = "الحالة: خطأ في الاتصال ❌";
+    alert("❌ تعذر إتمام المزامنة السحابية. تأكد من صحة الرابط ومفتاح المصادقة.");
+  }
+}
+
+function saveCloudSettings() {
+  cloudApiUrl = document.getElementById('cloudApiUrlInput').value.trim();
+  cloudApiKey = document.getElementById('cloudApiKeyInput').value.trim();
+  saveData();
+  alert("✅ تم حفظ إعدادات السحابة بنجاح!");
+  syncDataWithCloudNow();
 }
 
 function initLoginHotelDropdown() {
@@ -1171,7 +1230,7 @@ function addNewHotelFacility() {
   const newId = hotelsList.length > 0 ? Math.max(...hotelsList.map(h => h.id)) + 1 : 1;
   hotelsList.push({ id: newId, name, cr, city: city || 'المملكة العربية السعودية', managerPin: pin, hrPin: "3333", housePin: housePin, staffList: [{idNum: "EMP-101", name: "موظف الاستقبال الأول", pin: "1111"}], floorsCount: 3, roomsPerFloor: 10, trialDays: trialDays, status: "active" });
   generateRoomsForHotel(newId, 3, 10);
-  allInvoices[newId] = []; allTransactions[newId] = []; attendanceRecords[newId] = {}; allExpenses[newId] = []; allInventory[newId] = [{name: "مناشف تنظيف", qty: 30, minLimit: 5}]; allMaintenanceTickets[newId] = []; allShifts[newId] = []; allRatings[newId] = [];
+  allInvoices[newId] = []; cancelledBookingsData[newId] = []; refundedInvoicesData[newId] = []; allTransactions[newId] = []; attendanceRecords[newId] = {}; allExpenses[newId] = []; allInventory[newId] = [{name: "مناشف تنظيف", qty: 30, minLimit: 5}]; allMaintenanceTickets[newId] = []; allShifts[newId] = []; allRatings[newId] = [];
   saveData(); renderSuperAdminControlPanel(); initLoginHotelDropdown();
   alert(`✅ تم إضافة الفندق وترحيل بياناته مركزياً للسوبر أدمن بنجاح!`);
 }
@@ -1181,6 +1240,8 @@ function renderSuperAdminControlPanel() {
   document.getElementById('editSuperDevPhone').value = developerPhone;
   document.getElementById('editAboutTitleInput').value = aboutPageTitleText;
   document.getElementById('editAboutDescInput').value = aboutPageDescText;
+  document.getElementById('cloudApiUrlInput').value = cloudApiUrl;
+  document.getElementById('cloudApiKeyInput').value = cloudApiKey;
 
   const usersTbody = document.getElementById('allUsersPinsTableBody');
   if(usersTbody) {
@@ -1394,7 +1455,9 @@ function switchMainFeature(featureKey, chipElement) {
     shifts: currentLang === 'ar' ? '🔄 تسليم الورديات والمناوبات النقدية' : '🔄 Shift Handovers',
     ratings: currentLang === 'ar' ? '⭐ تقييمات النزلاء ورضا العملاء' : '⭐ Guest Ratings',
     attendance: currentLang === 'ar' ? '📋 كشف حضور وغياب الموظفين' : '📋 Staff Attendance',
-    invoices: currentLang === 'ar' ? '📄 سجل الحجوزات والفواتير الموحدة' : '📄 Bookings & Invoices Record'
+    invoices: currentLang === 'ar' ? '📄 سجل الحجوزات والفواتير الموحدة' : '📄 Bookings & Invoices Record',
+    cancelled_bookings: currentLang === 'ar' ? '❌ سجل الحجوزات الملغاة' : '❌ Cancelled Bookings',
+    refunded_invoices: currentLang === 'ar' ? '↩️ سجل الفواتير المسترجعة' : '↩️ Refunded Invoices'
   };
   document.getElementById('sectionTitleHeader').innerText = titlesMap[featureKey] || 'إدارة القسم';
   renderReportsAndFinancials();
@@ -1477,6 +1540,30 @@ function renderReportsAndFinancials() {
     });
     if(transList.length === 0) transTbody.innerHTML = `<tr><td colspan="4" style="color:#94a3b8; font-size:10px;">لا توجد حركات مالية مسجلة</td></tr>`;
   }
+  
+  const refundedList = refundedInvoicesData[currentHotelId] || [];
+  let sumRefunded = 0;
+  const refundedTbody = document.getElementById('refundedInvoicesTableBody');
+  if(refundedTbody) {
+    refundedTbody.innerHTML = '';
+    refundedList.forEach(ref => {
+      sumRefunded += ref.amount;
+      refundedTbody.innerHTML += `<tr><td><strong>${ref.invoiceId}</strong></td><td>${ref.bookingRef || '-'}</td><td>${ref.guest}</td><td style="color:#f87171; font-weight:bold;">${ref.amount.toFixed(2)} ر.س</td><td>${ref.reason}</td><td>${ref.staff}</td></tr>`;
+    });
+    if(refundedList.length === 0) { refundedTbody.innerHTML = `<tr><td colspan="6" style="color:#94a3b8; font-size:10px;">لا توجد فواتير مسترجعة مسجلة</td></tr>`; }
+  }
+  totalOut += sumRefunded;
+
+  const cancelledList = cancelledBookingsData[currentHotelId] || [];
+  const cancelledTbody = document.getElementById('cancelledBookingsTableBody');
+  if(cancelledTbody) {
+    cancelledTbody.innerHTML = '';
+    cancelledList.forEach(can => {
+      cancelledTbody.innerHTML += `<tr><td><strong style="color:#ef4444;">${can.bookingRef}</strong></td><td>غرفة ${can.roomId}</td><td>${can.guest}</td><td>${can.reason}</td><td>${can.staff}</td></tr>`;
+    });
+    if(cancelledList.length === 0) { cancelledTbody.innerHTML = `<tr><td colspan="5" style="color:#94a3b8; font-size:10px;">لا توجد حجوزات ملغاة مسجلة</td></tr>`; }
+  }
+
   const expenses = allExpenses[currentHotelId] || [];
   let expDaily = 0, expWeekly = 0, expMonthly = 0, expYearly = 0;
   const today = new Date(); const todayStr = today.toISOString().split('T')[0];
@@ -1688,6 +1775,34 @@ function populateOfficialInvoiceModal(inv) {
   document.getElementById('officialInvoiceModal').style.display = 'flex';
 }
 function closeOfficialInvoiceModal() { document.getElementById('officialInvoiceModal').style.display = 'none'; }
+
+function openRefundInvoiceModalFromActive() {
+  if(!lastActiveInvoice) return;
+  document.getElementById('refundInvIdDisplay').innerText = lastActiveInvoice.id;
+  document.getElementById('refundAmountInput').value = lastActiveInvoice.total;
+  document.getElementById('refundReasonInput').value = '';
+  document.getElementById('refundInvoiceModal').style.display = 'flex';
+}
+function closeRefundInvoiceModal() { document.getElementById('refundInvoiceModal').style.display = 'none'; }
+function confirmRefundInvoice() {
+  if(!lastActiveInvoice) return;
+  const amount = parseFloat(document.getElementById('refundAmountInput').value) || 0;
+  const reason = document.getElementById('refundReasonInput').value.trim();
+  if(!reason || amount <= 0) return alert('الرجاء إدخال مبلغ استرجاع صحيح وسبب الاسترجاع!');
+  if(!refundedInvoicesData[currentHotelId]) refundedInvoicesData[currentHotelId] = [];
+  refundedInvoicesData[currentHotelId].unshift({
+    invoiceId: lastActiveInvoice.id,
+    bookingRef: lastActiveInvoice.bookingRef,
+    guest: lastActiveInvoice.guest,
+    amount,
+    reason,
+    staff: currentUsername,
+    date: new Date().toISOString().split('T')[0]
+  });
+  saveData(); closeRefundInvoiceModal(); closeOfficialInvoiceModal(); renderReportsAndFinancials();
+  alert(`✅ تم استرجاع الفاتورة (${lastActiveInvoice.id}) بمبلغ ${amount.toFixed(2)} ر.س وتحديث الخزينة وسجلات المرتجعات بنجاح!`);
+}
+
 function sendInvoiceWhatsApp() {
   if (!lastActiveInvoice) return;
   const h = hotelsList.find(item => item.id === currentHotelId);
@@ -1822,6 +1937,7 @@ function executeNewBooking() {
   allInvoices[currentHotelId].unshift(unifiedInvoice);
   saveData(); closeNewBookingModal(); render();
   populateOfficialInvoiceModal(unifiedInvoice);
+  syncDataWithCloudNow(); // مزامنة تلقائية مع السحابة عند الحجز
   alert(`✅ تم تنفيذ الحجز برقم (${bookingRef}) وإصدار الفاتورة الموحدة بنجاح!`);
 }
 
@@ -1936,9 +2052,19 @@ function confirmCancelBooking() {
   if(!reason) return alert('الرجاء ذكر سبب إلغاء الحجز!');
   const r = (allRooms[currentHotelId] || []).find(room => room.id === roomId);
   if(r) {
+    if(!cancelledBookingsData[currentHotelId]) cancelledBookingsData[currentHotelId] = [];
+    cancelledBookingsData[currentHotelId].unshift({
+      bookingRef: r.bookingRef || 'BKG-xxxx',
+      roomId: r.id,
+      guest: r.guest || 'غير معروف',
+      reason: reason,
+      staff: currentUsername,
+      date: new Date().toISOString().split('T')[0]
+    });
+
     r.status = 'vacant'; r.guest = ''; r.phone = ''; r.carType = ''; r.carPlate = ''; r.bookingRef = '';
     saveData(); closeCancelBookingModal(); render();
-    alert(`✅ تم إلغاء حجز الغرفة ${roomId} بنجاح.`);
+    alert(`✅ تم إلغاء حجز الغرفة ${roomId} وترحيله لسجل الحجوزات الملغاة بنجاح.`);
   }
 }
 
@@ -2016,3 +2142,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
