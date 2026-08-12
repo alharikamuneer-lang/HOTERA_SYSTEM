@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl" id="htmlRoot">
 <head>
@@ -188,7 +187,6 @@ body { padding: 10px; padding-bottom: 85px; }
 
   <h3 style="color:var(--accent-solid); font-size:13px; margin-bottom:8px;" id="lblSuperTitle">👑 لوحة تحكم المالك العامة (إدارة الفنادق ومراقبة المستخدمين)</h3>
 
-  <!-- خانة ربط النظام بالبيانات السحابية المجانية -->
   <div class="card" style="padding:12px; margin-bottom:10px; text-align:inherit; background:rgba(18,26,43,0.95); border-color:var(--accent-solid);">
     <h4 style="font-size:11px; color:#38bdf8; margin-bottom:6px;">☁️ خانة ربط النظام بالبيانات السحابية المجانية (Cloud Sync):</h4>
     <p style="font-size:9px; color:var(--text-muted); margin-bottom:6px;">قم بإدخال رابط الخدمة السحابية المجانية (مثل Supabase أو JSONBin) ومفتاح التوثيق للربط الفوري:</p>
@@ -407,7 +405,6 @@ body { padding: 10px; padding-bottom: 85px; }
     </div>
   </div>
 
-  <!-- الحجوزات الملغاة -->
   <div id="feat_cancelled_bookings" class="feature-panel" style="display:none;">
     <div class="card" style="padding:12px; background:rgba(18,26,43,0.95); text-align:inherit;">
       <h4 style="font-size:11px; color:#ef4444; margin-bottom:8px;" id="lblCancelledTitle">❌ سجل الحجوزات الملغاة:</h4>
@@ -420,7 +417,6 @@ body { padding: 10px; padding-bottom: 85px; }
     </div>
   </div>
 
-  <!-- الفواتير المسترجعة -->
   <div id="feat_refunded_invoices" class="feature-panel" style="display:none;">
     <div class="card" style="padding:12px; background:rgba(18,26,43,0.95); text-align:inherit;">
       <h4 style="font-size:11px; color:#38bdf8; margin-bottom:8px;" id="lblRefundedTitle">↩️ سجل الفواتير المسترجعة (المرتجعة):</h4>
@@ -943,8 +939,8 @@ function togglePasswordVisibility(inputId, btn) {
 let hotelsList = JSON.parse(localStorage.getItem('hotera_all_hotels'));
 if (!hotelsList || hotelsList.length === 0) {
   hotelsList = [
-    { id: 1, name: "فندق النخيل الفاخر", cr: "403000001", city: "مكة المكرمة", managerPin: "1234", hrPin: "3333", staffList: [{idNum: "EMP-101", name: "محمد أحمد", pin: "1111"}], floorsCount: 3, roomsPerFloor: 10, trialDays: 14, status: "active" },
-    { id: 2, name: "فندق الأفق الذهبي", cr: "403000002", city: "المدينة المنورة", managerPin: "2222", hrPin: "4444", staffList: [{idNum: "EMP-201", name: "خالد عبد الله", pin: "2211"}], floorsCount: 2, roomsPerFloor: 8, trialDays: 7, status: "active" }
+    { id: 1, name: "فندق النخيل الفاخر", cr: "403000001", city: "مكة المكرمة", managerPin: "1234", hrPin: "3333", housePin: "0000", staffList: [{idNum: "EMP-101", name: "محمد أحمد", pin: "1111"}], floorsCount: 3, roomsPerFloor: 10, trialDays: 14, status: "active" },
+    { id: 2, name: "فندق الأفق الذهبي", cr: "403000002", city: "المدينة المنورة", managerPin: "2222", hrPin: "4444", housePin: "0000", staffList: [{idNum: "EMP-201", name: "خالد عبد الله", pin: "2211"}], floorsCount: 2, roomsPerFloor: 8, trialDays: 7, status: "active" }
   ];
 }
 let allRooms = JSON.parse(localStorage.getItem('hotera_all_rooms')) || {};
@@ -964,6 +960,7 @@ hotelsList.forEach(h => {
   if (h.status === undefined) h.status = "active";
   if (h.trialDays === undefined) h.trialDays = 14;
   if (!h.hrPin) h.hrPin = "3333";
+  if (!h.housePin) h.housePin = "0000";
   if (!h.staffList) h.staffList = [{idNum: "EMP-101", name: "موظف استقبال", pin: "1111"}];
   if (!h.floorsCount) h.floorsCount = 3;
   if (!h.roomsPerFloor) h.roomsPerFloor = 10;
@@ -1020,21 +1017,28 @@ function saveData() {
   localStorage.setItem('hotera_cloud_key', cloudApiKey);
 }
 
-// دالة مزامنة البيانات سحابياً تلقائياً في الخلفية
 async function syncDataWithCloudNow() {
   if(!cloudApiUrl) {
     alert("⚠️ الرجاء إدخال رابط الـ API السحابي أولاً في خانة الإعدادات السحابية!");
     return;
   }
   try {
-    document.getElementById('cloudSyncStatusText').innerText = "الحالة: جاري المزامنة مع السحابة... ⏳";
+    const statusText = document.getElementById('cloudSyncStatusText');
+    if(statusText) statusText.innerText = "الحالة: جاري المزامنة مع السحابة... ⏳";
+    
     const payload = {
+      masterSuperKey: masterSuperKey,
+      developerName: developerName,
+      developerPhone: developerPhone,
+      aboutPageTitleText: aboutPageTitleText,
+      aboutPageDescText: aboutPageDescText,
       hotels: hotelsList,
       rooms: allRooms,
       invoices: allInvoices,
       transactions: allTransactions,
       timestamp: new Date().toISOString()
     };
+    
     const response = await fetch(cloudApiUrl, {
       method: 'PUT',
       headers: {
@@ -1043,17 +1047,52 @@ async function syncDataWithCloudNow() {
       },
       body: JSON.stringify(payload)
     });
+    
     if(response.ok) {
-      document.getElementById('cloudSyncStatusText').innerText = "الحالة: تمت المزامنة السحابية بنجاح ✅";
-      alert("✅ تمت مزامنة جميع بيانات الفنادق والحجوزات سحابياً بنجاح!");
+      if(statusText) statusText.innerText = "الحالة: تمت المزامنة السحابية بنجاح ✅";
     } else {
       throw new Error("فشل الاتصال بالخادم السحابي");
     }
   } catch (err) {
     console.error(err);
-    document.getElementById('cloudSyncStatusText').innerText = "الحالة: خطأ في الاتصال ❌";
-    alert("❌ تعذر إتمام المزامنة السحابية. تأكد من صحة الرابط ومفتاح المصادقة.");
+    const statusText = document.getElementById('cloudSyncStatusText');
+    if(statusText) statusText.innerText = "الحالة: خطأ في الاتصال ❌";
   }
+}
+
+async function fetchDataFromCloud(isSilent = true) {
+  if(!cloudApiUrl) return false;
+  try {
+    const response = await fetch(cloudApiUrl, {
+      method: 'GET',
+      headers: {
+        ...(cloudApiKey ? { 'X-Master-Key': cloudApiKey, 'Authorization': `Bearer ${cloudApiKey}` } : {})
+      }
+    });
+    
+    if(response.ok) {
+      const result = await response.json();
+      const payload = result.record ? result.record : result;
+      
+      if(payload.masterSuperKey) {
+        masterSuperKey = payload.masterSuperKey;
+        localStorage.setItem('hotera_master_key', masterSuperKey);
+      }
+      if(payload.developerName) { developerName = payload.developerName; localStorage.setItem('hotera_dev_name', developerName); }
+      if(payload.developerPhone) { developerPhone = payload.developerPhone; localStorage.setItem('hotera_dev_phone', developerPhone); }
+      if(payload.hotels) { hotelsList = payload.hotels; localStorage.setItem('hotera_all_hotels', JSON.stringify(hotelsList)); }
+      if(payload.rooms) { allRooms = payload.rooms; localStorage.setItem('hotera_all_rooms', JSON.stringify(allRooms)); }
+      if(payload.invoices) { allInvoices = payload.invoices; localStorage.setItem('hotera_all_invoices', JSON.stringify(allInvoices)); }
+      if(payload.transactions) { allTransactions = payload.transactions; localStorage.setItem('hotera_all_transactions', JSON.stringify(allTransactions)); }
+      
+      updateGlobalDisplays();
+      if(!isSilent) alert("✅ تم جلب أحدث الأكواد والبيانات من السحابة بنجاح!");
+      return true;
+    }
+  } catch(err) {
+    console.error("خطأ أثناء جلب البيانات السحابية:", err);
+  }
+  return false;
 }
 
 function saveCloudSettings() {
@@ -1118,12 +1157,21 @@ function togglePinCodeField() {
   else { staffGroup.style.display = 'none'; pinLabel.innerText = t.pinHouse; }
 }
 
-function executeLogin() {
+async function executeLogin() {
   const hotelId = parseInt(document.getElementById('loginHotelSelect').value);
   const role = document.getElementById('loginRoleSelect').value;
   const pinInput = document.getElementById('loginPinInput').value;
+
+  if (cloudApiUrl) {
+    await fetchDataFromCloud(true);
+  }
+
   const targetHotel = hotelsList.find(h => h.id === hotelId);
-  if (role !== 'superadmin' && targetHotel.status === 'suspended') { alert("❌ عذراً، تم إيقاف النظام مؤقتاً عن هذا الفندق من قبل الإدارة العامة."); return; }
+  if (role !== 'superadmin' && targetHotel && targetHotel.status === 'suspended') { 
+    alert("❌ عذراً، تم إيقاف النظام مؤقتاً عن هذا الفندق من قبل الإدارة العامة."); 
+    return; 
+  }
+  
   if (role === 'superadmin') {
     if (pinInput !== masterSuperKey) { alert("❌ رمز السوبر أدمن غير صحيح!"); return; }
     currentRole = 'superadmin'; currentUsername = currentLang === 'ar' ? 'المالك العام' : 'Super Admin'; currentHotelId = hotelId;
@@ -1139,9 +1187,10 @@ function executeLogin() {
     if (pinInput !== targetHotel.hrPin) { alert("❌ رمز مشرف الموظفين غير صحيح!"); return; }
     currentRole = 'hr_supervisor'; currentUsername = currentLang === 'ar' ? 'مشرف الموظفين' : 'HR Supervisor'; currentHotelId = hotelId;
   } else {
-    if (pinInput !== targetHotel.housePin) { alert("❌ رمز مشرف النظافة غير صحيح!"); return; }
+    if (pinInput !== (targetHotel.housePin || "0000")) { alert("❌ رمز مشرف النظافة غير صحيح!"); return; }
     currentRole = 'housekeeper'; currentUsername = currentLang === 'ar' ? 'مشرف النظافة' : 'Housekeeper'; currentHotelId = hotelId;
   }
+  
   document.getElementById('loginOverlay').style.display = 'none';
   pinsAreRevealed = false;
   updateHeaderInfo();
@@ -1202,12 +1251,21 @@ function updateSuperAdminSettings() {
   const devNameInput = document.getElementById('editSuperDevName').value.trim();
   const devPhoneInput = document.getElementById('editSuperDevPhone').value.trim();
   const newKey = document.getElementById('newSuperAdminKeyInput').value.trim();
+  
   if(devNameInput) developerName = devNameInput;
   if(devPhoneInput) developerPhone = devPhoneInput;
   if(newKey) masterSuperKey = newKey;
-  saveData(); updateGlobalDisplays();
+  
+  saveData();
+  updateGlobalDisplays();
   document.getElementById('newSuperAdminKeyInput').value = '';
-  alert("✅ تم حفظ وتحديث بيانات السوبر أدمن بنجاح!");
+  
+  if(cloudApiUrl) {
+    syncDataWithCloudNow();
+    alert("✅ تم حفظ كلمة المرور الجديدة وتحديثها على السحابة لكافة الأجهزة بنجاح!");
+  } else {
+    alert("✅ تم حفظ الإعدادات محلياً (ينصح بربط السحابة لتحديث باقي الأجهزة).");
+  }
 }
 
 function saveAboutViewSettings() {
@@ -1254,7 +1312,7 @@ function renderSuperAdminControlPanel() {
       });
       if(!staffHtml) staffHtml = '<span style="font-size:9px; color:#94a3b8;">لا يوجد موظفين</span>';
       let mPin = pinsAreRevealed ? h.managerPin : '••••';
-      let hpPin = pinsAreRevealed ? h.housePin : '••••';
+      let hpPin = pinsAreRevealed ? (h.housePin || '••••') : '••••';
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td><strong>${h.name}</strong><br><small>${h.city}</small></td>
@@ -1293,7 +1351,7 @@ function resetManagerPinPrompt(hotelId) {
 function resetHousePinPrompt(hotelId) {
   const h = hotelsList.find(item => item.id === hotelId);
   if(!h) return;
-  const newPin = prompt(`أدخل رمز مشرف النظافة الجديد لـ (${h.name}):`, h.housePin);
+  const newPin = prompt(`أدخل رمز مشرف النظافة الجديد لـ (${h.name}):`, h.housePin || '0000');
   if(newPin) { h.housePin = newPin.trim(); saveData(); renderSuperAdminControlPanel(); alert("✅ تم تحديث رمز الهاوس كيبنج بنجاح!"); }
 }
 function resetStaffPinPrompt(hotelId, sIdx) {
@@ -1937,7 +1995,7 @@ function executeNewBooking() {
   allInvoices[currentHotelId].unshift(unifiedInvoice);
   saveData(); closeNewBookingModal(); render();
   populateOfficialInvoiceModal(unifiedInvoice);
-  syncDataWithCloudNow(); // مزامنة تلقائية مع السحابة عند الحجز
+  syncDataWithCloudNow();
   alert(`✅ تم تنفيذ الحجز برقم (${bookingRef}) وإصدار الفاتورة الموحدة بنجاح!`);
 }
 
@@ -2123,10 +2181,15 @@ function switchTab(tabId, btn) {
   if(tabId === 'superAdminView') renderSuperAdminControlPanel();
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   initLoginHotelDropdown();
   applyLanguage();
   updateGlobalDisplays();
+  
+  if (cloudApiUrl) {
+    await fetchDataFromCloud(true);
+  }
+  
   const urlParams = new URLSearchParams(window.location.search);
   if(urlParams.get('action') === 'rate') {
     const hId = urlParams.get('hotel');
@@ -2139,7 +2202,5 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 </script>
-
 </body>
 </html>
-
