@@ -2213,66 +2213,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 </script>
-  // ==========================================
-// ☁️ إعدادات التحديث التلقائي للسحابة (HOTERA)
-// ==========================================
-
-// 1. ضع رابط السحابة الخاص بك هنا (مثلاً رابط JSONBin) ومفتاح المصادقة
-const AUTO_CLOUD_URL = "ضع_رابط_الـ_API_السحابي_هنا"; 
-const AUTO_API_KEY = "ضع_مفتاح_المصادقة_API_Key_هنا";
-
-// 2. دالة جلب البيانات وتحديث الواجهة تلقائياً
-async function syncAndFetchDataOnLoad() {
-    if (!AUTO_CLOUD_URL || AUTO_CLOUD_URL.includes("ضع_رابط")) {
-        console.log("مفتاح السحابة غير محدد مسبقاً في الكود الثابت.");
-        return;
-    }
-
-    try {
-        const response = await fetch(AUTO_CLOUD_URL, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "X-Master-Key": AUTO_API_KEY // إذا كنت تستخدم JSONBin
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error("تعذر الاتصال بالخادم السحابي");
-        }
-
-        const result = await response.json();
-        
-        // استخراج البيانات وتحديث التخزين المحلي (تأكد من مطابقة هيكل بياناتك)
-        const cloudData = result.record || result; 
-
-        if (cloudData) {
-            // حفظ الفنادق والبيانات في الذاكرة المحلية للجوال
-            if (cloudData.hotels) {
-                localStorage.setItem("hotera_hotels", JSON.stringify(cloudData.hotels));
-            }
-            if (cloudData.rooms) {
-                localStorage.setItem("hotera_rooms", JSON.stringify(cloudData.rooms));
-            }
-
-            // تحديث العرض في الشاشة تلقائياً إذا كانت الدوال موجودة
-            if (typeof updateGlobalDisplays === "function") {
-                updateGlobalDisplays();
-            }
-            if (typeof render === "function") {
-                render();
-            }
-            
-            console.log("✅ تمت مزامنة السحابة وتحديث الفنادق تلقائياً بنجاح.");
-        }
-    } catch (err) {
-        console.warn("⚠️ تنبيه في التحديث التلقائي (قد يكون بسبب انقطاع الإنترنت):", err);
-    }
-}
-
-// 3. التشغيل التلقائي فور فتح الصفحة وقبل تحميل عناصر الواجهة
-document.addEventListener("DOMContentLoaded", async () => {
-    await syncAndFetchDataOnLoad();
+  // ==
 });
 
   <div class="form-group">
