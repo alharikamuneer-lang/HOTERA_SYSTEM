@@ -1,4 +1,15 @@
 <!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Untitled</title>
+    
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
 <html lang="ar" dir="rtl" id="htmlRoot">
 <head>
 <meta charset="UTF-8">
@@ -2202,5 +2213,147 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 </script>
+  // ==========================================
+// ☁️ إعدادات التحديث التلقائي للسحابة (HOTERA)
+// ==========================================
+
+// 1. ضع رابط السحابة الخاص بك هنا (مثلاً رابط JSONBin) ومفتاح المصادقة
+const AUTO_CLOUD_URL = "ضع_رابط_الـ_API_السحابي_هنا"; 
+const AUTO_API_KEY = "ضع_مفتاح_المصادقة_API_Key_هنا";
+
+// 2. دالة جلب البيانات وتحديث الواجهة تلقائياً
+async function syncAndFetchDataOnLoad() {
+    if (!AUTO_CLOUD_URL || AUTO_CLOUD_URL.includes("ضع_رابط")) {
+        console.log("مفتاح السحابة غير محدد مسبقاً في الكود الثابت.");
+        return;
+    }
+
+    try {
+        const response = await fetch(AUTO_CLOUD_URL, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "X-Master-Key": AUTO_API_KEY // إذا كنت تستخدم JSONBin
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error("تعذر الاتصال بالخادم السحابي");
+        }
+
+        const result = await response.json();
+        
+        // استخراج البيانات وتحديث التخزين المحلي (تأكد من مطابقة هيكل بياناتك)
+        const cloudData = result.record || result; 
+
+        if (cloudData) {
+            // حفظ الفنادق والبيانات في الذاكرة المحلية للجوال
+            if (cloudData.hotels) {
+                localStorage.setItem("hotera_hotels", JSON.stringify(cloudData.hotels));
+            }
+            if (cloudData.rooms) {
+                localStorage.setItem("hotera_rooms", JSON.stringify(cloudData.rooms));
+            }
+
+            // تحديث العرض في الشاشة تلقائياً إذا كانت الدوال موجودة
+            if (typeof updateGlobalDisplays === "function") {
+                updateGlobalDisplays();
+            }
+            if (typeof render === "function") {
+                render();
+            }
+            
+            console.log("✅ تمت مزامنة السحابة وتحديث الفنادق تلقائياً بنجاح.");
+        }
+    } catch (err) {
+        console.warn("⚠️ تنبيه في التحديث التلقائي (قد يكون بسبب انقطاع الإنترنت):", err);
+    }
+}
+
+// 3. التشغيل التلقائي فور فتح الصفحة وقبل تحميل عناصر الواجهة
+document.addEventListener("DOMContentLoaded", async () => {
+    await syncAndFetchDataOnLoad();
+});
+
+  <div class="form-group">
+    نوع الاشتراك:
+    <select id="newHotelSubType" class="form-control" onchange="toggleSubFields()">
+        <option value="trial">فترة تجريبية (أيام محدودة)</option>
+        <option value="yearly">اتفاق سنوي (سنة كاملة)</option>
+    </select>
+</div>
+
+<div class="form-group" id="trialDaysDiv">
+    عدد أيام التجربة:
+    <input type="number" id="newHotelTrialDays" class="form-control" value="14" min="1">
+</div>
+function addNewHotelFromSuperAdmin() {
+    const hotelName = document.getElementById("newHotelName").value;
+    const subType = document.getElementById("newHotelSubType").value;
+    const trialDays = parseInt(document.getElementById("newHotelTrialDays").value) || 14;
+    
+    let expiryDate = new Date();
+    
+    if (subType === "trial") {
+        // إضافة عدد أيام التجربة من تاريخ اليوم
+        expiryDate.setDate(expiryDate.getDate() + trialDays);
+    } else if (subType === "yearly") {
+        // إضافة سنة كاملة
+        expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+    }
+
+    const newHotel = {
+        id: Date.now(),
+        name: hotelName,
+        subType: subType, // نوع الاشتراك: تجريبي أو سنوي
+        createdAt: new Date().toISOString(),
+        expiryDate: expiryDate.toISOString(), // تاريخ انتهاء الاشتراك
+        isActive: true
+    };
+
+    // جلب الفنادق الحالية وإضافة الفندق الجديد
+    let hotels = JSON.parse(localStorage.getItem("hotera_hotels")) || [];
+    hotels.push(newHotel);
+    localStorage.setItem("hotera_hotels", JSON.stringify(hotels));
+
+    // مزامنة البيانات للسحابة لكي تنتقل التعديلات فوراً
+    if (typeof uploadDataToCloud === "function") {
+        uploadDataToCloud();
+    }
+
+    alert("تم إضافة الفندق بنجاح وتحديد نوع الاشتراك!");
+}
+
+// دالة لإظهار أو إخفاء حقل الأيام حسب نوع الاشتراك
+function toggleSubFields() {
+    const subType = document.getElementById("newHotelSubType").value;
+    const trialDiv = document.getElementById("trialDaysDiv");
+    if (subType === "trial") {
+        trialDiv.style.display = "block";
+    } else {
+        trialDiv.style.display = "none";
+    }
+}
+function checkHotelSubscription(hotelId) {
+    let hotels = JSON.parse(localStorage.getItem("hotera_hotels")) || [];
+    const hotel = hotels.find(h => h.id == hotelId);
+    
+    if (!hotel) return false;
+
+    const currentDate = new Date();
+    const expiry = new Date(hotel.expiryDate);
+
+    // التحقق هل انتهى الاشتراك أو تم إيقاف الفندق
+    if (!hotel.isActive || currentDate > expiry) {
+        alert("⚠️ عذراً، انتهت فترة الاشتراك التجريبي أو السنوي لهذا الفندق. يرجى التواصل مع الإدارة للتجديد.");
+        return false; // منع الدخول
+    }
+    
+    return true; // الاشتراك ساري
+}
 </body>
+</html>
+    
+  </body>
+  
 </html>
