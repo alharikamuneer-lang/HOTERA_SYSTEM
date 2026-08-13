@@ -785,53 +785,170 @@ body { padding: 10px; padding-bottom: 85px; }
 // ==========================================
 // ☁️ إعدادات المزامنة والربط السحابي التلقائي
 // ==========================================
-const AUTO_CLOUD_URL = "رابط_ملفك_هنا"; 
-const AUTO_API_KEY = "مفتاح_المصادقة_الخاص_بك_هنا";
+const AUTO_CLOUD_URL = "";
+const AUTO_API_KEY = "";
+let cloudSyncInProgress = false;
 
-async function syncAndFetchDataOnLoad() {
-    if (!AUTO_CLOUD_URL || AUTO_CLOUD_URL.includes("رابط_ملفك_هنا")) return;
-    try {
-        const response = await fetch(AUTO_CLOUD_URL, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "X-Master-Key": AUTO_API_KEY
-            }
-        });
-        if (!response.ok) return;
-        const result = await response.json();
-        const cloudData = result.record || result; 
-        if (cloudData) {
-            if (cloudData.hotels) localStorage.setItem("hotera_all_hotels", JSON.stringify(cloudData.hotels));
-            if (cloudData.rooms) localStorage.setItem("hotera_all_rooms", JSON.stringify(cloudData.rooms));
-            if (cloudData.invoices) localStorage.setItem("hotera_all_invoices", JSON.stringify(cloudData.invoices));
-            console.log("✅ تم جلب وتحديث البيانات تلقائياً بنجاح");
-        }
-    } catch (err) {
-        console.warn("تعذر الاتصال بالسحابة مؤقتاً:", err);
-    }
+function setCloudStatus(message, color = '#34d399') {
+  const el = document.getElementById('cloudSyncStatusText');
+  if (el) {
+    el.innerText = `الحالة: ${message}`;
+    el.style.color = color;
+  }
 }
 
-async function uploadDataToCloud() {
-    if (!AUTO_CLOUD_URL || AUTO_CLOUD_URL.includes("رابط_ملفك_هنا")) return;
-    const dataToSave = {
-        hotels: JSON.parse(localStorage.getItem("hotera_all_hotels")) || [],
-        rooms: JSON.parse(localStorage.getItem("hotera_all_rooms")) || [],
-        invoices: JSON.parse(localStorage.getItem("hotera_all_invoices")) || [],
-        bookings: JSON.parse(localStorage.getItem("hotera_cancelled_bookings")) || []
-    };
-    try {
-        await fetch(AUTO_CLOUD_URL, {
-            method: 'PUT',
-            headers: {
-                "Content-Type": "application/json",
-                "X-Master-Key": AUTO_API_KEY
-            },
-            body: JSON.stringify(dataToSave)
-        });
-    } catch (error) {
-        console.error("خطأ في الرفع للسحابة:", error);
-    }
+function getCloudConfig() {
+  return {
+    url: (cloudApiUrl || AUTO_CLOUD_URL || '').trim(),
+    key: (cloudApiKey || AUTO_API_KEY || '').trim()
+  };
+}
+
+function buildCloudPayload() {
+  return {
+    version: 2,
+    updatedAt: new Date().toISOString(),
+    hotels: hotelsList,
+    rooms: allRooms,
+    invoices: allInvoices,
+    cancelledBookings: cancelledBookingsData,
+    refundedInvoices: refundedInvoicesData,
+    transactions: allTransactions,
+    attendance: attendanceRecords,
+    customerMemory,
+    expenses: allExpenses,
+    inventory: allInventory,
+    maintenanceTickets: allMaintenanceTickets,
+    shifts: allShifts,
+    ratings: allRatings,
+    masterKey: masterSuperKey,
+    developerName,
+    developerPhone,
+    aboutTitle: aboutPageTitleText,
+    aboutDesc: aboutPageDescText
+  };
+}
+
+function applyCloudPayload(cloudData) {
+  if (!cloudData || typeof cloudData !== 'object') return false;
+
+  if (Array.isArray(cloudData.hotels)) {
+    hotelsList = cloudData.hotels;
+    hotelsList.forEach(h => {
+      if (h.status === undefined) h.status = 'active';
+      if (h.isActive === undefined) h.isActive = true;
+      if (!Array.isArray(h.staffList)) h.staffList = [];
+    });
+  }
+  if (cloudData.rooms) allRooms = cloudData.rooms;
+  if (cloudData.invoices) allInvoices = cloudData.invoices;
+  if (cloudData.cancelledBookings) cancelledBookingsData = cloudData.cancelledBookings;
+  if (cloudData.refundedInvoices) refundedInvoicesData = cloudData.refundedInvoices;
+  if (cloudData.transactions) allTransactions = cloudData.transactions;
+  if (cloudData.attendance) attendanceRecords = cloudData.attendance;
+  if (cloudData.customerMemory) customerMemory = cloudData.customerMemory;
+  if (cloudData.expenses) allExpenses = cloudData.expenses;
+  if (cloudData.inventory) allInventory = cloudData.inventory;
+  if (cloudData.maintenanceTickets) allMaintenanceTickets = cloudData.maintenanceTickets;
+  if (cloudData.shifts) allShifts = cloudData.shifts;
+  if (cloudData.ratings) allRatings = cloudData.ratings;
+  if (cloudData.masterKey) masterSuperKey = cloudData.masterKey;
+  if (cloudData.developerName) developerName = cloudData.developerName;
+  if (cloudData.developerPhone) developerPhone = cloudData.developerPhone;
+  if (cloudData.aboutTitle) aboutPageTitleText = cloudData.aboutTitle;
+  if (cloudData.aboutDesc) aboutPageDescText = cloudData.aboutDesc;
+
+  saveData();
+  return true;
+}
+
+async function fetchDataFromCloud(showError = false) {
+  const config = getCloudConfig();
+  if (!config.url) return false;
+
+  try {
+    const headers = { 'Content-Type': 'application/json' };
+    if (config.key) headers['X-Master-Key'] = config.key;
+    const response = await fetch(config.url, { method: 'GET', headers, cache: 'no-store' });
+    if (!response.ok) throw new Error(`GET HTTP ${response.status}`);
+    const result = await response.json();
+    const cloudData = result.record || result;
+    if (!applyCloudPayload(cloudData)) throw new Error('البيانات السحابية غير صالحة');
+    setCloudStatus(`تم جلب آخر تحديث: ${new Date().toLocaleTimeString()}`);
+    return true;
+  } catch (error) {
+    console.error('فشل جلب البيانات السحابية:', error);
+    setCloudStatus('تعذر الجلب؛ البيانات المحلية مستخدمة', '#fca5a5');
+    if (showError) alert(`❌ تعذر جلب البيانات السحابية: ${error.message}`);
+    return false;
+  }
+}
+
+async function uploadDataToCloud(showError = false) {
+  const config = getCloudConfig();
+  if (!config.url || cloudSyncInProgress) return false;
+
+  cloudSyncInProgress = true;
+  try {
+    const headers = { 'Content-Type': 'application/json' };
+    if (config.key) headers['X-Master-Key'] = config.key;
+    const response = await fetch(config.url, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify(buildCloudPayload())
+    });
+    if (!response.ok) throw new Error(`PUT HTTP ${response.status}`);
+    setCloudStatus(`تم الرفع لجميع الأجهزة: ${new Date().toLocaleTimeString()}`);
+    return true;
+  } catch (error) {
+    console.error('فشل رفع البيانات السحابية:', error);
+    setCloudStatus('فشل الرفع إلى السحابة', '#fca5a5');
+    if (showError) alert(`❌ تعذر رفع البيانات السحابية: ${error.message}`);
+    return false;
+  } finally {
+    cloudSyncInProgress = false;
+  }
+}
+
+async function syncAndFetchDataOnLoad() {
+  if (getCloudConfig().url) await fetchDataFromCloud(false);
+}
+
+async function syncDataWithCloudNow() {
+  if (!getCloudConfig().url) {
+    alert('⚠️ أدخل رابط API ومفتاح المصادقة أولاً، ثم اضغط حفظ واختبار الربط.');
+    return;
+  }
+  const ok = await fetchDataFromCloud(true);
+  if (ok) {
+    initLoginHotelDropdown();
+    updateGlobalDisplays();
+    if (typeof renderSuperAdminControlPanel === 'function') renderSuperAdminControlPanel();
+    if (typeof render === 'function') render();
+    alert('✅ تمت مزامنة البيانات المركزية بنجاح، وستظهر الآن على الأجهزة المرتبطة بنفس الرابط.');
+  }
+}
+
+async function saveCloudSettings() {
+  const url = document.getElementById('cloudApiUrlInput').value.trim();
+  const key = document.getElementById('cloudApiKeyInput').value.trim();
+  if (!url) return alert('⚠️ أدخل رابط API السحابي.');
+
+  try { new URL(url); } catch (_) { return alert('⚠️ رابط API غير صحيح.'); }
+  cloudApiUrl = url;
+  cloudApiKey = key;
+  saveData();
+  setCloudStatus('جارٍ اختبار الربط...', '#fbbf24');
+
+  const connected = await fetchDataFromCloud(false);
+  if (connected) {
+    alert('✅ تم حفظ إعدادات السحابة وجلب البيانات المركزية بنجاح.');
+    return;
+  }
+
+  const created = await uploadDataToCloud(false);
+  if (created) alert('✅ تم حفظ الإعدادات وإنشاء/تحديث السجل المركزي بنجاح.');
+  else alert('❌ تعذر اختبار الربط. تحقق من الرابط والمفتاح وصلاحية PUT في الخدمة السحابية.');
 }
 
 let currentHotelId = 1;
@@ -1189,48 +1306,6 @@ function checkHotelSubscription(hotelId) {
   return true;
 }
 
-async function fetchDataFromCloud(showError = false) {
-  if (!cloudApiUrl) return false;
-
-  try {
-    const response = await fetch(cloudApiUrl, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Master-Key': cloudApiKey
-      }
-    });
-
-    if (!response.ok) throw new Error(`Cloud HTTP ${response.status}`);
-
-    const result = await response.json();
-    const cloudData = result.record || result;
-
-    if (Array.isArray(cloudData.hotels)) {
-      hotelsList = cloudData.hotels;
-      hotelsList.forEach(h => {
-        if (h.status === undefined) h.status = 'active';
-        if (h.isActive === undefined) h.isActive = true;
-        if (!h.staffList) h.staffList = [];
-      });
-      localStorage.setItem('hotera_all_hotels', JSON.stringify(hotelsList));
-    }
-    if (cloudData.rooms) {
-      allRooms = cloudData.rooms;
-      localStorage.setItem('hotera_all_rooms', JSON.stringify(allRooms));
-    }
-    if (cloudData.invoices) {
-      allInvoices = cloudData.invoices;
-      localStorage.setItem('hotera_all_invoices', JSON.stringify(allInvoices));
-    }
-    return true;
-  } catch (error) {
-    console.error('فشل جلب البيانات السحابية:', error);
-    if (showError) console.warn('سيتم استخدام البيانات المحلية بدلاً من إيقاف تسجيل الدخول.');
-    return false;
-  }
-}
-
 async function executeLogin() {
   const hotelId = parseInt(document.getElementById('loginHotelSelect').value);
   const role = document.getElementById('loginRoleSelect').value;
@@ -1341,8 +1416,9 @@ function updateSuperAdminSettings() {
   document.getElementById('newSuperAdminKeyInput').value = '';
   
   if(cloudApiUrl) {
-    uploadDataToCloud();
-    alert("✅ تم حفظ الإعدادات وتحديثها على السحابة لكافة الأجهزة بنجاح!");
+    uploadDataToCloud(true).then(ok => {
+      if (ok) alert("✅ تم حفظ الإعدادات وتحديثها على السحابة لكافة الأجهزة بنجاح!");
+    });
   } else {
     alert("✅ تم حفظ الإعدادات محلياً.");
   }
