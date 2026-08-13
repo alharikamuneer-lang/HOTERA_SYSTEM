@@ -1055,6 +1055,8 @@ let allRatings = JSON.parse(localStorage.getItem('hotera_all_ratings')) || {};
 
 hotelsList.forEach(h => {
   if (h.status === undefined) h.status = "active";
+  // التوافق مع بيانات الفنادق القديمة: عدم وجود isActive يعني أن الفندق نشط
+  if (h.isActive === undefined) h.isActive = true;
   if (h.trialDays === undefined) h.trialDays = 14;
   if (!h.subType) h.subType = "trial";
   if (!h.expiryDate) h.expiryDate = new Date(Date.now() + 14*86400000).toISOString();
@@ -1171,15 +1173,62 @@ function togglePinCodeField() {
 }
 
 function checkHotelSubscription(hotelId) {
-  let targetHotel = hotelsList.find(h => h.id == hotelId);
-  if (!targetHotel) return true;
-  const currentDate = new Date();
-  const expiry = new Date(targetHotel.expiryDate);
-  if (!targetHotel.isActive || currentDate > expiry) {
-    alert("⚠️ عذراً، انتهت فترة الاشتراك التجريبي أو السنوي لهذا الفندق. يرجى التواصل مع الإدارة للتجديد.");
+  const targetHotel = hotelsList.find(h => h.id == hotelId);
+  if (!targetHotel) return false;
+
+  // التوافق مع البيانات القديمة والجديدة
+  const isSuspended = targetHotel.status === 'suspended';
+  const isInactive = targetHotel.isActive === false;
+  const hasExpiry = !!targetHotel.expiryDate;
+  const isExpired = hasExpiry && new Date() > new Date(targetHotel.expiryDate);
+
+  if (isSuspended || isInactive || isExpired) {
+    alert("⚠️ عذراً، انتهت فترة الاشتراك أو تم إيقاف هذا الفندق. يرجى التواصل مع الإدارة للتجديد.");
     return false;
   }
   return true;
+}
+
+async function fetchDataFromCloud(showError = false) {
+  if (!cloudApiUrl) return false;
+
+  try {
+    const response = await fetch(cloudApiUrl, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': cloudApiKey
+      }
+    });
+
+    if (!response.ok) throw new Error(`Cloud HTTP ${response.status}`);
+
+    const result = await response.json();
+    const cloudData = result.record || result;
+
+    if (Array.isArray(cloudData.hotels)) {
+      hotelsList = cloudData.hotels;
+      hotelsList.forEach(h => {
+        if (h.status === undefined) h.status = 'active';
+        if (h.isActive === undefined) h.isActive = true;
+        if (!h.staffList) h.staffList = [];
+      });
+      localStorage.setItem('hotera_all_hotels', JSON.stringify(hotelsList));
+    }
+    if (cloudData.rooms) {
+      allRooms = cloudData.rooms;
+      localStorage.setItem('hotera_all_rooms', JSON.stringify(allRooms));
+    }
+    if (cloudData.invoices) {
+      allInvoices = cloudData.invoices;
+      localStorage.setItem('hotera_all_invoices', JSON.stringify(allInvoices));
+    }
+    return true;
+  } catch (error) {
+    console.error('فشل جلب البيانات السحابية:', error);
+    if (showError) console.warn('سيتم استخدام البيانات المحلية بدلاً من إيقاف تسجيل الدخول.');
+    return false;
+  }
 }
 
 async function executeLogin() {
@@ -1187,8 +1236,9 @@ async function executeLogin() {
   const role = document.getElementById('loginRoleSelect').value;
   const pinInput = document.getElementById('loginPinInput').value;
 
+  // محاولة تحديث البيانات، مع السماح بالدخول محلياً إذا تعذر الاتصال بالسحابة
   if (cloudApiUrl) {
-    await fetchDataFromCloud(true);
+    await fetchDataFromCloud(false);
   }
 
   const targetHotel = hotelsList.find(h => h.id === hotelId);
@@ -2247,6 +2297,7 @@ function submitGuestRatingFromPortal() {
   alert('🌟 شكراً جزيلاً لتقييمكم! تم استلامه بنجاح.');
   switchMainFeature('rooms', document.querySelector('.quick-access-chip'));
 }
+
 function switchTab(tabId, btn) {
   document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
   document.getElementById(tabId).classList.add('active');
