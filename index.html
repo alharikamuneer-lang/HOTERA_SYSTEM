@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" id="htmlRoot"> 
+<html lang="ar" dir="rtl" id="htmlRoot">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -2272,48 +2272,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 </script>
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <title>لوحة تحكم السوبر أدمن - إعدادات النظام</title>
-    <style>
-        body { font-family: Tahoma, sans-serif; background: #f4f6f9; padding: 30px; }
-        .admin-card { max-width: 600px; margin: auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-weight: bold; color: #333; }
-        input[type="text"], select { width: 100%; padding: 10px; border: 1.5px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        .btn-save { background: #007bff; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; }
-        .btn-save:hover { background: #0056b3; }
-    </style>
-</head>
-<body>
-
-    <div class="admin-card">
-        <h2>إعدادات الربط والتحكم الشامل</h2>
-        <form action="save_settings.php" method="POST">
-            
-            <!-- خانة خاصة بالسوبر أدمن لإدارة ميزة المزامنة أو الربط -->
-            <div class="form-group">
-                <label for="sync_mode">حالة المزامنة الفورية للمخطط الزمني:</label>
-                <select name="sync_mode" id="sync_mode">
-                    <option value="enabled">مفعلة بالكامل (تحديث تلقائي لحظي)</option>
-                    <option value="manual">مفعلة جزئياً (يتطلب تأكيد يدوي)</option>
-                    <option value="disabled">معطلة</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="api_endpoint">مسار أو رابط الربط الخارجي (API Endpoint):</label>
-                <input type="text" id="api_endpoint" name="api_endpoint" value="https://yourhotel-system.com/api/v1/" placeholder="أدخل رابط الربط">
-            </div>
-
-            <button type="submit" class="btn-save">حفظ إعدادات الربط</button>
-        </form>
-    </div>
-
-</body>
-</html>
 
 </body>
 </html>
