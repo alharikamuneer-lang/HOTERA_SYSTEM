@@ -188,7 +188,8 @@ body { padding: 10px; padding-bottom: 85px; }
     <div id="deviceCloudConnectBox" style="margin-top:8px; padding:8px; border:1px dashed rgba(56,189,248,0.45); border-radius:8px; text-align:inherit; background:rgba(14,165,233,0.06);">
       <div style="font-size:9px; color:#38bdf8; margin-bottom:5px;">📱 ربط جهاز جديد وموافقة السوبر أدمن</div>
       <input type="text" id="deviceCloudUrlInput" class="form-input" placeholder="رابط API السحابي نفسه في جميع الأجهزة" style="margin-bottom:5px;">
-      <input type="password" id="deviceCloudKeyInput" class="form-input" placeholder="مفتاح المصادقة نفسه في جميع الأجهزة" style="margin-bottom:5px;">
+      <input type="password" id="deviceCloudKeyInput" class="form-input" placeholder="مفتاح المصادقة — يعبّئ تلقائياً من رابط الدعوة" style="margin-bottom:5px;">
+      <input type="text" id="deviceJoinCodeInput" class="form-input" placeholder="رمز الدعوة المؤقت — اختياري" style="margin-bottom:5px;">
       <button type="button" class="btn btn-blue" onclick="saveDeviceCloudAndRequest()" style="margin-top:0; background:#0284c7;">طلب اعتماد هذا الجهاز 🔐</button>
       <div id="deviceAccessStatusText" style="font-size:9px; color:#fbbf24; margin-top:5px;">الجهاز غير مربوط بعد</div>
     </div>
@@ -271,6 +272,15 @@ body { padding: 10px; padding-bottom: 85px; }
       <button class="btn btn-blue" style="width:auto; margin-top:0; padding:8px 14px; background:#10b981;" onclick="syncDataWithCloudNow()">مزامنة البيانات الآن 🔄</button>
       <span id="cloudSyncStatusText" style="font-size:9px; color:#34d399; font-weight:bold;">الحالة: جاهز للربط المحلي/السحابي</span>
     </div>
+  </div>
+  <div class="card" style="padding:10px; margin-bottom:10px; text-align:inherit; background:rgba(18,26,43,0.95); border-color:#34d399;">
+    <h4 style="font-size:11px; color:#34d399; margin-bottom:6px;">🔗 انضمام سريع لجهاز جديد بدون كتابة الإعدادات</h4>
+    <p style="font-size:9px; color:var(--text-muted); margin-bottom:6px;">أنشئ رابط دعوة مؤقتاً وأرسله للمستخدم. سيفتح الرابط خانة الربط تلقائياً، ثم يحتاج الجهاز إلى موافقة السوبر أدمن.</p>
+    <div style="display:flex; gap:6px; align-items:center;">
+      <button class="btn btn-green" style="width:auto; margin-top:0; padding:8px 14px;" onclick="generateDeviceInviteLink()">إنشاء رابط دعوة مؤقت 🔗</button>
+      <span id="inviteLinkStatus" style="font-size:9px; color:#94a3b8;">الرابط صالح للاستخدام مرة واحدة/لفترة قصيرة</span>
+    </div>
+    <input id="generatedInviteLink" class="form-input" readonly style="margin-top:6px; display:none; font-size:9px; direction:ltr;">
   </div>
 
   <div class="card" style="padding:10px; margin-bottom:10px; text-align:inherit; background:rgba(18,26,43,0.95); border-color:#38bdf8;">
@@ -944,10 +954,48 @@ function renderDeviceApprovalPanel() {
   }).join('');
 }
 
+function readInviteFromUrl() {
+  try {
+    const raw = new URLSearchParams(window.location.search).get('hoteraInvite');
+    if (!raw) return;
+    const data = JSON.parse(decodeURIComponent(atob(raw)));
+    if (data.url) cloudApiUrl = data.url;
+    if (data.key) cloudApiKey = data.key;
+    if (data.code) deviceJoinCode = data.code;
+    localStorage.setItem('hotera_cloud_url', cloudApiUrl);
+    localStorage.setItem('hotera_cloud_key', cloudApiKey);
+    localStorage.setItem('hotera_join_code', deviceJoinCode);
+    const u = document.getElementById('deviceCloudUrlInput');
+    const k = document.getElementById('deviceCloudKeyInput');
+    const c = document.getElementById('deviceJoinCodeInput');
+    if (u) u.value = cloudApiUrl;
+    if (k) k.value = cloudApiKey;
+    if (c) c.value = deviceJoinCode;
+    setDeviceStatusText('تم فتح رابط دعوة؛ أرسل طلب الاعتماد الآن ⏳');
+  } catch (e) { console.warn('رابط الدعوة غير صالح'); }
+}
+
+async function generateDeviceInviteLink() {
+  if (!cloudApiUrl || !cloudApiKey) return alert('⚠️ احفظ إعدادات السحابة أولاً.');
+  cloudJoinCode = String(Math.floor(100000 + Math.random() * 900000));
+  localStorage.setItem('hotera_cloud_join_code', cloudJoinCode);
+  const ok = await uploadDataToCloud(true);
+  if (!ok) return;
+  const payload = encodeURIComponent(btoa(JSON.stringify({ url: cloudApiUrl, key: cloudApiKey, code: cloudJoinCode })));
+  const link = `${window.location.origin}${window.location.pathname}?hoteraInvite=${payload}`;
+  const input = document.getElementById('generatedInviteLink');
+  if (input) { input.value = link; input.style.display = 'block'; input.select(); }
+  try { await navigator.clipboard.writeText(link); } catch (_) {}
+  const status = document.getElementById('inviteLinkStatus');
+  if (status) status.innerText = `تم إنشاء الرابط ونسخه — رمز الدعوة: ${cloudJoinCode}`;
+  alert('✅ تم إنشاء رابط الدعوة ونسخه. أرسله للمستخدم، ثم وافق على الجهاز من قائمة الطلبات.');
+}
+
 async function saveDeviceCloudAndRequest() {
   const url = document.getElementById('deviceCloudUrlInput').value.trim();
   const key = document.getElementById('deviceCloudKeyInput').value.trim();
-  if (!url) return alert('⚠️ أدخل رابط API السحابي نفسه المستخدم في جهاز السوبر أدمن.');
+  deviceJoinCode = document.getElementById('deviceJoinCodeInput').value.trim() || deviceJoinCode;
+  if (!url) return alert('⚠️ افتح رابط الدعوة المرسل من السوبر أدمن أو أدخل رابط الربط.');
   try { new URL(url); } catch (_) { return alert('⚠️ رابط API غير صحيح.'); }
   cloudApiUrl = url;
   cloudApiKey = key;
@@ -1020,6 +1068,7 @@ function buildCloudPayload() {
     shifts: allShifts,
     ratings: allRatings,
     devices: getDeviceRegistryForUpload(),
+    joinCode: cloudJoinCode,
     masterKey: masterSuperKey,
     developerName,
     developerPhone,
@@ -1052,6 +1101,7 @@ function applyCloudPayload(cloudData) {
   if (cloudData.shifts) allShifts = cloudData.shifts;
   if (cloudData.ratings) allRatings = cloudData.ratings;
   if (Array.isArray(cloudData.devices)) cloudDevices = cloudData.devices;
+  if (cloudData.joinCode) { cloudJoinCode = cloudData.joinCode; localStorage.setItem('hotera_cloud_join_code', cloudJoinCode); }
   if (cloudData.masterKey) masterSuperKey = cloudData.masterKey;
   if (cloudData.developerName) developerName = cloudData.developerName;
   if (cloudData.developerPhone) developerPhone = cloudData.developerPhone;
@@ -1169,6 +1219,8 @@ localStorage.setItem('hotera_device_id', deviceId);
 let deviceName = localStorage.getItem('hotera_device_name') || `${navigator.platform || 'جهاز'} — ${new Date().toLocaleDateString()}`;
 let cloudDevices = [];
 let deviceAccessStatus = 'pending';
+let deviceJoinCode = localStorage.getItem('hotera_join_code') || '';
+let cloudJoinCode = localStorage.getItem('hotera_cloud_join_code') || '';
 
 
 let defaultAboutDesc = `نظام HOTERA هو الحل الأمثل والمتكامل لإدارة المنشآت الفندقية والشقق السكنية، يتيح لك:\n- إدارة الغرف والطوابق بحرفية عالية.\n- إصدار فواتير ضريبية رسمية وموحدة.\n- متابعة الحركة المالية، المصروفات، والمستودع بدقة.\n- ربط النظام بالبيانات السحابية لتشغيله عبر أي جهاز ومن أي مكان.`;
@@ -2601,6 +2653,7 @@ function switchTab(tabId, btn) {
 
 document.addEventListener("DOMContentLoaded", async () => {
   showWelcomeScreen();
+  readInviteFromUrl();
   await syncAndFetchDataOnLoad();
   handleDeviceAccess();
   if (getCloudConfig().url) setInterval(() => { fetchDataFromCloud(false).then(() => { handleDeviceAccess(); initLoginHotelDropdown(); }); }, 30000);
