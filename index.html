@@ -126,6 +126,16 @@ body { padding: 10px; padding-bottom: 85px; }
 @media (prefers-reduced-motion: reduce) { #welcomeScreen *, #welcomeScreen::before, #welcomeScreen::after { animation:none !important; transition:none !important; } }
 
 
+.command-center-view{padding:4px 0 80px;animation:commandFade .45s ease}
+@keyframes commandFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.command-hero{background:radial-gradient(circle at 15% 20%,rgba(245,158,11,.22),transparent 36%),linear-gradient(135deg,rgba(18,26,43,.98),rgba(8,12,20,.96));border:1px solid rgba(245,158,11,.38);border-radius:18px;padding:16px;margin-bottom:10px;box-shadow:0 12px 30px rgba(0,0,0,.28);position:relative;overflow:hidden}
+.command-hero:after{content:'';position:absolute;width:150px;height:150px;border:1px solid rgba(245,158,11,.24);border-radius:50%;left:-45px;top:-70px;animation:orbitGlow 5s linear infinite}
+@keyframes orbitGlow{to{transform:rotate(360deg)}}
+.command-hero h2{margin:0;color:var(--accent-solid);font-size:17px;position:relative;z-index:1}.command-hero p{margin:5px 0 0;color:#cbd5e1;font-size:10px;line-height:1.7;position:relative;z-index:1}
+.command-status{display:flex;justify-content:space-between;gap:6px;margin-top:10px;position:relative;z-index:1}.command-status span{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:5px 8px;font-size:9px;color:#cbd5e1}
+.command-kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-bottom:10px}.command-kpi{background:var(--glass-bg);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:10px;text-align:center;transition:transform .2s ease,box-shadow .2s ease}.command-kpi:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.25)}.command-kpi small{display:block;color:var(--text-muted);font-size:9px}.command-kpi strong{display:block;font-size:20px;color:var(--accent-solid);margin-top:4px}
+.command-grid{display:grid;grid-template-columns:1fr;gap:8px}.command-panel{background:rgba(18,26,43,.9);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:11px}.command-panel h3{font-size:11px;color:var(--accent-solid);margin:0 0 8px}.command-room-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(66px,1fr));gap:5px}.command-room{border-radius:9px;padding:7px 3px;text-align:center;font-size:9px;border:1px solid rgba(255,255,255,.12);cursor:pointer;transition:transform .18s ease}.command-room:hover{transform:scale(1.04)}.command-room.available{background:rgba(16,185,129,.14);color:#6ee7b7}.command-room.occupied{background:rgba(239,68,68,.14);color:#fca5a5}.command-room.cleaning{background:rgba(245,158,11,.14);color:#fcd34d}.command-room.maintenance{background:rgba(168,85,247,.14);color:#d8b4fe}.command-alert{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px dashed rgba(255,255,255,.12);font-size:9px;color:#cbd5e1}.command-alert:last-child{border-bottom:0}.theme-light{--glass-bg:rgba(255,255,255,.82);--text-main:#0f172a;--text-muted:#475569;--glass-border:rgba(15,23,42,.16);background:#e8eef7!important;color:#0f172a!important}.theme-light .card,.theme-light .modal-body,.theme-light .command-panel{background:rgba(255,255,255,.9)!important;color:#0f172a}.theme-light .command-hero{background:linear-gradient(135deg,#fff7df,#e6f3ff)}
+
 .booking-note-box{background:linear-gradient(135deg,rgba(245,158,11,.13),rgba(14,165,233,.08));border:1px solid rgba(245,158,11,.3);border-radius:10px;padding:8px;margin-bottom:8px;color:#cbd5e1;font-size:10px;line-height:1.7}
 .invoice-footer-note{margin-top:12px;padding-top:10px;border-top:1px dashed #cbd5e1;text-align:center;color:#64748b;font-size:9px;line-height:1.8}
 </style>
@@ -232,6 +242,7 @@ body { padding: 10px; padding-bottom: 85px; }
 </div>
 
 <div class="quick-access-bar" id="quickAccessBar">
+  <div class="quick-access-chip" onclick="switchMainFeature('command_center', this)" id="chipCommandCenter">✨ مركز القيادة</div>
   <div class="quick-access-chip active" onclick="switchMainFeature('rooms', this)" id="chipRooms">🛏️ الغرف والطوابق</div>
   <div class="quick-access-chip staff-only" onclick="openNewBookingModal()" id="chipBooking">➕ إدارة الحجوزات</div>
   <div class="quick-access-chip hr-allowed" onclick="switchMainFeature('invoices', this)" id="chipInvoices">📄 إدارة الفواتير</div>
@@ -369,6 +380,12 @@ body { padding: 10px; padding-bottom: 85px; }
     </thead>
     <tbody id="hotelsTableBody"></tbody>
   </table>
+</div>
+
+<div id="commandCenterView" class="view-section command-center-view">
+  <div class="command-hero"><h2>✨ HOTERA Command Center</h2><p>لوحة القيادة الذكية لإدارة الفندق، متابعة الإشغال، الحجوزات، المغادرات، والتنبيهات من شاشة واحدة.</p><div class="command-status"><span id="commandCloudStatus">☁️ السحابة: محلي</span><span id="commandLastSync">⏱ آخر تحديث: الآن</span><button class="btn btn-gray" style="width:auto;margin:0;padding:4px 8px;font-size:9px" onclick="toggleHoteraTheme()" id="commandThemeBtn">☼ الوضع</button></div></div>
+  <div class="command-kpis"><div class="command-kpi"><small>إجمالي الغرف</small><strong id="cmdTotalRooms">0</strong></div><div class="command-kpi"><small>المتاح</small><strong id="cmdAvailableRooms" style="color:#34d399">0</strong></div><div class="command-kpi"><small>المحجوز</small><strong id="cmdOccupiedRooms" style="color:#f87171">0</strong></div><div class="command-kpi"><small>إيرادات الفواتير</small><strong id="cmdRevenue" style="font-size:14px">0 ر.س</strong></div></div>
+  <div class="command-grid"><div class="command-panel"><h3>🗺️ خريطة الغرف التفاعلية</h3><div id="commandRoomMap" class="command-room-grid"></div></div><div class="command-panel"><h3>🔔 مركز التنبيهات الذكي</h3><div id="commandAlertsList"></div></div><div class="command-panel"><h3>👤 وصول سريع لملف العميل</h3><div style="display:flex;gap:5px"><input id="commandCustomerSearch" class="form-input" placeholder="رقم الجوال أو اسم العميل" style="margin:0" oninput="searchCommandCustomer(this.value)"><button class="btn btn-blue" style="width:auto;margin:0;padding:6px 9px" onclick="searchCommandCustomer(document.getElementById('commandCustomerSearch').value)">بحث</button></div><div id="commandCustomerResult" style="margin-top:7px;font-size:10px;color:#cbd5e1">اكتب رقم الجوال أو اسم العميل لعرض ملخص سريع.</div></div></div>
 </div>
 
 <div id="roomsView" class="view-section active">
@@ -1286,6 +1303,8 @@ let defaultAboutDesc = `نظام HOTERA هو الحل الأمثل والمتك�
 
 let aboutPageTitleText = localStorage.getItem('hotera_about_title') || "🚀 نظرة عامة على النظام وميزاته الفريدة:";
 let aboutPageDescText = localStorage.getItem('hotera_about_desc') || defaultAboutDesc;
+restoreHoteraTheme();
+setInterval(() => { if (document.getElementById('commandCenterView')?.classList.contains('active')) renderCommandCenter(); }, 30000);
 
 const translations = {
   ar: {
@@ -1683,7 +1702,7 @@ async function executeLogin() {
     switchTab('superAdminView', null);
     renderSuperAdminControlPanel();
   } else {
-    switchMainFeature('rooms', document.querySelector('.quick-access-chip'));
+    switchMainFeature('command_center', document.getElementById('chipCommandCenter'));
     selectedFloor = 1; render();
   }
 }
@@ -1946,10 +1965,33 @@ function saveHotelSetupAndGenerateRooms() {
   alert("✅ تم حفظ إعدادات الأكواد بنجاح!");
 }
 
+function toggleHoteraTheme() {
+  document.body.classList.toggle('theme-light');
+  localStorage.setItem('hotera_theme', document.body.classList.contains('theme-light') ? 'light' : 'dark');
+}
+function restoreHoteraTheme() { if (localStorage.getItem('hotera_theme') === 'light') document.body.classList.add('theme-light'); }
+function renderCommandCenter() {
+  const rooms = allRooms[currentHotelId] || [];
+  const available = rooms.filter(r => r.status === 'vacant').length;
+  const occupied = rooms.filter(r => r.status === 'occupied').length;
+  const total = rooms.length;
+  const invoices = allInvoices[currentHotelId] || [];
+  const revenue = invoices.reduce((sum, inv) => sum + Number(inv.total || 0), 0);
+  const set = (id, value) => { const el=document.getElementById(id); if(el) el.innerText=value; };
+  set('cmdTotalRooms', total); set('cmdAvailableRooms', available); set('cmdOccupiedRooms', occupied); set('cmdRevenue', `${revenue.toFixed(2)} ر.س`);
+  const status = document.getElementById('commandCloudStatus'); if(status) status.innerText = `☁️ السحابة: ${(typeof cloudApiUrl !== 'undefined' && cloudApiUrl) ? 'متصل' : 'محلي'}`;
+  const sync = document.getElementById('commandLastSync'); if(sync) sync.innerText = `⏱ آخر تحديث: ${new Date().toLocaleTimeString()}`;
+  const map = document.getElementById('commandRoomMap'); if(map) { map.innerHTML = rooms.slice(0, 80).map(r => `<div class="command-room ${r.status || 'vacant'}" onclick="openRoomModalByCommand(${r.id})"><strong>${r.id}</strong><br><span>${r.status==='occupied'?'محجوز':r.status==='maintenance'?'صيانة':r.status==='cleaning'?'خروج':'متاح'}</span></div>`).join('') || '<div style="font-size:10px;color:#94a3b8">لا توجد غرف</div>'; }
+  const alerts=[]; rooms.filter(r=>r.status==='cleaning').slice(0,5).forEach(r=>alerts.push({icon:'🧹',text:`الغرفة ${r.id} تحتاج تنظيفاً`})); rooms.filter(r=>r.status==='maintenance').slice(0,5).forEach(r=>alerts.push({icon:'🛠️',text:`بلاغ صيانة للغرفة ${r.id}`})); rooms.filter(r=>r.status==='occupied' && r.checkOut && r.checkOut <= new Date().toISOString().split('T')[0]).slice(0,5).forEach(r=>alerts.push({icon:'⏰',text:`موعد مغادرة الغرفة ${r.id} اليوم`}));
+  const alertsEl=document.getElementById('commandAlertsList'); if(alertsEl) alertsEl.innerHTML=alerts.length?alerts.map(a=>`<div class="command-alert"><span>${a.icon} ${a.text}</span><span style="color:#fbbf24">تنبيه</span></div>`).join(''):'<div style="font-size:10px;color:#34d399">✅ لا توجد تنبيهات عاجلة حالياً</div>';
+}
+function openRoomModalByCommand(roomId) { const room=(allRooms[currentHotelId]||[]).find(r=>r.id===roomId); if(room && typeof openRoomModal==='function') openRoomModal(room); }
+function searchCommandCustomer(query) { const q=(query||'').trim().toLowerCase(); const el=document.getElementById('commandCustomerResult'); if(!el)return; if(!q){el.innerText='اكتب رقم الجوال أو اسم العميل لعرض ملخص سريع.';return;} const matches=Object.entries(customerMemory||{}).filter(([phone,c])=>phone.toLowerCase().includes(q)||(c.name||'').toLowerCase().includes(q)); if(!matches.length){el.innerText='لم يتم العثور على عميل محفوظ بهذا البحث.';return;} const [phone,c]=matches[0]; const invoices=Object.values(allInvoices||{}).flat().filter(inv=>inv.phone===phone||inv.guest===c.name); el.innerHTML=`<strong style="color:var(--accent-solid)">${c.name||'عميل'}</strong><br>📞 ${phone}<br>🧾 عدد الفواتير: ${invoices.length}<br>💰 إجمالي التعاملات: ${invoices.reduce((sum,i)=>sum+Number(i.total||0),0).toFixed(2)} ر.س`; }
 function render() {
   renderFloorTabs();
   renderRoomsGrid();
   renderReportsAndFinancials();
+  if (document.getElementById('commandCenterView')?.classList.contains('active')) renderCommandCenter();
 }
 
 function renderFloorTabs() {
@@ -2016,8 +2058,17 @@ function switchMainFeature(featureKey, chipElement) {
     document.querySelectorAll('.quick-access-chip').forEach(el => el.classList.remove('active'));
     chipElement.classList.add('active');
   }
+  if (featureKey === 'command_center') {
+    document.getElementById('commandCenterView').classList.add('active');
+    document.getElementById('roomsView').classList.remove('active');
+    document.getElementById('unifiedSectionView').classList.remove('active');
+    document.getElementById('superAdminView').classList.remove('active');
+    document.getElementById('aboutView').classList.remove('active');
+    renderCommandCenter(); return;
+  }
   if (featureKey === 'rooms') {
     document.getElementById('roomsView').classList.add('active');
+    document.getElementById('commandCenterView').classList.remove('active');
     document.getElementById('unifiedSectionView').classList.remove('active');
     document.getElementById('superAdminView').classList.remove('active');
     document.getElementById('aboutView').classList.remove('active');
