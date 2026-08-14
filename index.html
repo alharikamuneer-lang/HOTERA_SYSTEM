@@ -303,6 +303,8 @@ body { padding: 10px; padding-bottom: 85px; }
     <div id="deviceApprovalPanel"></div>
   </div>
 
+  <div class="card" style="padding:10px;margin-bottom:10px;text-align:inherit;background:rgba(18,26,43,.95);border-color:#a855f7"><div style="display:flex;justify-content:space-between;align-items:center"><h4 style="font-size:11px;color:#c084fc;margin-bottom:6px">🧾 سجل نشاط المستخدمين والأجهزة</h4><button class="btn btn-gray" style="width:auto;margin:0;padding:4px 7px;font-size:9px" onclick="renderActivityLog()">تحديث</button></div><div id="activityLogPanel" style="max-height:190px;overflow:auto;font-size:9px;color:#cbd5e1"></div></div>
+
   <div class="card" style="padding:10px; margin-bottom:10px; text-align:inherit; background:rgba(18,26,43,0.95); border-color:var(--accent-solid);">
     <h4 style="font-size:11px; color:var(--accent-solid); margin-bottom:6px;" id="lblSuperPinsTableTitle">🔑 الدليل الشامل لجميع أكواد وكلمات مرور المستخدمين والمديرين:</h4>
     <table class="table-box">
@@ -383,7 +385,7 @@ body { padding: 10px; padding-bottom: 85px; }
 </div>
 
 <div id="commandCenterView" class="view-section command-center-view">
-  <div class="command-hero"><h2>✨ HOTERA Command Center</h2><p>لوحة القيادة الذكية لإدارة الفندق، متابعة الإشغال، الحجوزات، المغادرات، والتنبيهات من شاشة واحدة.</p><div class="command-status"><span id="commandCloudStatus">☁️ السحابة: محلي</span><span id="commandLastSync">⏱ آخر تحديث: الآن</span><button class="btn btn-gray" style="width:auto;margin:0;padding:4px 8px;font-size:9px" onclick="toggleHoteraTheme()" id="commandThemeBtn">☼ الوضع</button></div></div>
+  <div class="command-hero"><h2>✨ HOTERA Command Center</h2><p>لوحة القيادة الذكية لإدارة الفندق، متابعة الإشغال، الحجوزات، المغادرات، والتنبيهات من شاشة واحدة.</p><div class="command-status"><span id="commandCloudStatus">☁️ السحابة: محلي</span><span id="commandLastSync">⏱ آخر تحديث: الآن</span><button class="btn btn-gray" style="width:auto;margin:0;padding:4px 8px;font-size:9px" onclick="toggleHoteraTheme()" id="commandThemeBtn">☼ الوضع</button></div><div style="display:flex;gap:6px;margin-top:8px;position:relative;z-index:1"><button class="btn btn-blue" style="margin:0;padding:6px;font-size:9px" onclick="downloadHoteraBackup()">🛡️ نسخة احتياطية</button><button class="btn btn-gray" style="margin:0;padding:6px;font-size:9px" onclick="document.getElementById('hoteraRestoreInput').click()">استعادة نسخة</button><input type="file" id="hoteraRestoreInput" accept="application/json" style="display:none" onchange="restoreHoteraBackup(this)"></div></div>
   <div class="command-kpis"><div class="command-kpi"><small>إجمالي الغرف</small><strong id="cmdTotalRooms">0</strong></div><div class="command-kpi"><small>المتاح</small><strong id="cmdAvailableRooms" style="color:#34d399">0</strong></div><div class="command-kpi"><small>المحجوز</small><strong id="cmdOccupiedRooms" style="color:#f87171">0</strong></div><div class="command-kpi"><small>إيرادات الفواتير</small><strong id="cmdRevenue" style="font-size:14px">0 ر.س</strong></div></div>
   <div class="command-grid"><div class="command-panel"><h3>🗺️ خريطة الغرف التفاعلية</h3><div id="commandRoomMap" class="command-room-grid"></div></div><div class="command-panel"><h3>🔔 مركز التنبيهات الذكي</h3><div id="commandAlertsList"></div></div><div class="command-panel"><h3>👤 وصول سريع لملف العميل</h3><div style="display:flex;gap:5px"><input id="commandCustomerSearch" class="form-input" placeholder="رقم الجوال أو اسم العميل" style="margin:0" oninput="searchCommandCustomer(this.value)"><button class="btn btn-blue" style="width:auto;margin:0;padding:6px 9px" onclick="searchCommandCustomer(document.getElementById('commandCustomerSearch').value)">بحث</button></div><div id="commandCustomerResult" style="margin-top:7px;font-size:10px;color:#cbd5e1">اكتب رقم الجوال أو اسم العميل لعرض ملخص سريع.</div></div></div>
 </div>
@@ -442,6 +444,10 @@ body { padding: 10px; padding-bottom: 85px; }
         <div class="kpi-box" style="border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.05);"><small style="color:var(--accent-solid);" id="lblFinNet">💰 صافي الخزينة</small><strong id="finNetBalance" style="color:var(--accent-solid);">0.00 ر.س</strong></div>
       </div>
     </div>
+    <div class="card" style="padding:12px;background:linear-gradient(135deg,rgba(245,158,11,.10),rgba(14,165,233,.08));text-align:inherit;margin-bottom:8px"><h4 style="font-size:11px;color:var(--accent-solid);margin-bottom:8px">📈 التحليلات الذكية</h4><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;text-align:center"><div class="stat-box"><small>نسبة الإشغال</small><strong id="analyticsOccupancy">0%</strong></div><div class="stat-box"><small>متوسط قيمة الحجز</small><strong id="analyticsAvgBooking">0 ر.س</strong></div><div class="stat-box"><small>الحجوزات هذا الشهر</small><strong id="analyticsMonthBookings">0</strong></div><div class="stat-box"><small>الاسترجاعات</small><strong id="analyticsRefunds">0 ر.س</strong></div></div><div id="analyticsPeriodNote" style="font-size:9px;color:var(--text-muted);margin-top:7px;text-align:center"></div></div>
+
+    <div class="card" style="padding:12px;background:linear-gradient(135deg,rgba(14,165,233,.10),rgba(168,85,247,.10));text-align:inherit;margin-bottom:8px"><h4 style="font-size:11px;color:var(--accent-solid);margin-bottom:8px">📊 مقارنة الأداء بين الفترات</h4><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><input type="month" id="comparePeriodA" class="form-input" style="margin:0"><input type="month" id="comparePeriodB" class="form-input" style="margin:0"></div><button class="btn btn-blue" style="margin-top:7px" onclick="compareHotelPeriods()">عرض المقارنة</button><div id="periodComparisonResult" style="margin-top:8px;font-size:10px;color:#cbd5e1"></div></div>
+
     <div class="card" style="padding:12px; background:rgba(18,26,43,0.95); text-align:inherit;">
       <h4 style="font-size:11px; color:var(--accent-solid); margin-bottom:6px;" id="lblTransLogTitle">سجل الحركات المالية المباشرة:</h4>
       <table class="table-box"><thead><tr><th id="thType">النوع</th><th id="thAmount">المبلغ</th><th id="thReason">السبب</th><th id="thStaffResp">المسؤول</th></tr></thead><tbody id="transactionsTableBody"></tbody></table>
@@ -528,9 +534,9 @@ body { padding: 10px; padding-bottom: 85px; }
 
   <div id="feat_ratings" class="feature-panel" style="display:none;">
     <div class="card" style="padding:12px; background:rgba(18,26,43,0.95); text-align:inherit;">
-      <h4 style="font-size:11px; color:var(--accent-solid); margin-bottom:6px;" id="lblRatingsTitle">⭐ تقييمات النزلاء ورضا العملاء</h4>
-      <div style="font-size:10px; color:var(--text-muted); margin-bottom:6px;"><span id="lblAvgRatingText">متوسط التقييم العام:</span> <strong id="avgRatingDisplay" style="color:#fbbf24; font-size:12px;">0.0 / 5.0 ⭐</strong></div>
-      <table class="table-box"><thead><tr><th id="thRateGuest">النزيل</th><th id="thRateRoom">الغرفة</th><th id="thRateStars">التقييم</th><th id="thRateComment">الملاحظة / التعليق</th></tr></thead><tbody id="ratingsTableBody"></tbody></table>
+      <div style="display:flex;justify-content:space-between;align-items:center"><h4 style="font-size:11px; color:var(--accent-solid); margin-bottom:6px;" id="lblRatingsTitle">⭐ تقييمات النزلاء ورضا العملاء</h4><button class="btn btn-blue superadmin-only" style="width:auto;margin:0;padding:4px 7px;font-size:9px" onclick="openReviewQr()">QR التقييم</button></div>
+      <div style="font-size:10px; color:var(--text-muted); margin-bottom:6px;"><span id="lblAvgRatingText">متوسط التقييم العام:</span> <strong id="avgRatingDisplay" style="color:#fbbf24; font-size:12px;">0.0 / 5.0 ⭐</strong><span id="ratingBreakdownDisplay" style="margin-right:8px"></span></div>
+      <table class="table-box"><thead><tr><th id="thRateGuest">النزيل</th><th id="thRateRoom">الغرفة</th><th id="thRateStars">التقييم</th><th id="thRateComment">الملاحظة / التعليق</th><th>إجراء</th></tr></thead><tbody id="ratingsTableBody"></tbody></table>
     </div>
   </div>
 
@@ -722,6 +728,10 @@ body { padding: 10px; padding-bottom: 85px; }
     <h3 style="color:var(--accent-solid); margin-bottom:8px;" id="modSetupTitle">⚙️ إعدادات الفندق وأكواد الدخول</h3>
     <input type="text" id="setupHotelName" class="form-input" placeholder="اسم الفندق">
     <input type="text" id="setupHotelCR" class="form-input" placeholder="السجل التجاري">
+    <input type="text" id="setupHotelTax" class="form-input" placeholder="الرقم الضريبي (اختياري)">
+    <input type="url" id="setupHotelLogo" class="form-input" placeholder="رابط شعار الفندق (اختياري)">
+    <input type="url" id="setupHotelLocation" class="form-input" placeholder="رابط موقع الفندق في خرائط Google">
+    <input type="url" id="setupHotelReview" class="form-input" placeholder="رابط التقييم الخارجي">
     <input type="text" id="setupHotelCity" class="form-input" placeholder="المدينة">
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px;">
       <div><label style="font-size:9px; color:var(--text-muted)" id="lblSetMgrPin">رمز مدير الفندق:</label><input type="text" id="setupManagerPin" class="form-input"></div>
@@ -780,6 +790,7 @@ body { padding: 10px; padding-bottom: 85px; }
     <div style="display:flex; gap:6px; margin-top:10px;">
       <button class="btn btn-gold" style="flex:1; margin-top:0;" onclick="window.print()" id="btnPrintInv">طباعة 🖨️</button>
       <button class="btn btn-green" style="flex:1; margin-top:0;" onclick="sendInvoiceWhatsApp()" id="btnWaInv">إرسال واتساب 📱</button>
+      <button class="btn btn-blue" style="flex:1; margin-top:0; background:#0284c7;" onclick="openInvoiceQr()" id="btnInvoiceQr">QR الفاتورة</button>
       <button class="btn btn-blue" style="flex:1; margin-top:0; background:#0284c7;" onclick="openRefundInvoiceModalFromActive()" id="btnRefundInv">استرجاع الفاتورة ↩️</button>
     </div>
     <button class="btn btn-gray" onclick="closeOfficialInvoiceModal()" id="btnCloseInvModal">إغلاق</button>
@@ -1509,6 +1520,7 @@ let allInventory = JSON.parse(localStorage.getItem('hotera_all_inventory')) || {
 let allMaintenanceTickets = JSON.parse(localStorage.getItem('hotera_maint_tickets')) || {};
 let allShifts = JSON.parse(localStorage.getItem('hotera_all_shifts')) || {};
 let allRatings = JSON.parse(localStorage.getItem('hotera_all_ratings')) || {};
+let allAuditLog = JSON.parse(localStorage.getItem('hotera_audit_log')) || {};
 
 hotelsList.forEach(h => {
   if (h.status === undefined) h.status = "active";
@@ -1566,6 +1578,7 @@ function saveData() {
   localStorage.setItem('hotera_maint_tickets', JSON.stringify(allMaintenanceTickets));
   localStorage.setItem('hotera_all_shifts', JSON.stringify(allShifts));
   localStorage.setItem('hotera_all_ratings', JSON.stringify(allRatings));
+  localStorage.setItem('hotera_audit_log', JSON.stringify(allAuditLog || {}));
   localStorage.setItem('hotera_master_key', masterSuperKey);
   localStorage.setItem('hotera_dev_name', developerName);
   localStorage.setItem('hotera_dev_phone', developerPhone);
@@ -1950,8 +1963,12 @@ function openHotelSetupModal() {
   const h = hotelsList.find(item => item.id === currentHotelId);
   if(h) {
     document.getElementById('setupHotelName').value = h.name;
-    document.getElementById('setupHotelCR').value = h.cr;
-    document.getElementById('setupHotelCity').value = h.city;
+    document.getElementById('setupHotelCR').value = h.cr || '';
+    document.getElementById('setupHotelTax').value = h.taxNumber || '';
+    document.getElementById('setupHotelLogo').value = h.logoUrl || '';
+    document.getElementById('setupHotelLocation').value = h.locationUrl || '';
+    document.getElementById('setupHotelReview').value = h.reviewUrl || '';
+    document.getElementById('setupHotelCity').value = h.city || '';
     document.getElementById('setupManagerPin').value = h.managerPin;
     document.getElementById('setupHrPin').value = h.hrPin || "3333";
   }
@@ -1962,6 +1979,10 @@ function saveHotelSetupAndGenerateRooms() {
   const h = hotelsList.find(item => item.id === currentHotelId);
   h.name = document.getElementById('setupHotelName').value.trim() || h.name;
   h.cr = document.getElementById('setupHotelCR').value.trim() || h.cr;
+  h.taxNumber = document.getElementById('setupHotelTax').value.trim() || h.taxNumber || '';
+  h.logoUrl = document.getElementById('setupHotelLogo').value.trim() || h.logoUrl || '';
+  h.locationUrl = document.getElementById('setupHotelLocation').value.trim() || h.locationUrl || '';
+  h.reviewUrl = document.getElementById('setupHotelReview').value.trim() || h.reviewUrl || '';
   h.city = document.getElementById('setupHotelCity').value.trim() || h.city;
   h.managerPin = document.getElementById('setupManagerPin').value.trim() || h.managerPin;
   h.hrPin = document.getElementById('setupHrPin').value.trim() || h.hrPin;
@@ -2163,7 +2184,25 @@ function resolveMaintenanceTicket(idx) {
   }
 }
 
+function renderAdvancedAnalytics(){
+  const rooms=allRooms[currentHotelId]||[], invoices=allInvoices[currentHotelId]||[], refunds=refundedInvoicesData[currentHotelId]||[];
+  const occupied=rooms.filter(r=>r.status==='occupied').length; const occ=rooms.length?Math.round(occupied/rooms.length*100):0;
+  const avg=invoices.length?invoices.reduce((n,i)=>n+Number(i.total||0),0)/invoices.length:0;
+  const month=new Date().toISOString().slice(0,7); const monthCount=invoices.filter(i=>(i.date||'').slice(0,7)===month).length; const refundTotal=refunds.reduce((n,r)=>n+Number(r.amount||0),0);
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.innerText=v}; set('analyticsOccupancy',`${occ}%`);set('analyticsAvgBooking',`${avg.toFixed(2)} ر.س`);set('analyticsMonthBookings',monthCount);set('analyticsRefunds',`${refundTotal.toFixed(2)} ر.س`);set('analyticsPeriodNote',`تحليل الفترة الحالية: ${month} — يتم تحديث المؤشرات تلقائياً`);
+}
+function openReviewQr(){ const h=hotelsList.find(x=>x.id===currentHotelId)||{}; const url=h.reviewUrl||`${location.origin}${location.pathname}?action=rate&hotel=${currentHotelId}`; window.open(`https://quickchart.io/qr?size=280&text=${encodeURIComponent(url)}`,'_blank'); }
+function deleteHotelRating(index){ if(currentRole!=='superadmin')return alert('هذا الإجراء متاح للسوبر أدمن فقط.'); if(!confirm('هل تريد حذف هذا التقييم؟'))return; const list=allRatings[currentHotelId]||[]; const removed=list[index]; list.splice(index,1); recordHoteraAudit('حذف تقييم',{guest:removed&&removed.guest,stars:removed&&removed.stars}); saveData(); uploadDataToCloud(); renderReportsAndFinancials(); }
+
+function getPeriodStats(period, hotelId=currentHotelId){
+  const inv=(allInvoices[hotelId]||[]).filter(i=>(i.date||'').slice(0,7)===period); const rooms=allRooms[hotelId]||[]; const refunds=(refundedInvoicesData[hotelId]||[]).filter(r=>(r.date||'').slice(0,7)===period); const revenue=inv.reduce((n,i)=>n+Number(i.total||0),0); return {period,count:inv.length,revenue,refunds:refunds.reduce((n,r)=>n+Number(r.amount||0),0),occupancy:rooms.length?Math.round(rooms.filter(r=>r.status==='occupied').length/rooms.length*100):0};
+}
+function compareHotelPeriods(){ const a=document.getElementById('comparePeriodA').value,b=document.getElementById('comparePeriodB').value,el=document.getElementById('periodComparisonResult'); if(!a||!b)return alert('اختر فترتين للمقارنة.'); const x=getPeriodStats(a),y=getPeriodStats(b); const delta=(v1,v2)=>{const d=v2-v1;return `${d>=0?'+':''}${d.toFixed(2)}`}; el.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;text-align:center"><div style="background:rgba(255,255,255,.06);padding:7px;border-radius:8px"><strong style="color:#38bdf8">${a}</strong><br>الحجوزات: ${x.count}<br>الإيرادات: ${x.revenue.toFixed(2)} ر.س<br>الإشغال: ${x.occupancy}%</div><div style="background:rgba(255,255,255,.06);padding:7px;border-radius:8px"><strong style="color:#c084fc">${b}</strong><br>الحجوزات: ${y.count}<br>الإيرادات: ${y.revenue.toFixed(2)} ر.س<br>الإشغال: ${y.occupancy}%</div></div><div style="margin-top:6px;text-align:center;color:#fbbf24">فرق الإيرادات: ${delta(x.revenue,y.revenue)} ر.س — فرق الحجوزات: ${y.count-x.count>=0?'+':''}${y.count-x.count}</div>`; }
+function renderActivityLog(){ const el=document.getElementById('activityLogPanel'); if(!el)return; const rows=Object.entries(allAuditLog||{}).flatMap(([hid,items])=>(items||[]).map(x=>({...x,hotelId:hid}))).sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,80); el.innerHTML=rows.length?rows.map(x=>`<div style="padding:6px 0;border-bottom:1px dashed rgba(255,255,255,.12)"><strong style="color:#c084fc">${x.action||'عملية'}</strong> — ${x.staff||'-'}<br><span style="color:#94a3b8">${new Date(x.date).toLocaleString('ar-SA')} — الفندق ${x.hotelId}</span></div>`).join(''):'لا توجد عمليات مسجلة بعد.'; }
+
 function renderReportsAndFinancials() {
+  renderActivityLog();
+  renderAdvancedAnalytics();
   const invoices = allInvoices[currentHotelId] || [];
   filterInvoicesTable(document.getElementById('searchBookingInput') ? document.getElementById('searchBookingInput').value : '');
   let sumInvoices = 0;
@@ -2435,6 +2474,7 @@ function confirmRefundInvoice() {
   const reason = document.getElementById('refundReasonInput').value.trim();
   if(!reason || amount <= 0) return alert('الرجاء إدخال مبلغ استرجاع صحيح وسبب الاسترجاع!');
   if(!refundedInvoicesData[currentHotelId]) refundedInvoicesData[currentHotelId] = [];
+  recordHoteraAudit('استرجاع فاتورة', {invoiceId:lastActiveInvoice.id, amount, reason});
   refundedInvoicesData[currentHotelId].unshift({
     invoiceId: lastActiveInvoice.id,
     bookingRef: lastActiveInvoice.bookingRef,
@@ -2625,6 +2665,7 @@ function executeNewBooking() {
     staffName: currentUsername
   };
   allInvoices[currentHotelId].unshift(unifiedInvoice);
+  recordHoteraAudit('إنشاء حجز', {bookingRef, guest, rooms: roomsListDetails.map(r=>r.id), total: totalGrandAmount});
   saveData(); 
   uploadDataToCloud(); 
   closeNewBookingModal(); 
@@ -2760,6 +2801,30 @@ function confirmCancelBooking() {
   }
 }
 
+function recordHoteraAudit(action, details = {}) {
+  if (!allAuditLog[currentHotelId]) allAuditLog[currentHotelId] = [];
+  allAuditLog[currentHotelId].unshift({ id:`AUD-${Date.now()}`, action, details, staff:currentUsername, date:new Date().toISOString() });
+  allAuditLog[currentHotelId] = allAuditLog[currentHotelId].slice(0, 500);
+}
+function completeRoomCheckout(room) {
+  const checkoutDate=new Date().toISOString().split('T')[0];
+  const previousGuest=room.guest||'غير معروف'; const bookingRef=room.bookingRef||'';
+  recordHoteraAudit('تسجيل مغادرة', {roomId:room.id, guest:previousGuest, bookingRef});
+  room.lastCheckoutAt=new Date().toISOString(); room.lastGuest=previousGuest; room.status='cleaning'; room.guest=''; room.phone=''; room.carType=''; room.carPlate=''; room.bookingRef=''; room.checkOut=checkoutDate;
+  alert(`✅ تم تسجيل مغادرة ${previousGuest} من الغرفة ${room.id}.\nتم تحويل الغرفة إلى حالة «خروج/تحتاج تنظيف» تلقائياً.`);
+}
+function downloadHoteraBackup(){
+  const payload={version:1,createdAt:new Date().toISOString(),source:'HOTERA',localStorage:{}};
+  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i); if(k && k.startsWith('hotera_')) payload.localStorage[k]=localStorage.getItem(k);}
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`HOTERA_BACKUP_${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(a.href); recordHoteraAudit('إنشاء نسخة احتياطية'); saveData(); alert('✅ تم تنزيل النسخة الاحتياطية بنجاح.');
+}
+function restoreHoteraBackup(input){
+  const file=input.files&&input.files[0]; if(!file)return; const reader=new FileReader(); reader.onload=()=>{try{const backup=JSON.parse(reader.result); if(!backup.localStorage)throw new Error('صيغة النسخة غير صحيحة'); if(!confirm('سيتم دمج بيانات النسخة الاحتياطية مع البيانات الحالية دون حذف المفاتيح الأخرى. هل تريد المتابعة؟'))return; Object.entries(backup.localStorage).forEach(([k,v])=>{if(k.startsWith('hotera_'))localStorage.setItem(k,v);}); recordHoteraAudit('استعادة نسخة احتياطية',{createdAt:backup.createdAt}); alert('✅ تمت الاستعادة. أعد تحميل الصفحة لتطبيق البيانات.'); location.reload();}catch(e){alert('❌ تعذر استعادة النسخة: '+e.message);}}; reader.readAsText(file); input.value='';
+}
+function openInvoiceQr(){
+  if(!lastActiveInvoice)return; const h=hotelsList.find(x=>x.id===currentHotelId)||{}; const text=`HOTERA|${h.name||'الفندق'}|Invoice:${lastActiveInvoice.id}|Booking:${lastActiveInvoice.bookingRef||''}|Total:${Number(lastActiveInvoice.total||0).toFixed(2)}|Guest:${lastActiveInvoice.guest||''}`; window.open(`https://quickchart.io/qr?size=260&text=${encodeURIComponent(text)}`,'_blank');
+}
+
 function executeRoomAction() {
   if (currentRoom.status === 'vacant') {
     const name = document.getElementById('mGuest').value.trim();
@@ -2786,7 +2851,7 @@ function executeRoomAction() {
     populateOfficialInvoiceModal(newInv);
     return;
   } else if (currentRoom.status === 'occupied') {
-    currentRoom.status = 'cleaning'; currentRoom.guest = ''; currentRoom.carType = ''; currentRoom.carPlate = ''; currentRoom.bookingRef = '';
+    completeRoomCheckout(currentRoom);
   } else if (currentRoom.status === 'maintenance') {
     currentRoom.status = 'vacant'; currentRoom.maintUser = ''; currentRoom.maintIssue = '';
   } else {
