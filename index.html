@@ -127,6 +127,13 @@ body { padding: 10px; padding-bottom: 85px; }
       </div>
     </div>
 
+    <div id="deviceCloudConnectBox" style="margin-top:8px; padding:8px; border:1px dashed rgba(56,189,248,0.45); border-radius:8px; text-align:inherit; background:rgba(14,165,233,0.06);">
+      <div style="font-size:9px; color:#38bdf8; margin-bottom:5px;">📱 ربط جهاز جديد وموافقة السوبر أدمن</div>
+      <input type="text" id="deviceCloudUrlInput" class="form-input" placeholder="رابط API السحابي نفسه في جميع الأجهزة" style="margin-bottom:5px;">
+      <input type="password" id="deviceCloudKeyInput" class="form-input" placeholder="مفتاح المصادقة نفسه في جميع الأجهزة" style="margin-bottom:5px;">
+      <button type="button" class="btn btn-blue" onclick="saveDeviceCloudAndRequest()" style="margin-top:0; background:#0284c7;">طلب اعتماد هذا الجهاز 🔐</button>
+      <div id="deviceAccessStatusText" style="font-size:9px; color:#fbbf24; margin-top:5px;">الجهاز غير مربوط بعد</div>
+    </div>
     <button class="btn btn-gold" id="btnLoginSubmit" onclick="executeLogin()">تسجيل الدخول للنظام 🚀</button>
     <button class="btn btn-gray" id="btnLoginForgot" style="font-size:10px; margin-top:6px; background:rgba(239,68,68,0.2); color:#fca5a5;" onclick="forgotPasswordAction()">🔑 نسيت كلمة المرور؟ (تواصل مع المطور)</button>
 
@@ -206,6 +213,12 @@ body { padding: 10px; padding-bottom: 85px; }
       <button class="btn btn-blue" style="width:auto; margin-top:0; padding:8px 14px; background:#10b981;" onclick="syncDataWithCloudNow()">مزامنة البيانات الآن 🔄</button>
       <span id="cloudSyncStatusText" style="font-size:9px; color:#34d399; font-weight:bold;">الحالة: جاهز للربط المحلي/السحابي</span>
     </div>
+  </div>
+
+  <div class="card" style="padding:10px; margin-bottom:10px; text-align:inherit; background:rgba(18,26,43,0.95); border-color:#38bdf8;">
+    <h4 style="font-size:11px; color:#38bdf8; margin-bottom:6px;">📱 طلبات اعتماد الأجهزة الجديدة</h4>
+    <p style="font-size:9px; color:var(--text-muted); margin-bottom:6px;">لن يستطيع أي جهاز جديد الدخول أو تعديل البيانات حتى تتم الموافقة عليه من هذه اللوحة.</p>
+    <div id="deviceApprovalPanel"></div>
   </div>
 
   <div class="card" style="padding:10px; margin-bottom:10px; text-align:inherit; background:rgba(18,26,43,0.95); border-color:var(--accent-solid);">
@@ -804,6 +817,116 @@ function getCloudConfig() {
   };
 }
 
+function getDeviceRegistryForUpload() {
+  const registry = Array.isArray(cloudDevices) ? [...cloudDevices] : [];
+  const existing = registry.find(d => d.id === deviceId);
+  if (existing) {
+    existing.name = deviceName;
+    existing.lastSeen = new Date().toISOString();
+  } else {
+    registry.push({
+      id: deviceId,
+      name: deviceName,
+      platform: navigator.platform || 'unknown',
+      requestedAt: new Date().toISOString(),
+      lastSeen: new Date().toISOString(),
+      status: registry.length === 0 ? 'approved' : 'pending'
+    });
+  }
+  return registry;
+}
+
+function setDeviceStatusText(message, color = '#fbbf24') {
+  const el = document.getElementById('deviceAccessStatusText');
+  if (el) {
+    el.innerText = message;
+    el.style.color = color;
+  }
+}
+
+function getCurrentDeviceRecord() {
+  return (Array.isArray(cloudDevices) ? cloudDevices : []).find(d => d.id === deviceId);
+}
+
+function isDeviceApproved() {
+  if (!getCloudConfig().url) return true;
+  const record = getCurrentDeviceRecord();
+  return !!record && record.status === 'approved';
+}
+
+function renderDeviceApprovalPanel() {
+  const panel = document.getElementById('deviceApprovalPanel');
+  if (!panel) return;
+  if (!Array.isArray(cloudDevices) || cloudDevices.length === 0) {
+    panel.innerHTML = '<div style="font-size:9px;color:#94a3b8;">لا توجد أجهزة مسجلة.</div>';
+    return;
+  }
+  panel.innerHTML = cloudDevices.map(d => {
+    const status = d.status === 'approved' ? 'معتمد ✅' : (d.status === 'rejected' ? 'مرفوض ⛔' : 'بانتظار الموافقة ⏳');
+    const color = d.status === 'approved' ? '#34d399' : (d.status === 'rejected' ? '#f87171' : '#fbbf24');
+    const actions = d.id === deviceId ? '<span style="font-size:8px;color:#38bdf8;">هذا الجهاز</span>' : `<button onclick="approveDevice('${d.id}')" style="background:#10b981;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;">اعتماد</button> <button onclick="rejectDevice('${d.id}')" style="background:#ef4444;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;">رفض</button>`;
+    return `<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;border-bottom:1px dashed rgba(255,255,255,.12);padding:6px 0;font-size:9px;"><span>📱 ${d.name || d.id}<br><small style="color:${color};">${status}</small></span><span>${actions}</span></div>`;
+  }).join('');
+}
+
+async function saveDeviceCloudAndRequest() {
+  const url = document.getElementById('deviceCloudUrlInput').value.trim();
+  const key = document.getElementById('deviceCloudKeyInput').value.trim();
+  if (!url) return alert('⚠️ أدخل رابط API السحابي نفسه المستخدم في جهاز السوبر أدمن.');
+  try { new URL(url); } catch (_) { return alert('⚠️ رابط API غير صحيح.'); }
+  cloudApiUrl = url;
+  cloudApiKey = key;
+  localStorage.setItem('hotera_cloud_url', cloudApiUrl);
+  localStorage.setItem('hotera_cloud_key', cloudApiKey);
+  await fetchDataFromCloud(false);
+  const record = getCurrentDeviceRecord();
+  if (record && record.status === 'approved') {
+    setDeviceStatusText('هذا الجهاز معتمد ويمكنه الدخول ✅', '#34d399');
+    return alert('✅ هذا الجهاز معتمد مسبقاً. يمكنك تسجيل الدخول.');
+  }
+  if (record && record.status === 'rejected') {
+    setDeviceStatusText('تم رفض هذا الجهاز من السوبر أدمن ⛔', '#f87171');
+    return alert('⛔ تم رفض اعتماد هذا الجهاز.');
+  }
+  if (!Array.isArray(cloudDevices)) cloudDevices = [];
+  if (!cloudDevices.find(d => d.id === deviceId)) {
+    cloudDevices.push({ id: deviceId, name: deviceName, platform: navigator.platform || 'unknown', requestedAt: new Date().toISOString(), lastSeen: new Date().toISOString(), status: 'pending' });
+  }
+  const ok = await uploadDataToCloud(true);
+  if (ok) {
+    setDeviceStatusText('تم إرسال الطلب، بانتظار موافقة السوبر أدمن ⏳');
+    alert('✅ تم إرسال طلب اعتماد الجهاز. بعد موافقة السوبر أدمن اضغط مزامنة أو أعد تحميل الصفحة.');
+  }
+}
+
+async function approveDevice(id) {
+  const item = cloudDevices.find(d => d.id === id);
+  if (!item) return;
+  item.status = 'approved'; item.approvedAt = new Date().toISOString();
+  if (await uploadDataToCloud(true)) { renderDeviceApprovalPanel(); alert('✅ تمت الموافقة على الجهاز.'); }
+}
+
+async function rejectDevice(id) {
+  const item = cloudDevices.find(d => d.id === id);
+  if (!item) return;
+  item.status = 'rejected'; item.rejectedAt = new Date().toISOString();
+  if (await uploadDataToCloud(true)) { renderDeviceApprovalPanel(); alert('⛔ تم رفض الجهاز.'); }
+}
+
+async function handleDeviceAccess() {
+  const record = getCurrentDeviceRecord();
+  if (!getCloudConfig().url) {
+    setDeviceStatusText('العمل المحلي: لم يتم ربط السحابة', '#fbbf24');
+  } else if (record && record.status === 'approved') {
+    setDeviceStatusText('الجهاز معتمد ✅', '#34d399');
+  } else if (record && record.status === 'rejected') {
+    setDeviceStatusText('الجهاز مرفوض ⛔', '#f87171');
+  } else {
+    setDeviceStatusText('الجهاز بانتظار اعتماد السوبر أدمن ⏳', '#fbbf24');
+  }
+  if (typeof renderDeviceApprovalPanel === 'function') renderDeviceApprovalPanel();
+}
+
 function buildCloudPayload() {
   return {
     version: 2,
@@ -821,6 +944,7 @@ function buildCloudPayload() {
     maintenanceTickets: allMaintenanceTickets,
     shifts: allShifts,
     ratings: allRatings,
+    devices: getDeviceRegistryForUpload(),
     masterKey: masterSuperKey,
     developerName,
     developerPhone,
@@ -852,6 +976,7 @@ function applyCloudPayload(cloudData) {
   if (cloudData.maintenanceTickets) allMaintenanceTickets = cloudData.maintenanceTickets;
   if (cloudData.shifts) allShifts = cloudData.shifts;
   if (cloudData.ratings) allRatings = cloudData.ratings;
+  if (Array.isArray(cloudData.devices)) cloudDevices = cloudData.devices;
   if (cloudData.masterKey) masterSuperKey = cloudData.masterKey;
   if (cloudData.developerName) developerName = cloudData.developerName;
   if (cloudData.developerPhone) developerPhone = cloudData.developerPhone;
@@ -964,6 +1089,12 @@ let developerName = localStorage.getItem('hotera_dev_name') || "م. منير ا�
 let developerPhone = localStorage.getItem('hotera_dev_phone') || "0566030594";
 let cloudApiUrl = localStorage.getItem('hotera_cloud_url') || "";
 let cloudApiKey = localStorage.getItem('hotera_cloud_key') || "";
+let deviceId = localStorage.getItem('hotera_device_id') || (crypto.randomUUID ? crypto.randomUUID() : `dev-${Date.now()}-${Math.random().toString(16).slice(2)}`);
+localStorage.setItem('hotera_device_id', deviceId);
+let deviceName = localStorage.getItem('hotera_device_name') || `${navigator.platform || 'جهاز'} — ${new Date().toLocaleDateString()}`;
+let cloudDevices = [];
+let deviceAccessStatus = 'pending';
+
 
 let defaultAboutDesc = `نظام HOTERA هو الحل الأمثل والمتكامل لإدارة المنشآت الفندقية والشقق السكنية، يتيح لك:\n- إدارة الغرف والطوابق بحرفية عالية.\n- إصدار فواتير ضريبية رسمية وموحدة.\n- متابعة الحركة المالية، المصروفات، والمستودع بدقة.\n- ربط النظام بالبيانات السحابية لتشغيله عبر أي جهاز ومن أي مكان.`;
 
@@ -1314,6 +1445,10 @@ async function executeLogin() {
   // محاولة تحديث البيانات، مع السماح بالدخول محلياً إذا تعذر الاتصال بالسحابة
   if (cloudApiUrl) {
     await fetchDataFromCloud(false);
+    if (!isDeviceApproved() && role !== 'superadmin') {
+      alert('⏳ هذا الجهاز بانتظار موافقة السوبر أدمن. استخدم خانة ربط الجهاز لإرسال الطلب.');
+      return;
+    }
   }
 
   const targetHotel = hotelsList.find(h => h.id === hotelId);
@@ -1495,6 +1630,7 @@ function renderSuperAdminControlPanel() {
   document.getElementById('editAboutDescInput').value = aboutPageDescText;
   document.getElementById('cloudApiUrlInput').value = cloudApiUrl;
   document.getElementById('cloudApiKeyInput').value = cloudApiKey;
+  handleDeviceAccess();
 
   const usersTbody = document.getElementById('allUsersPinsTableBody');
   if(usersTbody) {
@@ -2382,6 +2518,8 @@ function switchTab(tabId, btn) {
 
 document.addEventListener("DOMContentLoaded", async () => {
   await syncAndFetchDataOnLoad();
+  handleDeviceAccess();
+  if (getCloudConfig().url) setInterval(() => { fetchDataFromCloud(false).then(() => { handleDeviceAccess(); initLoginHotelDropdown(); }); }, 30000);
   initLoginHotelDropdown();
   applyLanguage();
   updateGlobalDisplays();
