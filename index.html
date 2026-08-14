@@ -90,9 +90,67 @@ body { padding: 10px; padding-bottom: 85px; }
 .kpi-box { background: rgba(8, 12, 20, 0.7); border-radius: 12px; padding: 10px 6px; text-align: center; border: 1px solid rgba(255, 255, 255, 0.08); position: relative; }
 .kpi-box small { font-size: 9px; display: block; margin-bottom: 4px; font-weight: bold; }
 .kpi-box strong { font-size: 12px; font-weight: 900; }
+
+/* شاشة الترحيب الافتتاحية الفاخرة */
+#welcomeScreen {
+  position: fixed; inset: 0; z-index: 5000; display: flex; align-items: center; justify-content: center;
+  overflow: hidden; background: radial-gradient(circle at 50% 35%, rgba(245,158,11,.16), transparent 34%), rgba(5,9,18,.98);
+  transition: opacity .8s ease, visibility .8s ease;
+}
+#welcomeScreen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+#welcomeScreen::before, #welcomeScreen::after { content:''; position:absolute; border-radius:50%; filter:blur(4px); opacity:.4; pointer-events:none; }
+#welcomeScreen::before { width:340px; height:340px; background:rgba(245,158,11,.1); top:-120px; right:-100px; animation:welcomeOrb 8s ease-in-out infinite; }
+#welcomeScreen::after { width:280px; height:280px; background:rgba(14,165,233,.09); bottom:-120px; left:-90px; animation:welcomeOrb 10s ease-in-out infinite reverse; }
+.welcome-card { position:relative; width:min(92%, 620px); padding:34px 24px 22px; text-align:center; border:1px solid rgba(245,158,11,.45); border-radius:28px; background:linear-gradient(145deg,rgba(18,26,43,.96),rgba(8,12,20,.92)); box-shadow:0 25px 80px rgba(0,0,0,.65), inset 0 1px rgba(255,255,255,.1); animation:welcomeCardIn 1s cubic-bezier(.2,.8,.2,1) both; }
+.welcome-card::before { content:''; position:absolute; inset:10px; border:1px solid rgba(245,158,11,.12); border-radius:20px; pointer-events:none; }
+.welcome-logo { position:relative; width:104px; height:104px; margin:0 auto 16px; display:flex; align-items:center; justify-content:center; border:2px solid #f59e0b; border-radius:30px; background:linear-gradient(145deg,#273449,#0b1220); font-size:54px; box-shadow:0 0 24px rgba(245,158,11,.55), inset 0 0 22px rgba(245,158,11,.16); animation:welcomeLogoFloat 3.8s ease-in-out infinite; }
+.welcome-logo::before, .welcome-logo::after { content:''; position:absolute; inset:-13px; border:1px solid rgba(245,158,11,.3); border-radius:36px; animation:welcomeRing 2.8s linear infinite; }
+.welcome-logo::after { inset:-25px; border-color:rgba(56,189,248,.18); animation-duration:4.5s; animation-direction:reverse; }
+.welcome-brand { position:relative; font-size:clamp(34px,8vw,58px); line-height:1; font-weight:950; letter-spacing:7px; color:#fbbf24; text-shadow:0 0 16px rgba(245,158,11,.55); animation:welcomeTextIn 1.2s .25s both; }
+.welcome-system { margin-top:10px; color:#e2e8f0; font-size:clamp(13px,3vw,19px); letter-spacing:4px; font-weight:800; animation:welcomeTextIn 1.2s .45s both; }
+.welcome-divider { width:92px; height:2px; margin:18px auto; background:linear-gradient(90deg,transparent,#f59e0b,transparent); animation:welcomeDivider 1.2s .7s both; }
+.welcome-message { color:#cbd5e1; font-size:clamp(12px,2.5vw,16px); line-height:2; max-width:500px; margin:0 auto; animation:welcomeTextIn 1.2s .65s both; }
+.welcome-message strong { color:#fbbf24; }
+.welcome-developer { margin-top:20px; padding-top:12px; border-top:1px dashed rgba(245,158,11,.28); color:#94a3b8; font-size:11px; line-height:1.9; animation:welcomeTextIn 1.2s .85s both; }
+.welcome-developer strong { color:#fbbf24; font-size:13px; }
+.welcome-actions { display:flex; justify-content:center; gap:8px; margin-top:18px; animation:welcomeTextIn 1.2s 1s both; }
+.welcome-enter { width:auto; min-width:180px; padding:11px 20px; border:0; border-radius:12px; cursor:pointer; color:#111827; font-weight:900; background:linear-gradient(135deg,#f59e0b,#fcd34d,#b45309); box-shadow:0 8px 24px rgba(245,158,11,.28); transition:transform .2s, box-shadow .2s; }
+.welcome-enter:hover { transform:translateY(-2px); box-shadow:0 12px 30px rgba(245,158,11,.45); }
+.welcome-skip { width:auto; padding:10px 14px; border:1px solid rgba(148,163,184,.3); border-radius:12px; cursor:pointer; color:#cbd5e1; background:rgba(255,255,255,.05); }
+@keyframes welcomeCardIn { from { opacity:0; transform:translateY(25px) scale(.96); } to { opacity:1; transform:none; } }
+@keyframes welcomeTextIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:none; } }
+@keyframes welcomeLogoFloat { 0%,100% { transform:translateY(0) rotate(-2deg); } 50% { transform:translateY(-9px) rotate(2deg); } }
+@keyframes welcomeRing { from { transform:rotate(0deg) scale(1); opacity:.7; } to { transform:rotate(360deg) scale(1.05); opacity:.15; } }
+@keyframes welcomeOrb { 0%,100% { transform:translate(0,0) scale(1); } 50% { transform:translate(25px,20px) scale(1.12); } }
+@keyframes welcomeDivider { from { width:0; opacity:0; } to { width:92px; opacity:1; } }
+@media (prefers-reduced-motion: reduce) { #welcomeScreen *, #welcomeScreen::before, #welcomeScreen::after { animation:none !important; transition:none !important; } }
+
 </style>
 </head>
 <body>
+
+<div id="welcomeScreen" aria-label="شاشة الترحيب بنظام HOTERA">
+  <div class="welcome-card">
+    <div class="welcome-logo" aria-hidden="true">🏨</div>
+    <div class="welcome-brand">HOTERA</div>
+    <div class="welcome-system">ULTIMATE HOTEL MANAGEMENT SYSTEM</div>
+    <div class="welcome-divider"></div>
+    <div class="welcome-message">
+      <strong>مرحباً بكم في نظام HOTERA SYSTEM</strong><br>
+      المنصة الذكية لإدارة الفنادق والمنشآت الفندقية باحترافية ودقة وسهولة.<br>
+      نرتقي بتجربة الإدارة، ونحوّل تفاصيل العمل اليومية إلى أداء منظم وقرارات أكثر ذكاءً.
+    </div>
+    <div class="welcome-developer">
+      تطوير وهندسة البرمجيات<br>
+      <strong id="welcomeDeveloperName">م. منير الحارقة</strong><br>
+      <span id="welcomeDeveloperPhone">0566030594</span>
+    </div>
+    <div class="welcome-actions">
+      <button class="welcome-enter" type="button" onclick="closeWelcomeScreen()">الدخول إلى النظام 🚀</button>
+      <button class="welcome-skip" type="button" onclick="closeWelcomeScreen()">تخطي</button>
+    </div>
+  </div>
+</div>
 
 <div id="loginOverlay">
   <div class="login-card">
@@ -802,6 +860,23 @@ const AUTO_CLOUD_URL = "";
 const AUTO_API_KEY = "";
 let cloudSyncInProgress = false;
 
+function closeWelcomeScreen() {
+  const screen = document.getElementById('welcomeScreen');
+  if (screen) screen.classList.add('hidden');
+}
+
+function showWelcomeScreen() {
+  const screen = document.getElementById('welcomeScreen');
+  if (!screen) return;
+  const name = document.getElementById('welcomeDeveloperName');
+  const phone = document.getElementById('welcomeDeveloperPhone');
+  if (name && typeof developerName !== 'undefined') name.innerText = developerName;
+  if (phone && typeof developerPhone !== 'undefined') phone.innerText = developerPhone;
+  screen.classList.remove('hidden');
+  window.clearTimeout(window.hoteraWelcomeTimer);
+  window.hoteraWelcomeTimer = window.setTimeout(closeWelcomeScreen, 5200);
+}
+
 function setCloudStatus(message, color = '#34d399') {
   const el = document.getElementById('cloudSyncStatusText');
   if (el) {
@@ -1380,7 +1455,15 @@ function initLoginHotelDropdown() {
   updateGlobalDisplays();
 }
 
+function updateWelcomeDeveloperDisplay() {
+  const name = document.getElementById('welcomeDeveloperName');
+  const phone = document.getElementById('welcomeDeveloperPhone');
+  if (name) name.innerText = developerName;
+  if (phone) phone.innerText = developerPhone;
+}
+
 function updateGlobalDisplays() {
+  updateWelcomeDeveloperDisplay();
   document.getElementById('loginDevNameDisplay').innerText = developerName;
   const p1 = document.getElementById('loginDevPhoneDisplay'); p1.innerText = developerPhone; p1.href = `tel:${developerPhone}`;
   document.getElementById('headerDevNameDisplay').innerText = developerName;
@@ -2517,6 +2600,7 @@ function switchTab(tabId, btn) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+  showWelcomeScreen();
   await syncAndFetchDataOnLoad();
   handleDeviceAccess();
   if (getCloudConfig().url) setInterval(() => { fetchDataFromCloud(false).then(() => { handleDeviceAccess(); initLoginHotelDropdown(); }); }, 30000);
