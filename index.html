@@ -806,6 +806,8 @@ body { padding: 10px; padding-bottom: 85px; }
   </div>
 </div>
 
+<div class="modal" id="customerProfileModal"><div class="modal-body" style="max-width:460px"><h3 style="color:var(--accent-solid);margin-bottom:8px">👤 ملف العميل الكامل</h3><div id="customerProfileContent" style="font-size:10px;line-height:1.9;color:#cbd5e1"></div><button class="btn btn-gray" onclick="closeCustomerProfileModal()">إغلاق</button></div></div>
+
 <div class="modal" id="bookingModal">
   <div class="modal-body">
     <h3 style="color:var(--accent-solid); margin-bottom:8px;" id="modBookingTitle">➕ حجز جماعي أو فردي متعدد الغرف</h3>
@@ -840,7 +842,9 @@ body { padding: 10px; padding-bottom: 85px; }
     <div style="text-align:center; background:rgba(245,158,11,0.1); padding:6px; border-radius:8px; margin-bottom:6px;">
       <span id="lblBkgTotalText">الإجمالي الكلي (لكل الغرف): </span><strong id="bookingTotalPriceDisplay" style="color:var(--accent-solid);">0.00 ر.س</strong>
     </div>
-    <button class="btn btn-gold" onclick="executeNewBooking()" id="btnBkgSubmit">تأكيد الحجز وإصدار الفاتورة الموحدة 🚀</button>
+    <div id="bookingReviewBox" class="booking-note-box" style="display:none"></div>
+    <button class="btn btn-blue" onclick="reviewNewBooking()" id="btnBkgReview">مراجعة بيانات الحجز قبل التأكيد 🔎</button>
+    <button class="btn btn-gold" onclick="executeNewBooking()" id="btnBkgSubmit" style="display:none">تأكيد الحجز وإصدار الفاتورة الموحدة 🚀</button>
     <button class="btn btn-gray" onclick="closeNewBookingModal()" id="btnBkgClose">إغلاق</button>
   </div>
 </div>
@@ -1986,7 +1990,7 @@ function renderCommandCenter() {
   const alertsEl=document.getElementById('commandAlertsList'); if(alertsEl) alertsEl.innerHTML=alerts.length?alerts.map(a=>`<div class="command-alert"><span>${a.icon} ${a.text}</span><span style="color:#fbbf24">تنبيه</span></div>`).join(''):'<div style="font-size:10px;color:#34d399">✅ لا توجد تنبيهات عاجلة حالياً</div>';
 }
 function openRoomModalByCommand(roomId) { const room=(allRooms[currentHotelId]||[]).find(r=>r.id===roomId); if(room && typeof openRoomModal==='function') openRoomModal(room); }
-function searchCommandCustomer(query) { const q=(query||'').trim().toLowerCase(); const el=document.getElementById('commandCustomerResult'); if(!el)return; if(!q){el.innerText='اكتب رقم الجوال أو اسم العميل لعرض ملخص سريع.';return;} const matches=Object.entries(customerMemory||{}).filter(([phone,c])=>phone.toLowerCase().includes(q)||(c.name||'').toLowerCase().includes(q)); if(!matches.length){el.innerText='لم يتم العثور على عميل محفوظ بهذا البحث.';return;} const [phone,c]=matches[0]; const invoices=Object.values(allInvoices||{}).flat().filter(inv=>inv.phone===phone||inv.guest===c.name); el.innerHTML=`<strong style="color:var(--accent-solid)">${c.name||'عميل'}</strong><br>📞 ${phone}<br>🧾 عدد الفواتير: ${invoices.length}<br>💰 إجمالي التعاملات: ${invoices.reduce((sum,i)=>sum+Number(i.total||0),0).toFixed(2)} ر.س`; }
+function searchCommandCustomer(query) { const q=(query||'').trim().toLowerCase(); const el=document.getElementById('commandCustomerResult'); if(!el)return; if(!q){el.innerText='اكتب رقم الجوال أو اسم العميل لعرض ملخص سريع.';return;} const matches=Object.entries(customerMemory||{}).filter(([phone,c])=>phone.toLowerCase().includes(q)||(c.name||'').toLowerCase().includes(q)); if(!matches.length){el.innerText='لم يتم العثور على عميل محفوظ بهذا البحث.';return;} const [phone,c]=matches[0]; const invoices=Object.values(allInvoices||{}).flat().filter(inv=>inv.phone===phone||inv.guest===c.name); el.innerHTML=`<strong style="color:var(--accent-solid)">${c.name||'عميل'}</strong><br>📞 ${phone}<br>🧾 عدد الفواتير: ${invoices.length}<br>💰 إجمالي التعاملات: ${invoices.reduce((sum,i)=>sum+Number(i.total||0),0).toFixed(2)} ر.س<br><button class="btn btn-blue" style="margin-top:6px;padding:5px" onclick="openCustomerProfile('${phone}')">فتح الملف الكامل</button>`; }
 function render() {
   renderFloorTabs();
   renderRoomsGrid();
@@ -2516,6 +2520,9 @@ function openNewBookingModal() {
   document.getElementById('bookingChildren').value = '0';
   document.getElementById('bookingPaymentMethod').value = 'نقدي';
   document.getElementById('bookingNotes').value = '';
+  document.getElementById('bookingReviewBox').style.display = 'none';
+  document.getElementById('btnBkgReview').style.display = 'block';
+  document.getElementById('btnBkgSubmit').style.display = 'none';
   document.getElementById('bookingCarType').value = '';
   document.getElementById('bookingCarPlate').value = '';
   document.getElementById('bookingCheckIn').value = new Date().toISOString().split('T')[0];
@@ -2546,6 +2553,32 @@ function calculateTotalFromManual() {
   const grandTotal = n * p * selectedCount;
   document.getElementById('bookingTotalPriceDisplay').innerText = `${grandTotal.toFixed(2)} ر.س`;
 }
+function reviewNewBooking() {
+  const guest=document.getElementById('bookingGuestName').value.trim();
+  const phone=document.getElementById('bookingGuestPhone').value.trim();
+  const rooms=[...document.querySelectorAll('input[name="selectedBookingRoom"]:checked')].map(x=>x.value);
+  const checkIn=document.getElementById('bookingCheckIn').value;
+  const checkOut=document.getElementById('bookingCheckOut').value;
+  const nights=parseInt(document.getElementById('bookingNightsInput').value)||1;
+  const price=parseFloat(document.getElementById('bookingNightPriceInput').value)||0;
+  const payment=document.getElementById('bookingPaymentMethod').value;
+  if(!guest) return alert('الرجاء إدخال اسم العميل قبل المراجعة.');
+  if(!rooms.length) return alert('الرجاء اختيار غرفة واحدة على الأقل قبل المراجعة.');
+  const box=document.getElementById('bookingReviewBox');
+  box.innerHTML=`<strong style="color:var(--accent-solid)">مراجعة الحجز</strong><br>👤 ${guest} — 📞 ${phone||'بدون جوال'}<br>🛏️ الغرف: ${rooms.join('، ')}<br>📅 ${checkIn} إلى ${checkOut} — ${nights} ليلة<br>💳 الدفع: ${payment}<br>💰 الإجمالي: <strong>${(rooms.length*nights*price).toFixed(2)} ر.س</strong>`;
+  box.style.display='block'; document.getElementById('btnBkgReview').style.display='none'; document.getElementById('btnBkgSubmit').style.display='block';
+}
+
+function openCustomerProfile(phoneOrName) {
+  const q=(phoneOrName||'').trim().toLowerCase();
+  const found=Object.entries(customerMemory||{}).find(([phone,c])=>phone.toLowerCase()===q||(c.name||'').toLowerCase()===q);
+  if(!found) return alert('لم يتم العثور على ملف عميل محفوظ.');
+  const [phone,c]=found; const invs=Object.values(allInvoices||{}).flat().filter(inv=>inv.phone===phone||inv.guest===c.name); const total=invs.reduce((n,i)=>n+Number(i.total||0),0);
+  document.getElementById('customerProfileContent').innerHTML=`<div style="background:rgba(245,158,11,.1);padding:9px;border-radius:10px;margin-bottom:8px"><strong style="font-size:14px;color:var(--accent-solid)">${c.name||'عميل'}</strong><br>📞 ${phone}<br>🪪 ${c.guestId||'غير مسجل'} — 🌍 ${c.nationality||'غير محدد'}<br>✉️ ${c.email||'غير مسجل'}</div><strong>ملخص التعاملات</strong><br>🧾 عدد الفواتير: ${invs.length}<br>💰 إجمالي التعاملات: ${total.toFixed(2)} ر.س<br><br>${invs.slice(0,8).map(i=>`📄 ${i.id||'-'} — ${i.date||'-'} — ${(i.total||0).toFixed(2)} ر.س`).join('<br>')||'لا توجد حجوزات سابقة'}`;
+  document.getElementById('customerProfileModal').style.display='flex';
+}
+function closeCustomerProfileModal(){document.getElementById('customerProfileModal').style.display='none';}
+
 function executeNewBooking() {
   const guest = document.getElementById('bookingGuestName').value.trim();
   const phone = document.getElementById('bookingGuestPhone').value.trim();
