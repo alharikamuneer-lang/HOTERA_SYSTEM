@@ -125,6 +125,9 @@ body { padding: 10px; padding-bottom: 85px; }
 @keyframes welcomeDivider { from { width:0; opacity:0; } to { width:92px; opacity:1; } }
 @media (prefers-reduced-motion: reduce) { #welcomeScreen *, #welcomeScreen::before, #welcomeScreen::after { animation:none !important; transition:none !important; } }
 
+
+.booking-note-box{background:linear-gradient(135deg,rgba(245,158,11,.13),rgba(14,165,233,.08));border:1px solid rgba(245,158,11,.3);border-radius:10px;padding:8px;margin-bottom:8px;color:#cbd5e1;font-size:10px;line-height:1.7}
+.invoice-footer-note{margin-top:12px;padding-top:10px;border-top:1px dashed #cbd5e1;text-align:center;color:#64748b;font-size:9px;line-height:1.8}
 </style>
 </head>
 <body>
@@ -731,8 +734,13 @@ body { padding: 10px; padding-bottom: 85px; }
         <div><strong id="invLabelGuest">اسم النزيل / الجهة:</strong> <span id="invGuestName" style="color:#b45309; font-weight:bold;">-</span></div>
         <div><strong id="invLabelType">نوع الحجز:</strong> <span id="invBookingType">-</span></div>
         <div><strong id="invLabelPhone">رقم الجوال:</strong> <span id="invGuestPhoneNum">-</span></div>
+        <div><strong>رقم الهوية:</strong> <span id="invGuestId">-</span></div>
+        <div><strong>الجنسية:</strong> <span id="invNationality">-</span></div>
+        <div><strong>عدد الضيوف:</strong> <span id="invGuestCount">-</span></div>
         <div><strong id="invLabelStaff">مسؤول الإصدار:</strong> <span id="invStaffName">-</span></div>
+        <div><strong>طريقة الدفع:</strong> <span id="invPaymentMethod">-</span></div>
         <div style="grid-column: span 2;"><strong id="invLabelCar">بيانات السيارات:</strong> <span id="invCarDetails">-</span></div>
+        <div style="grid-column: span 2;"><strong>ملاحظات الحجز:</strong> <span id="invBookingNotes">-</span></div>
       </div>
       <h5 style="font-size:11px; color:#b45309; margin-bottom:4px; font-weight:bold;" id="invRoomsHeaderTitle">🛏️ تفاصيل الغرف المحجوزة تحت رقم الحجز:</h5>
       <table class="table-box" style="margin:4px 0 12px 0; color:#1e293b;">
@@ -748,9 +756,9 @@ body { padding: 10px; padding-bottom: 85px; }
         <tbody id="invoiceRoomsTableBody"></tbody>
       </table>
       <div style="display:flex; justify-content:space-between; align-items:center; background:#fffbeb; padding:10px; border-radius:8px; border:1px solid #f59e0b; margin-top:8px;">
-        <span style="font-size:11px; color:#92400e; font-weight:bold;" id="invLabelGrandTotal">إجمالي المبلغ الشامل للضريبة والخدمة:</span>
+        <span style="font-size:11px; color:#92400e; font-weight:bold;" id="invLabelGrandTotal">الإجمالي النهائي:</span>
         <strong id="invGrandTotal" style="color:#b45309; font-size:15px; font-weight:900;">0.00 ر.س</strong>
-      </div>
+      </div><div class="invoice-footer-note">فاتورة صادرة من نظام HOTERA لإدارة المنشآت الفندقية.<br>نشكركم لاختياركم الفندق ونتمنى لكم إقامة سعيدة.</div>
     </div>
     <div style="display:flex; gap:6px; margin-top:10px;">
       <button class="btn btn-gold" style="flex:1; margin-top:0;" onclick="window.print()" id="btnPrintInv">طباعة 🖨️</button>
@@ -792,7 +800,11 @@ body { padding: 10px; padding-bottom: 85px; }
     <label style="font-size:10px; color:var(--text-muted);" id="lblBkgPhone">رقم الجوال (للبحث بذاكرة العملاء الذكية):</label>
     <input type="text" id="bookingGuestPhone" class="form-input" placeholder="أدخل رقم الجوال للبحث التلقائي" oninput="lookupCustomerByPhone()">
     <label style="font-size:10px; color:var(--text-muted);" id="lblBkgName">اسم النزيل / الشركة:</label>
-    <input type="text" id="bookingGuestName" class="form-input" placeholder="اسم النزيل أو الجهة">
+    <input type="text" id="bookingGuestName" class="form-input" placeholder="الاسم الرباعي أو اسم الجهة">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><input type="text" id="bookingGuestId" class="form-input" placeholder="رقم الهوية / السجل التجاري" style="margin-bottom:6px"><input type="text" id="bookingNationality" class="form-input" placeholder="الجنسية" style="margin-bottom:6px"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><input type="email" id="bookingGuestEmail" class="form-input" placeholder="البريد الإلكتروني (اختياري)" style="margin-bottom:6px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:4px"><input type="number" id="bookingAdults" class="form-input" value="1" min="1" placeholder="بالغون" style="margin-bottom:6px"><input type="number" id="bookingChildren" class="form-input" value="0" min="0" placeholder="أطفال" style="margin-bottom:6px"></div></div>
+    <label style="font-size:10px;color:var(--text-muted)">طريقة الدفع:</label><select id="bookingPaymentMethod" class="form-select"><option value="نقدي">💵 نقدي</option><option value="بطاقة">💳 بطاقة</option><option value="تحويل بنكي">🏦 تحويل بنكي</option><option value="آجل">🧾 آجل</option></select>
+    <textarea id="bookingNotes" class="form-input" placeholder="ملاحظات الحجز والطلبات الخاصة..." style="height:55px;resize:vertical"></textarea>
     <label style="font-size:10px; color:var(--accent-solid); font-weight:bold; display:block; margin-top:4px;" id="lblBkgCar">🚗 بيانات السيارات (إذا وجدت):</label>
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:6px;">
       <input type="text" id="bookingCarType" class="form-input" placeholder="نوع السيارة واللون" style="margin-bottom:0;">
@@ -2323,8 +2335,13 @@ function populateOfficialInvoiceModal(inv) {
   document.getElementById('invBookingRefNum').innerText = inv.bookingRef || 'BKG-xxxx';
   document.getElementById('invIdNum').innerText = inv.id;
   document.getElementById('invDateNum').innerText = inv.date || new Date().toISOString().split('T')[0];
-  document.getElementById('invGuestName').innerText = inv.guest;
+  document.getElementById('invGuestName').innerText = inv.guest || '-';
   document.getElementById('invGuestPhoneNum').innerText = inv.phone || 'غير متوفر';
+  document.getElementById('invGuestId').innerText = inv.guestId || 'غير متوفر';
+  document.getElementById('invNationality').innerText = inv.nationality || 'غير محدد';
+  document.getElementById('invGuestCount').innerText = `${inv.adults || 1} بالغ / ${inv.children || 0} طفل`;
+  document.getElementById('invPaymentMethod').innerText = inv.paymentMethod || 'نقدي';
+  document.getElementById('invBookingNotes').innerText = inv.bookingNotes || '-';
   document.getElementById('invBookingType').innerText = inv.bookingType || 'فردي';
   document.getElementById('invStaffName').innerText = inv.staffName || 'مدير الفندق';
   document.getElementById('invCarDetails').innerText = (inv.carType || inv.carPlate) ? `${inv.carType || ''} (لوحة: ${inv.carPlate || 'بدون'})` : 'لا توجد سيارة مسجلة';
@@ -2441,6 +2458,13 @@ function openNewBookingModal() {
   }
   document.getElementById('bookingGuestName').value = '';
   document.getElementById('bookingGuestPhone').value = '';
+  document.getElementById('bookingGuestId').value = '';
+  document.getElementById('bookingNationality').value = '';
+  document.getElementById('bookingGuestEmail').value = '';
+  document.getElementById('bookingAdults').value = '1';
+  document.getElementById('bookingChildren').value = '0';
+  document.getElementById('bookingPaymentMethod').value = 'نقدي';
+  document.getElementById('bookingNotes').value = '';
   document.getElementById('bookingCarType').value = '';
   document.getElementById('bookingCarPlate').value = '';
   document.getElementById('bookingCheckIn').value = new Date().toISOString().split('T')[0];
@@ -2474,6 +2498,13 @@ function calculateTotalFromManual() {
 function executeNewBooking() {
   const guest = document.getElementById('bookingGuestName').value.trim();
   const phone = document.getElementById('bookingGuestPhone').value.trim();
+  const guestId = document.getElementById('bookingGuestId').value.trim();
+  const nationality = document.getElementById('bookingNationality').value.trim();
+  const email = document.getElementById('bookingGuestEmail').value.trim();
+  const adults = parseInt(document.getElementById('bookingAdults').value) || 1;
+  const children = parseInt(document.getElementById('bookingChildren').value) || 0;
+  const paymentMethod = document.getElementById('bookingPaymentMethod').value;
+  const bookingNotes = document.getElementById('bookingNotes').value.trim();
   const carType = document.getElementById('bookingCarType').value.trim();
   const carPlate = document.getElementById('bookingCarPlate').value.trim();
   const bookingType = document.getElementById('bookingTypeSelect').value;
@@ -2484,7 +2515,7 @@ function executeNewBooking() {
   if(!guest) return alert('الرجاء إدخال اسم النزيل أو الجهة!');
   const checkboxes = document.querySelectorAll('input[name="selectedBookingRoom"]:checked');
   if(checkboxes.length === 0) return alert('الرجاء اختيار غرفة واحدة على الأقل للحجز!');
-  if(phone) { customerMemory[phone] = { name: guest }; }
+  if(phone) { customerMemory[phone] = { name: guest, guestId, nationality, email, adults, children }; }
   const bookingRef = generateBookingReference();
   let roomsListDetails = [];
   let totalGrandAmount = 0;
@@ -2502,9 +2533,11 @@ function executeNewBooking() {
     bookingRef: bookingRef,
     room: roomsListDetails[0] ? roomsListDetails[0].id : 'مجموعة',
     roomsList: roomsListDetails,
-    guest, phone, carType, carPlate, bookingType, nights, nightPrice,
+    guest, phone, guestId, nationality, email, adults, children, paymentMethod, bookingNotes,
+    carType, carPlate, bookingType, nights, nightPrice,
     total: totalGrandAmount,
-    date: checkIn,
+    date: checkIn, checkIn, checkOut,
+    status: 'confirmed',
     staffName: currentUsername
   };
   allInvoices[currentHotelId].unshift(unifiedInvoice);
