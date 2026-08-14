@@ -936,7 +936,9 @@ function getCurrentDeviceRecord() {
 function isDeviceApproved() {
   if (!getCloudConfig().url) return true;
   const record = getCurrentDeviceRecord();
-  return !!record && record.status === 'approved';
+  if (!record) return false;
+  if (record.status === 'suspended') return false;
+  return record.status === 'approved';
 }
 
 function renderDeviceApprovalPanel() {
@@ -947,10 +949,28 @@ function renderDeviceApprovalPanel() {
     return;
   }
   panel.innerHTML = cloudDevices.map(d => {
-    const status = d.status === 'approved' ? 'معتمد ✅' : (d.status === 'rejected' ? 'مرفوض ⛔' : 'بانتظار الموافقة ⏳');
+    const status = d.status === 'approved' ? 'معتمد ✅' : (d.status === 'suspended' ? 'موقوف مؤقتاً 🔴' : (d.status === 'rejected' ? 'مرفوض ⛔' : 'بانتظار الموافقة ⏳'));
     const color = d.status === 'approved' ? '#34d399' : (d.status === 'rejected' ? '#f87171' : '#fbbf24');
-    const actions = d.id === deviceId ? '<span style="font-size:8px;color:#38bdf8;">هذا الجهاز</span>' : `<button onclick="approveDevice('${d.id}')" style="background:#10b981;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;">اعتماد</button> <button onclick="rejectDevice('${d.id}')" style="background:#ef4444;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;">رفض</button>`;
-    return `<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;border-bottom:1px dashed rgba(255,255,255,.12);padding:6px 0;font-size:9px;"><span>📱 ${d.name || d.id}<br><small style="color:${color};">${status}</small></span><span>${actions}</span></div>`;
+    const isCurrent = d.id === deviceId;
+    const isApproved = d.status === 'approved';
+    const isSuspended = d.status === 'suspended';
+    
+    let actions = '';
+    if (isCurrent) {
+      actions = '<span style="font-size:8px;color:#38bdf8;">جهازك الحالي</span>';
+    } else {
+      if (d.status === 'pending') {
+        actions = `<button onclick="approveDevice('${d.id}')" style="background:#10b981;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;">اعتماد</button> <button onclick="rejectDevice('${d.id}')" style="background:#ef4444;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;">رفض</button>`;
+      } else if (isApproved) {
+        actions = `<button onclick="toggleDeviceSuspension('${d.id}')" style="background:#f59e0b;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;">إيقاف 🔴</button>`;
+      } else if (isSuspended) {
+        actions = `<button onclick="toggleDeviceSuspension('${d.id}')" style="background:#10b981;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;">تنشيط 🟢</button>`;
+      }
+      actions += ` <button onclick="deleteDeviceRecord('${d.id}')" style="background:#ef4444;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;margin-right:2px;">حذف</button>`;
+    }
+
+    const nameDisplay = isCurrent ? `<span>${d.name || d.id}</span>` : `<span style="cursor:pointer; border-bottom:1px dotted #38bdf8;" onclick="renameDevicePrompt('${d.id}')" title="اضغط لتعديل الاسم">${d.name || d.id}</span>`;
+    return `<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;border-bottom:1px dashed rgba(255,255,255,.12);padding:8px 0;font-size:9px;"><span>📱 ${nameDisplay}<br><small style="color:${color};">${status}</small></span><span style="display:flex;align-items:center;">${actions}</span></div>`;
   }).join('');
 }
 
@@ -1022,6 +1042,31 @@ async function saveDeviceCloudAndRequest() {
   }
 }
 
+async function renameDevicePrompt(id) {
+  const item = cloudDevices.find(d => d.id === id);
+  if (!item) return;
+  const newName = prompt(`أدخل اسماً جديداً لهذا الجهاز (مثلاً: اسم الموظف أو الفرع):`, item.name || '');
+  if (newName !== null) {
+    item.name = newName.trim() || item.id;
+    if (await uploadDataToCloud(true)) { renderDeviceApprovalPanel(); alert('✅ تم تحديث اسم الجهاز بنجاح.'); }
+  }
+}
+
+async function toggleDeviceSuspension(id) {
+  const item = cloudDevices.find(d => d.id === id);
+  if (!item) return;
+  const isSuspended = item.status === 'suspended';
+  item.status = isSuspended ? 'approved' : 'suspended';
+  const msg = isSuspended ? 'تنشيط الجهاز' : 'إيقاف الجهاز';
+  if (await uploadDataToCloud(true)) { renderDeviceApprovalPanel(); alert(`✅ تم ${msg} بنجاح.`); }
+}
+
+async function deleteDeviceRecord(id) {
+  if (!confirm('⚠️ هل أنت متأكد من حذف هذا الجهاز نهائياً؟ سيفقد الجهاز صلاحية الدخول فوراً.')) return;
+  cloudDevices = cloudDevices.filter(d => d.id !== id);
+  if (await uploadDataToCloud(true)) { renderDeviceApprovalPanel(); alert('✅ تم حذف الجهاز من السجل.'); }
+}
+
 async function approveDevice(id) {
   const item = cloudDevices.find(d => d.id === id);
   if (!item) return;
@@ -1042,6 +1087,8 @@ async function handleDeviceAccess() {
     setDeviceStatusText('العمل المحلي: لم يتم ربط السحابة', '#fbbf24');
   } else if (record && record.status === 'approved') {
     setDeviceStatusText('الجهاز معتمد ✅', '#34d399');
+  } else if (record && record.status === 'suspended') {
+    setDeviceStatusText('هذا الجهاز موقوف مؤقتاً 🔴', '#f59e0b');
   } else if (record && record.status === 'rejected') {
     setDeviceStatusText('الجهاز مرفوض ⛔', '#f87171');
   } else {
