@@ -248,12 +248,13 @@ body { padding: 10px; padding-bottom: 85px; }
     </div>
 
     <div id="deviceCloudConnectBox" style="margin-top:8px; padding:8px; border:1px dashed rgba(56,189,248,0.45); border-radius:8px; text-align:inherit; background:rgba(14,165,233,0.06);">
-      <div style="font-size:9px; color:#38bdf8; margin-bottom:5px;">📱 ربط جهاز جديد وموافقة السوبر أدمن</div>
-      <input type="text" id="deviceCloudUrlInput" class="form-input" placeholder="رابط API السحابي نفسه في جميع الأجهزة" style="margin-bottom:5px;">
-      <input type="password" id="deviceCloudKeyInput" class="form-input" placeholder="مفتاح المصادقة — يعبّئ تلقائياً من رابط الدعوة" style="margin-bottom:5px;">
-      <input type="text" id="deviceJoinCodeInput" class="form-input" placeholder="رمز الدعوة المؤقت — اختياري" style="margin-bottom:5px;">
+      <div style="font-size:9px; color:#38bdf8; margin-bottom:5px;">📱 انضمام جهاز جديد بدعوة آمنة</div>
+      <div style="font-size:9px; color:var(--text-muted); line-height:1.7; margin-bottom:6px;">أدخل رمز الدعوة المؤقت الذي أرسله لك السوبر أدمن. سيتم ربط الجهاز تلقائياً دون عرض إعدادات الخادم.</div>
+      <input type="text" id="deviceJoinCodeInput" class="form-input" inputmode="numeric" autocomplete="one-time-code" placeholder="رمز الدعوة المؤقت" style="margin-bottom:5px; direction:ltr; text-align:center; letter-spacing:3px;">
       <button type="button" class="btn btn-blue" onclick="saveDeviceCloudAndRequest()" style="margin-top:0; background:#0284c7;">طلب اعتماد هذا الجهاز 🔐</button>
       <div id="deviceAccessStatusText" style="font-size:9px; color:#fbbf24; margin-top:5px;">الجهاز غير مربوط بعد</div>
+      <input type="hidden" id="deviceCloudUrlInput" autocomplete="off">
+      <input type="hidden" id="deviceCloudKeyInput" autocomplete="off">
     </div>
     <button class="btn btn-gold" id="btnLoginSubmit" onclick="executeLogin()">تسجيل الدخول للنظام 🚀</button>
     <button class="btn btn-gray" id="btnLoginForgot" style="font-size:10px; margin-top:6px; background:rgba(239,68,68,0.2); color:#fca5a5;" onclick="forgotPasswordAction()">🔑 نسيت كلمة المرور؟ (تواصل مع المطور)</button>
@@ -1091,6 +1092,11 @@ function readInviteFromUrl() {
     const raw = new URLSearchParams(window.location.search).get('hoteraInvite');
     if (!raw) return;
     const data = JSON.parse(decodeURIComponent(atob(raw)));
+    const expiresAt = Number(data.expiresAt || 0);
+    if (expiresAt && Date.now() > expiresAt) {
+      setDeviceStatusText('انتهت صلاحية الدعوة؛ اطلب رمزاً جديداً من السوبر أدمن.', '#f87171');
+      return;
+    }
     if (data.url) cloudApiUrl = data.url;
     if (data.key) cloudApiKey = data.key;
     if (data.code) deviceJoinCode = data.code;
@@ -1103,8 +1109,8 @@ function readInviteFromUrl() {
     if (u) u.value = cloudApiUrl;
     if (k) k.value = cloudApiKey;
     if (c) c.value = deviceJoinCode;
-    setDeviceStatusText('تم فتح رابط دعوة؛ أرسل طلب الاعتماد الآن ⏳');
-  } catch (e) { console.warn('رابط الدعوة غير صالح'); }
+    setDeviceStatusText('تم التعرف على الدعوة؛ أدخل الرمز ثم اطلب اعتماد الجهاز ⏳');
+  } catch (e) { setDeviceStatusText('رابط الدعوة غير صالح؛ اطلب رابطاً جديداً.', '#f87171'); }
 }
 
 async function generateDeviceInviteLink() {
@@ -1113,7 +1119,7 @@ async function generateDeviceInviteLink() {
   localStorage.setItem('hotera_cloud_join_code', cloudJoinCode);
   const ok = await uploadDataToCloud(true);
   if (!ok) return;
-  const payload = encodeURIComponent(btoa(JSON.stringify({ url: cloudApiUrl, key: cloudApiKey, code: cloudJoinCode })));
+  const payload = encodeURIComponent(btoa(JSON.stringify({ url: cloudApiUrl, key: cloudApiKey, code: cloudJoinCode, expiresAt: Date.now() + 15 * 60 * 1000 })));
   const link = `${window.location.origin}${window.location.pathname}?hoteraInvite=${payload}`;
   const input = document.getElementById('generatedInviteLink');
   if (input) { input.value = link; input.style.display = 'block'; input.select(); }
@@ -1124,15 +1130,17 @@ async function generateDeviceInviteLink() {
 }
 
 async function saveDeviceCloudAndRequest() {
-  const url = document.getElementById('deviceCloudUrlInput').value.trim();
-  const key = document.getElementById('deviceCloudKeyInput').value.trim();
-  deviceJoinCode = document.getElementById('deviceJoinCodeInput').value.trim() || deviceJoinCode;
-  if (!url) return alert('⚠️ افتح رابط الدعوة المرسل من السوبر أدمن أو أدخل رابط الربط.');
-  try { new URL(url); } catch (_) { return alert('⚠️ رابط API غير صحيح.'); }
+  const url = (document.getElementById('deviceCloudUrlInput')?.value || cloudApiUrl || localStorage.getItem('hotera_cloud_url') || '').trim();
+  const key = (document.getElementById('deviceCloudKeyInput')?.value || cloudApiKey || localStorage.getItem('hotera_cloud_key') || '').trim();
+  deviceJoinCode = (document.getElementById('deviceJoinCodeInput')?.value || deviceJoinCode || localStorage.getItem('hotera_join_code') || '').trim();
+  if (!deviceJoinCode) return alert('⚠️ أدخل رمز الدعوة المؤقت المرسل من السوبر أدمن.');
+  if (!url) return alert('⚠️ لم يتم العثور على إعدادات الربط. افتح رابط الدعوة الأصلي أو اطلب دعوة جديدة.');
+  try { new URL(url); } catch (_) { return alert('⚠️ تعذر التحقق من إعدادات الدعوة. اطلب رابطاً جديداً.'); }
   cloudApiUrl = url;
   cloudApiKey = key;
   localStorage.setItem('hotera_cloud_url', cloudApiUrl);
   localStorage.setItem('hotera_cloud_key', cloudApiKey);
+  localStorage.setItem('hotera_join_code', deviceJoinCode);
   await fetchDataFromCloud(false);
   const record = getCurrentDeviceRecord();
   if (record && record.status === 'approved') {
