@@ -146,6 +146,7 @@ body { padding: 10px; padding-bottom: 85px; }
 @media (prefers-reduced-motion: reduce) { #welcomeScreen *, #welcomeScreen::before, #welcomeScreen::after { animation:none !important; transition:none !important; } }
 
 
+.company-owner-view{padding:8px 0 80px;animation:commandFade .45s ease}.company-owner-hero{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px;border:1px solid rgba(244,183,64,.42);border-radius:20px;background:radial-gradient(circle at 10% 10%,rgba(244,183,64,.18),transparent 38%),linear-gradient(135deg,rgba(16,36,57,.98),rgba(7,17,31,.98));box-shadow:0 18px 40px rgba(0,0,0,.3)}.company-owner-kicker{color:#2dd4ef;font-size:10px;font-weight:800}.company-owner-hero h2{margin:5px 0;color:#fbbf24;font-size:21px}.company-owner-hero p{margin:0;color:#cbd5e1;font-size:11px;line-height:1.8}.company-owner-badge{padding:9px 12px;border:1px solid rgba(45,212,239,.5);border-radius:14px;color:#e0f2fe;background:rgba(14,165,233,.1);white-space:nowrap;font-size:10px}.company-owner-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}.company-owner-summary>div{padding:12px;border-radius:14px;background:rgba(15,31,49,.9);border:1px solid rgba(244,183,64,.24);text-align:center}.company-owner-summary small{display:block;color:#94a3b8;font-size:9px}.company-owner-summary strong{display:block;color:#fbbf24;font-size:20px;margin-top:5px}.company-hotels-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.company-hotel-card{padding:14px;border-radius:18px;border:1px solid rgba(45,212,239,.3);background:linear-gradient(145deg,rgba(16,36,57,.96),rgba(7,17,31,.96));box-shadow:0 12px 28px rgba(0,0,0,.24)}.company-hotel-card h3{margin:0;color:#f8fafc;font-size:14px}.company-hotel-card p{margin:4px 0 10px;color:#94a3b8;font-size:10px}.company-hotel-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.company-hotel-metrics div{padding:7px 4px;border-radius:9px;background:rgba(255,255,255,.05);text-align:center}.company-hotel-metrics small{display:block;color:#94a3b8;font-size:8px}.company-hotel-metrics strong{display:block;color:#fbbf24;font-size:13px;margin-top:2px}.company-hotel-card .btn{margin-top:10px}@media(max-width:620px){.company-owner-hero{display:block}.company-owner-badge{display:inline-block;margin-top:10px}.company-owner-summary{grid-template-columns:repeat(2,1fr)}.company-hotels-grid{grid-template-columns:1fr}}
 .command-center-view{padding:4px 0 80px;animation:commandFade .45s ease}
 .hotera-premium-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:8px}.hotera-card-action{cursor:pointer;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}.hotera-card-action:hover{transform:translateY(-3px);border-color:rgba(45,211,238,.7);box-shadow:0 16px 32px rgba(0,0,0,.38),0 0 18px rgba(45,211,238,.12)}.hotera-card-action:focus-visible{outline:2px solid #2dd4ef;outline-offset:2px}.hotera-premium-card{position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(16,36,57,.96),rgba(7,17,31,.96));border:1px solid rgba(244,183,64,.34);border-radius:16px;padding:11px;box-shadow:0 12px 26px rgba(0,0,0,.25),inset 0 1px rgba(255,255,255,.08)}.hotera-premium-card h3{margin:0 0 8px;color:#fbbf24;font-size:11px}.hotera-premium-card .premium-value{font-size:23px;font-weight:950;color:#f8fafc}.hotera-premium-card .premium-meta{font-size:9px;color:#94a3b8;margin-top:3px}.hotera-mini-list{display:grid;gap:5px}.hotera-mini-row{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 7px;border-radius:9px;background:rgba(255,255,255,.05);font-size:9px;color:#dbeafe}.hotera-mini-row strong{color:#fbbf24}.hotera-status-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-left:4px}.hotera-insight-card{grid-column:1/-1}.hotera-progress{height:7px;border-radius:9px;background:rgba(255,255,255,.1);overflow:hidden;margin-top:8px}.hotera-progress span{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,#2dd4bf,#f4b740);transition:width .4s ease}.hotera-footer-features{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}.hotera-footer-feature{text-align:center;padding:8px 4px;border-top:1px solid rgba(244,183,64,.25);color:#cbd5e1;font-size:9px}.hotera-footer-feature b{display:block;color:#2dd4ef;font-size:17px;margin-bottom:3px}@media(max-width:620px){.hotera-premium-grid{grid-template-columns:1fr}.hotera-insight-card{grid-column:auto}.hotera-footer-features{grid-template-columns:repeat(2,1fr)}}
 @keyframes commandFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
@@ -221,6 +222,7 @@ body { padding: 10px; padding-bottom: 85px; }
     
     <label id="lblSelectHotel" style="font-size:10px; display:block; text-align:inherit; color:var(--text-muted); margin-bottom:4px;">اختر الفندق (المنشأة):</label>
     <select id="loginHotelSelect" class="form-select" onchange="updateLoginRoleOptions()"></select>
+    <div id="companySelectGroup" style="display:none;"><label style="font-size:10px;display:block;text-align:inherit;color:var(--accent-solid);margin:5px 0 4px">اختر الشركة</label><select id="loginCompanySelect" class="form-select"></select></div>
 
     <label id="lblSelectRole" style="font-size:10px; display:block; text-align:inherit; color:var(--text-muted); margin-bottom:4px;">اختر الصلاحية / نوع الحساب:</label>
     <select id="loginRoleSelect" class="form-select" onchange="togglePinCodeField()">
@@ -229,6 +231,7 @@ body { padding: 10px; padding-bottom: 85px; }
       <option value="hr_supervisor" id="optHr">📋 مشرف الموظفين (التحضير)</option>
       <option value="housekeeper" id="optHouse">🧹 مشرف الهاوس كيبنج</option>
       <option value="superadmin" id="optSuper">👑 المالك العام (السوبر أدمن)</option>
+      <option value="company_owner" id="optCompanyOwner">🏢 مالك الشركة متعددة الفنادق</option>
     </select>
 
     <div id="staffSelectGroup" style="display:none;">
@@ -429,7 +432,10 @@ body { padding: 10px; padding-bottom: 85px; }
     </thead>
     <tbody id="hotelsTableBody"></tbody>
   </table>
+  <div class="company-admin-panel" style="margin-top:14px;padding:12px;border:1px solid rgba(45,212,239,.28);border-radius:14px;background:rgba(14,165,233,.06);"><h4 style="margin:0 0 8px;color:#2dd4ef">🏢 الشركات ومالكوها</h4><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px"><input id="newCompanyName" class="form-input" placeholder="اسم الشركة"><input id="newCompanyOwnerName" class="form-input" placeholder="اسم مالك الشركة"><input id="newCompanyOwnerPin" class="form-input" placeholder="رمز مالك الشركة"></div><div id="companyHotelAssignment" style="display:flex;gap:5px;flex-wrap:wrap;margin:8px 0"></div><button class="btn btn-blue" style="width:auto;margin:0" onclick="createCompanyFromSuperAdmin()">إضافة الشركة وربط الفنادق</button><div id="companiesAdminList" style="margin-top:9px"></div><h4 style="margin:14px 0 7px;color:#fbbf24">🛡️ جدول الصلاحيات المعتمد</h4><div style="overflow:auto"><table id="permissionsMatrixTable" class="table-box" style="font-size:9px"><thead><tr><th>نوع الحساب</th><th>النطاق</th><th>القدرات الأساسية</th></tr></thead><tbody><tr><td>👑 السوبر أدمن</td><td>جميع الشركات والفنادق</td><td>إنشاء الشركات، ربط الفنادق، اعتماد الأجهزة، إدارة الصلاحيات</td></tr><tr><td>🏢 مالك الشركة</td><td>الشركة والفنادق المرتبطة فقط</td><td>لوحة إجمالية، متابعة كل فندق، الغرف، الحجوزات، الإيرادات والتنبيهات</td></tr><tr><td>⚡ مدير الفندق</td><td>الفندق المحدد فقط</td><td>الغرف، الحجوزات، الفواتير، التقارير وإدارة التشغيل</td></tr><tr><td>💼 الموظف</td><td>حسب الفندق والصلاحية</td><td>الوظائف التي يحددها مدير الفندق</td></tr></tbody></table></div></div>
 </div>
+
+<div id="companyOwnerView" class="view-section company-owner-view" style="display:none;"><div class="company-owner-hero"><div><span class="company-owner-kicker">🏢 لوحة الشركة</span><h2>متابعة فنادقك من مكان واحد</h2><p>تظهر هنا الفنادق المرتبطة بشركتك فقط، مع مؤشرات الإشغال والحجوزات والإيرادات والتنبيهات لكل فندق.</p></div><div class="company-owner-badge" id="companyOwnerNameBadge">مالك الشركة</div></div><div class="company-owner-summary"><div><small>الفنادق التابعة</small><strong id="companyHotelCount">0</strong></div><div><small>إجمالي الغرف</small><strong id="companyRoomCount">0</strong></div><div><small>إجمالي الحجوزات</small><strong id="companyBookingCount">0</strong></div><div><small>إجمالي الإيرادات</small><strong id="companyRevenueTotal">0 ر.س</strong></div></div><div id="companyHotelsGrid" class="company-hotels-grid"></div></div>
 
 <div id="commandCenterView" class="view-section command-center-view">
   <div class="command-hero"><h2>✨ HOTERA Command Center</h2><p>لوحة القيادة الذكية لإدارة الفندق، متابعة الإشغال، الحجوزات، المغادرات، والتنبيهات من شاشة واحدة.</p><div class="command-status"><span id="commandCloudStatus">☁️ السحابة: محلي</span><span id="commandLastSync">⏱ آخر تحديث: الآن</span><button class="btn btn-gray" style="width:auto;margin:0;padding:4px 8px;font-size:9px" onclick="toggleHoteraTheme()" id="commandThemeBtn">☼ الوضع</button></div><div style="display:flex;gap:6px;margin-top:8px;position:relative;z-index:1"><button class="btn btn-blue" style="margin:0;padding:6px;font-size:9px" onclick="downloadHoteraBackup()">🛡️ نسخة احتياطية</button><button class="btn btn-gray" style="margin:0;padding:6px;font-size:9px" onclick="document.getElementById('hoteraRestoreInput').click()">استعادة نسخة</button><input type="file" id="hoteraRestoreInput" accept="application/json" style="display:none" onchange="restoreHoteraBackup(this)"></div></div>
@@ -1569,6 +1575,11 @@ if (!hotelsList || hotelsList.length === 0) {
     { id: 2, name: "فندق الأفق الذهبي", cr: "403000002", city: "المدينة المنورة", managerPin: "2222", hrPin: "4444", housePin: "0000", staffList: [{idNum: "EMP-201", name: "خالد عبد الله", pin: "2211"}], floorsCount: 2, roomsPerFloor: 8, trialDays: 7, subType: "trial", expiryDate: new Date(Date.now() + 7*86400000).toISOString(), status: "active" }
   ];
 }
+let companiesList = JSON.parse(localStorage.getItem('hotera_companies')) || [{ id: 1, name: 'شركة HOTERA للإدارة الفندقية', ownerName: 'مالك الشركة', ownerPin: '5555', hotelIds: hotelsList.map(h => h.id), status: 'active' }];
+if (!companiesList.length) companiesList = [{ id: 1, name: 'شركة HOTERA للإدارة الفندقية', ownerName: 'مالك الشركة', ownerPin: '5555', hotelIds: hotelsList.map(h => h.id), status: 'active' }];
+companiesList.forEach(c => { if (!Array.isArray(c.hotelIds)) c.hotelIds = hotelsList.map(h => h.id); if (!c.status) c.status = 'active'; });
+let currentCompanyId = null;
+let companyVisibleHotelIds = [];
 let allRooms = JSON.parse(localStorage.getItem('hotera_all_rooms')) || {};
 let allInvoices = JSON.parse(localStorage.getItem('hotera_all_invoices')) || {};
 let cancelledBookingsData = JSON.parse(localStorage.getItem('hotera_cancelled_bookings')) || {};
@@ -1627,6 +1638,7 @@ function generateRoomsForHotel(hotelId, floors, perFloor) {
 
 function saveData() {
   localStorage.setItem('hotera_all_hotels', JSON.stringify(hotelsList));
+  localStorage.setItem('hotera_companies', JSON.stringify(companiesList));
   localStorage.setItem('hotera_all_rooms', JSON.stringify(allRooms));
   localStorage.setItem('hotera_all_invoices', JSON.stringify(allInvoices));
   localStorage.setItem('hotera_cancelled_bookings', JSON.stringify(cancelledBookingsData));
@@ -1660,6 +1672,8 @@ function initLoginHotelDropdown() {
     select.appendChild(opt);
   });
   updateLoginRoleOptions();
+  const companySelect = document.getElementById('loginCompanySelect');
+  if (companySelect) { companySelect.innerHTML = ''; companiesList.filter(c => c.status !== 'suspended').forEach(c => { const opt=document.createElement('option'); opt.value=c.id; opt.innerText=`${c.name} — ${c.ownerName}`; companySelect.appendChild(opt); }); }
   updateGlobalDisplays();
 }
 
@@ -1704,8 +1718,15 @@ function togglePinCodeField() {
   const staffGroup = document.getElementById('staffSelectGroup');
   pinGroup.style.display = 'block';
   const t = translations[currentLang];
+  const companyGroup = document.getElementById('companySelectGroup');
+  if (companyGroup) companyGroup.style.display = role === 'company_owner' ? 'block' : 'none';
+  const hotelLabel = document.getElementById('lblSelectHotel');
+  const hotelSelect = document.getElementById('loginHotelSelect');
+  if (hotelLabel) hotelLabel.style.display = role === 'company_owner' ? 'none' : '';
+  if (hotelSelect) hotelSelect.style.display = role === 'company_owner' ? 'none' : '';
   if (role === 'superadmin') { staffGroup.style.display = 'none'; pinLabel.innerText = t.pinSuper; }
   else if (role === 'manager') { staffGroup.style.display = 'none'; pinLabel.innerText = t.pinMgr; }
+  else if (role === 'company_owner') { staffGroup.style.display = 'none'; pinLabel.innerText = 'رمز مالك الشركة'; }
   else if (role === 'staff') { staffGroup.style.display = 'block'; pinLabel.innerText = t.pinStaff; }
   else if (role === 'hr_supervisor') { staffGroup.style.display = 'none'; pinLabel.innerText = t.pinHr; }
   else { staffGroup.style.display = 'none'; pinLabel.innerText = t.pinHouse; }
@@ -1728,6 +1749,12 @@ function checkHotelSubscription(hotelId) {
   return true;
 }
 
+function getCompanyHotels(companyId){const company=companiesList.find(c=>Number(c.id)===Number(companyId));const allowed=new Set((company&&company.hotelIds)||[]);return hotelsList.filter(h=>allowed.has(h.id));}
+function renderCompanyOwnerDashboard(){const company=companiesList.find(c=>Number(c.id)===Number(currentCompanyId));if(!company)return;const hotels=getCompanyHotels(currentCompanyId);companyVisibleHotelIds=hotels.map(h=>h.id);let roomTotal=0,bookingTotal=0,revenueTotal=0;const cards=hotels.map(h=>{const rooms=allRooms[h.id]||[];const invoices=allInvoices[h.id]||[];const occupied=rooms.filter(r=>r.status==='occupied').length;const revenue=invoices.reduce((sum,i)=>sum+Number(i.total||0),0);const bookings=rooms.filter(r=>r.status==='occupied'||r.bookingRef).length;roomTotal+=rooms.length;bookingTotal+=bookings;revenueTotal+=revenue;const occupancy=rooms.length?Math.round(occupied/rooms.length*100):0;return `<article class="company-hotel-card"><h3>🏨 ${h.name}</h3><p>📍 ${h.city||'—'} · حالة الاشتراك: ${h.status==='active'?'نشط':'متابعة'}</p><div class="company-hotel-metrics"><div><small>الإشغال</small><strong>${occupancy}%</strong></div><div><small>الغرف</small><strong>${rooms.length}</strong></div><div><small>الحجوزات</small><strong>${bookings}</strong></div></div><div class="company-hotel-metrics" style="margin-top:5px"><div><small>المتاح</small><strong style="color:#34d399">${rooms.filter(r=>r.status==='vacant').length}</strong></div><div><small>المحجوز</small><strong style="color:#fbbf24">${occupied}</strong></div><div><small>الإيرادات</small><strong>${revenue.toFixed(0)} ر.س</strong></div></div><button class="btn btn-blue" onclick="enterCompanyHotel(${h.id})">دخول الفندق ومتابعته ↗</button></article>`;}).join('');
+setText('companyOwnerNameBadge',`${company.name} · ${company.ownerName}`);setText('companyHotelCount',hotels.length);setText('companyRoomCount',roomTotal);setText('companyBookingCount',bookingTotal);setText('companyRevenueTotal',`${revenueTotal.toFixed(2)} ر.س`);const grid=document.getElementById('companyHotelsGrid');if(grid)grid.innerHTML=cards||'<div class="company-hotel-card">لا توجد فنادق مرتبطة بهذه الشركة حالياً.</div>';}
+function setText(id,value){const el=document.getElementById(id);if(el)el.innerText=value;}
+function switchToCompanyOwnerDashboard(){document.querySelectorAll('.view-section').forEach(v=>{v.classList.remove('active');v.style.display='none';});const view=document.getElementById('companyOwnerView');if(view){view.style.display='block';view.classList.add('active');}document.querySelectorAll('.quick-access-chip').forEach(el=>el.classList.remove('active'));renderCompanyOwnerDashboard();}
+function enterCompanyHotel(hotelId){if(currentRole!=='company_owner'||!companyVisibleHotelIds.includes(Number(hotelId)))return alert('هذا الفندق غير مصرح به لهذا الحساب.');currentHotelId=Number(hotelId);currentRole='company_owner_manager';currentUsername='مالك الشركة — متابعة الفندق';updateHeaderInfo();applyPermissions();switchMainFeature('command_center',document.getElementById('chipCommandCenter'));render();}
 async function executeLogin() {
   const hotelId = parseInt(document.getElementById('loginHotelSelect').value);
   const role = document.getElementById('loginRoleSelect').value;
@@ -1743,7 +1770,14 @@ async function executeLogin() {
   }
 
   const targetHotel = hotelsList.find(h => h.id === hotelId);
-  if (role !== 'superadmin') {
+  if (role === 'company_owner') {
+    const companyId = parseInt(document.getElementById('loginCompanySelect')?.value || '0');
+    const company = companiesList.find(c => Number(c.id) === companyId);
+    if (!company || company.status === 'suspended') { alert('❌ الشركة غير متاحة أو موقوفة.'); return; }
+    if (pinInput !== company.ownerPin) { alert('❌ رمز مالك الشركة غير صحيح!'); return; }
+    currentCompanyId = company.id; companyVisibleHotelIds = getCompanyHotels(company.id).map(h => h.id); currentRole = 'company_owner'; currentUsername = company.ownerName || 'مالك الشركة'; currentHotelId = null;
+  }
+  if (role !== 'superadmin' && role !== 'company_owner') {
     if (targetHotel && targetHotel.status === 'suspended') { 
       alert("❌ عذراً، تم إيقاف النظام مؤقتاً عن هذا الفندق من قبل الإدارة العامة."); 
       return; 
@@ -1753,7 +1787,9 @@ async function executeLogin() {
     }
   }
   
-  if (role === 'superadmin') {
+  if (role === 'company_owner') {
+    // تم التحقق من الحساب أعلاه، ولا يتم ربطه بفندق واحد قبل لوحة الشركة.
+  } else if (role === 'superadmin') {
     if (pinInput !== masterSuperKey) { alert("❌ رمز السوبر أدمن غير صحيح!"); return; }
     currentRole = 'superadmin'; currentUsername = currentLang === 'ar' ? 'المالك العام' : 'Super Admin'; currentHotelId = hotelId;
   } else if (role === 'manager') {
@@ -1778,7 +1814,9 @@ async function executeLogin() {
   pinsAreRevealed = false;
   updateHeaderInfo();
   applyPermissions();
-  if (currentRole === 'superadmin') {
+  if (currentRole === 'company_owner') {
+    switchToCompanyOwnerDashboard();
+  } else if (currentRole === 'superadmin') {
     switchTab('superAdminView', null);
     renderSuperAdminControlPanel();
   } else {
@@ -1799,18 +1837,23 @@ function forgotPasswordAction() {
 
 function updateHeaderInfo() {
   const h = hotelsList.find(item => item.id === currentHotelId);
+  const company = companiesList.find(c => Number(c.id) === Number(currentCompanyId));
   if(h) { document.getElementById('activeHeaderHotelName').innerText = `🏨 ${h.name} • ${h.city}`; }
+  else if (currentRole === 'company_owner' && company) { document.getElementById('activeHeaderHotelName').innerText = `🏢 ${company.name}`; }
   const rolesMap = {
     superadmin: currentLang === 'ar' ? "👑 مالك عام" : "👑 Super Admin",
     manager: currentLang === 'ar' ? `⚡ مدير الفندق (${currentUsername})` : `⚡ Manager (${currentUsername})`,
     hr_supervisor: currentLang === 'ar' ? "📋 مشرف الموظفين" : "📋 HR Supervisor",
     staff: currentLang === 'ar' ? `💼 موظف: ${currentUsername}` : `💼 Staff: ${currentUsername}`,
-    housekeeper: currentLang === 'ar' ? "🧹 مشرف النظافة" : "🧹 Housekeeper"
+    housekeeper: currentLang === 'ar' ? "🧹 مشرف النظافة" : "🧹 Housekeeper",
+    company_owner: currentLang === 'ar' ? `🏢 مالك الشركة (${currentUsername})` : `🏢 Company Owner (${currentUsername})`,
+    company_owner_manager: currentLang === 'ar' ? `🏢 متابعة الفندق (${currentUsername})` : `🏢 Hotel Oversight (${currentUsername})`
   };
   document.getElementById('currentRoleBadge').innerText = rolesMap[currentRole];
 }
 
 function logout() {
+  currentCompanyId = null; companyVisibleHotelIds = []; currentHotelId = null; currentRole = null; currentUsername = '';
   document.getElementById('loginOverlay').style.display = 'flex';
   document.getElementById('loginPinInput').value = '';
   initLoginHotelDropdown();
@@ -1818,9 +1861,11 @@ function logout() {
 
 function applyPermissions() {
   document.querySelectorAll('.superadmin-only').forEach(el => el.style.display = (currentRole === 'superadmin') ? 'block' : 'none');
-  document.querySelectorAll('.manager-only').forEach(el => el.style.display = (currentRole === 'superadmin' || currentRole === 'manager') ? 'block' : 'none');
-  document.querySelectorAll('.hr-allowed').forEach(el => el.style.display = (currentRole === 'superadmin' || currentRole === 'manager' || currentRole === 'hr_supervisor') ? 'block' : 'none');
-  document.querySelectorAll('.staff-only').forEach(el => el.style.display = (currentRole !== 'housekeeper') ? 'block' : 'none');
+  const hotelManagerRole = currentRole === 'manager' || currentRole === 'company_owner_manager';
+  document.querySelectorAll('.manager-only').forEach(el => el.style.display = (currentRole === 'superadmin' || hotelManagerRole) ? 'block' : 'none');
+  document.querySelectorAll('.hr-allowed').forEach(el => el.style.display = (currentRole === 'superadmin' || hotelManagerRole || currentRole === 'hr_supervisor') ? 'block' : 'none');
+  document.querySelectorAll('.staff-only').forEach(el => el.style.display = (currentRole !== 'housekeeper' && currentRole !== 'company_owner') ? 'block' : 'none');
+  document.querySelectorAll('.quick-access-chip').forEach(el => { if (currentRole === 'company_owner') { el.style.display = ['chipCommandCenter','chipDashboard','chipAbout'].includes(el.id) ? 'block' : 'none'; } else if (el.id !== 'chipSuper') { el.style.display = ''; } });
 }
 
 function toggleAllPinsVisibility() {
@@ -1965,7 +2010,12 @@ function renderSuperAdminControlPanel() {
       hotelsTbody.appendChild(tr);
     });
   }
+  renderCompaniesAdmin();
 }
+
+function renderCompaniesAdmin(){const assign=document.getElementById('companyHotelAssignment');if(assign){assign.innerHTML=hotelsList.map(h=>`<label style="font-size:9px;color:#cbd5e1;background:rgba(255,255,255,.05);padding:5px;border-radius:7px"><input type="checkbox" value="${h.id}" class="company-hotel-check"> ${h.name}</label>`).join('');}const list=document.getElementById('companiesAdminList');if(list){list.innerHTML=companiesList.map(c=>`<div style="display:flex;justify-content:space-between;gap:6px;align-items:center;padding:6px 0;border-bottom:1px dashed rgba(255,255,255,.12);font-size:9px"><span>🏢 <strong>${c.name}</strong><br><small>${c.ownerName} · الفنادق: ${(c.hotelIds||[]).length}</small></span><button onclick="editCompanyHotels(${c.id})" style="background:#2563eb;color:#fff;border:0;border-radius:5px;padding:4px 7px;font-size:8px">تعديل الفنادق</button></div>`).join('');}}
+function createCompanyFromSuperAdmin(){if(currentRole!=='superadmin')return alert('هذا الإجراء متاح للسوبر أدمن فقط.');const name=document.getElementById('newCompanyName').value.trim();const ownerName=document.getElementById('newCompanyOwnerName').value.trim();const ownerPin=document.getElementById('newCompanyOwnerPin').value.trim();const hotelIds=[...document.querySelectorAll('.company-hotel-check:checked')].map(x=>Number(x.value));if(!name||!ownerName||!ownerPin||!hotelIds.length)return alert('أكمل اسم الشركة واسم المالك والرمز وحدد فندقاً واحداً على الأقل.');companiesList.push({id:Date.now(),name,ownerName,ownerPin,hotelIds,status:'active'});saveData();uploadDataToCloud();document.getElementById('newCompanyName').value='';document.getElementById('newCompanyOwnerName').value='';document.getElementById('newCompanyOwnerPin').value='';renderCompaniesAdmin();alert('✅ تمت إضافة الشركة وربط فنادقها بنجاح.');}
+function editCompanyHotels(companyId){if(currentRole!=='superadmin')return alert('هذا الإجراء متاح للسوبر أدمن فقط.');const company=companiesList.find(c=>Number(c.id)===Number(companyId));if(!company)return;const ids=prompt(`أدخل أرقام الفنادق المسموح بها مفصولة بفواصل لشركة ${company.name}:`,(company.hotelIds||[]).join(','));if(ids===null)return;const parsed=ids.split(',').map(x=>Number(x.trim())).filter(id=>hotelsList.some(h=>h.id===id));if(!parsed.length)return alert('لم يتم حفظ التعديل: يجب اختيار فندق صالح واحد على الأقل.');company.hotelIds=[...new Set(parsed)];saveData();uploadDataToCloud();renderCompaniesAdmin();alert('✅ تم تحديث فنادق الشركة دون المساس ببيانات الفنادق.');}
 
 function resetManagerPinPrompt(hotelId) {
   const h = hotelsList.find(item => item.id === hotelId);
@@ -2157,6 +2207,7 @@ function switchMainFeature(featureKey, chipElement) {
     document.getElementById('unifiedSectionView').classList.remove('active');
     document.getElementById('superAdminView').classList.remove('active');
     document.getElementById('aboutView').classList.remove('active');
+    const companyView = document.getElementById('companyOwnerView'); if (companyView) { companyView.classList.remove('active'); companyView.style.display = 'none'; }
     renderCommandCenter(); return;
   }
   if (featureKey === 'rooms') {
@@ -2165,11 +2216,13 @@ function switchMainFeature(featureKey, chipElement) {
     document.getElementById('unifiedSectionView').classList.remove('active');
     document.getElementById('superAdminView').classList.remove('active');
     document.getElementById('aboutView').classList.remove('active');
+    const companyView = document.getElementById('companyOwnerView'); if (companyView) { companyView.classList.remove('active'); companyView.style.display = 'none'; }
     render(); return;
   }
   document.getElementById('roomsView').classList.remove('active');
   document.getElementById('superAdminView').classList.remove('active');
   document.getElementById('aboutView').classList.remove('active');
+  const companyView = document.getElementById('companyOwnerView'); if (companyView) { companyView.classList.remove('active'); companyView.style.display = 'none'; }
   document.getElementById('unifiedSectionView').classList.add('active');
   document.querySelectorAll('.feature-panel').forEach(panel => panel.style.display = 'none');
   const targetPanel = document.getElementById(`feat_${featureKey}`);
