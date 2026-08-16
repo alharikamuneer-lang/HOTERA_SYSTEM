@@ -999,7 +999,7 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
     </div>
     <div id="bookingReviewBox" class="booking-note-box" style="display:none"></div>
     <button class="btn btn-blue" onclick="reviewNewBooking()" id="btnBkgReview">مراجعة بيانات الحجز قبل التأكيد 🔎</button>
-    <button class="btn btn-gold" onclick="executeNewBooking()" id="btnBkgSubmit" style="display:none">تأكيد الحجز وإصدار الفاتورة الموحدة 🚀</button>
+    <button class="btn btn-gold" onclick="executeNewBooking()" id="btnBkgSubmit" style="display:none">تأكيد الحجز وإصدار الفاتورة الموحدة 🚀</button><div id="bookingAutoTypeBadge" style="display:none;margin-top:7px;padding:7px;border-radius:9px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.28);color:#fbbf24;font-size:10px;text-align:center"></div>
     <button class="btn btn-gray" onclick="closeNewBookingModal()" id="btnBkgClose">إغلاق</button>
   </div>
 </div>
@@ -2752,42 +2752,64 @@ function deleteRoom(idx) {
   saveData(); uploadDataToCloud(); renderEditRoomsTable();
 }
 
-function openNewBookingModal() {
+function bookingTypeForCount(count) {
+  if (count === 1) return 'مفرد';
+  if (count > 2) return 'جماعي';
+  return 'متعدد الغرف';
+}
+function updateBookingAutoTypeBadge(count) {
+  const badge=document.getElementById('bookingAutoTypeBadge');
+  if(!badge) return;
+  const type=bookingTypeForCount(count);
+  badge.innerText=`التصنيف التلقائي: ${type} — عدد الغرف: ${count}`;
+  badge.style.display=count?'block':'none';
+  const select=document.getElementById('bookingTypeSelect'); if(select) select.value=type==='مفرد'?'فردي':(type==='جماعي'?'شركة/مجموعات':'متعدد الغرف');
+}
+function openNewBookingModal(editRef) {
+  window.hoteraEditingBookingRef = editRef || null;
+  const editingRooms = editRef ? (allRooms[currentHotelId] || []).filter(r => r.bookingRef === editRef) : [];
+  const sourceRoom = editingRooms[0] || null;
   const grid = document.getElementById('bookingAvailableRoomsGrid');
   grid.innerHTML = '';
-  const availableRooms = (allRooms[currentHotelId] || []).filter(r => r.status === 'vacant');
+  const availableRooms = (allRooms[currentHotelId] || []).filter(r => r.status === 'vacant' || (editRef && r.bookingRef === editRef));
   if(availableRooms.length === 0) {
     grid.innerHTML = '<span style="font-size:10px; color:#ef4444; grid-column:span 4; text-align:center;">لا توجد غرف شاغرة حالياً!</span>';
   } else {
     availableRooms.forEach(r => {
-      grid.innerHTML += `
-        <label style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); padding:4px; border-radius:6px; font-size:10px; text-align:center; cursor:pointer; display:flex; flex-direction:column; align-items:center;">
-          <input type="checkbox" name="selectedBookingRoom" value="${r.id}" style="margin-bottom:2px;" onchange="calculateTotalFromManual()">
-          <strong>${r.id}</strong>
-          <span style="font-size:8px; color:#94a3b8;">${r.type}</span>
-        </label>
-      `;
+      const checked = editRef && r.bookingRef === editRef ? ' checked' : '';
+      grid.innerHTML += `<label style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); padding:4px; border-radius:6px; font-size:10px; text-align:center; cursor:pointer; display:flex; flex-direction:column; align-items:center;"><input type="checkbox" name="selectedBookingRoom" value="${r.id}" style="margin-bottom:2px;"${checked} onchange="calculateTotalFromManual();updateBookingAutoTypeBadge(document.querySelectorAll('input[name=selectedBookingRoom]:checked').length)"><strong>${r.id}</strong><span style="font-size:8px; color:#94a3b8;">${r.type}</span></label>`;
     });
   }
-  document.getElementById('bookingGuestName').value = '';
-  document.getElementById('bookingGuestPhone').value = '';
-  document.getElementById('bookingGuestId').value = '';
-  document.getElementById('bookingNationality').value = '';
-  document.getElementById('bookingGuestEmail').value = '';
-  document.getElementById('bookingAdults').value = '1';
-  document.getElementById('bookingChildren').value = '0';
-  document.getElementById('bookingPaymentMethod').value = 'نقدي';
-  document.getElementById('bookingNotes').value = '';
+  document.getElementById('bookingGuestName').value = sourceRoom?.guest || '';
+  document.getElementById('bookingGuestPhone').value = sourceRoom?.phone || '';
+  document.getElementById('bookingGuestId').value = sourceRoom?.guestId || '';
+  document.getElementById('bookingNationality').value = sourceRoom?.nationality || '';
+  document.getElementById('bookingGuestEmail').value = sourceRoom?.email || '';
+  document.getElementById('bookingAdults').value = sourceRoom?.adults || '1';
+  document.getElementById('bookingChildren').value = sourceRoom?.children || '0';
+  document.getElementById('bookingPaymentMethod').value = sourceRoom?.paymentMethod || 'نقدي';
+  document.getElementById('bookingNotes').value = sourceRoom?.bookingNotes || '';
+  document.getElementById('bookingCarType').value = sourceRoom?.carType || '';
+  document.getElementById('bookingCarPlate').value = sourceRoom?.carPlate || '';
+  document.getElementById('bookingCheckIn').value = sourceRoom?.checkIn || new Date().toISOString().split('T')[0];
+  let tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+  document.getElementById('bookingCheckOut').value = sourceRoom?.checkOut || tomorrow.toISOString().split('T')[0];
+  document.getElementById('bookingNightsInput').value = sourceRoom?.nights || 1;
+  document.getElementById('bookingNightPriceInput').value = sourceRoom?.nightPrice || 200;
+  document.getElementById('bookingTypeSelect').value = sourceRoom?.bookingType || 'فردي';
+  document.getElementById('modBookingTitle').innerText = editRef ? `✏️ تعديل الحجز ${editRef}` : '➕ حجز جماعي أو فردي متعدد الغرف';
   document.getElementById('bookingReviewBox').style.display = 'none';
   document.getElementById('btnBkgReview').style.display = 'block';
   document.getElementById('btnBkgSubmit').style.display = 'none';
-  document.getElementById('bookingCarType').value = '';
-  document.getElementById('bookingCarPlate').value = '';
-  document.getElementById('bookingCheckIn').value = new Date().toISOString().split('T')[0];
-  let tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
-  document.getElementById('bookingCheckOut').value = tomorrow.toISOString().split('T')[0];
   calculateBookingDays();
+  updateBookingAutoTypeBadge(document.querySelectorAll('input[name=selectedBookingRoom]:checked').length);
   document.getElementById('bookingModal').style.display = 'flex';
+}
+function openEditBookingModal(roomId) {
+  const room=(allRooms[currentHotelId]||[]).find(r=>r.id===roomId);
+  if(!room || !room.bookingRef) return alert('لا يوجد رقم حجز قابل للتعديل لهذه الغرفة.');
+  closeModal();
+  openNewBookingModal(room.bookingRef);
 }
 function closeNewBookingModal() { document.getElementById('bookingModal').style.display = 'none'; }
 function lookupCustomerByPhone() {
@@ -2849,47 +2871,35 @@ function executeNewBooking() {
   const bookingNotes = document.getElementById('bookingNotes').value.trim();
   const carType = document.getElementById('bookingCarType').value.trim();
   const carPlate = document.getElementById('bookingCarPlate').value.trim();
-  const bookingType = document.getElementById('bookingTypeSelect').value;
   const nights = parseInt(document.getElementById('bookingNightsInput').value) || 1;
   const nightPrice = parseFloat(document.getElementById('bookingNightPriceInput').value) || 200;
   const checkIn = document.getElementById('bookingCheckIn').value;
   const checkOut = document.getElementById('bookingCheckOut').value;
+  const checkboxes = [...document.querySelectorAll('input[name="selectedBookingRoom"]:checked')];
+  const selectedIds = checkboxes.map(chk=>parseInt(chk.value));
+  const editingRef = window.hoteraEditingBookingRef || null;
   if(!guest) return alert('الرجاء إدخال اسم النزيل أو الجهة!');
-  const checkboxes = document.querySelectorAll('input[name="selectedBookingRoom"]:checked');
-  if(checkboxes.length === 0) return alert('الرجاء اختيار غرفة واحدة على الأقل للحجز!');
-  if(phone) { customerMemory[phone] = { name: guest, guestId, nationality, email, adults, children }; }
-  const bookingRef = generateBookingReference();
-  let roomsListDetails = [];
-  let totalGrandAmount = 0;
-  checkboxes.forEach(chk => {
-    const roomId = parseInt(chk.value);
-    const target = (allRooms[currentHotelId] || []).find(r => r.id === roomId);
-    if(target) {
-      target.status = 'occupied'; target.guest = guest; target.phone = phone; target.carType = carType; target.carPlate = carPlate; target.bookingType = bookingType; target.bookingRef = bookingRef; target.nights = nights; target.nightPrice = nightPrice; target.checkIn = checkIn; target.checkOut = checkOut; target.totalAmount = nights * nightPrice; target.staffName = currentUsername;
-      roomsListDetails.push({ id: target.id, type: target.type, nights, price: nightPrice });
-      totalGrandAmount += (nights * nightPrice);
-    }
+  if(!selectedIds.length) return alert('الرجاء اختيار غرفة واحدة على الأقل للحجز!');
+  const bookingType = bookingTypeForCount(selectedIds.length);
+  const rooms = allRooms[currentHotelId] || [];
+  const previousRooms = editingRef ? rooms.filter(r=>r.bookingRef===editingRef) : [];
+  const invalid = selectedIds.some(id=>{const r=rooms.find(x=>x.id===id); return !r || (r.status!=='vacant' && r.bookingRef!==editingRef);});
+  if(invalid) return alert('إحدى الغرف المحددة لم تعد متاحة. حدّث الصفحة وحاول مرة أخرى.');
+  if(phone) customerMemory[phone] = { name: guest, guestId, nationality, email, adults, children };
+  const bookingRef = editingRef || generateBookingReference();
+  previousRooms.filter(r=>!selectedIds.includes(r.id)).forEach(r=>{r.status='vacant';r.guest='';r.phone='';r.bookingRef='';r.checkIn='';r.checkOut='';r.totalAmount=0;});
+  const roomsListDetails=[]; let totalGrandAmount=0;
+  selectedIds.forEach(roomId=>{
+    const target=rooms.find(r=>r.id===roomId); if(!target) return;
+    Object.assign(target,{status:'occupied',guest,phone,guestId,nationality,email,adults,children,paymentMethod,bookingNotes,carType,carPlate,bookingType,bookingRef,nights,nightPrice,checkIn,checkOut,totalAmount:nights*nightPrice,staffName:currentUsername});
+    roomsListDetails.push({id:target.id,type:target.type,nights,price:nightPrice}); totalGrandAmount += nights*nightPrice;
   });
-  const unifiedInvoice = {
-    id: `INV-${Math.floor(Math.random()*9000+1000)}`,
-    bookingRef: bookingRef,
-    room: roomsListDetails[0] ? roomsListDetails[0].id : 'مجموعة',
-    roomsList: roomsListDetails,
-    guest, phone, guestId, nationality, email, adults, children, paymentMethod, bookingNotes,
-    carType, carPlate, bookingType, nights, nightPrice,
-    total: totalGrandAmount,
-    date: checkIn, checkIn, checkOut,
-    status: 'confirmed',
-    staffName: currentUsername
-  };
-  allInvoices[currentHotelId].unshift(unifiedInvoice);
-  recordHoteraAudit('إنشاء حجز', {bookingRef, guest, rooms: roomsListDetails.map(r=>r.id), total: totalGrandAmount});
-  saveData(); 
-  uploadDataToCloud(); 
-  closeNewBookingModal(); 
-  render();
-  populateOfficialInvoiceModal(unifiedInvoice);
-  alert(`✅ تم تنفيذ الحجز برقم (${bookingRef}) وإصدار الفاتورة الموحدة بنجاح!`);
+  let unifiedInvoice = (allInvoices[currentHotelId]||[]).find(i=>i.bookingRef===bookingRef);
+  const invoiceData={bookingRef,room:roomsListDetails[0]?.id||'مجموعة',roomsList:roomsListDetails,guest,phone,guestId,nationality,email,adults,children,paymentMethod,bookingNotes,carType,carPlate,bookingType,nights,nightPrice,total:totalGrandAmount,date:checkIn,checkIn,checkOut,status:'confirmed',staffName:currentUsername};
+  if(unifiedInvoice) Object.assign(unifiedInvoice,invoiceData); else { unifiedInvoice={id:`INV-${Math.floor(Math.random()*9000+1000)}`,...invoiceData}; allInvoices[currentHotelId].unshift(unifiedInvoice); }
+  recordHoteraAudit(editingRef?'تعديل حجز':'إنشاء حجز',{bookingRef,guest,rooms:roomsListDetails.map(r=>r.id),total:totalGrandAmount,bookingType});
+  saveData(); uploadDataToCloud(); closeNewBookingModal(); window.hoteraEditingBookingRef=null; render(); populateOfficialInvoiceModal(unifiedInvoice);
+  alert(`✅ تم ${editingRef?'تعديل':'تنفيذ'} الحجز (${bookingRef}) وتصنيفه: ${bookingType}.`);
 }
 
 function openRoomModal(room) {
@@ -2918,6 +2928,7 @@ function openRoomModal(room) {
       <p style="font-size:11px; margin-bottom:4px;">رقم الجوال: <strong>${room.phone || 'غير متوفر'}</strong></p>
       <p style="font-size:11px; margin-bottom:6px;">السيارة: <strong style="color:#38bdf8;">${room.carType || room.carPlate ? `${room.carType || ''} (لوحة: ${room.carPlate || '-'})` : 'لا توجد'}</strong></p>
       <div style="display:flex; gap:6px; margin-top:6px;">
+        <button class="btn btn-blue" style="margin:0; font-size:10px;" onclick="openEditBookingModal(${room.id})">✏️ تعديل الحجز</button>
         <button class="btn btn-green" style="margin:0; font-size:10px;" onclick="openCheckoutReminderModal(${room.id})">⏰ تذكير بموعد المغادرة</button>
         <button class="btn btn-red" style="margin:0; font-size:10px;" onclick="openCancelBookingModal(${room.id})">🛑 إلغاء الحجز</button>
       </div>
