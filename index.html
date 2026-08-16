@@ -167,6 +167,22 @@ body { padding: 10px; padding-bottom: 85px; }
 #hoteraLoadingScreen{position:fixed;inset:0;z-index:250;display:none;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 35%,rgba(245,158,11,.12),transparent 34%),rgba(4,8,15,.96);backdrop-filter:blur(15px)}#hoteraLoadingScreen.active{display:flex;animation:loadingFade .25s ease}.loading-orbit{width:92px;height:92px;border:2px solid rgba(245,158,11,.2);border-top-color:#fbbf24;border-right-color:#38bdf8;border-radius:50%;animation:loadingSpin 1s linear infinite;display:flex;align-items:center;justify-content:center;box-shadow:0 0 28px rgba(245,158,11,.25)}.loading-orbit:after{content:'🏨';font-size:32px;animation:loadingPulse 1.2s ease-in-out infinite}.loading-copy{text-align:center;margin-top:15px;color:#cbd5e1;font-size:11px}.loading-copy strong{display:block;color:#fbbf24;font-size:15px;margin-bottom:5px}@keyframes loadingSpin{to{transform:rotate(360deg)}}@keyframes loadingPulse{50%{transform:scale(1.12)}}@keyframes loadingFade{from{opacity:0}to{opacity:1}}
 .view-section.active,.card,.command-kpi,.feature-panel{animation:surfaceEnter .3s ease}@keyframes surfaceEnter{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}button,.quick-access-chip,.card{transition:transform .18s ease,box-shadow .18s ease}button:active,.quick-access-chip:active{transform:scale(.97)}
 @media (prefers-reduced-motion: reduce){.welcome-particle,.welcome-progress span,.loading-orbit,.loading-orbit:after,.view-section.active,.card,.command-kpi,.feature-panel{animation:none!important;transition:none!important}}
+
+/* HOTERA visual command dashboard — additive layer; existing data logic remains unchanged */
+.hotera-visual-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin:10px 0 12px}
+.hotera-visual-card{position:relative;overflow:hidden;min-height:92px;padding:12px;border:1px solid rgba(56,189,248,.28);border-radius:17px;background:linear-gradient(145deg,rgba(13,43,70,.93),rgba(7,18,33,.96));box-shadow:0 12px 28px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.12);transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+.hotera-visual-card:hover{transform:translateY(-3px);border-color:rgba(245,158,11,.7);box-shadow:0 16px 34px rgba(0,0,0,.38),0 0 20px rgba(245,158,11,.1)}
+.hotera-visual-card:after{content:'';position:absolute;inset:auto -18px -34px auto;width:92px;height:92px;border-radius:50%;background:rgba(245,158,11,.1);filter:blur(5px)}
+.hotera-visual-label{display:block;color:#cbd5e1;font-size:10px;margin-bottom:8px}.hotera-visual-value{display:block;color:#fff;font-size:24px;font-weight:950;line-height:1.05}.hotera-visual-note{display:block;color:#38bdf8;font-size:9px;margin-top:6px}
+.hotera-visual-icon{float:right;width:31px;height:31px;display:grid;place-items:center;border-radius:50%;background:rgba(14,165,233,.16);border:1px solid rgba(56,189,248,.45);font-size:17px}
+.hotera-notification-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 10px;padding:9px 11px;border:1px solid rgba(245,158,11,.32);border-radius:14px;background:linear-gradient(135deg,rgba(21,39,60,.93),rgba(8,18,31,.96));box-shadow:0 8px 22px rgba(0,0,0,.22)}
+.hotera-notification-title{display:flex;align-items:center;gap:7px;color:#f8fafc;font-size:11px;font-weight:900}.hotera-notification-count{min-width:20px;height:20px;padding:0 6px;display:inline-grid;place-items:center;border-radius:20px;background:#ef4444;color:#fff;font-size:10px}.hotera-notification-button{position:relative;border:1px solid rgba(245,158,11,.42);border-radius:10px;padding:6px 10px;color:#fbbf24;background:rgba(245,158,11,.12);font-size:10px;font-weight:800;cursor:pointer}.hotera-notification-button:hover{background:rgba(245,158,11,.24)}
+.hotera-notification-drawer{display:none;margin:0 0 10px;padding:10px;border:1px solid rgba(56,189,248,.3);border-radius:15px;background:rgba(7,18,33,.97);box-shadow:0 14px 30px rgba(0,0,0,.3)}.hotera-notification-drawer.open{display:block;animation:hoteraDrawerIn .2s ease}.hotera-notification-item{display:flex;align-items:flex-start;gap:8px;padding:9px 4px;border-bottom:1px dashed rgba(255,255,255,.12);color:#cbd5e1;font-size:10px;line-height:1.6}.hotera-notification-item:last-child{border-bottom:0}.hotera-notification-dot{flex:0 0 8px;width:8px;height:8px;margin-top:5px;border-radius:50%;background:#f59e0b;box-shadow:0 0 10px currentColor}.hotera-notification-item.success .hotera-notification-dot{background:#10b981}.hotera-notification-item.info .hotera-notification-dot{background:#38bdf8}.hotera-notification-item.danger .hotera-notification-dot{background:#ef4444}@keyframes hoteraDrawerIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.hotera-room-showcase{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}.hotera-room-image-card{min-height:92px;padding:10px;display:flex;align-items:flex-end;border:1px solid rgba(255,255,255,.16);border-radius:14px;background-size:cover;background-position:center;position:relative;overflow:hidden}.hotera-room-image-card:before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 20%,rgba(3,10,20,.93) 100%)}.hotera-room-image-card span{position:relative;z-index:1;color:#fff;font-size:10px;font-weight:800}.hotera-room-image-card small{display:block;color:#86efac;font-size:8px;margin-top:3px}
+@media(max-width:760px){.hotera-visual-strip{grid-template-columns:repeat(2,1fr)}.hotera-room-showcase{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:420px){.hotera-visual-card{min-height:82px;padding:9px}.hotera-visual-value{font-size:20px}.hotera-room-showcase{grid-template-columns:1fr 1fr}.hotera-notification-bar{align-items:flex-start}}
+@media(prefers-reduced-motion:reduce){.hotera-visual-card,.hotera-notification-drawer{animation:none!important;transition:none!important}}
+
 </style>
 </head>
 <body>
@@ -290,6 +306,17 @@ body { padding: 10px; padding-bottom: 85px; }
     🏆 <span style="color: #38bdf8;">تحفيز:</span> الاحتفال بالإنجازات الصغيرة يرفع من معنويات الفريق ويحفزهم نحو التميز
   </marquee>
 </div>
+
+
+<div class="hotera-visual-strip" id="hoteraVisualStrip" aria-label="ملخص مؤشرات الفندق">
+  <div class="hotera-visual-card"><span class="hotera-visual-icon">🛏️</span><span class="hotera-visual-label">إجمالي الغرف</span><strong class="hotera-visual-value" id="visualRoomsTotal">—</strong><span class="hotera-visual-note">إدارة الغرف والطوابق</span></div>
+  <div class="hotera-visual-card"><span class="hotera-visual-icon">📅</span><span class="hotera-visual-label">حجوزات اليوم</span><strong class="hotera-visual-value" id="visualBookingsToday">—</strong><span class="hotera-visual-note">متابعة الوصول والمغادرة</span></div>
+  <div class="hotera-visual-card"><span class="hotera-visual-icon">📈</span><span class="hotera-visual-label">نسبة الإشغال</span><strong class="hotera-visual-value" id="visualOccupancy">—</strong><span class="hotera-visual-note">مؤشر التشغيل الحالي</span></div>
+  <div class="hotera-visual-card"><span class="hotera-visual-icon">💰</span><span class="hotera-visual-label">الإيرادات</span><strong class="hotera-visual-value" id="visualRevenue">—</strong><span class="hotera-visual-note">من السجلات الحالية</span></div>
+</div>
+<div class="hotera-notification-bar" aria-live="polite"><div class="hotera-notification-title"><span>🔔 مركز الإشعارات</span><span class="hotera-notification-count" id="hoteraNotificationCount">0</span></div><button class="hotera-notification-button" type="button" onclick="toggleHoteraNotifications()">عرض التنبيهات</button></div>
+<div class="hotera-notification-drawer" id="hoteraNotificationDrawer"><div class="hotera-notification-item info"><i class="hotera-notification-dot"></i><span>يتم تحديث مؤشرات النظام من البيانات المحلية الحالية دون حذف أو استبدال أي سجل.</span></div><div class="hotera-notification-item success"><i class="hotera-notification-dot"></i><span>حالة النظام مستقرة. يمكنك متابعة الغرف والحجوزات والتقارير من لوحة واحدة.</span></div><div class="hotera-notification-item danger" id="hoteraDynamicNotification"><i class="hotera-notification-dot"></i><span>سيتم عرض التنبيهات التشغيلية هنا عند وجود غرفة للصيانة أو التنظيف.</span></div></div>
+<div class="hotera-room-showcase" aria-label="صور مرجعية للغرف"><div class="hotera-room-image-card" style="background-image:url('https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=900&auto=format&fit=crop')"><span>غرف فندقية فاخرة<small>تصميم HOTERA</small></span></div><div class="hotera-room-image-card" style="background-image:url('https://images.unsplash.com/photo-1566665797739-1674de7a421a?q=80&w=900&auto=format&fit=crop')"><span>حالة الغرف<small>متابعة مباشرة</small></span></div><div class="hotera-room-image-card" style="background-image:url('https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=900&auto=format&fit=crop')"><span>تجربة فندقية<small>إدارة أذكى</small></span></div></div>
 
 <div class="quick-access-bar" id="quickAccessBar">
   <div class="quick-access-chip" onclick="switchMainFeature('command_center', this)" id="chipCommandCenter">✨ مركز القيادة</div>
@@ -1668,6 +1695,11 @@ function saveData() {
   localStorage.setItem('hotera_about_desc', aboutPageDescText);
   localStorage.setItem('hotera_cloud_url', cloudApiUrl);
   localStorage.setItem('hotera_cloud_key', cloudApiKey);
+  // تحديث طبقة المؤشرات والإشعارات بعد الحفظ دون تعديل أي سجل أو مفتاح بيانات.
+  try {
+    if (typeof window.refreshHoteraVisualDashboard === 'function') window.refreshHoteraVisualDashboard();
+    window.dispatchEvent(new CustomEvent('hotera:data-updated'));
+  } catch (visualUpdateError) { console.warn('HOTERA visual dashboard update skipped:', visualUpdateError); }
 }
 
 function initLoginHotelDropdown() {
@@ -3042,5 +3074,39 @@ async function pushHoteraSecureSnapshot(){const url=rememberSecureSyncServer();i
 async function compareHoteraLatestSnapshot(){const url=rememberSecureSyncServer();if(!url)return setSecureSyncStatus('أدخل رابط الخادم أولاً — لن يتم جلب أي بيانات','#fbbf24');try{setSecureSyncStatus('جارٍ جلب بيانات المقارنة دون تطبيقها...','#fbbf24');const r=await fetch(url+'/api/trpc/hoteraSync.latest?input='+encodeURIComponent(JSON.stringify({json:{scopeKey:'hotera-default'}})),{credentials:'include',cache:'no-store'});if(r.status===401||r.status===403){setSecureSyncStatus('المقارنة تتطلب تسجيل دخول الخادم — لم تُغيّر البيانات ✅','#fbbf24');return;}if(!r.ok)throw new Error('HTTP '+r.status);const body=await r.json();const latest=body?.result?.data?.json;if(!latest){setSecureSyncStatus('لا توجد لقطة خادم للمقارنة بعد — البيانات المحلية كما هي ✅','#34d399');return;}const localChecksum=await hoteraPayloadChecksum(buildCloudPayload());const serverChecksum=latest.checksum||'';setSecureSyncStatus(localChecksum===serverChecksum?'المقارنة ناجحة: البيانات المحلية مطابقة لآخر لقطة ✅':'توجد فروقات: لم يتم تطبيق أي تغيير على البيانات المحلية ⚠️',localChecksum===serverChecksum?'#34d399':'#fbbf24');}catch(e){setSecureSyncStatus('تعذرت المقارنة: '+e.message,'#f87171');}}
 const secureSyncInput=document.getElementById('secureSyncServerUrlInput');if(secureSyncInput){secureSyncInput.value=localStorage.getItem('hotera_secure_sync_server')||'';}
 </script>
+
+<script>
+(function(){
+  function hoteraVisualNumber(value){return Number.isFinite(value)?value.toLocaleString('ar-SA'):'—';}
+  window.toggleHoteraNotifications=function(){
+    const drawer=document.getElementById('hoteraNotificationDrawer');
+    if(drawer) drawer.classList.toggle('open');
+  };
+  window.refreshHoteraVisualDashboard=function(){
+    const roomStore=typeof allRooms!=='undefined'&&allRooms&&typeof allRooms==='object'?allRooms:{};
+    const roomList=typeof currentHotelId!=='undefined'&&Array.isArray(roomStore[currentHotelId])?roomStore[currentHotelId]:[];
+    const invoiceStore=typeof allInvoices!=='undefined'&&allInvoices&&typeof allInvoices==='object'?allInvoices:{};
+    const invoices=typeof currentHotelId!=='undefined'&&Array.isArray(invoiceStore[currentHotelId])?invoiceStore[currentHotelId].filter(Boolean):Object.values(invoiceStore).flat().filter(Boolean);
+    const occupied=roomList.filter(r=>r&&r.status==='occupied').length;
+    const actionable=roomList.filter(r=>r&&(r.status==='maintenance'||r.status==='cleaning')).length;
+    const revenue=invoices.reduce((sum,inv)=>sum+Number(inv.total||0),0);
+    const today=new Date().toISOString().slice(0,10);
+    const bookings=invoices.filter(inv=>String(inv.date||inv.createdAt||'').slice(0,10)===today).length;
+    const set=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value;};
+    set('visualRoomsTotal',hoteraVisualNumber(roomList.length));
+    set('visualBookingsToday',hoteraVisualNumber(bookings));
+    set('visualOccupancy',roomList.length?Math.round((occupied/roomList.length)*100)+'%':'—');
+    set('visualRevenue',revenue.toLocaleString('ar-SA',{maximumFractionDigits:0})+' ر.س');
+    set('hoteraNotificationCount',hoteraVisualNumber(actionable));
+    const note=document.querySelector('#hoteraDynamicNotification span');
+    if(note) note.textContent=actionable?`يوجد ${actionable.toLocaleString('ar-SA')} تنبيه تشغيلي يحتاج مراجعة في الغرف.`:'لا توجد تنبيهات تشغيلية عاجلة حاليًا. الحالة مستقرة.';
+  };
+  window.addEventListener('hotera:data-updated',()=>setTimeout(window.refreshHoteraVisualDashboard,0));
+  window.addEventListener('storage',event=>{if(event.key&&event.key.startsWith('hotera_'))setTimeout(window.refreshHoteraVisualDashboard,0);});
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(window.refreshHoteraVisualDashboard,700));
+  setTimeout(window.refreshHoteraVisualDashboard,1500);
+})();
+</script>
+
 </body>
 </html>
