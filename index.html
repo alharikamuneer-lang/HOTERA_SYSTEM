@@ -229,6 +229,12 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
 .hotera-language-option:hover,.hotera-language-option.active{transform:translateY(-1px);border-color:rgba(245,158,11,.7);background:rgba(245,158,11,.12)}.hotera-language-option b{display:block;font-size:11px}.hotera-language-option small{display:block;margin-top:2px;color:#94a3b8;font-size:9px}.hotera-language-flag{font-size:20px}.hotera-language-close{width:100%;margin-top:12px;padding:9px;border:1px solid rgba(148,163,184,.3);border-radius:11px;color:#cbd5e1;background:rgba(255,255,255,.05);cursor:pointer}
 @keyframes hoteraLangFade{from{opacity:0}to{opacity:1}}@media(max-width:460px){#hoteraLanguageResults{grid-template-columns:1fr}}
 
+
+/* HOTERA top settings panel */
+.hotera-topbar{position:relative;z-index:1200;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px;padding:8px 12px;border:1px solid rgba(56,189,248,.25);border-radius:15px;background:linear-gradient(135deg,rgba(10,30,52,.92),rgba(8,15,29,.92));box-shadow:0 8px 25px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.07);backdrop-filter:blur(10px)}
+.hotera-topbar-brand{display:flex;align-items:center;gap:7px;color:#e2e8f0;font-size:11px}.hotera-topbar-brand strong{color:#fbbf24;letter-spacing:.7px}.hotera-topbar-meta{color:#94a3b8;font-size:9px}.hotera-topbar-actions{display:flex;align-items:center;gap:5px;flex-wrap:wrap}.hotera-topbar-btn{border:1px solid rgba(245,158,11,.45);border-radius:10px;padding:6px 10px;color:#fbbf24;background:rgba(245,158,11,.1);font:inherit;font-size:10px;cursor:pointer;transition:transform .16s ease,background .16s ease,box-shadow .16s ease}.hotera-topbar-btn:hover{transform:translateY(-1px);background:rgba(245,158,11,.18);box-shadow:0 0 16px rgba(245,158,11,.16)}
+#hoteraTopSettingsPanel{display:none;position:absolute;top:calc(100% + 7px);right:10px;width:min(92vw,430px);padding:13px;border:1px solid rgba(245,158,11,.38);border-radius:18px;background:linear-gradient(145deg,rgba(13,38,62,.98),rgba(4,13,25,.98));box-shadow:0 20px 55px rgba(0,0,0,.55);backdrop-filter:blur(14px)}#hoteraTopSettingsPanel.open{display:block;animation:hoteraSettingsIn .2s ease}.hotera-settings-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.hotera-settings-head h3{margin:0;color:#fbbf24;font-size:15px}.hotera-settings-head span{color:#94a3b8;font-size:9px}.hotera-settings-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.hotera-settings-card{display:flex;align-items:center;gap:7px;padding:9px;border:1px solid rgba(148,163,184,.2);border-radius:12px;color:#e2e8f0;background:rgba(255,255,255,.045);cursor:pointer;text-align:right;font:inherit;font-size:10px;transition:border-color .16s ease,background .16s ease,transform .16s ease}.hotera-settings-card:hover{border-color:rgba(56,189,248,.6);background:rgba(56,189,248,.1);transform:translateY(-1px)}.hotera-settings-card b{font-size:17px}.hotera-settings-card small{display:block;color:#94a3b8;font-size:8px;margin-top:2px}.hotera-settings-close{width:100%;margin-top:9px;padding:7px;border:1px solid rgba(148,163,184,.25);border-radius:10px;color:#cbd5e1;background:rgba(255,255,255,.04);cursor:pointer;font:inherit;font-size:10px}@keyframes hoteraSettingsIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}@media(max-width:520px){.hotera-topbar{align-items:flex-start}.hotera-topbar-actions{width:100%}.hotera-topbar-btn{flex:1}.hotera-settings-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -547,6 +553,27 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
       <section class="hotera-glass-panel"><h3>▤ الوصول السريع</h3><div class="hotera-glass-list"><div class="hotera-glass-list-row"><span>الغرف والحجوزات</span><button class="btn btn-gray" style="width:auto;margin:0;padding:4px 8px" onclick="switchMainFeature('rooms',document.getElementById('chipRooms'))">فتح</button></div><div class="hotera-glass-list-row"><span>التقارير المالية</span><button class="btn btn-gray" style="width:auto;margin:0;padding:4px 8px" onclick="switchMainFeature('financial',document.getElementById('chipFinancial'))">فتح</button></div><div class="hotera-glass-list-row"><span>ملف النزيل</span><button class="btn btn-gray" style="width:auto;margin:0;padding:4px 8px" onclick="openCommandCustomerProfile()">فتح</button></div></div></section>
     </div>
     <footer class="hotera-glass-footer"><span><strong>HOTERA</strong> · PREMIUM GLASS COMMAND CENTER</span><span>تطوير وهندسة البرمجيات · <strong>م. منير الحارقة</strong></span></footer>
+  </div>
+</div>
+
+
+<div class="hotera-topbar manager-only" id="hoteraTopSettingsBar">
+  <div class="hotera-topbar-brand"><span>🏨</span><strong>HOTERA</strong><span class="hotera-topbar-meta">مركز إدارة النظام</span></div>
+  <div class="hotera-topbar-actions">
+    <span class="hotera-topbar-meta" id="hoteraTopCurrentHotel">الفندق الحالي</span>
+    <button type="button" class="hotera-topbar-btn" onclick="toggleTopSettingsPanel()" id="hoteraTopSettingsBtn">⚙️ الإعدادات</button>
+  </div>
+  <div id="hoteraTopSettingsPanel" role="dialog" aria-label="إعدادات HOTERA">
+    <div class="hotera-settings-head"><h3>⚙️ إعدادات HOTERA</h3><span>إدارة آمنة دون حذف البيانات</span></div>
+    <div class="hotera-settings-grid">
+      <button type="button" class="hotera-settings-card" onclick="openTopSettingAction('hotel')"><b>🏨</b><span>إعدادات الفندق<small>الاسم، الضريبة، الأكواد</small></span></button>
+      <button type="button" class="hotera-settings-card" onclick="openTopSettingAction('staff')"><b>👥</b><span>المستخدمون والصلاحيات<small>الموظفون والحسابات</small></span></button>
+      <button type="button" class="hotera-settings-card" onclick="openTopSettingAction('rooms')"><b>🛏️</b><span>الغرف والطوابق<small>إضافة وإدارة الغرف</small></span></button>
+      <button type="button" class="hotera-settings-card" onclick="openTopSettingAction('language')"><b>🌐</b><span>اللغة والمظهر<small>اللغة والوضع الليلي</small></span></button>
+      <button type="button" class="hotera-settings-card" onclick="openTopSettingAction('backup')"><b>🛡️</b><span>النسخ الاحتياطي<small>تنزيل نسخة آمنة</small></span></button>
+      <button type="button" class="hotera-settings-card" onclick="openTopSettingAction('sync')"><b>☁️</b><span>المزامنة السحابية<small>الربط والنسخ المركزية</small></span></button>
+    </div>
+    <button type="button" class="hotera-settings-close" onclick="toggleTopSettingsPanel(false)">إغلاق لوحة الإعدادات</button>
   </div>
 </div>
 
@@ -1640,6 +1667,11 @@ function openLanguagePicker(){const m=document.getElementById('hoteraLanguageMod
 function closeLanguagePicker(){const m=document.getElementById('hoteraLanguageModal');if(m)m.classList.remove('open')}
 function filterHoteraLanguages(query){const q=(query||'').trim().toLowerCase();const box=document.getElementById('hoteraLanguageResults');if(!box)return;const list=hoteraLanguages.filter(l=>!q||[l.code,l.name,l.native].some(v=>v.toLowerCase().includes(q)));box.innerHTML=list.length?list.map(l=>`<button type="button" class="hotera-language-option ${currentLang===l.code?'active':''}" onclick="selectHoteraLanguage('${l.code}')"><span class="hotera-language-flag">${l.flag}</span><span><b>${l.name}</b><small>${l.native} · ${l.code.toUpperCase()}</small></span></button>`).join(''):'<div style="grid-column:1/-1;color:#94a3b8;text-align:center;padding:15px;font-size:11px">لم يتم العثور على لغة</div>'}
 function selectHoteraLanguage(code){const lang=hoteraLanguages.find(l=>l.code===code);if(!lang)return;currentLang=code;localStorage.setItem('hotera_lang',code);const root=document.getElementById('htmlRoot');if(root){root.setAttribute('dir',lang.dir);root.setAttribute('lang',code)};applyLanguage();const b=document.getElementById('glassLanguageBtn');if(b)b.innerText=`${lang.flag} ${lang.native}`;closeLanguagePicker()}
+
+
+function toggleTopSettingsPanel(force){const panel=document.getElementById('hoteraTopSettingsPanel');if(!panel)return;const open=typeof force==='boolean'?force:!panel.classList.contains('open');panel.classList.toggle('open',open);if(open){const h=hotelsList.find(x=>x.id===currentHotelId);const el=document.getElementById('hoteraTopCurrentHotel');if(el)el.innerText=h?.name||'الفندق الحالي';}}
+function openTopSettingAction(action){toggleTopSettingsPanel(false);if(action==='hotel'&&typeof openHotelSetupModal==='function')return openHotelSetupModal();if(action==='staff'&&typeof openStaffManagementModal==='function')return openStaffManagementModal();if(action==='rooms'&&typeof openManageRoomsModal==='function')return openManageRoomsModal();if(action==='language'&&typeof openLanguagePicker==='function')return openLanguagePicker();if(action==='language'&&typeof toggleHoteraTheme==='function')return toggleHoteraTheme();if(action==='backup'&&typeof downloadHoteraBackup==='function')return downloadHoteraBackup();if(action==='sync'){const chip=document.getElementById('chipIntegrations');if(chip&&typeof switchMainFeature==='function')return switchMainFeature('integrations',chip);return alert('إعدادات المزامنة متاحة من قسم الإعدادات السحابية الحالي.');}}
+document.addEventListener('click',e=>{const panel=document.getElementById('hoteraTopSettingsPanel'),bar=document.getElementById('hoteraTopSettingsBar');if(panel&&panel.classList.contains('open')&&bar&&!bar.contains(e.target))panel.classList.remove('open');});
 
 function toggleLanguage() {
   currentLang = currentLang === 'ar' ? 'en' : 'ar';
