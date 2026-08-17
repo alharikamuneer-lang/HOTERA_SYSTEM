@@ -1858,7 +1858,7 @@ function togglePinCodeField() {
   const pinLabel = document.getElementById('pinLabel');
   const staffGroup = document.getElementById('staffSelectGroup');
   pinGroup.style.display = 'block';
-  const t = translations[currentLang];
+  const t = translations[currentLang] || translations.en;
   const companyGroup = document.getElementById('companySelectGroup');
   if (companyGroup) companyGroup.style.display = role === 'company_owner' ? 'block' : 'none';
   const hotelLabel = document.getElementById('lblSelectHotel');
