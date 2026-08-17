@@ -217,9 +217,31 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
 @media(max-width:680px){#luxuryEntryScreen .luxury-entry-card{padding:24px 13px 18px;border-radius:25px}.luxury-entry-constellation{grid-template-columns:repeat(2,1fr);gap:7px;margin-top:15px}.luxury-entry-glass-panel{min-height:78px;padding:9px}.luxury-entry-glass-panel strong{font-size:17px}.luxury-entry-identity{gap:6px}.luxury-entry-crown{width:58px;height:58px;font-size:23px}.luxury-entry-feature-chip{font-size:8px;padding:6px}.luxury-entry-value-strip{grid-template-columns:repeat(2,1fr);gap:4px}.luxury-entry-value-strip div{font-size:8px}}
 @media(prefers-reduced-motion:reduce){.luxury-entry-glass-panel{animation:none!important;opacity:1;transform:none}}
 
+
+/* Searchable multilingual selector */
+#hoteraLanguageModal{display:none;position:fixed;inset:0;z-index:9000;align-items:center;justify-content:center;background:rgba(1,7,16,.72);backdrop-filter:blur(8px)}
+#hoteraLanguageModal.open{display:flex;animation:hoteraLangFade .2s ease}
+.hotera-language-panel{width:min(92%,430px);padding:20px;border:1px solid rgba(245,158,11,.42);border-radius:22px;background:linear-gradient(145deg,rgba(14,38,62,.97),rgba(4,13,25,.98));box-shadow:0 24px 80px rgba(0,0,0,.6);direction:rtl}
+.hotera-language-panel h3{margin:0 0 5px;color:#fbbf24;font-size:18px}.hotera-language-panel p{margin:0 0 12px;color:#94a3b8;font-size:10px}
+#hoteraLanguageSearch{width:100%;box-sizing:border-box;padding:11px 13px;border:1px solid rgba(56,189,248,.38);border-radius:12px;outline:none;color:#f8fafc;background:rgba(255,255,255,.07);font:inherit;font-size:12px}
+#hoteraLanguageResults{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;max-height:300px;overflow:auto;margin-top:11px;padding-right:2px}
+.hotera-language-option{display:flex;align-items:center;gap:8px;padding:10px;border:1px solid rgba(148,163,184,.22);border-radius:12px;color:#e2e8f0;background:rgba(255,255,255,.045);cursor:pointer;text-align:right;transition:transform .16s ease,border-color .16s ease,background .16s ease}
+.hotera-language-option:hover,.hotera-language-option.active{transform:translateY(-1px);border-color:rgba(245,158,11,.7);background:rgba(245,158,11,.12)}.hotera-language-option b{display:block;font-size:11px}.hotera-language-option small{display:block;margin-top:2px;color:#94a3b8;font-size:9px}.hotera-language-flag{font-size:20px}.hotera-language-close{width:100%;margin-top:12px;padding:9px;border:1px solid rgba(148,163,184,.3);border-radius:11px;color:#cbd5e1;background:rgba(255,255,255,.05);cursor:pointer}
+@keyframes hoteraLangFade{from{opacity:0}to{opacity:1}}@media(max-width:460px){#hoteraLanguageResults{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
+
+
+<div id="hoteraLanguageModal" role="dialog" aria-modal="true" aria-label="اختيار اللغة" onclick="if(event.target===this)closeLanguagePicker()">
+  <div class="hotera-language-panel">
+    <h3>🌐 اختيار لغة النظام</h3><p>اكتب اسم اللغة أو رمزها للعثور عليها بسرعة.</p>
+    <input id="hoteraLanguageSearch" type="search" placeholder="ابحث عن اللغة..." oninput="filterHoteraLanguages(this.value)" autocomplete="off">
+    <div id="hoteraLanguageResults"></div>
+    <button class="hotera-language-close" type="button" onclick="closeLanguagePicker()">إغلاق</button>
+  </div>
+</div>
 
 <div id="luxuryEntryScreen" aria-label="الدخول الفاخر إلى نظام HOTERA">
   <div class="luxury-entry-particles" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
@@ -337,7 +359,7 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
   <div style="font-size:9px; color:var(--text-muted); margin-top:3px;"><span id="lblDevText">المطور:</span> <strong style="color:var(--accent-solid)" id="headerDevNameDisplay">م. منير الحارقة</strong> | 📞 <a href="tel:0566030594" style="color:#38bdf8; text-decoration:none;" id="headerDevPhoneDisplay">0566030594</a></div>
   
   <div style="position:absolute; left:12px; top:12px; [dir='ltr'] & { left: auto; right: 12px; } display:flex; gap:4px;">
-    <button onclick="toggleLanguage()" id="langSwitchBtn" style="background:rgba(245,158,11,0.2); color:#fbbf24; border:1px solid rgba(245,158,11,0.4); padding:3px 8px; border-radius:6px; font-size:9px; font-weight:bold; cursor:pointer;">🌐 English</button>
+    <button onclick="openLanguagePicker()" id="langSwitchBtn" style="background:rgba(245,158,11,0.2); color:#fbbf24; border:1px solid rgba(245,158,11,0.4); padding:3px 8px; border-radius:6px; font-size:9px; font-weight:bold; cursor:pointer;">🌐 English</button>
     <button onclick="logout()" id="btnLogoutText" style="background:rgba(239,68,68,0.2); color:#f87171; border:none; padding:3px 6px; border-radius:6px; font-size:9px; cursor:pointer;">تسجيل خروج 🚪</button>
   </div>
 </div>
@@ -513,7 +535,7 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
 
 <div id="commandCenterView" class="view-section command-center-view">
   <div class="hotera-glass-shell">
-    <header class="hotera-glass-header"><div class="hotera-glass-brand"><div class="hotera-glass-mark">🏨</div><div><h1>HOTERA</h1><p>ULTIMATE HOTEL MANAGEMENT SYSTEM · GLASS EDITION</p></div></div><div class="hotera-glass-meta"><span>تطوير وهندسة البرمجيات</span><br><strong id="glassDeveloperName">م. منير الحارقة</strong> · <span id="glassDeveloperPhone">0566030594</span><div class="hotera-glass-actions"><button type="button" onclick="toggleLanguage()">English</button><button type="button" onclick="logout()">⏻ متصل</button><button type="button" onclick="toggleHoteraTheme()">☼ الوضع الليلي</button></div></div></header>
+    <header class="hotera-glass-header"><div class="hotera-glass-brand"><div class="hotera-glass-mark">🏨</div><div><h1>HOTERA</h1><p>ULTIMATE HOTEL MANAGEMENT SYSTEM · GLASS EDITION</p></div></div><div class="hotera-glass-meta"><span>تطوير وهندسة البرمجيات</span><br><strong id="glassDeveloperName">م. منير الحارقة</strong> · <span id="glassDeveloperPhone">0566030594</span><div class="hotera-glass-actions"><button type="button" onclick="openLanguagePicker()" id="glassLanguageBtn">English</button><button type="button" onclick="logout()">⏻ متصل</button><button type="button" onclick="toggleHoteraTheme()">☼ الوضع الليلي</button></div></div></header>
     <div class="hotera-glass-intro"><div><h2>لوحة القيادة الذكية</h2><p>رؤية فورية لأداء الفندق، الإشغال، الحجوزات، الإيرادات والتنبيهات.</p></div><div class="hotera-glass-health"><span id="commandCloudStatus">☁️ السحابة: محلي</span><span id="commandLastSync">⏱ آخر تحديث: الآن</span><span>🛡️ النسخ الاحتياطي آمن</span></div></div>
     <div class="hotera-glass-kpis"><div class="hotera-glass-kpi"><small>إجمالي الغرف</small><strong id="cmdTotalRooms">0</strong><em>↗ حسب بيانات الفندق</em></div><div class="hotera-glass-kpi"><small>نسبة الإشغال</small><strong id="premiumOccupancy">0%</strong><em>↗ مقارنة مع أمس</em></div><div class="hotera-glass-kpi"><small>حجوزات اليوم</small><strong id="premiumTodayBookings">0</strong><em>↗ حجوزات جديدة</em></div><div class="hotera-glass-kpi"><small>إيرادات اليوم</small><strong id="premiumTodayRevenue">0 ر.س</strong><em>↗ أداء مالي</em></div><div class="hotera-glass-kpi"><small>تقييم النزلاء</small><strong id="premiumRatingsCount">0</strong><em>★ من السجلات الحالية</em></div></div>
     <div class="hotera-glass-grid">
@@ -1591,6 +1613,29 @@ const translations = {
   }
 };
 
+
+const hoteraLanguages=[
+ {code:'ar',flag:'🇸🇦',name:'العربية',native:'العربية',dir:'rtl'},
+ {code:'en',flag:'🇬🇧',name:'الإنجليزية',native:'English',dir:'ltr'},
+ {code:'fr',flag:'🇫🇷',name:'الفرنسية',native:'Français',dir:'ltr'},
+ {code:'es',flag:'🇪🇸',name:'الإسبانية',native:'Español',dir:'ltr'},
+ {code:'de',flag:'🇩🇪',name:'الألمانية',native:'Deutsch',dir:'ltr'},
+ {code:'tr',flag:'🇹🇷',name:'التركية',native:'Türkçe',dir:'ltr'},
+ {code:'ur',flag:'🇵🇰',name:'الأردية',native:'اردو',dir:'rtl'},
+ {code:'hi',flag:'🇮🇳',name:'الهندية',native:'हिन्दी',dir:'ltr'},
+ {code:'id',flag:'🇮🇩',name:'الإندونيسية',native:'Bahasa Indonesia',dir:'ltr'},
+ {code:'ms',flag:'🇲🇾',name:'الملايوية',native:'Bahasa Melayu',dir:'ltr'},
+ {code:'ru',flag:'🇷🇺',name:'الروسية',native:'Русский',dir:'ltr'},
+ {code:'zh',flag:'🇨🇳',name:'الصينية',native:'中文',dir:'ltr'},
+ {code:'ja',flag:'🇯🇵',name:'اليابانية',native:'日本語',dir:'ltr'},
+ {code:'ko',flag:'🇰🇷',name:'الكورية',native:'한국어',dir:'ltr'},
+ {code:'pt',flag:'🇵🇹',name:'البرتغالية',native:'Português',dir:'ltr'}
+];
+function openLanguagePicker(){const m=document.getElementById('hoteraLanguageModal');if(!m)return;m.classList.add('open');const s=document.getElementById('hoteraLanguageSearch');if(s){s.value='';filterHoteraLanguages('');setTimeout(()=>s.focus(),30)}}
+function closeLanguagePicker(){const m=document.getElementById('hoteraLanguageModal');if(m)m.classList.remove('open')}
+function filterHoteraLanguages(query){const q=(query||'').trim().toLowerCase();const box=document.getElementById('hoteraLanguageResults');if(!box)return;const list=hoteraLanguages.filter(l=>!q||[l.code,l.name,l.native].some(v=>v.toLowerCase().includes(q)));box.innerHTML=list.length?list.map(l=>`<button type="button" class="hotera-language-option ${currentLang===l.code?'active':''}" onclick="selectHoteraLanguage('${l.code}')"><span class="hotera-language-flag">${l.flag}</span><span><b>${l.name}</b><small>${l.native} · ${l.code.toUpperCase()}</small></span></button>`).join(''):'<div style="grid-column:1/-1;color:#94a3b8;text-align:center;padding:15px;font-size:11px">لم يتم العثور على لغة</div>'}
+function selectHoteraLanguage(code){const lang=hoteraLanguages.find(l=>l.code===code);if(!lang)return;currentLang=code;localStorage.setItem('hotera_lang',code);const root=document.getElementById('htmlRoot');if(root){root.setAttribute('dir',lang.dir);root.setAttribute('lang',code)};applyLanguage();const b=document.getElementById('glassLanguageBtn');if(b)b.innerText=`${lang.flag} ${lang.native}`;closeLanguagePicker()}
+
 function toggleLanguage() {
   currentLang = currentLang === 'ar' ? 'en' : 'ar';
   localStorage.setItem('hotera_lang', currentLang);
@@ -1599,9 +1644,9 @@ function toggleLanguage() {
 
 function applyLanguage() {
   const root = document.getElementById('htmlRoot');
-  root.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+  root.setAttribute('dir', hoteraLanguages.find(l=>l.code===currentLang)?.dir || (currentLang === 'ar' ? 'rtl' : 'ltr'));
   root.setAttribute('lang', currentLang);
-  const t = translations[currentLang];
+  const t = translations[currentLang] || translations.en;
   document.getElementById('pageTitle').innerText = t.pageTitle;
   document.getElementById('lblLoginSubtitle').innerText = t.loginSubtitle;
   document.getElementById('lblSelectHotel').innerText = t.selectHotel;
@@ -1617,7 +1662,8 @@ function applyLanguage() {
   document.getElementById('lblDevBy').innerText = t.devBy;
   document.getElementById('lblDevText').innerText = t.devText;
   document.getElementById('btnLogoutText').innerText = t.logout;
-  document.getElementById('langSwitchBtn').innerText = t.langBtn;
+  document.getElementById('langSwitchBtn').innerText = (hoteraLanguages.find(l=>l.code===currentLang)?.flag || '🌐') + ' ' + (hoteraLanguages.find(l=>l.code===currentLang)?.native || t.langBtn);
+  const glassLang=document.getElementById('glassLanguageBtn'); if(glassLang) glassLang.innerText=(hoteraLanguages.find(l=>l.code===currentLang)?.flag || '🌐')+' '+(hoteraLanguages.find(l=>l.code===currentLang)?.native || t.langBtn);
   document.getElementById('lblRoomsManagementTitle').innerText = t.roomsTitle;
   document.getElementById('searchRoomsBookingInput').placeholder = t.searchPh;
   document.getElementById('btnStaffNav').innerText = t.staffNav;
