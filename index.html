@@ -1000,6 +1000,11 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><input type="text" id="bookingGuestId" class="form-input" placeholder="رقم الهوية / السجل التجاري" style="margin-bottom:6px"><input type="text" id="bookingNationality" class="form-input" placeholder="الجنسية" style="margin-bottom:6px"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><input type="email" id="bookingGuestEmail" class="form-input" placeholder="البريد الإلكتروني (اختياري)" style="margin-bottom:6px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:4px"><input type="number" id="bookingAdults" class="form-input" value="1" min="1" placeholder="بالغون" style="margin-bottom:6px"><input type="number" id="bookingChildren" class="form-input" value="0" min="0" placeholder="أطفال" style="margin-bottom:6px"></div></div>
     <label style="font-size:10px;color:var(--text-muted)">طريقة الدفع:</label><select id="bookingPaymentMethod" class="form-select"><option value="نقدي">💵 نقدي</option><option value="بطاقة">💳 بطاقة</option><option value="تحويل بنكي">🏦 تحويل بنكي</option><option value="آجل">🧾 آجل</option></select>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">
+      <div><label style="font-size:10px;color:var(--text-muted);">غرض الزيارة:</label><select id="bookingPurpose" class="form-select" style="margin-bottom:0;"><option value="سياحة">سياحة</option><option value="عائلة أو أصدقاء">عائلة أو أصدقاء</option><option value="ديني">ديني</option><option value="عمل">عمل</option><option value="رياضي">رياضي</option><option value="أخرى">أخرى</option></select></div>
+      <div><label style="font-size:10px;color:var(--text-muted);">مصدر الحجز:</label><select id="bookingSource" class="form-select" style="margin-bottom:0;"><option value="الاستقبال">الاستقبال</option><option value="الموقع الإلكتروني">الموقع الإلكتروني</option><option value="Booking.com">Booking.com</option><option value="Agoda">Agoda</option><option value="Expedia">Expedia</option><option value="Airbnb">Airbnb</option><option value="Trip.com">Trip.com</option><option value="المسافر (Almosafer)">المسافر (Almosafer)</option><option value="المطار (Almatar)">المطار (Almatar)</option><option value="ترافيلستارت">ترافيلستارت</option><option value="أخرى">أخرى</option></select></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:7px;padding:7px 9px;margin-bottom:6px;border:1px solid rgba(56,189,248,.2);border-radius:9px;background:rgba(56,189,248,.06);font-size:10px;color:#bae6fd;"><span>👤 منفذ الحجز:</span><strong id="bookingCreatedByDisplay">—</strong></div>
     <textarea id="bookingNotes" class="form-input" placeholder="ملاحظات الحجز والطلبات الخاصة..." style="height:55px;resize:vertical"></textarea>
     <label style="font-size:10px; color:var(--accent-solid); font-weight:bold; display:block; margin-top:4px;" id="lblBkgCar">🚗 بيانات السيارات (إذا وجدت):</label>
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:6px;">
@@ -2263,8 +2268,9 @@ function renderCommandCenter() {
   const map = document.getElementById('commandRoomMap'); if(map) { map.innerHTML = rooms.slice(0, 80).map(r => `<div class="command-room ${r.status || 'vacant'}" onclick="openRoomModalByCommand(${r.id})"><strong>${r.id}</strong><br><span>${r.status==='occupied'?'محجوز':r.status==='maintenance'?'صيانة':r.status==='cleaning'?'خروج':'متاح'}</span></div>`).join('') || '<div style="font-size:10px;color:#94a3b8">لا توجد غرف</div>'; }
   const alerts=[]; rooms.filter(r=>r.status==='cleaning').slice(0,5).forEach(r=>alerts.push({icon:'🧹',text:`الغرفة ${r.id} تحتاج تنظيفاً`})); rooms.filter(r=>r.status==='maintenance').slice(0,5).forEach(r=>alerts.push({icon:'🛠️',text:`بلاغ صيانة للغرفة ${r.id}`})); rooms.filter(r=>r.status==='occupied' && r.checkOut && r.checkOut <= new Date().toISOString().split('T')[0]).slice(0,5).forEach(r=>alerts.push({icon:'⏰',text:`موعد مغادرة الغرفة ${r.id} اليوم`}));
   const alertsEl=document.getElementById('commandAlertsList'); if(alertsEl) alertsEl.innerHTML=alerts.length?alerts.map(a=>`<div class="command-alert"><span>${a.icon} ${a.text}</span><span style="color:#fbbf24">تنبيه</span></div>`).join(''):'<div style="font-size:10px;color:#34d399">✅ لا توجد تنبيهات عاجلة حالياً</div>';
+  const today=new Date().toISOString().split('T')[0];
   const upcomingEl=document.getElementById('glassUpcomingBookings'); if(upcomingEl){ const upcoming=rooms.filter(r=>r&&r.guest&&r.checkIn&&String(r.checkIn)>=today).sort((a,b)=>String(a.checkIn).localeCompare(String(b.checkIn))).slice(0,5); upcomingEl.innerHTML=upcoming.length?upcoming.map(r=>`<div class="hotera-glass-list-row"><span>${r.guest||'نزيل'} · غرفة ${r.id}<br><small style="color:#8dd8f5">${r.checkIn||'—'}</small></span><strong>${r.bookingRef||'حجز'}</strong></div>`).join(''):'<div class="hotera-glass-list-row"><span>لا توجد حجوزات قادمة</span><strong>—</strong></div>'; }
-  const today=new Date().toISOString().split('T')[0]; const hotelInvoices=allInvoices[currentHotelId]||[]; const todayInvoices=hotelInvoices.filter(i=>String(i.date||i.createdAt||'').startsWith(today)); const todayBookings=rooms.filter(r=>r.status==='occupied'&&String(r.checkIn||'').startsWith(today)); const guestCount=Object.keys(customerMemory||{}).length; const ratingsCount=(allRatings[currentHotelId]||[]).length; const invoiceTotal=hotelInvoices.reduce((sum,i)=>sum+Number(i.total||0),0); const todayRevenue=todayInvoices.reduce((sum,i)=>sum+Number(i.total||0),0); const avgBooking=todayBookings.length?todayRevenue/todayBookings.length:0; const occupancy=total?Math.round((occupied/total)*100):0; const lastInvoice=hotelInvoices.length?hotelInvoices[hotelInvoices.length-1]:null;
+  const hotelInvoices=allInvoices[currentHotelId]||[]; const todayInvoices=hotelInvoices.filter(i=>String(i.date||i.createdAt||'').startsWith(today)); const todayBookings=rooms.filter(r=>r.status==='occupied'&&String(r.checkIn||'').startsWith(today)); const guestCount=Object.keys(customerMemory||{}).length; const ratingsCount=(allRatings[currentHotelId]||[]).length; const invoiceTotal=hotelInvoices.reduce((sum,i)=>sum+Number(i.total||0),0); const todayRevenue=todayInvoices.reduce((sum,i)=>sum+Number(i.total||0),0); const avgBooking=todayBookings.length?todayRevenue/todayBookings.length:0; const occupancy=total?Math.round((occupied/total)*100):0; const lastInvoice=hotelInvoices.length?hotelInvoices[hotelInvoices.length-1]:null;
   set('premiumTodayBookings',todayBookings.length); set('premiumTodayRevenue',`${todayRevenue.toFixed(2)} ر.س`);
   const revenueBars=document.getElementById('glassRevenueBars'); if(revenueBars){ const days=[]; for(let offset=6;offset>=0;offset--){const d=new Date();d.setDate(d.getDate()-offset);const key=d.toISOString().slice(0,10);days.push(hotelInvoices.filter(i=>String(i.date||i.createdAt||'').startsWith(key)).reduce((sum,i)=>sum+Number(i.total||0),0));} const maxDay=Math.max(...days,1); revenueBars.innerHTML=days.map((value,index)=>`<i title="${value.toFixed(2)} ر.س" style="height:${Math.max(12,Math.round((value/maxDay)*100))}%"></i>`).join(''); } set('premiumAvgBooking',`${avgBooking.toFixed(2)} ر.س`); set('premiumOccupancy',`${occupancy}%`); set('premiumOccupancyBar',`${occupancy}%`); const bar=document.getElementById('premiumOccupancyBar'); if(bar)bar.style.width=`${occupancy}%`; set('premiumVacant',available); set('premiumBooked',occupied); set('premiumInvoiceTotal',`${invoiceTotal.toFixed(2)} ر.س`); set('premiumInvoiceCount',hotelInvoices.length); set('premiumLastInvoice',lastInvoice?.number||lastInvoice?.id||'—'); set('premiumGuestCount',guestCount); set('premiumActiveGuests',Object.values(customerMemory||{}).filter(c=>c&&c.name).length); set('premiumRatingsCount',ratingsCount); set('premiumOperationStatus',alerts.length?'يحتاج متابعة':'مستقر'); set('premiumDataUpdated',new Date().toLocaleTimeString());
 }
@@ -2834,6 +2840,9 @@ function openNewBookingModal(editRef) {
   document.getElementById('bookingAdults').value = sourceRoom?.adults || '1';
   document.getElementById('bookingChildren').value = sourceRoom?.children || '0';
   document.getElementById('bookingPaymentMethod').value = sourceRoom?.paymentMethod || 'نقدي';
+  document.getElementById('bookingPurpose').value = sourceRoom?.bookingPurpose || 'سياحة';
+  document.getElementById('bookingSource').value = sourceRoom?.bookingSource || 'الاستقبال';
+  document.getElementById('bookingCreatedByDisplay').innerText = sourceRoom?.bookingCreatedBy || sourceRoom?.staffName || currentUsername || 'المستخدم الحالي';
   document.getElementById('bookingNotes').value = sourceRoom?.bookingNotes || '';
   document.getElementById('bookingCarType').value = sourceRoom?.carType || '';
   document.getElementById('bookingCarPlate').value = sourceRoom?.carPlate || '';
@@ -2891,7 +2900,7 @@ function reviewNewBooking() {
   if(!guest) return alert('الرجاء إدخال اسم العميل قبل المراجعة.');
   if(!rooms.length) return alert('الرجاء اختيار غرفة واحدة على الأقل قبل المراجعة.');
   const box=document.getElementById('bookingReviewBox');
-  box.innerHTML=`<strong style="color:var(--accent-solid)">مراجعة الحجز</strong><br>👤 ${guest} — 📞 ${phone||'بدون جوال'}<br>🛏️ الغرف: ${rooms.join('، ')}<br>📅 ${checkIn} إلى ${checkOut} — ${nights} ليلة<br>💳 الدفع: ${payment}<br>💰 الإجمالي: <strong>${(rooms.length*nights*price).toFixed(2)} ر.س</strong>`;
+  box.innerHTML=`<strong style="color:var(--accent-solid)">مراجعة الحجز</strong><br>👤 ${guest} — 📞 ${phone||'بدون جوال'}<br>🛏️ الغرف: ${rooms.join('، ')}<br>📅 ${checkIn} إلى ${checkOut} — ${nights} ليلة<br>💳 الدفع: ${payment}<br>🎯 الغرض: ${document.getElementById('bookingPurpose').value}<br>📌 المصدر: ${document.getElementById('bookingSource').value}<br>👤 المنفذ: ${currentUsername||'المستخدم الحالي'}<br>💰 الإجمالي: <strong>${(rooms.length*nights*price).toFixed(2)} ر.س</strong>`;
   box.style.display='block'; document.getElementById('btnBkgReview').style.display='none'; document.getElementById('btnBkgSubmit').style.display='block';
 }
 
@@ -2914,6 +2923,8 @@ function executeNewBooking() {
   const adults = parseInt(document.getElementById('bookingAdults').value) || 1;
   const children = parseInt(document.getElementById('bookingChildren').value) || 0;
   const paymentMethod = document.getElementById('bookingPaymentMethod').value;
+  const bookingPurpose = document.getElementById('bookingPurpose').value;
+  const bookingSource = document.getElementById('bookingSource').value;
   const bookingNotes = document.getElementById('bookingNotes').value.trim();
   const carType = document.getElementById('bookingCarType').value.trim();
   const carPlate = document.getElementById('bookingCarPlate').value.trim();
@@ -2928,6 +2939,9 @@ function executeNewBooking() {
   if(!selectedIds.length) return alert('الرجاء اختيار غرفة واحدة على الأقل للحجز!');
   const bookingType = bookingTypeForCount(selectedIds.length);
   const rooms = allRooms[currentHotelId] || [];
+  const originalBookingRoom = editingRef ? (rooms.find(r=>r.bookingRef===editingRef)||{}) : {};
+  const bookingCreatedBy = editingRef ? (originalBookingRoom.bookingCreatedBy || originalBookingRoom.staffName || currentUsername || 'المستخدم الحالي') : (currentUsername || 'المستخدم الحالي');
+  const bookingUpdatedBy = currentUsername || 'المستخدم الحالي';
   const previousRooms = editingRef ? rooms.filter(r=>r.bookingRef===editingRef) : [];
   const invalid = selectedIds.some(id=>{const r=rooms.find(x=>x.id===id); return !r || (r.status!=='vacant' && r.bookingRef!==editingRef);});
   if(invalid) return alert('إحدى الغرف المحددة لم تعد متاحة. حدّث الصفحة وحاول مرة أخرى.');
@@ -2937,11 +2951,11 @@ function executeNewBooking() {
   const roomsListDetails=[]; let totalGrandAmount=0;
   selectedIds.forEach(roomId=>{
     const target=rooms.find(r=>r.id===roomId); if(!target) return;
-    Object.assign(target,{status:'occupied',guest,phone,guestId,nationality,email,adults,children,paymentMethod,bookingNotes,carType,carPlate,bookingType,bookingRef,nights,nightPrice,checkIn,checkOut,totalAmount:nights*nightPrice,staffName:currentUsername});
+    Object.assign(target,{status:'occupied',guest,phone,guestId,nationality,email,adults,children,paymentMethod,bookingNotes,carType,carPlate,bookingType,bookingRef,nights,nightPrice,checkIn,checkOut,totalAmount:nights*nightPrice,staffName:currentUsername,bookingCreatedBy,bookingUpdatedBy,bookingPurpose,bookingSource});
     roomsListDetails.push({id:target.id,type:target.type,nights,price:nightPrice}); totalGrandAmount += nights*nightPrice;
   });
   let unifiedInvoice = (allInvoices[currentHotelId]||[]).find(i=>i.bookingRef===bookingRef);
-  const invoiceData={bookingRef,room:roomsListDetails[0]?.id||'مجموعة',roomsList:roomsListDetails,guest,phone,guestId,nationality,email,adults,children,paymentMethod,bookingNotes,carType,carPlate,bookingType,nights,nightPrice,total:totalGrandAmount,date:checkIn,checkIn,checkOut,status:'confirmed',staffName:currentUsername};
+  const invoiceData={bookingRef,room:roomsListDetails[0]?.id||'مجموعة',roomsList:roomsListDetails,guest,phone,guestId,nationality,email,adults,children,paymentMethod,bookingNotes,carType,carPlate,bookingType,nights,nightPrice,bookingPurpose,bookingSource,total:totalGrandAmount,date:checkIn,checkIn,checkOut,status:'confirmed',staffName:currentUsername,bookingCreatedBy,bookingUpdatedBy};
   if(unifiedInvoice) Object.assign(unifiedInvoice,invoiceData); else { unifiedInvoice={id:`INV-${Math.floor(Math.random()*9000+1000)}`,...invoiceData}; allInvoices[currentHotelId].unshift(unifiedInvoice); }
   recordHoteraAudit(editingRef?'تعديل حجز':'إنشاء حجز',{bookingRef,guest,rooms:roomsListDetails.map(r=>r.id),total:totalGrandAmount,bookingType});
   saveData(); uploadDataToCloud(); closeNewBookingModal(); window.hoteraEditingBookingRef=null; render(); populateOfficialInvoiceModal(unifiedInvoice);
@@ -3110,14 +3124,14 @@ function executeRoomAction() {
     if(!name) return alert('أدخل اسم النزيل!');
     if(phone) customerMemory[phone] = { name };
     const bookingRef = generateBookingReference();
-    currentRoom.status = 'occupied'; currentRoom.guest = name; currentRoom.phone = phone; currentRoom.carType = carType; currentRoom.carPlate = carPlate; currentRoom.bookingType = bookingType; currentRoom.bookingRef = bookingRef; currentRoom.nights = 1; currentRoom.nightPrice = 200; currentRoom.totalAmount = 200; currentRoom.staffName = currentUsername;
+    currentRoom.status = 'occupied'; currentRoom.guest = name; currentRoom.phone = phone; currentRoom.carType = carType; currentRoom.carPlate = carPlate; currentRoom.bookingType = bookingType; currentRoom.bookingRef = bookingRef; currentRoom.nights = 1; currentRoom.nightPrice = 200; currentRoom.totalAmount = 200; currentRoom.staffName = currentUsername; currentRoom.bookingCreatedBy = currentUsername || 'المستخدم الحالي'; currentRoom.bookingUpdatedBy = currentUsername || 'المستخدم الحالي'; currentRoom.bookingPurpose = 'أخرى'; currentRoom.bookingSource = 'الاستقبال';
     
     const newInv = {
       id: `INV-${Math.floor(Math.random()*9000+1000)}`,
       bookingRef: bookingRef,
       room: currentRoom.id,
       roomsList: [{ id: currentRoom.id, type: currentRoom.type, nights: 1, price: 200 }],
-      guest: name, phone, carType, carPlate, bookingType, nights: 1, nightPrice: 200, total: 200,
+      guest: name, phone, carType, carPlate, bookingType, nights: 1, nightPrice: 200, bookingPurpose: 'أخرى', bookingSource: 'الاستقبال', bookingCreatedBy: currentUsername || 'المستخدم الحالي', bookingUpdatedBy: currentUsername || 'المستخدم الحالي', total: 200,
       date: new Date().toISOString().split('T')[0],
       staffName: currentUsername
     };
