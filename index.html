@@ -611,6 +611,7 @@ body.hotera-compact-mode .hotera-glass-panel,body.hotera-compact-mode .section-c
       <button type="button" class="hotera-settings-card" onclick="openHoteraWaitlistModal()"><b>⏳</b><span>قائمة انتظار الحجوزات<small>طلبات العملاء عند عدم التوفر</small></span></button>
       <button type="button" class="hotera-settings-card" onclick="openHoteraSourceReportModal()"><b>📈</b><span>تحليل مصادر الحجوزات<small>المصدر والغرض والأداء</small></span></button>
       <button type="button" class="hotera-settings-card" onclick="openHoteraQuickOperationsModal()"><b>⚡</b><span>التشغيل السريع<small>إجراءات الاستقبال اليومية</small></span></button>
+      <button type="button" class="hotera-settings-card" onclick="openHoteraFrontDeskModal()"><b>🛎️</b><span>الوصول والمغادرة<small>تسجيل دخول وخروج النزلاء</small></span></button>
       <button type="button" class="hotera-settings-card" onclick="showHoteraConnectionStatus()"><b>📡</b><span>حالة الاتصال<small>محلي / متصل وآخر مزامنة</small></span></button>
       <button type="button" class="hotera-settings-card" onclick="openHoteraPermissionsSummary()"><b>🔐</b><span>صلاحياتي الحالية<small>الوصول المتاح لهذا الحساب</small></span></button>
       <button type="button" class="hotera-settings-card" onclick="toggleHoteraCompactMode()"><b>📱</b><span>وضع الجوال المختصر<small>واجهة أسرع للشاشات الصغيرة</small></span></button>
@@ -1775,6 +1776,38 @@ function openHoteraSourceReportModal(){toggleTopSettingsPanel(false);document.ge
 function closeHoteraSourceReportModal(){document.getElementById('hoteraSourceReportModal')?.classList.remove('open')}
 function renderHoteraSourceReport(){const el=document.getElementById('hoteraSourceReportContent');if(!el)return;const invoices=Array.isArray(allInvoices?.[currentHotelId])?allInvoices[currentHotelId]:[];const source={},purpose={};invoices.forEach(i=>{const a=i.bookingSource||'غير محدد',b=i.bookingPurpose||'غير محدد';source[a]=(source[a]||0)+1;purpose[b]=(purpose[b]||0)+1});const rows=Object.entries(source).sort((a,b)=>b[1]-a[1]);const purposes=Object.entries(purpose).sort((a,b)=>b[1]-a[1]);el.innerHTML=`<div class="hotera-report-summary"><div><b>${invoices.length}</b><small>إجمالي الفواتير</small></div><div><b>${rows.length}</b><small>مصادر مستخدمة</small></div><div><b>${purposes.length}</b><small>أغراض زيارة</small></div></div><table class="hotera-source-table"><thead><tr><th>المصدر</th><th>عدد الحجوزات/الفواتير</th><th>النسبة</th></tr></thead><tbody>${rows.map(([k,v])=>`<tr><td>${k}</td><td>${v}</td><td>${invoices.length?Math.round(v/invoices.length*100):0}%</td></tr>`).join('')||'<tr><td colspan="3">لا توجد بيانات بعد</td></tr>'}</tbody></table><h4 style="color:#fbbf24;font-size:12px;margin:14px 0 6px">أغراض الزيارة</h4><table class="hotera-source-table"><tbody>${purposes.map(([k,v])=>`<tr><td>${k}</td><td>${v}</td><td>${invoices.length?Math.round(v/invoices.length*100):0}%</td></tr>`).join('')||'<tr><td colspan="3">لا توجد بيانات بعد</td></tr>'}</tbody></table>`}
 
+
+
+/* Front desk operations: additive metadata only. Existing booking fields and status logic remain intact. */
+function hoteraTodayKey(){return new Date().toISOString().slice(0,10)}
+function hoteraFrontDeskStatus(room){
+  if(!room) return 'unknown';
+  if(room.checkInStatus) return room.checkInStatus;
+  if(room.status==='occupied') return String(room.checkIn||'')>hoteraTodayKey()?'scheduled':'checked-in';
+  if(room.lastCheckoutAt) return 'checked-out';
+  return room.status||'vacant';
+}
+function openHoteraFrontDeskModal(){toggleTopSettingsPanel(false);document.getElementById('hoteraFrontDeskModal')?.classList.add('open');renderHoteraFrontDesk();}
+function closeHoteraFrontDeskModal(){document.getElementById('hoteraFrontDeskModal')?.classList.remove('open')}
+function hoteraFrontDeskAction(roomId,action){
+  const room=(allRooms[currentHotelId]||[]).find(r=>String(r.id)===String(roomId));
+  if(!room)return;
+  if(action==='checkin'){
+    if(!room.guest||!room.bookingRef)return alert('لا توجد بيانات حجز مكتملة لهذه الغرفة.');
+    room.checkInStatus='checked-in';room.checkedInAt=room.checkedInAt||new Date().toISOString();room.checkedInBy=room.checkedInBy||currentUsername||'المستخدم الحالي';
+    recordHoteraAudit('تسجيل وصول',{roomId:room.id,guest:room.guest,bookingRef:room.bookingRef});
+  }else if(action==='checkout'){
+    if(room.status!=='occupied')return alert('الغرفة ليست مشغولة حاليًا.');
+    completeRoomCheckout(room);room.checkOutStatus='checked-out';
+  }
+  saveData();uploadDataToCloud();renderHoteraFrontDesk();render();
+}
+function renderHoteraFrontDesk(){
+  const el=document.getElementById('hoteraFrontDeskList');if(!el)return;
+  const rooms=Array.isArray(allRooms?.[currentHotelId])?allRooms[currentHotelId]:[],today=hoteraTodayKey();
+  const rows=rooms.filter(r=>r&&r.guest&&r.bookingRef&&r.checkIn&&r.checkOut).sort((a,b)=>String(a.checkIn).localeCompare(String(b.checkIn)));
+  el.innerHTML=rows.length?rows.map(r=>{const st=hoteraFrontDeskStatus(r),isScheduled=st==='scheduled';const label=isScheduled?'موعد وصول قادم':st==='checked-in'?'تم تسجيل الوصول':st==='checked-out'?'تم تسجيل المغادرة':'بحاجة متابعة';const color=isScheduled?'#fbbf24':st==='checked-in'?'#34d399':'#94a3b8';return `<div class=\"hotera-frontdesk-row\"><span><b>غرفة ${r.id} · ${r.guest}</b><br><small>${r.bookingRef} · ${r.checkIn} → ${r.checkOut} · <i style=\"color:${color};font-style:normal\">${label}</i></small></span><span style=\"display:flex;gap:4px\">${isScheduled?`<button type=\"button\" class=\"btn btn-blue\" style=\"margin:0;padding:5px 7px\" onclick=\"hoteraFrontDeskAction('${r.id}','checkin')\">وصول</button>`:''}${!isScheduled&&r.status==='occupied'?`<button type=\"button\" class=\"btn btn-gold\" style=\"margin:0;padding:5px 7px\" onclick=\"hoteraFrontDeskAction('${r.id}','checkout')\">مغادرة</button>`:''}</span></div>`}).join(''):'<div class=\"hotera-audit-empty\">لا توجد حجوزات مرتبطة حاليًا.</div>';
+}
 
 function openHoteraQuickOperationsModal(){toggleTopSettingsPanel(false);document.getElementById('hoteraQuickOperationsModal')?.classList.add('open')}
 function closeHoteraQuickOperationsModal(){document.getElementById('hoteraQuickOperationsModal')?.classList.remove('open')}
@@ -3133,7 +3166,7 @@ function executeNewBooking() {
   const roomsListDetails=[]; let totalGrandAmount=0;
   selectedIds.forEach(roomId=>{
     const target=rooms.find(r=>r.id===roomId); if(!target) return;
-    Object.assign(target,{status:'occupied',guest,phone,guestId,nationality,email,adults,children,paymentMethod,bookingNotes,carType,carPlate,bookingType,bookingRef,nights,nightPrice,checkIn,checkOut,totalAmount:nights*nightPrice,staffName:currentUsername,bookingCreatedBy,bookingUpdatedBy,bookingPurpose,bookingSource});
+    const priorCheckInStatus=target.checkInStatus; Object.assign(target,{status:'occupied',guest,phone,guestId,nationality,email,adults,children,paymentMethod,bookingNotes,carType,carPlate,bookingType,bookingRef,nights,nightPrice,checkIn,checkOut,totalAmount:nights*nightPrice,staffName:currentUsername,bookingCreatedBy,bookingUpdatedBy,bookingPurpose,bookingSource,checkInStatus:priorCheckInStatus||(checkIn>new Date().toISOString().slice(0,10)?'scheduled':'checked-in'),checkedInAt:target.checkedInAt||((checkIn<=new Date().toISOString().slice(0,10))?new Date().toISOString():''),checkedInBy:target.checkedInBy||((checkIn<=new Date().toISOString().slice(0,10))?(currentUsername||'المستخدم الحالي'):'')});
     roomsListDetails.push({id:target.id,type:target.type,nights,price:nightPrice}); totalGrandAmount += nights*nightPrice;
   });
   if(!allInvoices || typeof allInvoices!=='object') allInvoices={};
@@ -3284,7 +3317,7 @@ function completeRoomCheckout(room) {
   const checkoutDate=new Date().toISOString().split('T')[0];
   const previousGuest=room.guest||'غير معروف'; const bookingRef=room.bookingRef||'';
   recordHoteraAudit('تسجيل مغادرة', {roomId:room.id, guest:previousGuest, bookingRef});
-  room.lastCheckoutAt=new Date().toISOString(); room.lastGuest=previousGuest; room.status='cleaning'; room.guest=''; room.phone=''; room.carType=''; room.carPlate=''; room.bookingRef=''; room.checkOut=checkoutDate;
+  room.lastCheckoutAt=new Date().toISOString(); room.lastGuest=previousGuest; room.checkInStatus='checked-out'; room.checkOutStatus='checked-out'; room.checkedOutAt=room.lastCheckoutAt; room.checkedOutBy=currentUsername||'المستخدم الحالي'; room.status='cleaning'; room.guest=''; room.phone=''; room.carType=''; room.carPlate=''; room.bookingRef=''; room.checkOut=checkoutDate;
   alert(`✅ تم تسجيل مغادرة ${previousGuest} من الغرفة ${room.id}.\nتم تحويل الغرفة إلى حالة «خروج/تحتاج تنظيف» تلقائياً.`);
 }
 function downloadHoteraBackup(){
@@ -3309,7 +3342,7 @@ function executeRoomAction() {
     if(!name) return alert('أدخل اسم النزيل!');
     if(phone) customerMemory[phone] = { name };
     const bookingRef = generateBookingReference();
-    currentRoom.status = 'occupied'; currentRoom.guest = name; currentRoom.phone = phone; currentRoom.carType = carType; currentRoom.carPlate = carPlate; currentRoom.bookingType = bookingType; currentRoom.bookingRef = bookingRef; currentRoom.nights = 1; currentRoom.nightPrice = 200; currentRoom.totalAmount = 200; currentRoom.staffName = currentUsername; currentRoom.bookingCreatedBy = currentUsername || 'المستخدم الحالي'; currentRoom.bookingUpdatedBy = currentUsername || 'المستخدم الحالي'; currentRoom.bookingPurpose = 'أخرى'; currentRoom.bookingSource = 'الاستقبال';
+    currentRoom.status = 'occupied'; currentRoom.guest = name; currentRoom.phone = phone; currentRoom.carType = carType; currentRoom.carPlate = carPlate; currentRoom.bookingType = bookingType; currentRoom.bookingRef = bookingRef; currentRoom.checkInStatus = 'checked-in'; currentRoom.checkedInAt = new Date().toISOString(); currentRoom.checkedInBy = currentUsername || 'المستخدم الحالي'; currentRoom.nights = 1; currentRoom.nightPrice = 200; currentRoom.totalAmount = 200; currentRoom.staffName = currentUsername; currentRoom.bookingCreatedBy = currentUsername || 'المستخدم الحالي'; currentRoom.bookingUpdatedBy = currentUsername || 'المستخدم الحالي'; currentRoom.bookingPurpose = 'أخرى'; currentRoom.bookingSource = 'الاستقبال';
     
     const newInv = {
       id: `INV-${Math.floor(Math.random()*9000+1000)}`,
@@ -3425,6 +3458,8 @@ const secureSyncInput=document.getElementById('secureSyncServerUrlInput');if(sec
   <div class="hotera-audit-box"><div class="hotera-audit-head"><h3>🧾 سجل النشاط والتدقيق</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraAuditLogModal()">إغلاق</button></div><input id="hoteraAuditFilter" class="hotera-audit-filter" placeholder="ابحث في العمليات أو المستخدمين..." oninput="renderHoteraAuditLog()"><div id="hoteraAuditLogList"></div></div>
 </div>
 
+
+<div id="hoteraFrontDeskModal" class="hotera-ops-modal" role="dialog" aria-modal="true" aria-label="الوصول والمغادرة HOTERA"><div class="hotera-ops-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3>🛎️ الوصول والمغادرة</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraFrontDeskModal()">إغلاق</button></div><p style="font-size:10px;color:#94a3b8;line-height:1.7">لوحة تشغيلية إضافية؛ لا تحذف أو تستبدل الحجز أو الفاتورة. يتم حفظ وقت المنفذ فقط داخل بيانات الغرفة.</p><div id="hoteraFrontDeskList" class="hotera-ops-list"></div></div></div>
 
 <div id="hoteraCalendarModal" class="hotera-calendar-modal" role="dialog" aria-modal="true" aria-label="تقويم حجوزات HOTERA"><div class="hotera-calendar-box"><div class="hotera-calendar-head"><h3>🗓️ تقويم الحجوزات</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraCalendarModal()">إغلاق</button></div><div class="hotera-calendar-toolbar"><button type="button" onclick="hoteraCalendarShift(-1)">‹ السابق</button><span id="hoteraCalendarMonth" class="hotera-calendar-month"></span><button type="button" onclick="hoteraCalendarShift(1)">التالي ›</button><button type="button" onclick="hoteraCalendarToday()">اليوم</button></div><div id="hoteraCalendarGrid" class="hotera-calendar-grid"></div><div class="hotera-calendar-side"><h4>الحجوزات القادمة</h4><div id="hoteraCalendarUpcoming" class="hotera-calendar-list"></div></div></div></div>
 
