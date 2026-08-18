@@ -612,6 +612,8 @@ body.hotera-compact-mode .hotera-glass-panel,body.hotera-compact-mode .section-c
       <button type="button" class="hotera-settings-card" onclick="openHoteraSourceReportModal()"><b>📈</b><span>تحليل مصادر الحجوزات<small>المصدر والغرض والأداء</small></span></button>
       <button type="button" class="hotera-settings-card" onclick="openHoteraQuickOperationsModal()"><b>⚡</b><span>التشغيل السريع<small>إجراءات الاستقبال اليومية</small></span></button>
       <button type="button" class="hotera-settings-card" onclick="openHoteraFrontDeskModal()"><b>🛎️</b><span>الوصول والمغادرة<small>تسجيل دخول وخروج النزلاء</small></span></button>
+      <button type="button" class="hotera-settings-card" onclick="openHoteraPaymentsServicesModal()"><b>💳</b><span>المدفوعات والخدمات<small>عربون، أقساط، خدمات إضافية</small></span></button>
+      <button type="button" class="hotera-settings-card" onclick="openHoteraFieldOperationsModal()"><b>🧹</b><span>التشغيل الميداني<small>هاوس كيبنج وصيانة وقائية</small></span></button>
       <button type="button" class="hotera-settings-card" onclick="showHoteraConnectionStatus()"><b>📡</b><span>حالة الاتصال<small>محلي / متصل وآخر مزامنة</small></span></button>
       <button type="button" class="hotera-settings-card" onclick="openHoteraPermissionsSummary()"><b>🔐</b><span>صلاحياتي الحالية<small>الوصول المتاح لهذا الحساب</small></span></button>
       <button type="button" class="hotera-settings-card" onclick="toggleHoteraCompactMode()"><b>📱</b><span>وضع الجوال المختصر<small>واجهة أسرع للشاشات الصغيرة</small></span></button>
@@ -1021,7 +1023,7 @@ body.hotera-compact-mode .hotera-glass-panel,body.hotera-compact-mode .section-c
       <div style="display:flex; justify-content:space-between; align-items:center; background:#fffbeb; padding:10px; border-radius:8px; border:1px solid #f59e0b; margin-top:8px;">
         <span style="font-size:11px; color:#92400e; font-weight:bold;" id="invLabelGrandTotal">الإجمالي النهائي:</span>
         <strong id="invGrandTotal" style="color:#b45309; font-size:15px; font-weight:900;">0.00 ر.س</strong>
-      </div><div class="invoice-footer-note">فاتورة صادرة من نظام HOTERA لإدارة المنشآت الفندقية.<br>نشكركم لاختياركم الفندق ونتمنى لكم إقامة سعيدة.</div>
+      </div><div id="hoteraInvoiceExpandedSummary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:7px;font-size:10px;color:#1e293b"><div style="background:#eff6ff;padding:7px;border-radius:6px"><small>الخدمات الإضافية</small><br><strong id="invServicesTotal">0.00 ر.س</strong></div><div style="background:#ecfdf5;padding:7px;border-radius:6px"><small>المدفوع</small><br><strong id="invPaidTotal">0.00 ر.س</strong></div><div style="background:#fff7ed;padding:7px;border-radius:6px"><small>المتبقي</small><br><strong id="invRemainingTotal">0.00 ر.س</strong></div></div><div id="hoteraInvoiceServicesList" style="font-size:9px;color:#64748b;margin-top:6px"></div><div class="invoice-footer-note">فاتورة صادرة من نظام HOTERA لإدارة المنشآت الفندقية.<br>نشكركم لاختياركم الفندق ونتمنى لكم إقامة سعيدة.</div>
     </div>
     <div style="display:flex; gap:6px; margin-top:10px;">
       <button class="btn btn-gold" style="flex:1; margin-top:0;" onclick="window.print()" id="btnPrintInv">طباعة 🖨️</button>
@@ -1402,6 +1404,9 @@ function buildCloudPayload() {
     hotels: hotelsList,
     rooms: allRooms,
     invoices: allInvoices,
+    invoicePayments: hoteraInvoicePayments,
+    invoiceServices: hoteraInvoiceServices,
+    preventiveMaintenance: Object.fromEntries((Array.isArray(hotelsList)?hotelsList:[]).map(h=>[h.id, JSON.parse(localStorage.getItem(`hotera_preventive_maintenance_${h.id}`)||'[]')])),
     cancelledBookings: cancelledBookingsData,
     refundedInvoices: refundedInvoicesData,
     transactions: allTransactions,
@@ -1435,6 +1440,9 @@ function applyCloudPayload(cloudData) {
   }
   if (cloudData.rooms) allRooms = cloudData.rooms;
   if (cloudData.invoices) allInvoices = cloudData.invoices;
+  if (cloudData.invoicePayments) hoteraInvoicePayments = cloudData.invoicePayments;
+  if (cloudData.invoiceServices) hoteraInvoiceServices = cloudData.invoiceServices;
+  if (cloudData.preventiveMaintenance && typeof cloudData.preventiveMaintenance==='object') Object.entries(cloudData.preventiveMaintenance).forEach(([hotelId,list])=>{if(Array.isArray(list))localStorage.setItem(`hotera_preventive_maintenance_${hotelId}`,JSON.stringify(list));});
   if (cloudData.cancelledBookings) cancelledBookingsData = cloudData.cancelledBookings;
   if (cloudData.refundedInvoices) refundedInvoicesData = cloudData.refundedInvoices;
   if (cloudData.transactions) allTransactions = cloudData.transactions;
@@ -1778,6 +1786,26 @@ function renderHoteraSourceReport(){const el=document.getElementById('hoteraSour
 
 
 
+
+
+function hoteraPreventiveKey(){return `hotera_preventive_maintenance_${currentHotelId||'default'}`}
+function hoteraReadPreventive(){try{return JSON.parse(localStorage.getItem(hoteraPreventiveKey())||'[]')}catch(e){return[]}}
+function hoteraWritePreventive(list){localStorage.setItem(hoteraPreventiveKey(),JSON.stringify(list.slice(0,500)))}
+function openHoteraFieldOperationsModal(){toggleTopSettingsPanel(false);document.getElementById('hoteraFieldOperationsModal')?.classList.add('open');renderHoteraFieldOperations()}
+function closeHoteraFieldOperationsModal(){document.getElementById('hoteraFieldOperationsModal')?.classList.remove('open')}
+function hoteraHousekeepingAction(roomId){const room=(allRooms[currentHotelId]||[]).find(r=>String(r.id)===String(roomId));if(!room)return;if(!['cleaning','maintenance'].includes(room.status))return;if(room.status==='maintenance')return alert('أغلق بلاغ الصيانة أولاً قبل إعادة الغرفة للخدمة.');room.status='vacant';room.housekeepingStatus='clean';room.housekeepingCompletedBy=currentUsername||'المستخدم الحالي';room.housekeepingCompletedAt=new Date().toISOString();recordHoteraAudit('إكمال تنظيف غرفة',{roomId:room.id});saveData();uploadDataToCloud();renderHoteraFieldOperations();render()}
+function addHoteraPreventiveTask(){const room=(document.getElementById('hoteraPreventiveRoom')?.value||'').trim(),date=document.getElementById('hoteraPreventiveDate')?.value||'',task=(document.getElementById('hoteraPreventiveTask')?.value||'').trim();if(!room||!date||!task)return alert('أدخل الغرفة أو المعدة والتاريخ ووصف الصيانة.');const list=hoteraReadPreventive();list.unshift({id:`PM-${Date.now()}`,room,date,task,status:'مجدولة',createdBy:currentUsername||'المستخدم الحالي',createdAt:new Date().toISOString()});hoteraWritePreventive(list);recordHoteraAudit('جدولة صيانة وقائية',{room,date,task});['hoteraPreventiveRoom','hoteraPreventiveDate','hoteraPreventiveTask'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});renderHoteraFieldOperations()}
+function completeHoteraPreventiveTask(id){const list=hoteraReadPreventive(),item=list.find(x=>x.id===id);if(!item)return;item.status='مكتملة';item.completedBy=currentUsername||'المستخدم الحالي';item.completedAt=new Date().toISOString();hoteraWritePreventive(list);recordHoteraAudit('إكمال صيانة وقائية',{id:item.id,room:item.room});renderHoteraFieldOperations()}
+function renderHoteraFieldOperations(){const rooms=Array.isArray(allRooms?.[currentHotelId])?allRooms[currentHotelId]:[],tasks=rooms.filter(r=>['cleaning','maintenance'].includes(r.status)),pm=hoteraReadPreventive(),summary=document.getElementById('hoteraFieldOpsSummary'),house=document.getElementById('hoteraHousekeepingTasks'),list=document.getElementById('hoteraPreventiveList');if(summary)summary.innerHTML=`<div><b>${tasks.filter(r=>r.status==='cleaning').length}</b><small>تحتاج تنظيف</small></div><div><b>${tasks.filter(r=>r.status==='maintenance').length}</b><small>تحت الصيانة</small></div><div><b>${pm.filter(x=>x.status!=='مكتملة').length}</b><small>صيانة مجدولة</small></div>`;if(house)house.innerHTML=tasks.length?tasks.map(r=>`<div class="hotera-ops-row"><span><b>غرفة ${r.id}</b><br><small>${r.status==='cleaning'?'تحتاج تنظيفًا':'بلاغ صيانة'} · ${r.maintIssue||''}</small></span>${r.status==='cleaning'?`<button type="button" class="btn btn-green" style="margin:0;padding:5px 7px" onclick="hoteraHousekeepingAction('${r.id}')">تم التنظيف</button>`:'<span style="color:#fca5a5;font-size:9px">تحتاج فني</span>'}</div>`).join(''):'<div class="hotera-audit-empty">لا توجد مهام غرف مفتوحة.</div>';if(list)list.innerHTML=pm.length?pm.slice(0,30).map(x=>`<div class="hotera-ops-row"><span><b>${x.room}</b> · ${x.task}<br><small>${x.date} · ${x.status} · ${x.createdBy}</small></span>${x.status==='مكتملة'?'<span style="color:#34d399;font-size:9px">مكتملة</span>':`<button type="button" class="btn btn-blue" style="margin:0;padding:5px 7px" onclick="completeHoteraPreventiveTask('${x.id}')">إتمام</button>`}</div>`).join(''):'<div class="hotera-audit-empty">لا توجد جداول صيانة وقائية.</div>'}
+
+function hoteraInvoiceRecords(){return Array.isArray(allInvoices?.[currentHotelId])?allInvoices[currentHotelId]:[]}
+function selectedHoteraInvoice(){const id=document.getElementById('hoteraPaymentInvoice')?.value;return hoteraInvoiceRecords().find(i=>String(i.id||i.bookingRef)===String(id))}
+function openHoteraPaymentsServicesModal(){toggleTopSettingsPanel(false);const m=document.getElementById('hoteraPaymentsServicesModal');if(!m)return;m.classList.add('open');const sel=document.getElementById('hoteraPaymentInvoice');const rows=hoteraInvoiceRecords();sel.innerHTML=rows.length?rows.map(i=>`<option value="${i.id||i.bookingRef}">${i.id||'فاتورة'} · ${i.bookingRef||'—'} · ${i.guest||'نزيل'}</option>`).join(''):'<option value="">لا توجد فواتير</option>';sel.onchange=renderHoteraPaymentSummary;renderHoteraPaymentSummary();}
+function closeHoteraPaymentsServicesModal(){document.getElementById('hoteraPaymentsServicesModal')?.classList.remove('open')}
+function addHoteraInvoicePayment(){const inv=selectedHoteraInvoice(),amount=Number(document.getElementById('hoteraPaymentAmount')?.value||0),method=document.getElementById('hoteraPaymentMethod')?.value||'نقدي';if(!inv||amount<=0)return alert('اختر فاتورة وأدخل مبلغًا صحيحًا.');if(!hoteraInvoicePayments[currentHotelId])hoteraInvoicePayments[currentHotelId]=[];hoteraInvoicePayments[currentHotelId].unshift({id:`PAY-${Date.now()}`,invoiceId:inv.id,bookingRef:inv.bookingRef||'',amount,method,staff:currentUsername||'المستخدم الحالي',date:new Date().toISOString()});recordHoteraAudit('إضافة دفعة',{invoiceId:inv.id,amount,method});document.getElementById('hoteraPaymentAmount').value='';saveData();uploadDataToCloud();renderHoteraPaymentSummary();}
+function addHoteraInvoiceService(){const inv=selectedHoteraInvoice(),name=(document.getElementById('hoteraServiceName')?.value||'').trim(),amount=Number(document.getElementById('hoteraServiceAmount')?.value||0);if(!inv||!name||amount<=0)return alert('اختر فاتورة وأدخل اسم الخدمة والمبلغ.');if(!hoteraInvoiceServices[currentHotelId])hoteraInvoiceServices[currentHotelId]=[];hoteraInvoiceServices[currentHotelId].unshift({id:`SVC-${Date.now()}`,invoiceId:inv.id,bookingRef:inv.bookingRef||'',name,amount,staff:currentUsername||'المستخدم الحالي',date:new Date().toISOString()});recordHoteraAudit('إضافة خدمة إضافية',{invoiceId:inv.id,name,amount});document.getElementById('hoteraServiceName').value='';document.getElementById('hoteraServiceAmount').value='';saveData();uploadDataToCloud();renderHoteraPaymentSummary();}
+function renderHoteraPaymentSummary(){const el=document.getElementById('hoteraPaymentSummary'),inv=selectedHoteraInvoice();if(!el||!inv)return;const ps=(hoteraInvoicePayments[currentHotelId]||[]).filter(x=>x.invoiceId===inv.id||x.bookingRef===inv.bookingRef),ss=(hoteraInvoiceServices[currentHotelId]||[]).filter(x=>x.invoiceId===inv.id||x.bookingRef===inv.bookingRef),paid=ps.reduce((n,x)=>n+Number(x.amount||0),0),services=ss.reduce((n,x)=>n+Number(x.amount||0),0),total=Number(inv.total||0)+services;el.innerHTML=`<div class="hotera-audit-row"><span>الفاتورة</span><span>${inv.id||'—'}</span><span>الإجمالي الأساسي</span><span>${Number(inv.total||0).toFixed(2)} ر.س</span></div><div class="hotera-audit-row"><span>الخدمات</span><span>${services.toFixed(2)} ر.س</span><span>المدفوع</span><span>${paid.toFixed(2)} ر.س</span></div><div class="hotera-audit-row" style="color:#fbbf24"><span>المتبقي</span><span>${Math.max(0,total-paid).toFixed(2)} ر.س</span><span>عدد الدفعات</span><span>${ps.length}</span></div>${ss.map(x=>`<div class="hotera-audit-empty">خدمة: ${x.name} · ${Number(x.amount).toFixed(2)} ر.س</div>`).join('')}`}
+
 /* Front desk operations: additive metadata only. Existing booking fields and status logic remain intact. */
 function hoteraTodayKey(){return new Date().toISOString().slice(0,10)}
 function hoteraFrontDeskStatus(room){
@@ -1861,6 +1889,26 @@ function toggleLanguage() {
   applyLanguage();
 }
 
+
+const hoteraNewUiTranslations={
+ ar:{payCard:'المدفوعات والخدمات',paySmall:'عربون، أقساط، خدمات إضافية',fieldCard:'التشغيل الميداني',fieldSmall:'هاوس كيبنج وصيانة وقائية',payTitle:'💳 المدفوعات والخدمات الإضافية',fieldTitle:'🧹 التشغيل الميداني',services:'الخدمات الإضافية',paid:'المدفوع',remaining:'المتبقي',close:'إغلاق'},
+ en:{payCard:'Payments & Services',paySmall:'Deposits, installments, extras',fieldCard:'Field Operations',fieldSmall:'Housekeeping & preventive maintenance',payTitle:'💳 Payments & Additional Services',fieldTitle:'🧹 Field Operations',services:'Additional services',paid:'Paid',remaining:'Remaining',close:'Close'},
+ tr:{payCard:'Ödemeler ve Hizmetler',paySmall:'Kapora, taksitler, ek hizmetler',fieldCard:'Saha Operasyonları',fieldSmall:'Kat hizmetleri ve önleyici bakım',payTitle:'💳 Ödemeler ve Ek Hizmetler',fieldTitle:'🧹 Saha Operasyonları',services:'Ek hizmetler',paid:'Ödenen',remaining:'Kalan',close:'Kapat'},
+ fr:{payCard:'Paiements et services',paySmall:'Acompte, échéances, extras',fieldCard:'Opérations terrain',fieldSmall:'Housekeeping et maintenance préventive',payTitle:'💳 Paiements et services supplémentaires',fieldTitle:'🧹 Opérations terrain',services:'Services supplémentaires',paid:'Payé',remaining:'Reste à payer',close:'Fermer'},
+ es:{payCard:'Pagos y servicios',paySmall:'Anticipos, cuotas y extras',fieldCard:'Operaciones de campo',fieldSmall:'Limpieza y mantenimiento preventivo',payTitle:'💳 Pagos y servicios adicionales',fieldTitle:'🧹 Operaciones de campo',services:'Servicios adicionales',paid:'Pagado',remaining:'Pendiente',close:'Cerrar'},
+ de:{payCard:'Zahlungen und Services',paySmall:'Anzahlung, Raten, Extras',fieldCard:'Betrieb vor Ort',fieldSmall:'Housekeeping und vorbeugende Wartung',payTitle:'💳 Zahlungen und Zusatzleistungen',fieldTitle:'🧹 Betrieb vor Ort',services:'Zusatzleistungen',paid:'Bezahlt',remaining:'Offen',close:'Schließen'},
+ ur:{payCard:'ادائیگیاں اور خدمات',paySmall:'ایڈوانس، اقساط، اضافی خدمات',fieldCard:'فیلڈ آپریشنز',fieldSmall:'ہاؤس کیپنگ اور احتیاطی دیکھ بھال',payTitle:'💳 ادائیگیاں اور اضافی خدمات',fieldTitle:'🧹 فیلڈ آپریشنز',services:'اضافی خدمات',paid:'ادا شدہ',remaining:'باقی',close:'بند کریں'},
+ hi:{payCard:'भुगतान और सेवाएँ',paySmall:'अग्रिम, किस्तें, अतिरिक्त सेवाएँ',fieldCard:'फील्ड संचालन',fieldSmall:'हाउसकीपिंग और निवारक रखरखाव',payTitle:'💳 भुगतान और अतिरिक्त सेवाएँ',fieldTitle:'🧹 फील्ड संचालन',services:'अतिरिक्त सेवाएँ',paid:'भुगतान किया गया',remaining:'शेष',close:'बंद करें'},
+ id:{payCard:'Pembayaran & Layanan',paySmall:'Uang muka, cicilan, layanan tambahan',fieldCard:'Operasional Lapangan',fieldSmall:'Housekeeping & pemeliharaan preventif',payTitle:'💳 Pembayaran & Layanan Tambahan',fieldTitle:'🧹 Operasional Lapangan',services:'Layanan tambahan',paid:'Terbayar',remaining:'Sisa',close:'Tutup'},
+ ms:{payCard:'Bayaran & Perkhidmatan',paySmall:'Deposit, ansuran, perkhidmatan tambahan',fieldCard:'Operasi Lapangan',fieldSmall:'Housekeeping & penyelenggaraan pencegahan',payTitle:'💳 Bayaran & Perkhidmatan Tambahan',fieldTitle:'🧹 Operasi Lapangan',services:'Perkhidmatan tambahan',paid:'Dibayar',remaining:'Baki',close:'Tutup'},
+ ru:{payCard:'Платежи и услуги',paySmall:'Депозит, рассрочка, дополнительные услуги',fieldCard:'Операции на месте',fieldSmall:'Уборка и профилактическое обслуживание',payTitle:'💳 Платежи и дополнительные услуги',fieldTitle:'🧹 Операции на месте',services:'Дополнительные услуги',paid:'Оплачено',remaining:'Остаток',close:'Закрыть'},
+ zh:{payCard:'付款与服务',paySmall:'定金、分期和额外服务',fieldCard:'现场运营',fieldSmall:'客房服务与预防性维护',payTitle:'💳 付款与附加服务',fieldTitle:'🧹 现场运营',services:'附加服务',paid:'已支付',remaining:'待支付',close:'关闭'},
+ ja:{payCard:'支払いとサービス',paySmall:'前金、分割払い、追加サービス',fieldCard:'現場運用',fieldSmall:'ハウスキーピングと予防保守',payTitle:'💳 支払いと追加サービス',fieldTitle:'🧹 現場運用',services:'追加サービス',paid:'支払済み',remaining:'残額',close:'閉じる'},
+ ko:{payCard:'결제 및 서비스',paySmall:'보증금, 할부, 추가 서비스',fieldCard:'현장 운영',fieldSmall:'하우스키핑 및 예방 정비',payTitle:'💳 결제 및 추가 서비스',fieldTitle:'🧹 현장 운영',services:'추가 서비스',paid:'결제됨',remaining:'잔액',close:'닫기'},
+ pt:{payCard:'Pagamentos e serviços',paySmall:'Entrada, parcelas e extras',fieldCard:'Operações de campo',fieldSmall:'Limpeza e manutenção preventiva',payTitle:'💳 Pagamentos e serviços adicionais',fieldTitle:'🧹 Operações de campo',services:'Serviços adicionais',paid:'Pago',remaining:'Restante',close:'Fechar'}
+};
+function applyHoteraNewUiTranslations(){const t=hoteraNewUiTranslations[currentLang]||hoteraNewUiTranslations.en;const set=(q,v)=>{const e=document.querySelector(q);if(e)e.innerText=v};const card=(q,title,small)=>{const e=document.querySelector(q);if(e){const sp=e.querySelector('span'),sm=e.querySelector('small');if(sp)sp.childNodes[0].textContent=title;if(sm)sm.innerText=small}};card('[onclick="openHoteraPaymentsServicesModal()"]',t.payCard,t.paySmall);card('[onclick="openHoteraFieldOperationsModal()"]',t.fieldCard,t.fieldSmall);set('#hoteraPaymentsServicesModal h3',t.payTitle);set('#hoteraFieldOperationsModal h3',t.fieldTitle);set('#invServicesTotal',document.getElementById('invServicesTotal')?.innerText||'0.00');set('#invPaidTotal',document.getElementById('invPaidTotal')?.innerText||'0.00');set('#invRemainingTotal',document.getElementById('invRemainingTotal')?.innerText||'0.00');['#hoteraPaymentsServicesModal .hotera-settings-close','#hoteraFieldOperationsModal .hotera-settings-close'].forEach(q=>set(q,t.close));const labels=document.querySelectorAll('#hoteraInvoiceExpandedSummary small');if(labels[0])labels[0].innerText=t.services;if(labels[1])labels[1].innerText=t.paid;if(labels[2])labels[2].innerText=t.remaining}
+
 function applyLanguage() {
   const root = document.getElementById('htmlRoot');
   root.setAttribute('dir', hoteraLanguages.find(l=>l.code===currentLang)?.dir || (currentLang === 'ar' ? 'rtl' : 'ltr'));
@@ -1916,6 +1964,7 @@ function applyLanguage() {
   document.getElementById('chipAbout').innerText = t.chipAbout;
   document.getElementById('chipSuper').innerText = t.chipSuper;
   togglePinCodeField();
+  applyHoteraNewUiTranslations();
 }
 
 function togglePasswordVisibility(inputId, btn) {
@@ -1938,6 +1987,8 @@ let currentCompanyId = null;
 let companyVisibleHotelIds = [];
 let allRooms = JSON.parse(localStorage.getItem('hotera_all_rooms')) || {};
 let allInvoices = JSON.parse(localStorage.getItem('hotera_all_invoices')) || {};
+let hoteraInvoicePayments = JSON.parse(localStorage.getItem('hotera_invoice_payments')) || {};
+let hoteraInvoiceServices = JSON.parse(localStorage.getItem('hotera_invoice_services')) || {};
 let cancelledBookingsData = JSON.parse(localStorage.getItem('hotera_cancelled_bookings')) || {};
 let refundedInvoicesData = JSON.parse(localStorage.getItem('hotera_refunded_invoices')) || {};
 let allTransactions = JSON.parse(localStorage.getItem('hotera_all_transactions')) || {};
@@ -1964,6 +2015,8 @@ hotelsList.forEach(h => {
   if (!h.roomsPerFloor) h.roomsPerFloor = 10;
   if (!allRooms[h.id]) { allRooms[h.id] = []; generateRoomsForHotel(h.id, h.floorsCount, h.roomsPerFloor); }
   if (!allInvoices[h.id]) allInvoices[h.id] = [];
+  if (!hoteraInvoicePayments[h.id]) hoteraInvoicePayments[h.id] = [];
+  if (!hoteraInvoiceServices[h.id]) hoteraInvoiceServices[h.id] = [];
   if (!cancelledBookingsData[h.id]) cancelledBookingsData[h.id] = [];
   if (!refundedInvoicesData[h.id]) refundedInvoicesData[h.id] = [];
   if (!allTransactions[h.id]) allTransactions[h.id] = [];
@@ -1997,6 +2050,8 @@ function saveData() {
   localStorage.setItem('hotera_companies', JSON.stringify(companiesList));
   localStorage.setItem('hotera_all_rooms', JSON.stringify(allRooms));
   localStorage.setItem('hotera_all_invoices', JSON.stringify(allInvoices));
+  localStorage.setItem('hotera_invoice_payments', JSON.stringify(hoteraInvoicePayments));
+  localStorage.setItem('hotera_invoice_services', JSON.stringify(hoteraInvoiceServices));
   localStorage.setItem('hotera_cancelled_bookings', JSON.stringify(cancelledBookingsData));
   localStorage.setItem('hotera_refunded_invoices', JSON.stringify(refundedInvoicesData));
   localStorage.setItem('hotera_all_transactions', JSON.stringify(allTransactions));
@@ -2314,7 +2369,7 @@ function addNewHotelFacility() {
   });
   
   generateRoomsForHotel(newId, 3, 10);
-  allInvoices[newId] = []; cancelledBookingsData[newId] = []; refundedInvoicesData[newId] = []; allTransactions[newId] = []; attendanceRecords[newId] = {}; allExpenses[newId] = []; allInventory[newId] = [{name: "مناشف تنظيف", qty: 30, minLimit: 5}]; allMaintenanceTickets[newId] = []; allShifts[newId] = []; allRatings[newId] = [];
+  allInvoices[newId] = []; hoteraInvoicePayments[newId] = []; hoteraInvoiceServices[newId] = []; cancelledBookingsData[newId] = []; refundedInvoicesData[newId] = []; allTransactions[newId] = []; attendanceRecords[newId] = {}; allExpenses[newId] = []; allInventory[newId] = [{name: "مناشف تنظيف", qty: 30, minLimit: 5}]; allMaintenanceTickets[newId] = []; allShifts[newId] = []; allRatings[newId] = [];
   saveData(); 
   uploadDataToCloud();
   renderSuperAdminControlPanel(); 
@@ -2611,7 +2666,23 @@ function switchMainFeature(featureKey, chipElement) {
 
 function openExpenseModal() { document.getElementById('expenseModal').style.display = 'flex'; }
 function closeExpenseModal() { document.getElementById('expenseModal').style.display = 'none'; }
+
+/* Permission guards: deny only unauthorized mutations; never alter stored records. */
+const hoteraPermissionMatrix={
+  booking:['superadmin','manager','company_owner_manager','front_desk'],
+  financial:['superadmin','manager','company_owner_manager','front_desk'],
+  expense:['superadmin','manager','company_owner_manager'],
+  inventory:['superadmin','manager','company_owner_manager','housekeeper'],
+  shift:['superadmin','manager','company_owner_manager','hr_supervisor','front_desk'],
+  roomAdmin:['superadmin','manager'],
+  maintenance:['superadmin','manager','company_owner_manager','front_desk','housekeeper'],
+  cancel:['superadmin','manager','company_owner_manager','front_desk']
+};
+function hoteraHasPermission(action){const role=String(window.currentRole||'').trim();return !!role&&Array.isArray(hoteraPermissionMatrix[action])&&hoteraPermissionMatrix[action].includes(role)}
+function hoteraRequirePermission(action){if(hoteraHasPermission(action))return true;alert('🔒 لا تملك صلاحية تنفيذ هذه العملية حسب الدور الحالي.');return false}
+
 function saveNewExpense() {
+  if(!hoteraRequirePermission('expense')) return;
   const reason = document.getElementById('expenseReason').value.trim();
   const amount = parseFloat(document.getElementById('expenseAmount').value) || 0;
   if(!reason || amount <= 0) return alert('أدخل بند المصروف والمبلغ!');
@@ -2625,6 +2696,7 @@ function saveNewExpense() {
 function openInventoryModal() { document.getElementById('inventoryModal').style.display = 'flex'; }
 function closeInventoryModal() { document.getElementById('inventoryModal').style.display = 'none'; }
 function saveNewInventoryItem() {
+  if(!hoteraRequirePermission('inventory')) return;
   const name = document.getElementById('invItemName').value.trim();
   const qty = parseInt(document.getElementById('invItemQty').value) || 0;
   const minLimit = parseInt(document.getElementById('invItemMin').value) || 5;
@@ -2635,6 +2707,7 @@ function saveNewInventoryItem() {
   alert('✅ تم إضافة الصنف للمستودع بنجاح!');
 }
 function reduceInventoryQty(idx) {
+  if(!hoteraRequirePermission('inventory')) return;
   if(!allInventory[currentHotelId][idx]) return;
   if(allInventory[currentHotelId][idx].qty > 0) {
     allInventory[currentHotelId][idx].qty -= 1;
@@ -2645,6 +2718,7 @@ function reduceInventoryQty(idx) {
 function openShiftHandoverModal() { document.getElementById('shiftModal').style.display = 'flex'; }
 function closeShiftHandoverModal() { document.getElementById('shiftModal').style.display = 'none'; }
 function saveShiftHandoverRecord() {
+  if(!hoteraRequirePermission('shift')) return;
   const outgoing = document.getElementById('shiftOutgoing').value.trim() || currentUsername;
   const incoming = document.getElementById('shiftIncoming').value.trim() || "موظف الوردية القادمة";
   const cash = parseFloat(document.getElementById('shiftCash').value) || 0;
@@ -2879,6 +2953,7 @@ function openFinancialTransactionModal() {
 }
 function closeFinancialModal() { document.getElementById('financialModal').style.display = 'none'; }
 function saveFinancialTransaction() {
+  if(!hoteraRequirePermission('financial')) return;
   const type = document.getElementById('finTypeSelect').value;
   const amount = parseFloat(document.getElementById('finAmountInput').value) || 0;
   const reason = document.getElementById('finReasonInput').value.trim();
@@ -2940,7 +3015,16 @@ function populateOfficialInvoiceModal(inv) {
       </tr>
     `;
   });
-  document.getElementById('invGrandTotal').innerText = `${inv.total.toFixed(2)} ر.س`;
+  const paymentRows=(hoteraInvoicePayments?.[currentHotelId]||[]).filter(x=>x.invoiceId===inv.id||x.bookingRef===inv.bookingRef);
+  const serviceRows=(hoteraInvoiceServices?.[currentHotelId]||[]).filter(x=>x.invoiceId===inv.id||x.bookingRef===inv.bookingRef);
+  const servicesTotal=serviceRows.reduce((n,x)=>n+Number(x.amount||0),0);
+  const paidTotal=paymentRows.reduce((n,x)=>n+Number(x.amount||0),0);
+  const baseTotal=Number(inv.total||0), remaining=Math.max(0,baseTotal+servicesTotal-paidTotal);
+  document.getElementById('invGrandTotal').innerText = `${baseTotal.toFixed(2)} ر.س`;
+  if(document.getElementById('invServicesTotal'))document.getElementById('invServicesTotal').innerText=`${servicesTotal.toFixed(2)} ر.س`;
+  if(document.getElementById('invPaidTotal'))document.getElementById('invPaidTotal').innerText=`${paidTotal.toFixed(2)} ر.س`;
+  if(document.getElementById('invRemainingTotal'))document.getElementById('invRemainingTotal').innerText=`${remaining.toFixed(2)} ر.س`;
+  if(document.getElementById('hoteraInvoiceServicesList'))document.getElementById('hoteraInvoiceServicesList').innerText=serviceRows.length?`الخدمات: ${serviceRows.map(x=>`${x.name} (${Number(x.amount||0).toFixed(2)} ر.س)`).join(' · ')}`:'لا توجد خدمات إضافية مسجلة';
   document.getElementById('officialInvoiceModal').style.display = 'flex';
 }
 function closeOfficialInvoiceModal() { document.getElementById('officialInvoiceModal').style.display = 'none'; }
@@ -3008,6 +3092,7 @@ function renderEditRoomsTable() {
   });
 }
 function addNewRoom() {
+  if(!hoteraRequirePermission('roomAdmin')) return;
   const id = parseInt(document.getElementById('newRoomId').value);
   const type = document.getElementById('newRoomType').value;
   if(!id) return;
@@ -3015,6 +3100,7 @@ function addNewRoom() {
   saveData(); uploadDataToCloud(); renderEditRoomsTable();
 }
 function deleteRoom(idx) {
+  if(!hoteraRequirePermission('roomAdmin')) return;
   allRooms[currentHotelId].splice(idx, 1);
   saveData(); uploadDataToCloud(); renderEditRoomsTable();
 }
@@ -3129,7 +3215,12 @@ function openCustomerProfile(phoneOrName) {
 }
 function closeCustomerProfileModal(){document.getElementById('customerProfileModal').style.display='none';}
 
+
+function hoteraDatesOverlap(aStart,aEnd,bStart,bEnd){const a1=String(aStart||''),a2=String(aEnd||''),b1=String(bStart||''),b2=String(bEnd||'');return !!(a1&&a2&&b1&&b2&&a1<b2&&b1<a2)}
+function hoteraFindBookingConflicts(roomIds,checkIn,checkOut,editingRef){const rooms=Array.isArray(allRooms?.[currentHotelId])?allRooms[currentHotelId]:[];return rooms.filter(r=>roomIds.includes(Number(r.id))&&r.bookingRef&&String(r.bookingRef)!==String(editingRef||'')&&hoteraDatesOverlap(checkIn,checkOut,r.checkIn,r.checkOut)).map(r=>({roomId:r.id,bookingRef:r.bookingRef,guest:r.guest||'نزيل',checkIn:r.checkIn,checkOut:r.checkOut}))}
+
 function executeNewBooking() {
+  if(!hoteraRequirePermission('booking')) return;
   const guest = document.getElementById('bookingGuestName').value.trim();
   const phone = document.getElementById('bookingGuestPhone').value.trim();
   const guestId = document.getElementById('bookingGuestId').value.trim();
@@ -3160,6 +3251,8 @@ function executeNewBooking() {
   const previousRooms = editingRef ? rooms.filter(r=>r.bookingRef===editingRef) : [];
   const invalid = selectedIds.some(id=>{const r=rooms.find(x=>x.id===id); return !r || (r.status!=='vacant' && r.bookingRef!==editingRef);});
   if(invalid) return alert('إحدى الغرف المحددة لم تعد متاحة. حدّث الصفحة وحاول مرة أخرى.');
+  const conflicts=hoteraFindBookingConflicts(selectedIds,checkIn,checkOut,editingRef);
+  if(conflicts.length) return alert(`⚠️ يوجد تعارض زمني في الغرفة ${conflicts[0].roomId}.\nالحجز ${conflicts[0].bookingRef} من ${conflicts[0].checkIn} إلى ${conflicts[0].checkOut}.\nلم يتم حفظ أي تعديل.`);
   if(phone) customerMemory[phone] = { name: guest, guestId, nationality, email, adults, children };
   const bookingRef = editingRef || generateBookingReference();
   previousRooms.filter(r=>!selectedIds.includes(r.id)).forEach(r=>{r.status='vacant';r.guest='';r.phone='';r.bookingRef='';r.checkIn='';r.checkOut='';r.totalAmount=0;});
@@ -3264,6 +3357,7 @@ function openMaintenanceModal(roomId) {
 }
 function closeMaintenanceModal() { document.getElementById('maintenanceModal').style.display = 'none'; }
 function confirmRoomMaintenance() {
+  if(!hoteraRequirePermission('maintenance')) return;
   const roomId = parseInt(document.getElementById('maintRoomIdDisplay').innerText);
   const issue = document.getElementById('maintIssueInput').value.trim();
   if(!issue) return alert('الرجاء ذكر ووصف مشكلة الصيانة!');
@@ -3286,6 +3380,7 @@ function openCancelBookingModal(roomId) {
 }
 function closeCancelBookingModal() { document.getElementById('cancelBookingModal').style.display = 'none'; }
 function confirmCancelBooking() {
+  if(!hoteraRequirePermission('cancel')) return;
   const roomId = parseInt(document.getElementById('cancelRoomIdDisplay').innerText);
   const reason = document.getElementById('cancelReasonInput').value.trim();
   if(!reason) return alert('الرجاء ذكر سبب إلغاء الحجز!');
@@ -3458,6 +3553,10 @@ const secureSyncInput=document.getElementById('secureSyncServerUrlInput');if(sec
   <div class="hotera-audit-box"><div class="hotera-audit-head"><h3>🧾 سجل النشاط والتدقيق</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraAuditLogModal()">إغلاق</button></div><input id="hoteraAuditFilter" class="hotera-audit-filter" placeholder="ابحث في العمليات أو المستخدمين..." oninput="renderHoteraAuditLog()"><div id="hoteraAuditLogList"></div></div>
 </div>
 
+
+<div id="hoteraFieldOperationsModal" class="hotera-ops-modal" role="dialog" aria-modal="true" aria-label="التشغيل الميداني HOTERA"><div class="hotera-ops-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3>🧹 التشغيل الميداني</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraFieldOperationsModal()">إغلاق</button></div><div class="hotera-ops-summary" id="hoteraFieldOpsSummary"></div><h4 style="color:#fbbf24;font-size:12px;margin:12px 0 6px">مهام الغرف الحالية</h4><div id="hoteraHousekeepingTasks" class="hotera-ops-list"></div><h4 style="color:#fbbf24;font-size:12px;margin:12px 0 6px">جدولة صيانة وقائية</h4><div style="display:grid;grid-template-columns:1fr 1fr;gap:5px"><input id="hoteraPreventiveRoom" class="form-input" placeholder="رقم الغرفة أو المعدة"><input id="hoteraPreventiveDate" class="form-input" type="date"><input id="hoteraPreventiveTask" class="form-input" placeholder="وصف الصيانة" style="grid-column:1/-1"></div><button type="button" class="btn btn-gold" onclick="addHoteraPreventiveTask()">حفظ جدول الصيانة</button><div id="hoteraPreventiveList" class="hotera-ops-list"></div></div></div>
+
+<div id="hoteraPaymentsServicesModal" class="hotera-ops-modal" role="dialog" aria-modal="true" aria-label="المدفوعات والخدمات HOTERA"><div class="hotera-ops-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3>💳 المدفوعات والخدمات الإضافية</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraPaymentsServicesModal()">إغلاق</button></div><p style="font-size:10px;color:#94a3b8;line-height:1.7">تُحفظ الدفعات والخدمات في سجلات إضافية مرتبطة برقم الفاتورة، ولا يتم تعديل الفواتير القديمة.</p><select id="hoteraPaymentInvoice" class="form-select"></select><div class="hotera-frontdesk-row" style="display:block"><b>إضافة دفعة</b><div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:6px"><input id="hoteraPaymentAmount" class="form-input" type="number" min="0" placeholder="المبلغ"><select id="hoteraPaymentMethod" class="form-select"><option>نقدي</option><option>بطاقة</option><option>تحويل بنكي</option><option>رابط دفع</option></select></div><button type="button" class="btn btn-gold" onclick="addHoteraInvoicePayment()">حفظ الدفعة</button></div><div class="hotera-frontdesk-row" style="display:block"><b>إضافة خدمة</b><div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:6px"><input id="hoteraServiceName" class="form-input" placeholder="اسم الخدمة"><input id="hoteraServiceAmount" class="form-input" type="number" min="0" placeholder="المبلغ"></div><button type="button" class="btn btn-blue" onclick="addHoteraInvoiceService()">حفظ الخدمة</button></div><div id="hoteraPaymentSummary" class="hotera-ops-list"></div></div></div>
 
 <div id="hoteraFrontDeskModal" class="hotera-ops-modal" role="dialog" aria-modal="true" aria-label="الوصول والمغادرة HOTERA"><div class="hotera-ops-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3>🛎️ الوصول والمغادرة</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraFrontDeskModal()">إغلاق</button></div><p style="font-size:10px;color:#94a3b8;line-height:1.7">لوحة تشغيلية إضافية؛ لا تحذف أو تستبدل الحجز أو الفاتورة. يتم حفظ وقت المنفذ فقط داخل بيانات الغرفة.</p><div id="hoteraFrontDeskList" class="hotera-ops-list"></div></div></div>
 
