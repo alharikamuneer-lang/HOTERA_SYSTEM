@@ -1397,11 +1397,16 @@ async function handleDeviceAccess() {
   if (typeof renderDeviceApprovalPanel === 'function') renderDeviceApprovalPanel();
 }
 
+
+function hoteraMergeById(localList,remoteList){const map=new Map();(Array.isArray(localList)?localList:[]).forEach(x=>{if(x&&x.id!==undefined)map.set(String(x.id),x)});(Array.isArray(remoteList)?remoteList:[]).forEach(x=>{if(!x||x.id===undefined)return;const key=String(x.id),old=map.get(key);map.set(key,old?{...old,...x}:x)});return [...map.values()]}
+function hoteraMergeCompanies(remoteCompanies){const merged=hoteraMergeById(companiesList,remoteCompanies);merged.forEach(c=>{if(!Array.isArray(c.hotelIds))c.hotelIds=[];c.hotelIds=[...new Set(c.hotelIds.map(Number).filter(id=>hotelsList.some(h=>Number(h.id)===id)))];if(!c.status)c.status='active'});return merged}
+
 function buildCloudPayload() {
   return {
-    version: 2,
+    version: 3,
     updatedAt: new Date().toISOString(),
     hotels: hotelsList,
+    companies: companiesList,
     rooms: allRooms,
     invoices: allInvoices,
     invoicePayments: hoteraInvoicePayments,
@@ -1431,14 +1436,15 @@ function applyCloudPayload(cloudData) {
   if (!cloudData || typeof cloudData !== 'object') return false;
 
   if (Array.isArray(cloudData.hotels)) {
-    hotelsList = cloudData.hotels;
+    hotelsList = hoteraMergeById(hotelsList, cloudData.hotels);
     hotelsList.forEach(h => {
       if (h.status === undefined) h.status = 'active';
       if (h.isActive === undefined) h.isActive = true;
       if (!Array.isArray(h.staffList)) h.staffList = [];
     });
   }
-  if (cloudData.rooms) allRooms = cloudData.rooms;
+  if (Array.isArray(cloudData.companies)) companiesList = hoteraMergeCompanies(cloudData.companies);
+  if (cloudData.rooms) allRooms = {...allRooms,...cloudData.rooms};
   if (cloudData.invoices) allInvoices = cloudData.invoices;
   if (cloudData.invoicePayments) hoteraInvoicePayments = cloudData.invoicePayments;
   if (cloudData.invoiceServices) hoteraInvoiceServices = cloudData.invoiceServices;
@@ -1462,6 +1468,9 @@ function applyCloudPayload(cloudData) {
   if (cloudData.aboutDesc) aboutPageDescText = cloudData.aboutDesc;
 
   saveData();
+  if (typeof initLoginHotelDropdown === 'function') initLoginHotelDropdown();
+  if (typeof renderCompaniesAdmin === 'function') renderCompaniesAdmin();
+  if (typeof renderCompanyOwnerDashboard === 'function' && currentRole === 'company_owner') renderCompanyOwnerDashboard();
   return true;
 }
 
@@ -2430,8 +2439,8 @@ function renderSuperAdminControlPanel() {
 }
 
 function renderCompaniesAdmin(){const assign=document.getElementById('companyHotelAssignment');if(assign){assign.innerHTML=hotelsList.map(h=>`<label style="font-size:9px;color:#cbd5e1;background:rgba(255,255,255,.05);padding:5px;border-radius:7px"><input type="checkbox" value="${h.id}" class="company-hotel-check"> ${h.name}</label>`).join('');}const list=document.getElementById('companiesAdminList');if(list){list.innerHTML=companiesList.map(c=>`<div style="display:flex;justify-content:space-between;gap:6px;align-items:center;padding:6px 0;border-bottom:1px dashed rgba(255,255,255,.12);font-size:9px"><span>🏢 <strong>${c.name}</strong><br><small>${c.ownerName} · الفنادق: ${(c.hotelIds||[]).length}</small></span><button onclick="editCompanyHotels(${c.id})" style="background:#2563eb;color:#fff;border:0;border-radius:5px;padding:4px 7px;font-size:8px">تعديل الفنادق</button></div>`).join('');}}
-function createCompanyFromSuperAdmin(){if(currentRole!=='superadmin')return alert('هذا الإجراء متاح للسوبر أدمن فقط.');const name=document.getElementById('newCompanyName').value.trim();const ownerName=document.getElementById('newCompanyOwnerName').value.trim();const ownerPin=document.getElementById('newCompanyOwnerPin').value.trim();const hotelIds=[...document.querySelectorAll('.company-hotel-check:checked')].map(x=>Number(x.value));if(!name||!ownerName||!ownerPin||!hotelIds.length)return alert('أكمل اسم الشركة واسم المالك والرمز وحدد فندقاً واحداً على الأقل.');companiesList.push({id:Date.now(),name,ownerName,ownerPin,hotelIds,status:'active'});saveData();uploadDataToCloud();document.getElementById('newCompanyName').value='';document.getElementById('newCompanyOwnerName').value='';document.getElementById('newCompanyOwnerPin').value='';renderCompaniesAdmin();alert('✅ تمت إضافة الشركة وربط فنادقها بنجاح.');}
-function editCompanyHotels(companyId){if(currentRole!=='superadmin')return alert('هذا الإجراء متاح للسوبر أدمن فقط.');const company=companiesList.find(c=>Number(c.id)===Number(companyId));if(!company)return;const ids=prompt(`أدخل أرقام الفنادق المسموح بها مفصولة بفواصل لشركة ${company.name}:`,(company.hotelIds||[]).join(','));if(ids===null)return;const parsed=ids.split(',').map(x=>Number(x.trim())).filter(id=>hotelsList.some(h=>h.id===id));if(!parsed.length)return alert('لم يتم حفظ التعديل: يجب اختيار فندق صالح واحد على الأقل.');company.hotelIds=[...new Set(parsed)];saveData();uploadDataToCloud();renderCompaniesAdmin();alert('✅ تم تحديث فنادق الشركة دون المساس ببيانات الفنادق.');}
+function createCompanyFromSuperAdmin(){if(currentRole!=='superadmin')return alert('هذا الإجراء متاح للسوبر أدمن فقط.');const name=document.getElementById('newCompanyName').value.trim();const ownerName=document.getElementById('newCompanyOwnerName').value.trim();const ownerPin=document.getElementById('newCompanyOwnerPin').value.trim();const hotelIds=[...document.querySelectorAll('.company-hotel-check:checked')].map(x=>Number(x.value));if(!name||!ownerName||!ownerPin||!hotelIds.length)return alert('أكمل اسم الشركة واسم المالك والرمز وحدد فندقاً واحداً على الأقل.');companiesList.push({id:Date.now(),name,ownerName,ownerPin,hotelIds,status:'active',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});saveData();uploadDataToCloud(true);document.getElementById('newCompanyName').value='';document.getElementById('newCompanyOwnerName').value='';document.getElementById('newCompanyOwnerPin').value='';renderCompaniesAdmin();alert('✅ تمت إضافة الشركة وربط فنادقها بنجاح.');}
+function editCompanyHotels(companyId){if(currentRole!=='superadmin')return alert('هذا الإجراء متاح للسوبر أدمن فقط.');const company=companiesList.find(c=>Number(c.id)===Number(companyId));if(!company)return;const ids=prompt(`أدخل أرقام الفنادق المسموح بها مفصولة بفواصل لشركة ${company.name}:`,(company.hotelIds||[]).join(','));if(ids===null)return;const parsed=ids.split(',').map(x=>Number(x.trim())).filter(id=>hotelsList.some(h=>h.id===id));if(!parsed.length)return alert('لم يتم حفظ التعديل: يجب اختيار فندق صالح واحد على الأقل.');company.hotelIds=[...new Set(parsed)];company.updatedAt=new Date().toISOString();saveData();uploadDataToCloud(true);renderCompaniesAdmin();alert('✅ تم تحديث فنادق الشركة دون المساس ببيانات الفنادق.');}
 
 function resetManagerPinPrompt(hotelId) {
   const h = hotelsList.find(item => item.id === hotelId);
