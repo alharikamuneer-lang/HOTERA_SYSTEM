@@ -365,10 +365,10 @@ body.hotera-compact-mode .hotera-glass-panel,body.hotera-compact-mode .section-c
     </div>
 
     <div id="deviceCloudConnectBox" style="margin-top:8px; padding:8px; border:1px dashed rgba(56,189,248,0.45); border-radius:8px; text-align:inherit; background:rgba(14,165,233,0.06);">
-      <div style="font-size:9px; color:#38bdf8; margin-bottom:5px;">📱 انضمام جهاز جديد بدعوة آمنة</div>
-      <div style="font-size:9px; color:var(--text-muted); line-height:1.7; margin-bottom:6px;">أدخل رمز الدعوة المؤقت الذي أرسله لك السوبر أدمن. سيتم ربط الجهاز تلقائياً دون عرض إعدادات الخادم.</div>
-      <input type="text" id="deviceJoinCodeInput" class="form-input" inputmode="numeric" autocomplete="one-time-code" placeholder="رمز الدعوة المؤقت" style="margin-bottom:5px; direction:ltr; text-align:center; letter-spacing:3px;">
-      <button type="button" class="btn btn-blue" onclick="saveDeviceCloudAndRequest()" style="margin-top:0; background:#0284c7;">طلب اعتماد هذا الجهاز 🔐</button>
+      <div style="font-size:9px; color:#38bdf8; margin-bottom:5px;">📱 طلب اعتماد جهاز جديد برمز مؤقت</div>
+      <div style="font-size:9px; color:var(--text-muted); line-height:1.7; margin-bottom:6px;">أرسل طلب الاعتماد أولاً. بعد مراجعة السوبر أدمن سيُرسل لك كود أرقام مؤقت لإكمال الاعتماد دون عرض رابط أو مفتاح السحابة.</div>
+      <input type="text" id="deviceJoinCodeInput" class="form-input" inputmode="numeric" autocomplete="one-time-code" placeholder="كود اعتماد الجهاز" style="margin-bottom:5px; direction:ltr; text-align:center; letter-spacing:3px;">
+      <button type="button" class="btn btn-blue" onclick="saveDeviceCloudAndRequest()" style="margin-top:0; background:#0284c7;">إرسال الطلب / اعتماد بالكود 🔐</button>
       <div id="deviceAccessStatusText" style="font-size:9px; color:#fbbf24; margin-top:5px;">الجهاز غير مربوط بعد</div>
       <input type="hidden" id="deviceCloudUrlInput" autocomplete="off">
       <input type="hidden" id="deviceCloudKeyInput" autocomplete="off">
@@ -1256,7 +1256,7 @@ function renderDeviceApprovalPanel() {
       actions = '<span style="font-size:8px;color:#38bdf8;">جهازك الحالي</span>';
     } else {
       if (d.status === 'pending') {
-        actions = `<button onclick="approveDevice('${d.id}')" style="background:#10b981;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;">اعتماد</button> <button onclick="rejectDevice('${d.id}')" style="background:#ef4444;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;">رفض</button>`;
+        actions = `<button onclick="issueDeviceApprovalCode('${d.id}')" style="background:#0284c7;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;">إرسال كود</button> <button onclick="approveDevice('${d.id}')" style="background:#10b981;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;">اعتماد مباشر</button> <button onclick="rejectDevice('${d.id}')" style="background:#ef4444;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;">رفض</button>`;
       } else if (isApproved) {
         actions = `<button onclick="toggleDeviceSuspension('${d.id}')" style="background:#f59e0b;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;">إيقاف 🔴</button>`;
       } else if (isSuspended) {
@@ -1334,6 +1334,15 @@ async function saveDeviceCloudAndRequest() {
     setDeviceStatusText('تم رفض هذا الجهاز من السوبر أدمن ⛔', '#f87171');
     return alert('⛔ تم رفض اعتماد هذا الجهاز.');
   }
+  if (record && record.status === 'pending' && record.approvalCodeHash) {
+    const enteredHash = await hoteraHashApprovalCode(deviceJoinCode);
+    const expires = record.approvalExpiresAt ? new Date(record.approvalExpiresAt).getTime() > Date.now() : false;
+    if (enteredHash === record.approvalCodeHash && expires) {
+      record.status='approved'; record.approvedAt=new Date().toISOString(); record.approvedBy='superadmin-code'; delete record.approvalCodeHash; delete record.approvalExpiresAt;
+      await uploadDataToCloud(true); setDeviceStatusText('تم اعتماد الجهاز بالكود ✅','#34d399'); return alert('✅ تم اعتماد هذا الجهاز بالكود المؤقت. يمكنك تسجيل الدخول.');
+    }
+    if (deviceJoinCode && record.approvalCodeHash) return alert('⛔ الكود غير صحيح أو انتهت صلاحيته. اطلب كودًا جديدًا.');
+  }
   if (!Array.isArray(cloudDevices)) cloudDevices = [];
   if (!cloudDevices.find(d => d.id === deviceId)) {
     cloudDevices.push({ id: deviceId, name: deviceName, platform: navigator.platform || 'unknown', requestedAt: new Date().toISOString(), lastSeen: new Date().toISOString(), status: 'pending' });
@@ -1369,6 +1378,9 @@ async function deleteDeviceRecord(id) {
   cloudDevices = cloudDevices.filter(d => d.id !== id);
   if (await uploadDataToCloud(true)) { renderDeviceApprovalPanel(); alert('✅ تم حذف الجهاز من السجل.'); }
 }
+
+async function hoteraHashApprovalCode(code){const data=new TextEncoder().encode(String(code));const digest=await crypto.subtle.digest('SHA-256',data);return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,'0')).join('')}
+async function issueDeviceApprovalCode(id){if(currentRole!=='superadmin')return alert('هذه العملية للسوبر أدمن فقط.');const item=cloudDevices.find(d=>d.id===id);if(!item)return;const code=String(Math.floor(100000+Math.random()*900000));item.approvalCodeHash=await hoteraHashApprovalCode(code);item.approvalIssuedAt=new Date().toISOString();item.approvalExpiresAt=new Date(Date.now()+15*60*1000).toISOString();item.status='pending';if(await uploadDataToCloud(true)){renderDeviceApprovalPanel();prompt('أرسل هذا الكود للموظف عبر قناة آمنة. صالح لمدة 15 دقيقة:',code)}}
 
 async function approveDevice(id) {
   const item = cloudDevices.find(d => d.id === id);
