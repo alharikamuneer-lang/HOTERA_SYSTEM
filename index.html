@@ -277,6 +277,30 @@ body.hotera-compact-mode .hotera-glass-panel,body.hotera-compact-mode .section-c
 @keyframes hoteraSceneDrift{0%{transform:scale(1.04) translate3d(0,0,0)}100%{transform:scale(1.1) translate3d(-1.2%, -1%,0)}}
 @media(max-width:620px){#luxuryEntryScreen:before,#welcomeScreen:before{background-position:center;background-size:auto 100%;opacity:.72}#luxuryEntryScreen .luxury-entry-card,#welcomeScreen .welcome-card{width:min(94%,520px);padding:24px 15px 18px}.hotera-scene-caption{font-size:9px;margin-bottom:9px}}
 @media(prefers-reduced-motion:reduce){#luxuryEntryScreen:before,#welcomeScreen:before{animation:none;transform:scale(1.04)}}
+
+/* HOTERA GLASS LUXURY WELCOME — شاشة واحدة متحركة */
+.hotera-welcome-hero{position:fixed;inset:0;z-index:6000;display:flex;align-items:center;justify-content:center;overflow:hidden;background:radial-gradient(circle at 50% 38%,rgba(21,76,110,.45),transparent 34%),linear-gradient(135deg,#020811 0%,#06172a 50%,#02050b 100%);opacity:1;visibility:visible;transition:opacity .8s ease,visibility .8s ease;isolation:isolate}
+.hotera-welcome-hero.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.hotera-welcome-hero:before{content:'';position:absolute;inset:-8%;z-index:-4;background:linear-gradient(110deg,rgba(2,8,18,.15),rgba(10,41,67,.28),rgba(2,8,18,.5));animation:hoteraWelcomeBreath 12s ease-in-out infinite alternate}
+.hotera-welcome-shade{position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse at center,transparent 20%,rgba(0,0,0,.28) 64%,rgba(0,0,0,.82) 100%),linear-gradient(180deg,rgba(2,8,18,.08),rgba(2,8,18,.62));}
+.hotera-welcome-stars{position:absolute;inset:0;z-index:1;pointer-events:none}
+.hotera-welcome-stars i{position:absolute;width:3px;height:3px;border-radius:50%;background:#f9d77e;box-shadow:0 0 14px #f59e0b;animation:hoteraStarFloat 6s ease-in-out infinite}
+.hotera-welcome-stars i:nth-child(1){top:15%;left:12%;animation-delay:-1s}.hotera-welcome-stars i:nth-child(2){top:26%;left:28%;animation-delay:-3s}.hotera-welcome-stars i:nth-child(3){top:11%;left:70%;animation-delay:-2s}.hotera-welcome-stars i:nth-child(4){top:35%;left:84%;animation-delay:-4s}.hotera-welcome-stars i:nth-child(5){top:66%;left:9%;animation-delay:-5s}.hotera-welcome-stars i:nth-child(6){top:74%;left:24%;animation-delay:-2.5s}.hotera-welcome-stars i:nth-child(7){top:62%;left:76%;animation-delay:-1.5s}.hotera-welcome-stars i:nth-child(8){top:80%;left:91%;animation-delay:-4.5s}.hotera-welcome-stars i:nth-child(9){top:18%;left:50%;animation-delay:-3.5s}.hotera-welcome-stars i:nth-child(10){top:53%;left:94%;animation-delay:-.5s}
+.hotera-welcome-scene{position:absolute;z-index:0;pointer-events:none;opacity:.9;filter:drop-shadow(0 25px 35px rgba(0,0,0,.5));animation:hoteraSceneFloat 14s ease-in-out infinite alternate}
+.hotera-scene-hotel{left:-2vw;bottom:0;width:46vw;height:58vh;min-width:330px;min-height:310px}.hotera-scene-office{right:-2vw;bottom:-2vh;width:43vw;height:54vh;min-width:300px;min-height:290px;animation-delay:-5s;opacity:.72}
+.hotera-moon{position:absolute;top:7%;left:28%;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle at 35% 32%,#fff3c4,#e8ad43 58%,rgba(245,158,11,.05) 70%);box-shadow:0 0 55px rgba(245,190,70,.36)}
+.hotera-hotel-building{position:absolute;bottom:0;left:8%;width:84%;height:58%;border:1px solid rgba(245,190,70,.4);border-bottom:0;border-radius:18px 18px 0 0;background:linear-gradient(90deg,rgba(10,27,45,.95),rgba(27,50,72,.82),rgba(8,22,38,.98));box-shadow:inset 0 0 45px rgba(245,158,11,.08),0 -12px 45px rgba(245,158,11,.08);display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:12px;padding:22px 18px 30px}
+.hotera-hotel-building:before{content:'';position:absolute;top:-18px;left:12%;right:12%;height:18px;border:1px solid rgba(245,190,70,.5);border-bottom:0;border-radius:18px 18px 0 0;background:rgba(13,31,49,.9)}
+.hotera-hotel-building i{display:block;border:1px solid rgba(251,191,36,.32);background:linear-gradient(180deg,rgba(250,204,21,.66),rgba(14,165,233,.12));box-shadow:0 0 15px rgba(245,158,11,.18);animation:hoteraWindowGlow 4s ease-in-out infinite alternate}.hotera-hotel-building i:nth-child(2n){animation-delay:-1.8s}.hotera-hotel-sign{position:absolute;bottom:7%;left:25%;width:50%;padding:7px;text-align:center;letter-spacing:5px;color:#fbbf24;font-weight:900;font-size:clamp(13px,2vw,22px);border:1px solid rgba(245,190,70,.32);border-radius:7px;background:rgba(3,12,23,.7);box-shadow:0 0 28px rgba(245,158,11,.32)}
+.hotera-lobby-glow{position:absolute;bottom:-4%;left:38%;width:24%;height:16%;border-radius:50% 50% 0 0;background:radial-gradient(ellipse,#fcd34d,rgba(245,158,11,.08) 63%,transparent 70%);filter:blur(3px);animation:hoteraLobbyPulse 3s ease-in-out infinite}
+.hotera-office-building{position:absolute;bottom:0;right:5%;width:86%;height:75%;border:1px solid rgba(56,189,248,.28);border-bottom:0;border-radius:14px 14px 0 0;background:linear-gradient(135deg,rgba(9,29,49,.9),rgba(16,50,73,.78));box-shadow:inset 0 0 55px rgba(56,189,248,.08);display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,1fr);gap:11px;padding:20px 16px 34px;transform:skewY(-3deg)}
+.hotera-office-building i{border:1px solid rgba(56,189,248,.35);background:linear-gradient(180deg,rgba(56,189,248,.45),rgba(15,23,42,.25));animation:hoteraWindowGlow 5s ease-in-out infinite alternate}.hotera-office-building i:nth-child(3n){animation-delay:-2.2s}.hotera-office-desk{position:absolute;bottom:5%;right:12%;width:55%;height:8%;border-radius:20px 20px 3px 3px;background:linear-gradient(180deg,#b7791f,#4a2c0d);box-shadow:0 0 22px rgba(245,158,11,.18)}.hotera-office-lamp{position:absolute;bottom:12%;right:30%;width:4px;height:24%;background:#fbbf24;box-shadow:0 0 20px #f59e0b}.hotera-office-lamp:before{content:'';position:absolute;top:-8px;left:-12px;width:28px;height:16px;border-radius:50% 50% 4px 4px;background:#fbbf24;box-shadow:0 0 25px #f59e0b}
+.hotera-welcome-card{position:relative;z-index:2;width:min(90%,650px);padding:32px 30px 24px;text-align:center;border:1px solid rgba(245,190,70,.5);border-radius:30px;background:linear-gradient(145deg,rgba(7,24,42,.78),rgba(2,10,20,.84));box-shadow:0 35px 100px rgba(0,0,0,.72),inset 0 1px rgba(255,255,255,.18);backdrop-filter:blur(18px);animation:hoteraWelcomeCardIn .95s cubic-bezier(.2,.8,.2,1) both}
+.hotera-welcome-card:before{content:'';position:absolute;inset:9px;border:1px solid rgba(56,189,248,.16);border-radius:23px;pointer-events:none}.hotera-welcome-emblem{position:relative;margin:0 auto 10px;width:70px;height:70px;border-radius:23px;display:flex;align-items:center;justify-content:center;color:#fcd34d;border:1px solid rgba(245,190,70,.72);background:linear-gradient(145deg,#1f3a4e,#071321);box-shadow:0 0 35px rgba(245,158,11,.3),inset 0 0 25px rgba(56,189,248,.16);animation:hoteraEmblemPulse 4s ease-in-out infinite}.hotera-welcome-emblem span{font-size:36px;font-weight:950;letter-spacing:-4px}.hotera-welcome-emblem b{position:absolute;right:8px;top:7px;color:#7dd3fc;font-size:13px}.hotera-welcome-brand{position:relative;color:#fcd34d;font-size:clamp(42px,8vw,64px);font-weight:950;letter-spacing:8px;line-height:1;text-shadow:0 0 22px rgba(245,158,11,.55)}.hotera-welcome-system{position:relative;margin-top:7px;color:#bae6fd;font-size:clamp(10px,2vw,14px);letter-spacing:4px;font-weight:800}.hotera-welcome-kicker{position:relative;display:inline-block;margin-top:17px;padding:6px 13px;border:1px solid rgba(56,189,248,.3);border-radius:999px;color:#7dd3fc;background:rgba(14,165,233,.08);font-size:11px}.hotera-welcome-card h1{position:relative;margin:17px 0 8px;color:#f8fafc;font-size:clamp(23px,4vw,34px);line-height:1.4;font-weight:900}.hotera-welcome-card h1 strong{color:#fbbf24;text-shadow:0 0 18px rgba(245,158,11,.45)}.hotera-welcome-card p{position:relative;color:#cbd5e1;font-size:13px;line-height:1.9}.hotera-welcome-pillars{position:relative;display:flex;justify-content:center;gap:7px;flex-wrap:wrap;margin:17px auto 0}.hotera-welcome-pillars span{padding:8px 11px;border:1px solid rgba(148,163,184,.25);border-radius:12px;color:#dbeafe;background:rgba(255,255,255,.045);font-size:10px;box-shadow:inset 0 1px rgba(255,255,255,.08)}.hotera-welcome-pillars b{margin-inline-end:4px;color:#fbbf24}.hotera-welcome-footer{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:18px;color:#94a3b8;font-size:10px}.hotera-welcome-footer em{width:4px;height:4px;border-radius:50%;background:#fbbf24;box-shadow:0 0 10px #f59e0b}.hotera-welcome-actions{position:relative;display:flex;justify-content:center;align-items:center;gap:10px;margin-top:19px}.hotera-welcome-enter{min-width:220px;padding:13px 19px;border:0;border-radius:14px;cursor:pointer;color:#07111f;background:linear-gradient(135deg,#f59e0b,#fde68a,#b45309);font:inherit;font-weight:950;box-shadow:0 12px 28px rgba(245,158,11,.3);transition:transform .18s ease,box-shadow .18s ease}.hotera-welcome-enter:hover{transform:translateY(-2px);box-shadow:0 16px 35px rgba(245,158,11,.46)}.hotera-welcome-enter:active{transform:scale(.97)}.hotera-welcome-enter b{margin-inline-start:5px;font-size:18px}.hotera-welcome-skip{padding:11px 16px;border:1px solid rgba(148,163,184,.34);border-radius:12px;color:#cbd5e1;background:rgba(255,255,255,.04);cursor:pointer;font:inherit;font-size:11px}.hotera-welcome-progress{position:relative;height:2px;margin:18px auto 0;max-width:270px;overflow:hidden;background:rgba(148,163,184,.16)}.hotera-welcome-progress span{display:block;width:35%;height:100%;background:#fbbf24;box-shadow:0 0 12px #f59e0b;animation:hoteraProgress 7s linear infinite}
+@keyframes hoteraWelcomeCardIn{from{opacity:0;transform:translateY(22px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}@keyframes hoteraWelcomeBreath{from{transform:scale(1) translate3d(0,0,0)}to{transform:scale(1.06) translate3d(0,-1.5%,0)}}@keyframes hoteraSceneFloat{from{transform:translateY(0) scale(1)}to{transform:translateY(-12px) scale(1.03)}}@keyframes hoteraWindowGlow{from{opacity:.42;filter:brightness(.8)}to{opacity:1;filter:brightness(1.35)}}@keyframes hoteraLobbyPulse{0%,100%{opacity:.5;transform:scale(.9)}50%{opacity:1;transform:scale(1.08)}}@keyframes hoteraStarFloat{0%,100%{opacity:.25;transform:translateY(0)}50%{opacity:1;transform:translateY(-10px)}}@keyframes hoteraEmblemPulse{0%,100%{transform:translateY(0);box-shadow:0 0 30px rgba(245,158,11,.28),inset 0 0 22px rgba(56,189,248,.14)}50%{transform:translateY(-5px);box-shadow:0 0 48px rgba(245,158,11,.52),inset 0 0 28px rgba(56,189,248,.22)}}@keyframes hoteraProgress{to{transform:translateX(-320%)}}@media(max-width:700px){.hotera-welcome-card{width:min(93%,520px);padding:24px 16px 18px;border-radius:24px}.hotera-welcome-brand{letter-spacing:5px}.hotera-welcome-system{letter-spacing:2px}.hotera-welcome-card p{font-size:11px}.hotera-scene-hotel{left:-28vw;width:85vw;height:48vh;opacity:.52}.hotera-scene-office{right:-25vw;width:80vw;height:44vh;opacity:.42}.hotera-welcome-pillars span{font-size:9px;padding:7px 8px}.hotera-welcome-footer{font-size:9px}.hotera-welcome-enter{min-width:180px}}
+@media(max-width:430px){.hotera-desktop-only{display:none}.hotera-welcome-card{padding:20px 12px 15px}.hotera-welcome-emblem{width:58px;height:58px}.hotera-welcome-emblem span{font-size:30px}.hotera-welcome-card h1{font-size:21px}.hotera-welcome-actions{gap:6px}.hotera-welcome-enter{min-width:155px;padding:11px 10px;font-size:11px}.hotera-welcome-skip{padding:10px 11px}}
+.hotera-welcome-minimal{background:radial-gradient(circle at 50% 50%,rgba(56,189,248,.13),transparent 27%),linear-gradient(135deg,#020810,#071d31 53%,#02050b)}.hotera-welcome-minimal-card{position:relative;z-index:3;width:min(84%,480px);padding:42px 30px 26px;text-align:center;border:1px solid rgba(245,190,70,.58);border-radius:34px;background:linear-gradient(145deg,rgba(5,21,37,.72),rgba(2,9,18,.76));box-shadow:0 35px 110px rgba(0,0,0,.8),inset 0 1px rgba(255,255,255,.2);backdrop-filter:blur(22px);animation:hoteraMinimalIn 1s cubic-bezier(.2,.8,.2,1) both}.hotera-welcome-minimal-card:before{content:'';position:absolute;inset:11px;border:1px solid rgba(56,189,248,.2);border-radius:25px;pointer-events:none}.hotera-welcome-minimal-card .hotera-welcome-emblem{width:86px;height:86px;margin-bottom:18px}.hotera-welcome-minimal-card .hotera-welcome-brand{font-size:clamp(46px,10vw,78px);letter-spacing:10px}.hotera-welcome-minimal-card .hotera-welcome-system{margin-top:8px;color:#fbbf24;letter-spacing:9px;font-size:clamp(12px,2.5vw,17px)}.hotera-minimal-line{width:92px;height:1px;margin:22px auto 14px;background:linear-gradient(90deg,transparent,#fbbf24,transparent);box-shadow:0 0 14px rgba(245,158,11,.8)}.hotera-minimal-subtitle{color:#dbeafe;font-size:11px;letter-spacing:3px}.hotera-minimal-actions{position:relative;display:flex;justify-content:center;align-items:center;gap:10px;margin-top:28px}.hotera-minimal-actions .hotera-welcome-enter{min-width:170px}.hotera-minimal-caption{display:flex;justify-content:center;align-items:center;gap:9px;margin-top:24px;color:#94a3b8;font-size:9px;letter-spacing:3px}.hotera-minimal-caption em{width:4px;height:4px;border-radius:50%;background:#fbbf24;box-shadow:0 0 10px #f59e0b}.hotera-minimal-orbit{position:absolute;z-index:1;border:1px solid rgba(125,211,252,.24);border-radius:50%;pointer-events:none;animation:hoteraOrbitSpin 18s linear infinite}.hotera-orbit-one{width:72vw;height:24vw;transform:rotate(-22deg)}.hotera-orbit-two{width:60vw;height:18vw;transform:rotate(35deg);animation-direction:reverse;border-color:rgba(245,190,70,.22)}@keyframes hoteraMinimalIn{from{opacity:0;transform:translateY(24px) scale(.94)}to{opacity:1;transform:translateY(0) scale(1)}}@keyframes hoteraOrbitSpin{to{transform:rotate(338deg)}}@media(max-width:700px){.hotera-welcome-minimal-card{width:min(90%,390px);padding:30px 18px 22px}.hotera-welcome-minimal-card .hotera-welcome-brand{letter-spacing:6px}.hotera-welcome-minimal-card .hotera-welcome-system{letter-spacing:5px}.hotera-minimal-subtitle{font-size:9px}.hotera-scene-hotel{left:-30vw}.hotera-scene-office{right:-30vw}}@media(prefers-reduced-motion:reduce){.hotera-welcome-hero *, .hotera-welcome-hero:before{animation:none!important;transition:none!important}}
+.hotera-welcome-admin-badge{padding:4px 8px;border:1px solid rgba(192,132,252,.4);border-radius:999px;color:#e9d5ff;background:rgba(168,85,247,.12);font-size:8px}.hotera-welcome-admin-open{width:auto!important;margin:0!important;background:linear-gradient(135deg,#7c3aed,#c084fc)!important}.hotera-welcome-customizer-modal{display:none;position:fixed;inset:0;z-index:7100;align-items:center;justify-content:center;padding:14px;background:rgba(0,0,0,.76);backdrop-filter:blur(10px)}.hotera-welcome-customizer-modal.open{display:flex}.hotera-welcome-customizer-box{width:min(94vw,680px);max-height:90vh;overflow:auto;padding:16px;border:1px solid rgba(192,132,252,.5);border-radius:20px;background:linear-gradient(145deg,rgba(20,24,55,.98),rgba(5,10,23,.98));box-shadow:0 25px 90px rgba(0,0,0,.7)}.hotera-welcome-customizer-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}.hotera-welcome-customizer-head h3{margin:0;color:#e9d5ff;font-size:16px}.hotera-welcome-customizer-head small{color:#94a3b8;font-size:9px}.hotera-welcome-customizer-note{padding:9px;margin-bottom:10px;border:1px solid rgba(56,189,248,.2);border-radius:10px;color:#cbd5e1;background:rgba(56,189,248,.06);font-size:10px;line-height:1.7}.hotera-welcome-customizer-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.hotera-welcome-customizer-grid label{color:#cbd5e1;font-size:10px}.hotera-welcome-customizer-grid .form-select,.hotera-welcome-customizer-grid .form-input{margin-top:5px}.hotera-welcome-media-meta{margin-top:8px;color:#94a3b8;font-size:9px}.hotera-welcome-media-preview{position:relative;display:flex;align-items:center;justify-content:center;min-height:150px;margin-top:10px;overflow:hidden;border:1px dashed rgba(192,132,252,.42);border-radius:14px;color:#94a3b8;background:rgba(255,255,255,.03)}.hotera-welcome-media-preview img,.hotera-welcome-media-preview video{max-width:100%;max-height:260px;object-fit:contain;border-radius:10px}.hotera-welcome-customizer-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.hotera-welcome-customizer-actions .btn{width:auto;margin:0;padding:8px 11px}.hotera-welcome-hero.hotera-custom-media:before{z-index:0;background-image:linear-gradient(90deg,rgba(2,9,20,.45),rgba(2,9,20,.22)),var(--hotera-custom-welcome-bg)!important;background-size:cover;background-position:center;opacity:.72}.hotera-welcome-hero.hotera-custom-media .hotera-welcome-scene{z-index:1;opacity:.5}.hotera-welcome-hero.hotera-custom-media .hotera-welcome-stars{z-index:2}.hotera-welcome-hero.hotera-custom-media .hotera-welcome-shade{z-index:2}.hotera-welcome-video{position:absolute;inset:0;z-index:0;width:100%;height:100%;object-fit:cover;opacity:.62;filter:saturate(.82) contrast(1.05)}.hotera-welcome-hero.hotera-custom-video:before{background:linear-gradient(90deg,rgba(2,9,20,.35),rgba(2,9,20,.24))!important;z-index:1}.hotera-welcome-hero.hotera-custom-video .hotera-welcome-video{z-index:0}.hotera-welcome-hero.hotera-custom-video .hotera-welcome-scene{z-index:2;opacity:.42}.hotera-welcome-hero.hotera-custom-video .hotera-welcome-shade{z-index:3}.hotera-welcome-hero.hotera-custom-video .hotera-welcome-card,.hotera-welcome-hero.hotera-custom-media .hotera-welcome-minimal-card{z-index:4}@media(max-width:600px){.hotera-welcome-customizer-grid{grid-template-columns:1fr}.hotera-welcome-customizer-actions .btn{flex:1;min-width:120px}}
 </style>
 </head>
 <body>
@@ -291,56 +315,26 @@ body.hotera-compact-mode .hotera-glass-panel,body.hotera-compact-mode .section-c
   </div>
 </div>
 
-<div id="luxuryEntryScreen" aria-label="الدخول الفاخر إلى نظام HOTERA">
-  <div class="luxury-entry-particles" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-  <div class="luxury-entry-card">
-    <div class="luxury-entry-mark" aria-hidden="true">🏨</div>
-    <div class="luxury-entry-brand">HOTERA</div>
-    <div class="luxury-entry-system">SYSTEM</div>
-    <div class="luxury-entry-title">مرحباً بك في عالم HOTERA</div>
-    <div class="luxury-entry-subtitle">إدارة فندقك بذكاء وأناقة<br>الحجوزات • الغرف • الفواتير • التقارير</div>
-    <div class="hotera-scene-caption">صالة فندقية ملكية · أناقة الاستقبال · إدارة تبدأ من اللحظة الأولى</div>
-    <div class="luxury-entry-constellation" aria-label="مكوّنات نظام HOTERA">
-      <div class="luxury-entry-glass-panel"><span class="luxury-entry-glass-icon">▦</span><h4>لوحة التحكم</h4><strong>78%</strong><small>مؤشر الإشغال</small></div>
-      <div class="luxury-entry-glass-panel"><span class="luxury-entry-glass-icon">▤</span><h4>الحجوزات</h4><strong>24</strong><small>حجز اليوم</small></div>
-      <div class="luxury-entry-glass-panel"><span class="luxury-entry-glass-icon">▣</span><h4>الفواتير</h4><strong>35,230</strong><small>إجمالي الإيرادات</small></div>
-      <div class="luxury-entry-glass-panel"><span class="luxury-entry-glass-icon">◈</span><h4>خريطة الغرف</h4><strong>30</strong><small>غرفة تفاعلية</small></div>
-    </div>
-    <div class="luxury-entry-identity" aria-label="هوية النظام ومزاياه">
-      <div class="luxury-entry-feature-column"><div class="luxury-entry-feature-chip"><b>إدارة متكاملة</b> · من الكمبيوتر والجوال</div><div class="luxury-entry-feature-chip"><b>إشعارات وتنبيهات</b> · فورية وذكية</div></div>
-      <div class="luxury-entry-crown" aria-hidden="true">♛</div>
-      <div class="luxury-entry-feature-column"><div class="luxury-entry-feature-chip"><b>تقارير وتحليلات</b> · قرارات أوضح</div><div class="luxury-entry-feature-chip"><b>أمان متقدم</b> · حماية بياناتك</div></div>
-    </div>
-    <div class="luxury-entry-value-strip"><div><b>غرف</b>خريطة تفاعلية</div><div><b>حجوزات</b>متابعة فورية</div><div><b>فواتير</b>تقارير دقيقة</div><div><b>تنبيهات</b>قرارات أسرع</div></div>
-    <div class="luxury-entry-developer">تطوير وهندسة البرمجيات<br><strong>م. منير الحارقة</strong> — 0566030594</div>
-    <div class="luxury-entry-actions"><button class="luxury-entry-primary" type="button" onclick="enterLuxuryWelcome()">الدخول إلى النظام</button><button class="luxury-entry-skip" type="button" onclick="skipLuxuryEntry()">تخطي</button></div>
-    <div class="luxury-entry-progress" aria-hidden="true"><span></span></div>
+<div id="luxuryEntryScreen" class="hotera-welcome-hero hotera-welcome-minimal" aria-label="HOTERA SYSTEM">
+  <div class="hotera-welcome-scene hotera-scene-hotel" aria-hidden="true">
+    <div class="hotera-moon"></div><div class="hotera-hotel-building"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="hotera-hotel-sign">HOTERA</div><div class="hotera-lobby-glow"></div>
   </div>
-</div>
-
-<div id="welcomeScreen" aria-label="شاشة الترحيب بنظام HOTERA">
-  <div class="welcome-particles" aria-hidden="true"><i class="welcome-particle"></i><i class="welcome-particle"></i><i class="welcome-particle"></i><i class="welcome-particle"></i><i class="welcome-particle"></i></div>
-  <div class="welcome-card">
-    <div class="welcome-logo" aria-hidden="true">🏨</div>
-    <div class="welcome-brand">HOTERA</div>
-    <div class="welcome-system">ULTIMATE HOTEL MANAGEMENT SYSTEM</div>
-    <div class="welcome-divider"></div>
-    <div class="hotera-scene-caption">مركز القيادة الفندقي · رؤية موحّدة للفنادق والعمليات والقرارات</div>
-    <div class="welcome-message">
-      <strong>مرحباً بكم في نظام HOTERA SYSTEM</strong><br>
-      المنصة الذكية لإدارة الفنادق والمنشآت الفندقية باحترافية ودقة وسهولة.<br>
-      نرتقي بتجربة الإدارة، ونحوّل تفاصيل العمل اليومية إلى أداء منظم وقرارات أكثر ذكاءً.
-    </div>
-    <div class="welcome-developer">
-      تطوير وهندسة البرمجيات<br>
-      <strong id="welcomeDeveloperName">م. منير الحارقة</strong><br>
-      <span id="welcomeDeveloperPhone">0566030594</span>
-    </div>
-    <div class="welcome-progress" aria-hidden="true"><span></span></div>
-    <div class="welcome-actions">
-      <button class="welcome-enter" type="button" onclick="closeWelcomeScreen()">الدخول إلى النظام 🚀</button>
-      <button class="welcome-skip" type="button" onclick="closeWelcomeScreen()">تخطي</button>
-    </div>
+  <div class="hotera-welcome-scene hotera-scene-office" aria-hidden="true">
+    <div class="hotera-office-building"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="hotera-office-desk"></div><div class="hotera-office-lamp"></div>
+  </div>
+  <div class="hotera-welcome-stars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="hotera-welcome-shade" aria-hidden="true"></div>
+  <div class="hotera-minimal-orbit hotera-orbit-one" aria-hidden="true"></div><div class="hotera-minimal-orbit hotera-orbit-two" aria-hidden="true"></div>
+  <div class="hotera-welcome-minimal-card">
+    <div class="hotera-welcome-emblem" aria-hidden="true"><span>H</span><b>✦</b></div>
+    <div class="hotera-welcome-brand">HOTERA</div>
+    <div class="hotera-welcome-system">SYSTEM</div>
+    <div class="hotera-minimal-line"></div>
+    <div class="hotera-minimal-subtitle">HOTEL MANAGEMENT SYSTEM</div>
+    <div class="hotera-minimal-actions"><button class="hotera-welcome-enter" type="button" onclick="enterLuxuryWelcome()">الدخول <b>↗</b></button><button class="hotera-welcome-skip" type="button" onclick="skipLuxuryEntry()">تخطي</button></div>
+    <div class="hotera-minimal-caption"><span>HOTELS</span><em></em><span>OFFICES</span></div>
   </div>
 </div>
 <div id="hoteraLoadingScreen" aria-live="polite"><div><div class="loading-orbit"></div><div class="loading-copy"><strong>HOTERA SYSTEM</strong><span id="hoteraLoadingText">جارٍ تجهيز لوحة القيادة...</span></div></div></div>
@@ -500,6 +494,12 @@ body.hotera-compact-mode .hotera-glass-panel,body.hotera-compact-mode .section-c
   </div>
 
   <div class="card" style="padding:10px;margin-bottom:10px;text-align:inherit;background:rgba(18,26,43,.95);border-color:#a855f7"><div style="display:flex;justify-content:space-between;align-items:center"><h4 style="font-size:11px;color:#c084fc;margin-bottom:6px">🧾 سجل نشاط المستخدمين والأجهزة</h4><button class="btn btn-gray" style="width:auto;margin:0;padding:4px 7px;font-size:9px" onclick="renderActivityLog()">تحديث</button></div><div id="activityLogPanel" style="max-height:190px;overflow:auto;font-size:9px;color:#cbd5e1"></div></div>
+
+  <div class="card hotera-welcome-admin-card" style="padding:12px;margin-bottom:10px;text-align:inherit;background:linear-gradient(145deg,rgba(30,27,75,.92),rgba(18,26,43,.96));border-color:#c084fc">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><h4 style="font-size:11px;color:#e9d5ff;margin-bottom:5px">🎬 استوديو شاشة الترحيب</h4><span class="hotera-welcome-admin-badge">للسوبر أدمن فقط</span></div>
+    <p style="font-size:9px;color:#cbd5e1;line-height:1.7;margin-bottom:8px">ارفع صورة أو فيديو ليظهر في شاشة الترحيب، أو استعد التصميم الفاخر الافتراضي. تُحفظ إعدادات الترحيب في مساحة مستقلة ولا تستبدل الحجوزات أو الفواتير أو بيانات الفنادق.</p>
+    <button type="button" class="btn btn-purple hotera-welcome-admin-open" onclick="openHoteraWelcomeCustomizer()">فتح استوديو الترحيب 🎨</button>
+  </div>
 
   <div class="card" style="padding:10px; margin-bottom:10px; text-align:inherit; background:rgba(18,26,43,0.95); border-color:var(--accent-solid);">
     <h4 style="font-size:11px; color:var(--accent-solid); margin-bottom:6px;" id="lblSuperPinsTableTitle">🔑 الدليل الشامل لجميع أكواد وكلمات مرور المستخدمين والمديرين:</h4>
@@ -1178,24 +1178,10 @@ function showHoteraLoading(text='جارٍ تجهيز النظام...'){const ove
 function hideHoteraLoading(){const overlay=document.getElementById('hoteraLoadingScreen');if(overlay){overlay.classList.remove('active');setTimeout(()=>{overlay.style.display='none';},280);}}
 
 function closeLuxuryEntry(){const screen=document.getElementById('luxuryEntryScreen');if(screen)screen.classList.add('hidden');window.clearTimeout(window.hoteraLuxuryEntryTimer);}
-function enterLuxuryWelcome(){closeLuxuryEntry();showWelcomeScreen();}
-function skipLuxuryEntry(){closeLuxuryEntry();showWelcomeScreen();}
-function closeWelcomeScreen() {
-  const screen = document.getElementById('welcomeScreen');
-  if (screen) screen.classList.add('hidden');
-}
-
-function showWelcomeScreen() {
-  const screen = document.getElementById('welcomeScreen');
-  if (!screen) return;
-  const name = document.getElementById('welcomeDeveloperName');
-  const phone = document.getElementById('welcomeDeveloperPhone');
-  if (name && typeof developerName !== 'undefined') name.innerText = developerName;
-  if (phone && typeof developerPhone !== 'undefined') phone.innerText = developerPhone;
-  screen.classList.remove('hidden');
-  window.clearTimeout(window.hoteraWelcomeTimer);
-  window.hoteraWelcomeTimer = window.setTimeout(closeWelcomeScreen, 5200);
-}
+function enterLuxuryWelcome(){closeLuxuryEntry();const login=document.getElementById('loginOverlay');if(login)login.style.display='flex';}
+function skipLuxuryEntry(){enterLuxuryWelcome();}
+function closeWelcomeScreen(){enterLuxuryWelcome();}
+function showWelcomeScreen(){const screen=document.getElementById('luxuryEntryScreen');if(screen)screen.classList.remove('hidden');}
 
 function hoteraRecordSyncEvent(type){try{const key='hotera_sync_history',list=JSON.parse(localStorage.getItem(key)||'[]');list.unshift({type,at:new Date().toISOString(),hotelId:currentHotelId,deviceId:deviceId||''});localStorage.setItem(key,JSON.stringify(list.slice(0,30)))}catch(e){console.warn('تعذر حفظ سجل المزامنة',e)}}
 function hoteraReadSyncHistory(){try{return JSON.parse(localStorage.getItem('hotera_sync_history')||'[]')}catch(e){return[]}}
@@ -3730,5 +3716,31 @@ const secureSyncInput=document.getElementById('secureSyncServerUrlInput');if(sec
 
 <div id="hoteraBookingManagementModal" class="hotera-booking-modal" role="dialog" aria-modal="true" aria-label="إدارة الحجوزات"><div class="hotera-booking-box"><div class="hotera-booking-head"><h3>📅 إدارة الحجوزات</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraBookingManagement()">إغلاق</button></div><div id="hoteraBookingTabs" class="hotera-booking-tabs"></div><div id="hoteraBookingManagementList" class="hotera-booking-list"></div></div></div>
 
+<div id="hoteraWelcomeCustomizerModal" class="hotera-welcome-customizer-modal" role="dialog" aria-modal="true" aria-label="استوديو تخصيص شاشة الترحيب">
+  <div class="hotera-welcome-customizer-box">
+    <div class="hotera-welcome-customizer-head"><div><h3>🎬 استوديو شاشة الترحيب</h3><small>تغيير مستقل وآمن للمظهر فقط</small></div><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraWelcomeCustomizer()">إغلاق</button></div>
+    <div class="hotera-welcome-customizer-note">اختر صورة أو فيديو من جهازك. الحد المقترح للصورة 2MB وللفيديو 8MB حتى تبقى الصفحة سريعة. لا يتم رفع الملفات إلى الإنترنت من هذه الصفحة؛ تُحفظ محليًا على هذا الجهاز، وللمزامنة بين الأجهزة يلزم ربط خادم HOTERA مركزي.</div>
+    <div class="hotera-welcome-customizer-grid"><label>نوع التصميم<select id="hoteraWelcomeMediaMode" class="form-select"><option value="default">التصميم الفاخر الافتراضي</option><option value="image">صورة مخصصة</option><option value="video">فيديو مخصص</option></select></label><label>اختيار صورة أو فيديو<input id="hoteraWelcomeMediaFile" class="form-input" type="file" accept="image/png,image/jpeg,image/webp,video/mp4,video/webm"></label></div>
+    <div id="hoteraWelcomeMediaMeta" class="hotera-welcome-media-meta">لا يوجد تصميم مخصص نشط.</div><div id="hoteraWelcomeMediaPreview" class="hotera-welcome-media-preview"><span>المعاينة ستظهر هنا</span></div>
+    <div class="hotera-welcome-customizer-actions"><button type="button" class="btn btn-purple" onclick="saveHoteraWelcomeMedia()">حفظ وتفعيل التصميم</button><button type="button" class="btn btn-gray" onclick="resetHoteraWelcomeMedia()">استعادة الافتراضي</button><button type="button" class="btn btn-blue" onclick="previewHoteraWelcomeMedia()">معاينة الترحيب</button></div>
+  </div>
+</div>
+<script>
+(function(){
+  const KEY='hotera_welcome_media_v1';
+  const MAX_IMAGE=2*1024*1024, MAX_VIDEO=8*1024*1024;
+  function read(){try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}}
+  function isSuper(){return typeof currentRole!=='undefined'&&currentRole==='superadmin'}
+  function apply(){const hero=document.getElementById('luxuryEntryScreen');if(!hero)return;const cfg=read();hero.classList.remove('hotera-custom-media','hotera-custom-video');hero.style.removeProperty('--hotera-custom-welcome-bg');const old=hero.querySelector('.hotera-welcome-video');if(old)old.remove();if(!cfg||cfg.mode==='default')return;if(cfg.mode==='image'&&cfg.data){hero.classList.add('hotera-custom-media');hero.style.setProperty('--hotera-custom-welcome-bg',`url("${cfg.data}")`)}if(cfg.mode==='video'&&cfg.data){hero.classList.add('hotera-custom-media','hotera-custom-video');const v=document.createElement('video');v.className='hotera-welcome-video';v.src=cfg.data;v.autoplay=true;v.loop=true;v.muted=true;v.playsInline=true;v.setAttribute('aria-hidden','true');hero.prepend(v)}}
+  function meta(){const cfg=read(),el=document.getElementById('hoteraWelcomeMediaMeta');if(!el)return;el.textContent=cfg&&cfg.mode!=='default'?`التصميم النشط: ${cfg.mode==='image'?'صورة':'فيديو'} — ${cfg.name||'ملف مخصص'}`:'لا يوجد تصميم مخصص نشط؛ يعمل التصميم الفاخر الافتراضي.'}
+  window.openHoteraWelcomeCustomizer=function(){if(!isSuper())return alert('هذه الخاصية متاحة للسوبر أدمن فقط.');const m=document.getElementById('hoteraWelcomeCustomizerModal');if(!m)return;m.classList.add('open');const mode=document.getElementById('hoteraWelcomeMediaMode'),cfg=read();if(mode)mode.value=cfg?.mode||'default';meta();previewHoteraWelcomeMedia()};
+  window.closeHoteraWelcomeCustomizer=function(){document.getElementById('hoteraWelcomeCustomizerModal')?.classList.remove('open')};
+  window.previewHoteraWelcomeMedia=function(){const box=document.getElementById('hoteraWelcomeMediaPreview');if(!box)return;box.innerHTML='';const cfg=read();if(!cfg||cfg.mode==='default'){box.innerHTML='<span>المعاينة: التصميم الفاخر الافتراضي</span>';return}const el=document.createElement(cfg.mode==='video'?'video':'img');el.src=cfg.data;if(cfg.mode==='video'){el.controls=true;el.muted=true;el.playsInline=true}box.appendChild(el)};
+  window.saveHoteraWelcomeMedia=function(){if(!isSuper())return alert('هذه الخاصية متاحة للسوبر أدمن فقط.');const mode=document.getElementById('hoteraWelcomeMediaMode')?.value||'default';if(mode==='default'){resetHoteraWelcomeMedia();return}const file=document.getElementById('hoteraWelcomeMediaFile')?.files?.[0];if(!file)return alert('اختر صورة أو فيديو أولاً.');const valid=mode==='image'?file.type.startsWith('image/'):file.type.startsWith('video/');if(!valid)return alert('نوع الملف لا يطابق نوع التصميم المختار.');const limit=mode==='image'?MAX_IMAGE:MAX_VIDEO;if(file.size>limit)return alert(`حجم الملف أكبر من الحد المسموح (${mode==='image'?'2MB':'8MB'}). اختر ملفًا أصغر.`);const reader=new FileReader();reader.onload=()=>{try{localStorage.setItem(KEY,JSON.stringify({mode,data:reader.result,name:file.name,size:file.size,updatedAt:new Date().toISOString()}));apply();meta();previewHoteraWelcomeMedia();alert('✅ تم حفظ وتفعيل تصميم الترحيب على هذا الجهاز دون تعديل بيانات النظام.')}catch(e){alert('تعذر الحفظ؛ قد تكون مساحة التخزين المحلية ممتلئة. استخدم ملفًا أصغر أو اربط خادم HOTERA مركزيًا.')}};reader.readAsDataURL(file)};
+  window.resetHoteraWelcomeMedia=function(){if(!isSuper())return alert('هذه الخاصية متاحة للسوبر أدمن فقط.');localStorage.removeItem(KEY);apply();meta();previewHoteraWelcomeMedia();alert('✅ تمت استعادة تصميم الترحيب الافتراضي دون المساس ببيانات النظام.')};
+  const oldShow=window.showWelcomeScreen;window.showWelcomeScreen=function(){apply();return oldShow?oldShow.apply(this,arguments):document.getElementById('luxuryEntryScreen')?.classList.remove('hidden')};
+  document.addEventListener('DOMContentLoaded',()=>{apply();meta();document.getElementById('hoteraWelcomeMediaMode')?.addEventListener('change',()=>{const mode=document.getElementById('hoteraWelcomeMediaMode').value;const input=document.getElementById('hoteraWelcomeMediaFile');if(input)input.accept=mode==='image'?'image/png,image/jpeg,image/webp':mode==='video'?'video/mp4,video/webm':''})});
+})();
+</script>
 </body>
 </html>
