@@ -462,7 +462,7 @@ body.hotera-compact-mode .hotera-glass-panel,body.hotera-compact-mode .section-c
       </div>
     </div>
     <div style="display:flex; gap:6px; align-items:center;">
-      <button class="btn btn-gold" style="width:auto; margin-top:0; padding:8px 14px;" onclick="saveCloudSettings()">حفظ واختبار الربط السحابي 🔗</button>
+      <button class="btn btn-gold" style="width:auto; margin-top:0; padding:8px 14px;" onclick="saveCloudSettings()">حفظ واختبار الربط السحابي 🔗</button><div style="margin-top:8px;padding:8px;border:1px dashed rgba(245,158,11,.45);border-radius:8px;background:rgba(245,158,11,.05)"><label style="font-size:9px;color:#fbbf24">🛡️ رابط خادم HOTERA العام (ليس مفتاحًا سريًا):</label><input type="url" id="hoteraServerUrlInput" class="form-input" placeholder="https://api.example.com" style="margin:5px 0 4px;direction:ltr;text-align:left"><div style="display:flex;gap:6px;align-items:center"><button class="btn btn-blue" style="width:auto;margin:0;padding:6px 10px;background:#0284c7" onclick="saveHoteraServerUrl()">حفظ رابط الخادم</button><button class="btn btn-green" style="width:auto;margin:0;padding:6px 10px" onclick="checkHoteraServerHealth()">فحص الخادم</button><span id="hoteraServerStatusText" style="font-size:9px;color:#94a3b8">لم يتم إعداد خادم مركزي</span></div><small style="display:block;color:#94a3b8;font-size:8px;margin-top:4px">لا تضع API Key هنا أو داخل GitHub؛ يوضع المفتاح داخل خادم HOTERA كمتغير سري.</small></div>
       <button class="btn btn-blue" style="width:auto; margin-top:0; padding:8px 14px; background:#10b981;" onclick="syncDataWithCloudNow()">مزامنة البيانات الآن 🔄</button>
       <span id="cloudSyncStatusText" style="font-size:9px; color:#34d399; font-weight:bold;">الحالة: جاهز للربط المحلي/السحابي</span>
     </div>
@@ -1190,6 +1190,12 @@ function setCloudStatus(message, color = '#34d399') {
     el.style.color = color;
   }
 }
+
+function getHoteraServerUrl(){return (localStorage.getItem('hotera_server_url')||'').trim()}
+function saveHoteraServerUrl(){const input=document.getElementById('hoteraServerUrlInput'),url=(input?.value||'').trim();if(url){try{const u=new URL(url);if(!/^https?:$/.test(u.protocol))throw new Error('protocol')}catch(e){return alert('⚠️ رابط خادم HOTERA غير صحيح. استخدم https:// أو http:// للاختبار.')}}localStorage.setItem('hotera_server_url',url);setHoteraServerStatus(url?'تم حفظ رابط الخادم العام ✅':'لم يتم إعداد خادم مركزي','#34d399');alert(url?'✅ تم حفظ رابط خادم HOTERA دون حفظ أي مفتاح سري.':'تم إلغاء رابط الخادم.');}
+function setHoteraServerStatus(message,color='#94a3b8'){const el=document.getElementById('hoteraServerStatusText');if(el){el.innerText=message;el.style.color=color}}
+async function checkHoteraServerHealth(){const url=getHoteraServerUrl();if(!url)return setHoteraServerStatus('أدخل رابط الخادم أولاً','#fbbf24');setHoteraServerStatus('جارٍ فحص خادم HOTERA...','#fbbf24');try{const res=await fetch(url.replace(/\/$/,'')+'/health',{method:'GET',headers:{Accept:'application/json'}});if(!res.ok)throw new Error(`HTTP ${res.status}`);const data=await res.json().catch(()=>({}));setHoteraServerStatus(`الخادم يعمل ✅ ${data.service||'HOTERA Server'}`,'#34d399')}catch(e){setHoteraServerStatus('تعذر الوصول إلى الخادم أو مسار /health غير جاهز','#f87171');console.warn('HOTERA server health check failed',e)}}
+function hydrateHoteraServerSettings(){const input=document.getElementById('hoteraServerUrlInput');if(input)input.value=getHoteraServerUrl();}
 
 function getCloudConfig() {
   return {
@@ -2491,6 +2497,7 @@ function renderSuperAdminControlPanel() {
   document.getElementById('editAboutDescInput').value = aboutPageDescText;
   document.getElementById('cloudApiUrlInput').value = cloudApiUrl;
   document.getElementById('cloudApiKeyInput').value = cloudApiKey;
+  hydrateHoteraServerSettings();
   handleDeviceAccess();
 
   const usersTbody = document.getElementById('allUsersPinsTableBody');
