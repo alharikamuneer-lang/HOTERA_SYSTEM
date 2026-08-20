@@ -608,7 +608,7 @@ body.hotera-compact-mode .hotera-glass-panel,body.hotera-compact-mode .section-c
 </div>
 
 
-<div class="hotera-topbar manager-only" id="hoteraTopSettingsBar">
+<div class="hotera-topbar manager-only" id="hoteraTopSettingsBar" style="display:none!important;">
   <div class="hotera-topbar-brand"><span>🏨</span><strong>HOTERA</strong><span class="hotera-topbar-meta">مركز إدارة النظام</span></div>
   <div class="hotera-topbar-actions">
     <span class="hotera-topbar-meta" id="hoteraTopCurrentHotel">الفندق الحالي</span>
@@ -2364,6 +2364,7 @@ async function executeLogin() {
   }
   
   document.getElementById('loginOverlay').style.display = 'none';
+  syncHoteraSettingsVisibility();
   showHoteraLoading(currentRole === 'superadmin' ? 'جارٍ فتح لوحة المالك...' : 'جارٍ تجهيز مركز القيادة...');
   setTimeout(hideHoteraLoading, 650);
   pinsAreRevealed = false;
@@ -2409,12 +2410,15 @@ function updateHeaderInfo() {
 
 function logout() {
   currentCompanyId = null; companyVisibleHotelIds = []; currentHotelId = null; currentRole = null; currentUsername = '';
+  syncHoteraSettingsVisibility();
   document.getElementById('loginOverlay').style.display = 'flex';
   document.getElementById('loginPinInput').value = '';
   initLoginHotelDropdown();
 }
 
+function syncHoteraSettingsVisibility(){const bar=document.getElementById('hoteraTopSettingsBar');if(!bar)return;const allowed=['superadmin','manager','company_owner_manager'].includes(currentRole);bar.style.setProperty('display',allowed?'flex':'none','important');}
 function applyPermissions() {
+  syncHoteraSettingsVisibility();
   document.querySelectorAll('.superadmin-only').forEach(el => el.style.display = (currentRole === 'superadmin') ? 'block' : 'none');
   const hotelManagerRole = currentRole === 'manager' || currentRole === 'company_owner_manager';
   document.querySelectorAll('.manager-only').forEach(el => el.style.display = (currentRole === 'superadmin' || hotelManagerRole) ? 'block' : 'none');
