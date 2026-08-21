@@ -341,6 +341,36 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 #hoteraLoadingScreen{background:radial-gradient(circle at 50% 42%,rgba(56,189,248,.12),transparent 28%),rgba(3,10,20,.98)!important}
 @media(max-width:600px){.login-card{padding:20px 15px}.btn{min-height:40px}.form-select,.form-input{min-height:42px}}
 @media(prefers-reduced-motion:reduce){.btn{transition:none!important}}
+/* HOTERA Glass Edition — الحزمة الخامسة: تنظيم الوحدات التشغيلية */
+.hotera-booking-box,.hotera-calendar-box,.hotera-backup-box,.hotera-audit-box,.hotera-advanced-report-box{border-color:rgba(103,232,249,.22)!important;box-shadow:0 16px 38px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.12);background:linear-gradient(145deg,rgba(14,35,57,.92),rgba(5,17,32,.96))!important}
+.hotera-booking-tabs button,.hotera-calendar-toolbar button,.hotera-backup-toolbar button{transition:transform .16s ease,filter .16s ease,box-shadow .16s ease}.hotera-booking-tabs button:hover,.hotera-calendar-toolbar button:hover,.hotera-backup-toolbar button:hover{transform:translateY(-1px);filter:brightness(1.1);box-shadow:0 8px 18px rgba(56,189,248,.14)}
+.hotera-booking-item,.hotera-calendar-booking,.hotera-backup-row,.hotera-audit-row,.hotera-contract-row{border-color:rgba(255,255,255,.11)!important;background:rgba(255,255,255,.035)!important;box-shadow:inset 0 1px rgba(255,255,255,.07);transition:background .16s ease,transform .16s ease}
+.hotera-booking-item:hover,.hotera-calendar-booking:hover,.hotera-backup-row:hover,.hotera-audit-row:hover,.hotera-contract-row:hover{background:rgba(56,189,248,.08)!important;transform:translateY(-1px)}
+.hotera-calendar-day{border-color:rgba(148,163,184,.18)!important;background:rgba(255,255,255,.025)!important}.hotera-calendar-day.today{border-color:rgba(251,191,36,.72)!important;box-shadow:0 0 18px rgba(245,158,11,.14)}
+.hotera-report-kpis,.hotera-contract-report-kpis{filter:drop-shadow(0 10px 20px rgba(0,0,0,.16))}
+@media(max-width:600px){.hotera-booking-tabs,.hotera-calendar-toolbar,.hotera-backup-toolbar{overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}.hotera-booking-tabs button,.hotera-calendar-toolbar button,.hotera-backup-toolbar button{flex-shrink:0}.hotera-calendar-day{min-height:54px}}
+@media(prefers-reduced-motion:reduce){.hotera-booking-tabs button,.hotera-calendar-toolbar button,.hotera-backup-toolbar button,.hotera-booking-item,.hotera-calendar-booking,.hotera-backup-row,.hotera-audit-row,.hotera-contract-row{transition:none!important}}
+/* HOTERA Glass Edition — الحزمة السادسة: توحيد اللمسة الفاخرة */
+.hotera-language-panel,.hotera-welcome-customizer-box,.hotera-welcome-intro-card{box-shadow:0 30px 90px rgba(0,0,0,.72),inset 0 1px 0 rgba(255,255,255,.14)!important}
+.hotera-language-panel h3,.hotera-welcome-customizer-head h3{ text-shadow:0 0 14px rgba(252,211,77,.22)}
+.hotera-language-panel input,.hotera-welcome-customizer-box input,.hotera-welcome-customizer-box select{border-color:rgba(103,232,249,.28)!important;box-shadow:inset 0 1px 10px rgba(0,0,0,.2)}
+.hotera-settings-card,.hotera-contract-box,.hotera-customer-box,.hotera-frontdesk-row{border-color:rgba(103,232,249,.2)!important;box-shadow:0 12px 28px rgba(0,0,0,.2),inset 0 1px rgba(255,255,255,.1);transition:transform .18s ease,background .18s ease,box-shadow .18s ease}
+.hotera-settings-card:hover,.hotera-contract-box:hover,.hotera-customer-box:hover,.hotera-frontdesk-row:hover{transform:translateY(-2px);background:rgba(56,189,248,.06)!important;box-shadow:0 18px 34px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.14)}
+@media(max-width:600px){.hotera-settings-card:hover,.hotera-contract-box:hover,.hotera-customer-box:hover,.hotera-frontdesk-row:hover{transform:none}}
+@media(prefers-reduced-motion:reduce){.hotera-settings-card,.hotera-contract-box,.hotera-customer-box,.hotera-frontdesk-row{transition:none!important}}
+/* HOTERA Glass Edition — الحزمة السابعة: جاهزية الخادم والأجهزة */
+#deviceApprovalPanel{border-radius:18px}#deviceApprovalPanel>div{border-color:rgba(103,232,249,.22)!important;background:linear-gradient(145deg,rgba(14,35,57,.9),rgba(5,17,32,.96))!important;box-shadow:0 14px 32px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.1)}
+#hoteraServerStatusText,#commandCloudStatus,#commandLastSync{transition:color .2s ease,background .2s ease;letter-spacing:.1px}
+#hoteraServerUrlInput,#cloudApiUrlInput{direction:ltr;text-align:left;border-color:rgba(103,232,249,.28)!important;background:rgba(3,12,24,.72)!important}
+#hoteraServerStatusText{display:inline-flex;align-items:center;gap:4px;padding:4px 7px;border-radius:8px;background:rgba(255,255,255,.035)}
+@media(max-width:600px){#deviceApprovalPanel{font-size:10px}#hoteraServerStatusText{display:block;margin-top:6px;line-height:1.6}#hoteraServerUrlInput,#cloudApiUrlInput{font-size:11px}}
+/* HOTERA Glass Edition — الحزمة الثامنة: وضوح الأقسام والحالات */
+.section-card,.section-panel,.panel,.card-panel{box-shadow:0 14px 32px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.1)}
+.hotera-audit-empty,.hotera-contract-alert.info{border-color:rgba(103,232,249,.22)!important;background:linear-gradient(145deg,rgba(14,35,57,.62),rgba(5,17,32,.72))!important;box-shadow:inset 0 1px rgba(255,255,255,.1)}
+.hotera-booking-head,.hotera-audit-head,.hotera-calendar-head,.hotera-backup-toolbar{border-bottom-color:rgba(103,232,249,.18)!important}
+.hotera-booking-head h3,.hotera-audit-head h3,.hotera-calendar-head h3{color:#fcd34d!important;text-shadow:0 0 12px rgba(252,211,77,.18)}
+.hotera-conflict-row{border-color:rgba(248,113,113,.28)!important;background:rgba(127,29,29,.16)!important;box-shadow:inset 0 1px rgba(255,255,255,.08)}
+@media(max-width:600px){.section-card,.section-panel,.panel,.card-panel{box-shadow:0 10px 24px rgba(0,0,0,.2),inset 0 1px rgba(255,255,255,.08)}}
 </style>
 </head>
 <body>
@@ -3421,6 +3451,7 @@ function executeNewBooking() {
   const bookingPurpose = document.getElementById('bookingPurpose').value;
   const bookingSource = document.getElementById('bookingSource').value;
   const bookingNotes = document.getElementById('bookingNotes').value.trim();
+  const editingRef = window.hoteraEditingBookingRef || null;
   const companyContractId = document.getElementById('bookingCompanyContract')?.value || '';
   const selectedContract = companyContractId && typeof getHoteraCompanyContract==='function' ? getHoteraCompanyContract(companyContractId) : null;
   const applyCompanyRate = !!document.getElementById('bookingApplyCompanyRate')?.checked && !editingRef;
@@ -3435,7 +3466,6 @@ function executeNewBooking() {
   const checkOut = document.getElementById('bookingCheckOut').value;
   const checkboxes = [...document.querySelectorAll('input[name="selectedBookingRoom"]:checked')];
   const selectedIds = checkboxes.map(chk=>parseInt(chk.value));
-  const editingRef = window.hoteraEditingBookingRef || null;
   if(!guest) return alert('الرجاء إدخال اسم النزيل أو الجهة!');
   if(!selectedIds.length) return alert('الرجاء اختيار غرفة واحدة على الأقل للحجز!');
   const bookingType = bookingTypeForCount(selectedIds.length);
