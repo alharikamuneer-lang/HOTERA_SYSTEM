@@ -2895,7 +2895,7 @@ const hoteraPermissionMatrix={
   maintenance:['superadmin','manager','company_owner_manager','front_desk','housekeeper'],
   cancel:['superadmin','manager','company_owner_manager','front_desk']
 };
-function hoteraHasPermission(action){const role=String(window.currentRole||'').trim();return !!role&&Array.isArray(hoteraPermissionMatrix[action])&&hoteraPermissionMatrix[action].includes(role)}
+function hoteraHasPermission(action){const role=String((typeof currentRole!=='undefined'?currentRole:'')||window.currentRole||'').trim();return !!role&&Array.isArray(hoteraPermissionMatrix[action])&&hoteraPermissionMatrix[action].includes(role)}
 function hoteraRequirePermission(action){if(hoteraHasPermission(action))return true;alert('🔒 لا تملك صلاحية تنفيذ هذه العملية حسب الدور الحالي.');return false}
 
 function saveNewExpense() {
