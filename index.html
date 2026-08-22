@@ -73,6 +73,10 @@ body { padding: 10px; padding-bottom: 85px; }
 .room-card-number { font-size:16px; font-weight:900; color:#fff; position:relative; z-index:1; }
 .room-card-icon { font-size:25px; line-height:30px; min-height:30px; color:#fff; position:relative; z-index:1; }
 .room-card-status { font-size:10px; font-weight:800; color:#fff; position:relative; z-index:1; }
+.hotera-booking-summary{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0;padding:8px;border:1px solid rgba(245,158,11,.24);border-radius:12px;background:linear-gradient(135deg,rgba(245,158,11,.09),rgba(56,189,248,.06));text-align:center}
+.hotera-booking-summary small{display:block;color:#94a3b8;font-size:9px;margin-bottom:3px}.hotera-booking-summary strong{display:block;color:#fbbf24;font-size:11px;word-break:break-word}
+.hotera-stay-status{margin:5px 0 8px;padding:6px 9px;border-radius:10px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.26);color:#86efac;font-size:10px;font-weight:800;text-align:center}.hotera-stay-status span{color:#34d399}
+@media(max-width:600px){.hotera-booking-summary{grid-template-columns:1fr 1fr}}
 #roomStatusFilter{background:rgba(8,12,20,.8);border-color:rgba(245,158,11,.28);color:#f8fafc;box-shadow:inset 0 1px rgba(255,255,255,.08)}
 @media(max-width:600px){#roomStatusFilter{width:100%;min-width:0}.rooms-toolbar{align-items:stretch!important}.rooms-toolbar>div{max-width:none!important;flex:1 1 100%}}
 .room-card-alert { position:absolute; top:7px; left:7px; width:8px; height:8px; border-radius:50%; background:currentColor; box-shadow:0 0 0 3px rgba(255,255,255,.1); z-index:2; }
@@ -734,7 +738,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     </div>
     <div style="display:flex; gap:6px; align-items:center; flex:1; max-width:260px;">
       <input type="text" id="searchRoomsBookingInput" class="form-input" placeholder="🔍 ابحث برقم الغرفة أو الحجز..." style="margin-bottom:0; padding:6px; font-size:10px;" oninput="filterRoomsByBookingRef(this.value)">
-      <select id="roomStatusFilter" class="form-select" aria-label="فلترة حالة الغرف" style="margin-bottom:0; padding:6px; font-size:10px; width:118px;" onchange="filterRoomsByBookingRef(document.getElementById('searchRoomsBookingInput')?.value||'')"><option value="all">كل الحالات</option><option value="vacant">متاحة</option><option value="occupied">محجوزة</option><option value="cleaning">خروج</option><option value="maintenance">صيانة</option></select>
+      <select id="roomStatusFilter" class="form-select" aria-label="فلترة حالة الغرف" style="margin-bottom:0; padding:6px; font-size:10px; width:118px;" onchange="filterRoomsByBookingRef(document.getElementById('searchRoomsBookingInput')?.value||'')"><option value="all">كل الحالات</option><option value="vacant">متاحة</option><option value="occupied">محجوزة</option><option value="cleaning">خروج</option><option value="maintenance">صيانة</option><option value="checkoutToday">مغادرة اليوم</option></select>
     </div>
     <div style="display:flex; gap:4px; flex-wrap:wrap;">
       <button class="btn btn-blue manager-only" style="width:auto; padding:4px 8px; margin:0; font-size:9px;" onclick="openStaffManagementModal()" id="btnStaffNav">👥 الموظفين</button>
@@ -2811,14 +2815,14 @@ function filterRoomsByBookingRef(query) {
   if(searchTerm) {
     filtered = rooms.filter(r => String(r.id || '').toLowerCase().includes(searchTerm) || (r.bookingRef || '').toLowerCase().includes(searchTerm) || (r.guest || '').toLowerCase().includes(searchTerm));
   }
-  if(statusFilter !== 'all') filtered = filtered.filter(r => r.status === statusFilter);
+  if(statusFilter !== 'all') filtered = statusFilter === 'checkoutToday' ? filtered.filter(r => String(r.checkOut||'') === new Date().toISOString().slice(0,10)) : filtered.filter(r => r.status === statusFilter);
   let v = 0, o = 0, maint = 0, totalShown = 0;
   rooms.forEach(r => {
     if (r.status === 'vacant') v++;
     else if (r.status === 'occupied') o++;
     else if (r.status === 'maintenance') maint++;
   });
-  const statusText = {vacant:'متاحة',occupied:'محجوزة',cleaning:'خروج',maintenance:'صيانة'}[statusFilter] || '';
+  const statusText = {vacant:'متاحة',occupied:'محجوزة',cleaning:'خروج',maintenance:'صيانة',checkoutToday:'مغادرة اليوم'}[statusFilter] || '';
   const statusLabel = statusFilter === 'all' ? '' : ` · ${statusText}`;
   document.getElementById('currentFloorHeaderTitle').innerText = searchTerm ? (currentLang === 'ar' ? `🔍 نتائج البحث برقم الغرفة أو الحجز: "${searchTerm}"${statusLabel}` : `🔍 Room or Booking Search Results for: "${searchTerm}"${statusLabel}`) : (currentLang === 'ar' ? `🏢 غرف الطابق رقم ${selectedFloor}${statusLabel}` : `🏢 Floor Number ${selectedFloor} Rooms${statusLabel}`);
   
@@ -3515,6 +3519,9 @@ function executeNewBooking() {
   alert(`✅ تم ${editingRef?'تعديل':'تنفيذ'} الحجز (${bookingRef}) وتصنيفه: ${bookingType}.`);
 }
 
+function copyHoteraBookingRef(ref){const value=String(ref||'').trim();if(!value)return;try{navigator.clipboard?.writeText(value);alert(`تم نسخ رقم الحجز ${value}`)}catch(e){prompt('رقم الحجز للنسخ:',value)}}
+function hoteraBookingStayLabel(room){const today=new Date().toISOString().slice(0,10),checkIn=String(room?.checkIn||''),checkOut=String(room?.checkOut||'');if(checkOut&&checkOut<today)return 'منتهية وتحتاج مراجعة';if(checkOut===today)return 'مغادرة اليوم';if(checkIn===today)return 'وصول اليوم';if(checkIn&&checkIn>today)return 'وصول قادم';return 'إقامة نشطة'}
+
 function openRoomModal(room) {
   currentRoom = room;
   document.getElementById('roomModal').style.display = 'flex';
@@ -3535,9 +3542,13 @@ function openRoomModal(room) {
   } else if (room.status === 'occupied') {
     title.innerText = `تفاصيل غرفة ${room.id}`;
     content.innerHTML = `
-      <p style="font-size:11px; margin-bottom:4px;">رقم الحجز: <strong style="color:var(--accent-solid);">${room.bookingRef || 'BKG-xxxx'}</strong></p>
+      <div class="hotera-booking-summary"><div><small>رقم الحجز</small><strong>${room.bookingRef || 'BKG-xxxx'}</strong></div><div><small>الإجمالي</small><strong>${Number(room.totalAmount||0).toFixed(2)} ر.س</strong></div></div>
+      <div class="hotera-stay-status"><span>●</span> ${hoteraBookingStayLabel(room)}</div>
+      <div style="display:flex;gap:6px;margin:5px 0 7px"><button type="button" class="btn btn-gray" style="margin:0;font-size:10px" onclick="copyHoteraBookingRef('${String(room.bookingRef||'').replace(/'/g,"\\'")}')">نسخ رقم الحجز</button></div>
       <p style="font-size:11px; margin-bottom:4px;">النزيل: <strong>${room.guest}</strong></p>
       <p style="font-size:11px; margin-bottom:4px;">نوع الحجز: <strong style="color:var(--accent-solid);">${room.bookingType || 'فردي'}</strong></p>
+      <p style="font-size:11px; margin-bottom:4px;">الإقامة: <strong>${room.checkIn || '—'} ← ${room.checkOut || '—'}</strong></p>
+      <p style="font-size:11px; margin-bottom:4px;">أنشأه: <strong>${room.bookingCreatedBy || room.staffName || 'المستخدم الحالي'}</strong></p>
       <p style="font-size:11px; margin-bottom:4px;">رقم الجوال: <strong>${room.phone || 'غير متوفر'}</strong></p>
       <p style="font-size:11px; margin-bottom:6px;">السيارة: <strong style="color:#38bdf8;">${room.carType || room.carPlate ? `${room.carType || ''} (لوحة: ${room.carPlate || '-'})` : 'لا توجد'}</strong></p>
       <div style="display:flex; gap:6px; margin-top:6px;">
