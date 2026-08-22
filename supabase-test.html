@@ -3871,10 +3871,10 @@ const panel=document.getElementById('hoteraSupabaseReadonlyTest');
 if(new URLSearchParams(location.search).get('supabaseTest')==='1'){panel.classList.add('is-open');panel.setAttribute('aria-hidden','false');}
 window.hoteraCloseSupabaseReadonlyTest=function(){panel.classList.remove('is-open');panel.setAttribute('aria-hidden','true');};
 window.hoteraRunSupabaseReadonlyTest=async function(){
-const url=(document.getElementById('hoteraSbProjectUrl').value||'').trim().replace(/\/$/,'');
+const rawUrl=(document.getElementById('hoteraSbProjectUrl').value||'').trim(); const foundUrl=rawUrl.match(/https:\/\/[^\s]+/i); const url=(foundUrl?foundUrl[0]:rawUrl).replace(/[),؛،]+$/,'').replace(/\/$/,'');
 const key=(document.getElementById('hoteraSbPublicKey').value||'').trim();
 const out=document.getElementById('hoteraSupabaseReadonlyResult');
-if(!/^https:\/\/[^\s/]+\.supabase\.co$/i.test(url)){out.className='hotera-sb-result hotera-sb-error';out.textContent='رابط Project URL غير صحيح.';return;}
+let parsedUrl=null; try{parsedUrl=new URL(url);}catch(e){} if(!parsedUrl || parsedUrl.protocol!=='https:' || !parsedUrl.hostname.toLowerCase().endsWith('.supabase.co')){out.className='hotera-sb-result hotera-sb-error';out.textContent='رابط Project URL غير صحيح. استخدم الرابط المنسوخ من Data API مثل: https://معرّف-المشروع.supabase.co';return;}
 if(!key){out.className='hotera-sb-result hotera-sb-error';out.textContent='أدخل المفتاح العام فقط.';return;}
 out.className='hotera-sb-result';out.textContent='جارٍ اختبار القراءة من الجداول الأربعة...';
 const headers={apikey:key,Authorization:'Bearer '+key,Accept:'application/json'};const tables=['hotels','rooms','bookings','user_profiles'];const results=[];
