@@ -26,11 +26,19 @@ html, body {
   color: var(--text-main); width: 100%; min-height: 100vh; overflow-x: hidden;
 }
 body { padding: 10px; padding-bottom: 85px; }
-#loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(8, 12, 20, 0.96); backdrop-filter: blur(15px); display: flex; justify-content: center; align-items: center; z-index: 999; }
-.login-card { background: #121a2b; border: 1px solid var(--glass-border); padding: 22px; border-radius: 20px; width: 92%; max-width: 380px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.8); position: relative; }
+#loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 15% 18%,rgba(56,189,248,.12),transparent 28%), radial-gradient(circle at 86% 82%,rgba(245,158,11,.14),transparent 30%), rgba(3,8,18,.94); backdrop-filter: blur(18px) saturate(125%); display: flex; justify-content: center; align-items: center; z-index: 999; }
+#loginOverlay::before,#loginOverlay::after{content:'';position:absolute;border-radius:50%;pointer-events:none;border:1px solid rgba(245,158,11,.16);animation:loginOrbit 16s linear infinite}
+#loginOverlay::before{width:min(76vw,680px);height:min(76vw,680px);box-shadow:0 0 80px rgba(245,158,11,.08),inset 0 0 60px rgba(56,189,248,.05)}
+#loginOverlay::after{width:min(52vw,460px);height:min(52vw,460px);border-color:rgba(56,189,248,.14);animation-direction:reverse;animation-duration:11s}
+@keyframes loginOrbit{to{transform:rotate(360deg) scale(1.04)}}
+@media(prefers-reduced-motion:reduce){#loginOverlay::before,#loginOverlay::after{animation:none!important}}
+.login-card { background: linear-gradient(145deg,rgba(18,34,56,.91),rgba(7,14,27,.94)); border: 1px solid rgba(245,190,70,.42); padding: 24px; border-radius: 24px; width: 92%; max-width: 400px; text-align: center; box-shadow: 0 28px 90px rgba(0,0,0,.72), inset 0 1px rgba(255,255,255,.12), 0 0 34px rgba(56,189,248,.08); position: relative; z-index: 1; backdrop-filter: blur(18px) saturate(125%); overflow: hidden; }
+.login-card::before{content:'';position:absolute;inset:9px;border:1px solid rgba(255,255,255,.08);border-radius:17px;pointer-events:none}
+.login-card::after{content:'';position:absolute;top:-55%;left:-30%;width:70%;height:180%;background:linear-gradient(115deg,transparent,rgba(255,255,255,.08),transparent);transform:rotate(18deg);animation:loginSweep 7s ease-in-out infinite;pointer-events:none}
+@keyframes loginSweep{0%,35%{transform:translateX(-80%) rotate(18deg);opacity:0}55%{opacity:.7}85%,100%{transform:translateX(240%) rotate(18deg);opacity:0}}
 .hotel-logo-container { display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 6px; }
 .logo-icon-box {
-  width: 60px; height: 60px; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  width: 64px; height: 64px; background: radial-gradient(circle at 35% 28%,#334155,#0b1220 72%);
   border: 2px solid #f59e0b; border-radius: 18px; display: flex; align-items: center; justify-content: center;
   font-size: 28px; box-shadow: 0 0 25px rgba(245, 158, 11, 0.5); position: relative; overflow: hidden;
   animation: logoFloat 4s ease-in-out infinite;
@@ -77,7 +85,9 @@ body { padding: 10px; padding-bottom: 85px; }
 .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; padding: 12px; z-index: 100; }
 .modal-body { background: #121a2b; padding: 18px; border-radius: 18px; width: 100%; max-width: 420px; border: 1px solid var(--glass-border); max-height: 90vh; overflow-y: auto; text-align: inherit; }
 .btn { padding: 9px; border: none; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 6px; }
-.btn-gold { background: var(--accent-grad); color: white; }
+.btn-gold { background: var(--accent-grad); color: #111827; box-shadow:0 8px 22px rgba(245,158,11,.18); transition:transform .16s ease,box-shadow .16s ease,filter .16s ease; }
+.btn-gold:hover{transform:translateY(-1px);filter:saturate(1.12);box-shadow:0 12px 28px rgba(245,158,11,.32)}
+.btn-gold:active{transform:scale(.98)}
 .btn-blue { background: #2563eb; color: white; }
 .btn-red { background: #ef4444; color: white; }
 .btn-green { background: #10b981; color: white; }
