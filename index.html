@@ -1159,7 +1159,18 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     <h3 style="color:var(--accent-solid); margin-bottom:8px;" id="modManageRoomsTitle">⚙️ إدارة الغرف</h3>
     <input type="number" id="newRoomId" class="form-input" placeholder="رقم الغرفة (مثال: 301)">
     <select id="newRoomType" class="form-select"><option value="مفردة" id="optTypeSingle">مفردة</option><option value="مزدوجة" id="optTypeDouble">مزدوجة</option><option value="جناح" id="optTypeSuite">جناح</option></select>
-    <button class="btn btn-gold" onclick="addNewRoom()" id="btnAddRoomSubmit">إضافة غرفة ➕</button>
+    <button class="btn btn-gold" onclick="addNewRoom()" id="btnAddRoomSubmit">إضافة غرفة واحدة ➕</button>
+    <div style="margin:8px 0;padding:9px;border:1px solid rgba(56,189,248,.28);border-radius:10px;background:rgba(56,189,248,.06)">
+      <div style="font-size:10px;color:#bae6fd;font-weight:800;margin-bottom:6px">⚡ إضافة طابق وغرف بسرعة</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">
+        <input type="number" id="bulkFloorNumber" class="form-input" min="1" placeholder="رقم الطابق (مثال: 3)" style="margin-bottom:0">
+        <input type="number" id="bulkRoomStart" class="form-input" min="1" placeholder="أول رقم غرفة (301)" style="margin-bottom:0">
+        <input type="number" id="bulkRoomCount" class="form-input" min="1" max="100" placeholder="عدد الغرف" style="margin-bottom:0">
+        <select id="bulkRoomType" class="form-select" style="margin-bottom:0"><option value="مفردة">مفردة</option><option value="مزدوجة">مزدوجة</option><option value="جناح">جناح</option></select>
+      </div>
+      <button class="btn btn-blue" type="button" onclick="addRoomsBatch()" style="margin-top:6px">إنشاء الطابق والغرف دفعة واحدة ⚡</button>
+      <small style="display:block;color:#94a3b8;font-size:9px;margin-top:5px">مثال: الطابق 3، البداية 301، العدد 10 = الغرف 301 إلى 310.</small>
+    </div>
     <table class="table-box"><thead><tr><th id="thEditRoomNum">رقم</th><th id="thEditRoomType">نوع</th><th id="thEditRoomDel">حذف</th></tr></thead><tbody id="editRoomsTableBody"></tbody></table>
     <button class="btn btn-gray" style="margin-top:8px;" onclick="closeManageRoomsModal()" id="modManageRoomsClose">إغلاق</button>
   </div>
@@ -1206,6 +1217,11 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     </div>
     <div style="text-align:center; background:rgba(245,158,11,0.1); padding:6px; border-radius:8px; margin-bottom:6px;">
       <span id="lblBkgTotalText">الإجمالي الكلي (لكل الغرف): </span><strong id="bookingTotalPriceDisplay" style="color:var(--accent-solid);">0.00 ر.س</strong>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px;margin-bottom:6px;border:1px solid rgba(16,185,129,.28);border-radius:10px;background:rgba(16,185,129,.06);">
+      <div><label style="font-size:10px;color:var(--text-muted);">حالة الدفع:</label><select id="bookingPaymentStatus" class="form-select" onchange="calculateBookingPaymentSummary()"><option value="غير مدفوع">غير مدفوع</option><option value="عربون">عربون</option><option value="دفعة جزئية">دفعة جزئية</option><option value="مدفوع بالكامل">مدفوع بالكامل</option></select></div>
+      <div><label style="font-size:10px;color:var(--text-muted);">المبلغ المدفوع (ر.س):</label><input id="bookingPaidAmount" class="form-input" type="number" min="0" step="0.01" value="0" oninput="calculateBookingPaymentSummary()" style="margin-bottom:0"></div>
+      <div id="bookingPaymentSummary" style="grid-column:1/-1;text-align:center;padding:6px;border-radius:8px;background:rgba(2,6,23,.28);font-size:10px;color:#cbd5e1;">المدفوع: 0.00 ر.س · المتبقي: 0.00 ر.س</div>
     </div>
     <div id="bookingReviewBox" class="booking-note-box" style="display:none"></div>
     <button class="btn btn-blue" onclick="reviewNewBooking()" id="btnBkgReview">مراجعة بيانات الحجز قبل التأكيد 🔎</button>
@@ -3329,6 +3345,26 @@ function renderEditRoomsTable() {
     tbody.innerHTML += `<tr><td>${r.id}</td><td>${r.type}</td><td><button onclick="deleteRoom(${idx})" style="background:#ef4444; color:white; border:none; padding:2px 4px; font-size:8px;">حذف</button></td></tr>`;
   });
 }
+function addRoomsBatch(){
+  if(!hoteraRequirePermission('roomAdmin')) return;
+  const hotel=hotelsList.find(item=>item.id===currentHotelId);
+  const floor=Math.max(1,parseInt(document.getElementById('bulkFloorNumber')?.value)||0);
+  const start=Math.max(1,parseInt(document.getElementById('bulkRoomStart')?.value)||0);
+  const count=Math.min(100,Math.max(1,parseInt(document.getElementById('bulkRoomCount')?.value)||0));
+  const type=document.getElementById('bulkRoomType')?.value||'مفردة';
+  if(!hotel||!floor||!start||!count) return alert('أدخل رقم الطابق ورقم أول غرفة وعدد الغرف.');
+  const list=allRooms[currentHotelId]||(allRooms[currentHotelId]=[]);
+  const existing=new Set(list.map(r=>String(r.id)));
+  const ids=Array.from({length:count},(_,i)=>start+i);
+  const duplicates=ids.filter(id=>existing.has(String(id)));
+  if(duplicates.length) return alert(`لم تتم الإضافة. أرقام الغرف موجودة مسبقاً: ${duplicates.slice(0,8).join('، ')}${duplicates.length>8?' ...':''}`);
+  ids.forEach(id=>list.push({id,floor,type,status:'vacant',guest:'',phone:'',carType:'',carPlate:'',bookingType:'فردي',bookingRef:'',maintUser:'',maintIssue:'',nights:1,nightPrice:200,totalAmount:200}));
+  hotel.floorsCount=Math.max(Number(hotel.floorsCount||0),floor);
+  selectedFloor=floor;
+  saveData(); uploadDataToCloud(); render(); renderEditRoomsTable();
+  document.getElementById('bulkRoomCount').value='';
+  alert(`✅ تم إنشاء الطابق ${floor} وإضافة ${ids.length} غرفة بنجاح.`);
+}
 function addNewRoom() {
   if(!hoteraRequirePermission('roomAdmin')) return;
   const id = parseInt(document.getElementById('newRoomId').value);
@@ -3381,6 +3417,8 @@ function openNewBookingModal(editRef) {
   document.getElementById('bookingAdults').value = sourceRoom?.adults || '1';
   document.getElementById('bookingChildren').value = sourceRoom?.children || '0';
   document.getElementById('bookingPaymentMethod').value = sourceRoom?.paymentMethod || 'نقدي';
+  document.getElementById('bookingPaymentStatus').value = sourceRoom?.paymentStatus || 'غير مدفوع';
+  document.getElementById('bookingPaidAmount').value = Number(sourceRoom?.paidAmount || 0).toFixed(2);
   document.getElementById('bookingPurpose').value = sourceRoom?.bookingPurpose || 'سياحة';
   document.getElementById('bookingSource').value = sourceRoom?.bookingSource || 'الاستقبال';
   document.getElementById('bookingCreatedByDisplay').innerText = sourceRoom?.bookingCreatedBy || sourceRoom?.staffName || currentUsername || 'المستخدم الحالي';
@@ -3398,6 +3436,7 @@ function openNewBookingModal(editRef) {
   document.getElementById('btnBkgReview').style.display = 'block';
   document.getElementById('btnBkgSubmit').style.display = 'none';
   calculateBookingDays();
+  calculateBookingPaymentSummary();
   updateBookingAutoTypeBadge(document.querySelectorAll('input[name=selectedBookingRoom]:checked').length);
   document.getElementById('bookingModal').style.display = 'flex';
 }
@@ -3428,6 +3467,20 @@ function calculateTotalFromManual() {
   const selectedCount = checkboxes.length > 0 ? checkboxes.length : 1;
   const grandTotal = n * p * selectedCount;
   document.getElementById('bookingTotalPriceDisplay').innerText = `${grandTotal.toFixed(2)} ر.س`;
+  calculateBookingPaymentSummary();
+}
+function calculateBookingPaymentSummary(){
+  const total=(parseFloat(document.getElementById('bookingNightsInput')?.value)||1)*(parseFloat(document.getElementById('bookingNightPriceInput')?.value)||200)*(document.querySelectorAll('input[name="selectedBookingRoom"]:checked').length||1);
+  const status=document.getElementById('bookingPaymentStatus')?.value||'غير مدفوع';
+  const paidInput=document.getElementById('bookingPaidAmount');
+  let paid=Math.max(0,parseFloat(paidInput?.value)||0);
+  if(status==='مدفوع بالكامل') paid=total;
+  paid=Math.min(paid,total);
+  if(paidInput && status==='مدفوع بالكامل') paidInput.value=paid.toFixed(2);
+  const remaining=Math.max(0,total-paid);
+  const summary=document.getElementById('bookingPaymentSummary');
+  if(summary) summary.innerHTML=`<strong style="color:#86efac">المدفوع: ${paid.toFixed(2)} ر.س</strong> &nbsp; · &nbsp; <strong style="color:${remaining>0?'#fbbf24':'#86efac'}">المتبقي: ${remaining.toFixed(2)} ر.س</strong>`;
+  return {total,paid,remaining,status};
 }
 function reviewNewBooking() {
   const guest=document.getElementById('bookingGuestName').value.trim();
@@ -3441,7 +3494,7 @@ function reviewNewBooking() {
   if(!guest) return alert('الرجاء إدخال اسم العميل قبل المراجعة.');
   if(!rooms.length) return alert('الرجاء اختيار غرفة واحدة على الأقل قبل المراجعة.');
   const box=document.getElementById('bookingReviewBox');
-  box.innerHTML=`<strong style="color:var(--accent-solid)">مراجعة الحجز</strong><br>👤 ${guest} — 📞 ${phone||'بدون جوال'}<br>🛏️ الغرف: ${rooms.join('، ')}<br>📅 ${checkIn} إلى ${checkOut} — ${nights} ليلة<br>💳 الدفع: ${payment}<br>🎯 الغرض: ${document.getElementById('bookingPurpose').value}<br>📌 المصدر: ${document.getElementById('bookingSource').value}<br>👤 المنفذ: ${currentUsername||'المستخدم الحالي'}<br>💰 الإجمالي: <strong>${(rooms.length*nights*price).toFixed(2)} ر.س</strong>`;
+  box.innerHTML=`<strong style="color:var(--accent-solid)">مراجعة الحجز</strong><br>👤 ${guest} — 📞 ${phone||'بدون جوال'}<br>🛏️ الغرف: ${rooms.join('، ')}<br>📅 ${checkIn} إلى ${checkOut} — ${nights} ليلة<br>💳 الدفع: ${payment}<br>🎯 الغرض: ${document.getElementById('bookingPurpose').value}<br>📌 المصدر: ${document.getElementById('bookingSource').value}<br>👤 المنفذ: ${currentUsername||'المستخدم الحالي'}<br>💰 الإجمالي: <strong>${(rooms.length*nights*price).toFixed(2)} ر.س</strong><br>💳 الحالة: ${document.getElementById('bookingPaymentStatus')?.value||'غير مدفوع'} · المدفوع: ${(calculateBookingPaymentSummary().paid||0).toFixed(2)} ر.س · المتبقي: ${(calculateBookingPaymentSummary().remaining||0).toFixed(2)} ر.س`;
   box.style.display='block'; document.getElementById('btnBkgReview').style.display='none'; document.getElementById('btnBkgSubmit').style.display='block';
 }
 
@@ -3469,6 +3522,10 @@ function executeNewBooking() {
   const adults = parseInt(document.getElementById('bookingAdults').value) || 1;
   const children = parseInt(document.getElementById('bookingChildren').value) || 0;
   const paymentMethod = document.getElementById('bookingPaymentMethod').value;
+  const paymentInfo = calculateBookingPaymentSummary();
+  const paymentStatus = paymentInfo.status;
+  const paidAmount = paymentInfo.paid;
+  const remainingAmount = paymentInfo.remaining;
   const bookingPurpose = document.getElementById('bookingPurpose').value;
   const bookingSource = document.getElementById('bookingSource').value;
   const bookingNotes = document.getElementById('bookingNotes').value.trim();
@@ -3489,6 +3546,7 @@ function executeNewBooking() {
   const selectedIds = checkboxes.map(chk=>parseInt(chk.value));
   if(!guest) return alert('الرجاء إدخال اسم النزيل أو الجهة!');
   if(!selectedIds.length) return alert('الرجاء اختيار غرفة واحدة على الأقل للحجز!');
+  if(paidAmount<0 || paidAmount>paymentInfo.total) return alert('قيمة المدفوع غير صحيحة. يجب أن تكون بين صفر والإجمالي.');
   const bookingType = bookingTypeForCount(selectedIds.length);
   const rooms = allRooms[currentHotelId] || [];
   const originalBookingRoom = editingRef ? (rooms.find(r=>r.bookingRef===editingRef)||{}) : {};
@@ -3506,14 +3564,18 @@ function executeNewBooking() {
   const roomsListDetails=[]; let totalGrandAmount=0;
   selectedIds.forEach(roomId=>{
     const target=rooms.find(r=>r.id===roomId); if(!target) return;
-    const priorCheckInStatus=target.checkInStatus; Object.assign(target,{status:'occupied',guest,phone,guestId,nationality,email,adults,children,paymentMethod,bookingNotes,carType,carPlate,bookingType,bookingRef,nights,nightPrice,baseNightPrice,pricingSource,contractDiscount,checkIn,checkOut,totalAmount:nights*nightPrice,staffName:currentUsername,bookingCreatedBy,bookingUpdatedBy,bookingPurpose,bookingSource,companyContractId,checkInStatus:priorCheckInStatus||(checkIn>new Date().toISOString().slice(0,10)?'scheduled':'checked-in'),checkedInAt:target.checkedInAt||((checkIn<=new Date().toISOString().slice(0,10))?new Date().toISOString():''),checkedInBy:target.checkedInBy||((checkIn<=new Date().toISOString().slice(0,10))?(currentUsername||'المستخدم الحالي'):'')});
+    const priorCheckInStatus=target.checkInStatus; Object.assign(target,{status:'occupied',guest,phone,guestId,nationality,email,adults,children,paymentMethod,paymentStatus,paidAmount,remainingAmount,bookingNotes,carType,carPlate,bookingType,bookingRef,nights,nightPrice,baseNightPrice,pricingSource,contractDiscount,checkIn,checkOut,totalAmount:nights*nightPrice,staffName:currentUsername,bookingCreatedBy,bookingUpdatedBy,bookingPurpose,bookingSource,companyContractId,checkInStatus:priorCheckInStatus||(checkIn>new Date().toISOString().slice(0,10)?'scheduled':'checked-in'),checkedInAt:target.checkedInAt||((checkIn<=new Date().toISOString().slice(0,10))?new Date().toISOString():''),checkedInBy:target.checkedInBy||((checkIn<=new Date().toISOString().slice(0,10))?(currentUsername||'المستخدم الحالي'):'')});
     roomsListDetails.push({id:target.id,type:target.type,nights,price:nightPrice}); totalGrandAmount += nights*nightPrice;
   });
   if(!allInvoices || typeof allInvoices!=='object') allInvoices={};
   if(!Array.isArray(allInvoices[currentHotelId])) allInvoices[currentHotelId]=[];
   let unifiedInvoice = allInvoices[currentHotelId].find(i=>i.bookingRef===bookingRef);
-  const invoiceData={bookingRef,room:roomsListDetails[0]?.id||'مجموعة',roomsList:roomsListDetails,guest,phone,guestId,nationality,email,adults,children,paymentMethod,bookingNotes,carType,carPlate,bookingType,nights,nightPrice,baseNightPrice,pricingSource,contractDiscount,bookingPurpose,bookingSource,companyContractId,total:totalGrandAmount,date:checkIn,checkIn,checkOut,status:'confirmed',staffName:currentUsername,bookingCreatedBy,bookingUpdatedBy};
+  const invoiceData={bookingRef,room:roomsListDetails[0]?.id||'مجموعة',roomsList:roomsListDetails,guest,phone,guestId,nationality,email,adults,children,paymentMethod,paymentStatus,paidAmount,remainingAmount,bookingNotes,carType,carPlate,bookingType,nights,nightPrice,baseNightPrice,pricingSource,contractDiscount,bookingPurpose,bookingSource,companyContractId,total:totalGrandAmount,date:checkIn,checkIn,checkOut,status:'confirmed',staffName:currentUsername,bookingCreatedBy,bookingUpdatedBy};
   if(unifiedInvoice) Object.assign(unifiedInvoice,invoiceData); else { unifiedInvoice={id:`INV-${Math.floor(Math.random()*9000+1000)}`,...invoiceData}; allInvoices[currentHotelId].unshift(unifiedInvoice); }
+  if(typeof hoteraInvoicePayments!=='object'||!hoteraInvoicePayments) hoteraInvoicePayments={};
+  if(!Array.isArray(hoteraInvoicePayments[currentHotelId])) hoteraInvoicePayments[currentHotelId]=[];
+  hoteraInvoicePayments[currentHotelId]=hoteraInvoicePayments[currentHotelId].filter(x=>x.bookingRef!==bookingRef||x.source!=='booking-payment');
+  if(paidAmount>0) hoteraInvoicePayments[currentHotelId].push({id:`PAY-${Date.now()}`,invoiceId:unifiedInvoice.id,bookingRef,amount:paidAmount,method:paymentMethod,status:paymentStatus,source:'booking-payment',createdBy:currentUsername||'المستخدم الحالي',createdAt:new Date().toISOString()});
   recordHoteraAudit(editingRef?'تعديل حجز':'إنشاء حجز',{bookingRef,guest,rooms:roomsListDetails.map(r=>r.id),total:totalGrandAmount,bookingType});
   saveData(); uploadDataToCloud(); closeNewBookingModal(); window.hoteraEditingBookingRef=null; render(); if(document.getElementById('hoteraBookingManagementModal')?.classList.contains('open'))renderHoteraBookingManagement(); populateOfficialInvoiceModal(unifiedInvoice);
   alert(`✅ تم ${editingRef?'تعديل':'تنفيذ'} الحجز (${bookingRef}) وتصنيفه: ${bookingType}.`);
