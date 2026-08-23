@@ -3877,7 +3877,7 @@ const out=document.getElementById('hoteraSupabaseReadonlyResult');
 let parsedUrl=null; try{parsedUrl=new URL(url);}catch(e){} if(!parsedUrl || parsedUrl.protocol!=='https:' || !parsedUrl.hostname.toLowerCase().endsWith('.supabase.co')){out.className='hotera-sb-result hotera-sb-error';out.textContent='رابط Project URL غير صحيح. استخدم الرابط المنسوخ من Data API مثل: https://معرّف-المشروع.supabase.co';return;}
 if(!key){out.className='hotera-sb-result hotera-sb-error';out.textContent='أدخل المفتاح العام فقط.';return;}
 out.className='hotera-sb-result';out.textContent='جارٍ اختبار القراءة من الجداول الأربعة...';
-const headers={apikey:key,Authorization:'Bearer '+key,Accept:'application/json'};const tables=['hotels','rooms','bookings','user_profiles'];const results=[];
+const headers={apikey:key,Authorization:'Bearer '+key,Accept:'application/json'};const tables=['hotera_hotels','hotera_rooms','hotera_bookings','hotera_user_profiles'];const results=[];
 try{for(const table of tables){const res=await fetch(url+'/rest/v1/'+table+'?select=*',{method:'GET',headers,cache:'no-store'});const body=await res.text();if(!res.ok)throw new Error(table+' — HTTP '+res.status+' — '+body.slice(0,180));let rows=[];try{rows=JSON.parse(body)}catch(e){}results.push('✓ '+table+': '+(Array.isArray(rows)?rows.length:0)+' سجل مقروء');}out.className='hotera-sb-result hotera-sb-ok';out.textContent='نجح الاتصال بالقراءة فقط.\n'+results.join('\n')+'\n\nلم يتم إرسال أي تعديل أو حفظ أي مفتاح.';}catch(e){out.className='hotera-sb-result hotera-sb-error';out.textContent='تعذر اختبار القراءة.\n'+e.message+'\n\nتحقق من اسم الجدول وسياسات SELECT والمفتاح العام.';}}
 })();
 </script>
