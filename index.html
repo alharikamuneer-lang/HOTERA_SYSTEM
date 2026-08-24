@@ -219,6 +219,8 @@ body { padding: 10px; padding-bottom: 85px; }
 @media(max-width:650px){.hotera-glass-header,.hotera-glass-intro{display:block}.hotera-glass-meta{text-align:right;margin-top:12px}.hotera-glass-kpis{grid-template-columns:repeat(2,1fr)}.hotera-glass-grid{grid-template-columns:1fr}.hotera-glass-room-grid{grid-template-columns:repeat(4,1fr)}.hotera-glass-brand h1{font-size:22px}.hotera-glass-health{margin-top:12px}}
 
 
+.hotera-daily-tasks{margin:0 0 12px;padding:14px;border:1px solid rgba(245,158,11,.32);border-radius:19px;background:linear-gradient(145deg,rgba(18,43,68,.94),rgba(5,18,34,.96));box-shadow:0 12px 30px rgba(0,0,0,.22)}.hotera-daily-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}.hotera-daily-head h3{margin:0;color:#fbbf24;font-size:13px}.hotera-daily-date{color:#94a3b8;font-size:9px}.hotera-daily-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.hotera-daily-card{padding:10px;border:1px solid rgba(148,163,184,.2);border-radius:13px;background:rgba(255,255,255,.045);min-height:92px}.hotera-daily-card h4{margin:0 0 7px;color:#e2e8f0;font-size:10px}.hotera-daily-card strong{display:block;color:#fbbf24;font-size:22px;line-height:1}.hotera-daily-card p{margin:6px 0 0;color:#94a3b8;font-size:9px;line-height:1.6}.hotera-daily-card button{margin-top:7px;padding:5px 8px;border:1px solid rgba(56,189,248,.35);border-radius:8px;color:#bae6fd;background:rgba(14,165,233,.1);font:inherit;font-size:9px;cursor:pointer}.hotera-daily-empty{color:#34d399!important}.hotera-daily-list{margin-top:7px;max-height:52px;overflow:auto;color:#cbd5e1;font-size:9px;line-height:1.7}@media(max-width:700px){.hotera-daily-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:420px){.hotera-daily-grid{grid-template-columns:1fr}}
+
 /* Keep the command center visually focused while preserving the underlying modules. */
 body:has(#commandCenterView.active) .brand-header,body:has(#commandCenterView.active) .advice-ticker-bar,body:has(#commandCenterView.active) .hotera-visual-strip,body:has(#commandCenterView.active) .hotera-notification-bar,body:has(#commandCenterView.active) .hotera-room-showcase{display:none!important}
 body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2px}
@@ -264,7 +266,7 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
 .hotera-audit-modal{display:none;position:fixed;inset:0;z-index:2200;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.62);backdrop-filter:blur(7px)}.hotera-audit-modal.open{display:flex}.hotera-audit-box{width:min(94vw,760px);max-height:86vh;overflow:auto;border:1px solid rgba(245,158,11,.35);border-radius:18px;background:linear-gradient(145deg,rgba(13,38,62,.98),rgba(4,13,25,.98));box-shadow:0 25px 80px rgba(0,0,0,.6);padding:15px}.hotera-audit-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}.hotera-audit-head h3{margin:0;color:#fbbf24;font-size:16px}.hotera-audit-filter{width:100%;padding:8px 10px;margin-bottom:9px;border:1px solid rgba(148,163,184,.22);border-radius:10px;color:#e2e8f0;background:rgba(255,255,255,.06);font:inherit;font-size:11px}.hotera-audit-row{display:grid;grid-template-columns:1.2fr 1fr 1fr 1.7fr;gap:7px;padding:8px 5px;border-bottom:1px solid rgba(148,163,184,.12);font-size:10px;color:#dbeafe}.hotera-audit-row small{color:#94a3b8}.hotera-audit-empty{padding:20px;text-align:center;color:#94a3b8;font-size:11px}@media(max-width:620px){.hotera-audit-row{grid-template-columns:1fr 1fr}.hotera-audit-row span:last-child{grid-column:1/-1}}
 
 
-.hotera-calendar-modal{display:none;position:fixed;inset:0;z-index:2200;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.62);backdrop-filter:blur(7px)}.hotera-calendar-modal.open{display:flex}.hotera-calendar-box{width:min(95vw,900px);max-height:88vh;overflow:auto;border:1px solid rgba(56,189,248,.35);border-radius:18px;background:linear-gradient(145deg,rgba(13,38,62,.98),rgba(4,13,25,.98));box-shadow:0 25px 80px rgba(0,0,0,.6);padding:15px}.hotera-calendar-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}.hotera-calendar-head h3{margin:0;color:#fbbf24;font-size:16px}.hotera-calendar-toolbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.hotera-calendar-toolbar button{padding:6px 10px;border:1px solid rgba(148,163,184,.25);border-radius:9px;color:#e2e8f0;background:rgba(255,255,255,.06);cursor:pointer;font:inherit;font-size:10px}.hotera-calendar-month{color:#bae6fd;font-size:12px;font-weight:bold;margin-inline:auto}.hotera-calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.hotera-calendar-day,.hotera-calendar-week{min-height:58px;padding:6px;border:1px solid rgba(148,163,184,.15);border-radius:9px}.hotera-calendar-week{min-height:auto;color:#94a3b8;text-align:center;font-size:9px;background:rgba(255,255,255,.04)}.hotera-calendar-day{color:#e2e8f0;background:rgba(255,255,255,.025);cursor:pointer}.hotera-calendar-day:hover{border-color:rgba(56,189,248,.65)}.hotera-calendar-day.muted{opacity:.32}.hotera-calendar-day.today{box-shadow:inset 0 0 0 1px #fbbf24}.hotera-calendar-day strong{font-size:11px}.hotera-calendar-booking{display:block;margin-top:4px;padding:2px 4px;border-radius:5px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:#0f172a;background:#7dd3fc;font-size:8px}.hotera-calendar-side{margin-top:12px;padding:10px;border:1px solid rgba(245,158,11,.22);border-radius:12px;background:rgba(245,158,11,.06)}.hotera-calendar-side h4{margin:0 0 7px;color:#fbbf24;font-size:12px}.hotera-calendar-list{display:grid;gap:5px}.hotera-calendar-list div{display:flex;justify-content:space-between;gap:8px;padding:6px;border-bottom:1px solid rgba(148,163,184,.12);color:#dbeafe;font-size:10px}@media(max-width:560px){.hotera-calendar-day{min-height:44px;padding:3px}.hotera-calendar-booking{font-size:7px}.hotera-calendar-grid{gap:3px}}
+.hotera-calendar-modal{display:none;position:fixed;inset:0;z-index:2200;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.62);backdrop-filter:blur(7px)}.hotera-calendar-modal.open{display:flex}.hotera-calendar-box{width:min(95vw,900px);max-height:88vh;overflow:auto;border:1px solid rgba(56,189,248,.35);border-radius:18px;background:linear-gradient(145deg,rgba(13,38,62,.98),rgba(4,13,25,.98));box-shadow:0 25px 80px rgba(0,0,0,.6);padding:15px}.hotera-calendar-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}.hotera-calendar-head h3{margin:0;color:#fbbf24;font-size:16px}.hotera-calendar-toolbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.hotera-calendar-toolbar button{padding:6px 10px;border:1px solid rgba(148,163,184,.25);border-radius:9px;color:#e2e8f0;background:rgba(255,255,255,.06);cursor:pointer;font:inherit;font-size:10px}.hotera-calendar-month{color:#bae6fd;font-size:12px;font-weight:bold;margin-inline:auto}.hotera-calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.hotera-calendar-day,.hotera-calendar-week{min-height:58px;padding:6px;border:1px solid rgba(148,163,184,.15);border-radius:9px}.hotera-calendar-week{min-height:auto;color:#94a3b8;text-align:center;font-size:9px;background:rgba(255,255,255,.04)}.hotera-calendar-day{color:#e2e8f0;background:rgba(255,255,255,.025);cursor:pointer}.hotera-calendar-day:hover{border-color:rgba(56,189,248,.65)}.hotera-calendar-day.muted{opacity:.32}.hotera-calendar-day.today{box-shadow:inset 0 0 0 1px #fbbf24}.hotera-calendar-day strong{font-size:11px}.hotera-calendar-booking{display:block;margin-top:4px;padding:2px 4px;border-radius:5px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:#0f172a;background:#7dd3fc;font-size:8px}.hotera-calendar-booking.status-staying{background:#34d399}.hotera-calendar-booking.status-departure{background:#fbbf24}.hotera-calendar-booking.status-confirmed{background:#7dd3fc}.hotera-calendar-booking.status-completed{background:#94a3b8}.hotera-calendar-booking.status-maintenance{background:#cbd5e1;color:#1e293b}.hotera-calendar-side{margin-top:12px;padding:10px;border:1px solid rgba(245,158,11,.22);border-radius:12px;background:rgba(245,158,11,.06)}.hotera-calendar-side h4{margin:0 0 7px;color:#fbbf24;font-size:12px}.hotera-calendar-list{display:grid;gap:5px}.hotera-calendar-list div{display:flex;justify-content:space-between;gap:8px;padding:6px;border-bottom:1px solid rgba(148,163,184,.12);color:#dbeafe;font-size:10px}@media(max-width:560px){.hotera-calendar-day{min-height:44px;padding:3px}.hotera-calendar-booking{font-size:7px}.hotera-calendar-grid{gap:3px}}
 
 
 .hotera-ops-modal{display:none;position:fixed;inset:0;z-index:2200;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.62);backdrop-filter:blur(7px)}.hotera-ops-modal.open{display:flex}.hotera-ops-box{width:min(94vw,620px);max-height:88vh;overflow:auto;border:1px solid rgba(56,189,248,.35);border-radius:18px;background:linear-gradient(145deg,rgba(13,38,62,.98),rgba(4,13,25,.98));box-shadow:0 25px 80px rgba(0,0,0,.6);padding:15px}.hotera-ops-box h3{margin:0;color:#fbbf24;font-size:16px}.hotera-ops-form{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:12px 0}.hotera-ops-form input,.hotera-ops-form select,.hotera-ops-form textarea{width:100%;box-sizing:border-box;padding:8px;border:1px solid rgba(148,163,184,.22);border-radius:9px;color:#e2e8f0;background:rgba(255,255,255,.06);font:inherit;font-size:10px}.hotera-ops-form textarea{grid-column:1/-1;min-height:60px}.hotera-ops-list{display:grid;gap:6px}.hotera-ops-row{display:flex;justify-content:space-between;gap:8px;padding:8px;border:1px solid rgba(148,163,184,.15);border-radius:10px;color:#dbeafe;font-size:10px}.hotera-ops-row small{color:#94a3b8}.hotera-ops-row button{padding:3px 7px;border:1px solid rgba(52,211,153,.35);border-radius:7px;color:#bbf7d0;background:rgba(52,211,153,.1);cursor:pointer;font:inherit;font-size:9px}@media(max-width:520px){.hotera-ops-form{grid-template-columns:1fr}.hotera-ops-form textarea{grid-column:auto}}
@@ -578,6 +580,7 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
     <header class="hotera-glass-header"><div class="hotera-glass-brand"><div class="hotera-glass-mark">🏨</div><div><h1>HOTERA</h1><p>ULTIMATE HOTEL MANAGEMENT SYSTEM · GLASS EDITION</p></div></div><div class="hotera-glass-meta"><span>تطوير وهندسة البرمجيات</span><br><strong id="glassDeveloperName">م. منير الحارقة</strong> · <span id="glassDeveloperPhone">0566030594</span><div class="hotera-glass-actions"><button type="button" onclick="openLanguagePicker()" id="glassLanguageBtn">English</button><button type="button" onclick="logout()">⏻ متصل</button><button type="button" onclick="toggleHoteraTheme()">☼ الوضع الليلي</button></div></div></header>
     <div class="hotera-glass-intro"><div><h2>لوحة القيادة الذكية</h2><p>رؤية فورية لأداء الفندق، الإشغال، الحجوزات، الإيرادات والتنبيهات.</p></div><div class="hotera-glass-health"><span id="commandCloudStatus">☁️ السحابة: محلي</span><span id="commandLastSync">⏱ آخر تحديث: الآن</span><span>🛡️ النسخ الاحتياطي آمن</span></div></div>
     <div class="hotera-glass-kpis"><div class="hotera-glass-kpi"><small>إجمالي الغرف</small><strong id="cmdTotalRooms">0</strong><em>↗ حسب بيانات الفندق</em></div><div class="hotera-glass-kpi"><small>نسبة الإشغال</small><strong id="premiumOccupancy">0%</strong><em>↗ مقارنة مع أمس</em></div><div class="hotera-glass-kpi"><small>حجوزات اليوم</small><strong id="premiumTodayBookings">0</strong><em>↗ حجوزات جديدة</em></div><div class="hotera-glass-kpi"><small>إيرادات اليوم</small><strong id="premiumTodayRevenue">0 ر.س</strong><em>↗ أداء مالي</em></div><div class="hotera-glass-kpi"><small>تقييم النزلاء</small><strong id="premiumRatingsCount">0</strong><em>★ من السجلات الحالية</em></div></div>
+    <section class="hotera-daily-tasks" aria-label="المهام اليومية"><div class="hotera-daily-head"><h3>📋 مهام اليوم التشغيلية</h3><span class="hotera-daily-date" id="hoteraDailyTasksDate">—</span></div><div class="hotera-daily-grid"><article class="hotera-daily-card"><h4>🛬 وصولات اليوم</h4><strong id="dailyArrivalsCount">0</strong><p id="dailyArrivalsSummary">لا توجد وصولات اليوم</p><button type="button" onclick="openDailyTaskTarget('booking')">فتح الحجوزات</button></article><article class="hotera-daily-card"><h4>🛫 مغادرات اليوم</h4><strong id="dailyDeparturesCount">0</strong><p id="dailyDeparturesSummary">لا توجد مغادرات اليوم</p><button type="button" onclick="openDailyTaskTarget('rooms')">فتح الغرف</button></article><article class="hotera-daily-card"><h4>🧹 تنظيف وصيانة</h4><strong id="dailyServiceCount">0</strong><p id="dailyServiceSummary">لا توجد مهام معلقة</p><button type="button" onclick="openDailyTaskTarget('maintenance')">فتح التشغيل</button></article><article class="hotera-daily-card"><h4>💳 فواتير تحتاج متابعة</h4><strong id="dailyUnpaidCount">0</strong><p id="dailyUnpaidSummary">لا توجد فواتير معلقة</p><button type="button" onclick="openDailyTaskTarget('invoices')">فتح الفواتير</button></article></div></section>
     <div class="hotera-glass-grid">
       <section class="hotera-glass-panel"><h3>🔔 التنبيهات الذكية</h3><div id="commandAlertsList"></div></section><section class="hotera-glass-panel"><h3>▤ الحجوزات القادمة</h3><div id="glassUpcomingBookings" class="hotera-glass-list"><div class="hotera-glass-list-row"><span>لا توجد حجوزات قادمة</span><strong>—</strong></div></div></section>
       <section class="hotera-glass-panel"><h3>◉ مؤشر الإشغال</h3><div class="hotera-glass-donut-wrap"><div class="hotera-glass-donut" id="glassOccupancyDonut"><span id="glassOccupancyValue">0%</span></div></div><div class="hotera-glass-list-row"><span>متاحة</span><strong id="premiumVacant">0</strong></div><div class="hotera-glass-list-row"><span>محجوزة</span><strong id="premiumBooked">0</strong></div></section>
@@ -1291,6 +1294,7 @@ function readInviteFromUrl() {
 }
 
 async function generateDeviceInviteLink() {
+  if (!requireHoteraPermission('superadmin', 'إنشاء دعوات الأجهزة متاح للسوبر أدمن فقط.')) return;
   if (!cloudApiUrl || !cloudApiKey) return alert('⚠️ احفظ إعدادات السحابة أولاً.');
   cloudJoinCode = String(Math.floor(100000 + Math.random() * 900000));
   localStorage.setItem('hotera_cloud_join_code', cloudJoinCode);
@@ -1359,6 +1363,7 @@ async function toggleDeviceSuspension(id) {
 }
 
 async function deleteDeviceRecord(id) {
+  if (!requireHoteraPermission('superadmin', 'حذف الأجهزة المرتبطة متاح للسوبر أدمن فقط.')) return;
   if (!confirm('⚠️ هل أنت متأكد من حذف هذا الجهاز نهائياً؟ سيفقد الجهاز صلاحية الدخول فوراً.')) return;
   cloudDevices = cloudDevices.filter(d => d.id !== id);
   if (await uploadDataToCloud(true)) { renderDeviceApprovalPanel(); alert('✅ تم حذف الجهاز من السجل.'); }
@@ -1723,11 +1728,13 @@ function openHoteraNotificationsPanel(){toggleTopSettingsPanel(false);if(typeof 
 
 
 window.hoteraCalendarCursor=new Date();
-function openHoteraCalendarModal(){toggleTopSettingsPanel(false);document.getElementById('hoteraCalendarModal')?.classList.add('open');renderHoteraCalendar();}
+function getHoteraBookingDisplayStatus(room, today = new Date().toISOString().slice(0,10)) { if (!room) return {key:'confirmed',label:'مؤكد'}; if (room.status === 'maintenance') return {key:'maintenance',label:'صيانة'}; if (room.status === 'cleaning') return {key:'maintenance',label:'تنظيف'}; if (room.checkOut && String(room.checkOut) < today) return {key:'completed',label:'منتهي'}; if (room.checkOut && String(room.checkOut) === today) return {key:'departure',label:'مغادرة اليوم'}; if (room.checkIn && String(room.checkIn) <= today && String(room.checkOut) > today) return {key:'staying',label:'مقيم'}; return {key:'confirmed',label:'مؤكد / قادم'}; }
+function openHoteraCalendarModal(){toggleTopSettingsPanel(false);document.getElementById('hoteraCalendarModal')?.classList.add('open');renderHoteraCalendarAdvanced();}
 function closeHoteraCalendarModal(){document.getElementById('hoteraCalendarModal')?.classList.remove('open');}
-function hoteraCalendarShift(delta){window.hoteraCalendarCursor.setMonth(window.hoteraCalendarCursor.getMonth()+delta);renderHoteraCalendar();}
-function hoteraCalendarToday(){window.hoteraCalendarCursor=new Date();renderHoteraCalendar();}
+function hoteraCalendarShift(delta){window.hoteraCalendarCursor.setMonth(window.hoteraCalendarCursor.getMonth()+delta);renderHoteraCalendarAdvanced();}
+function hoteraCalendarToday(){window.hoteraCalendarCursor=new Date();renderHoteraCalendarAdvanced();}
 function renderHoteraCalendar(){const grid=document.getElementById('hoteraCalendarGrid'),monthEl=document.getElementById('hoteraCalendarMonth'),up=document.getElementById('hoteraCalendarUpcoming');if(!grid)return;const cursor=window.hoteraCalendarCursor;const y=cursor.getFullYear(),m=cursor.getMonth();const monthNames=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];if(monthEl)monthEl.textContent=`${monthNames[m]} ${y}`;const rooms=Array.isArray(allRooms?.[currentHotelId])?allRooms[currentHotelId]:[];const bookings=rooms.filter(r=>r&&r.guest&&r.checkIn&&r.checkOut);const first=new Date(y,m,1),start=(first.getDay()+6)%7,last=new Date(y,m+1,0).getDate();const cells=[];['الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت','الأحد'].forEach(d=>cells.push(`<div class="hotera-calendar-week">${d}</div>`));for(let i=0;i<start;i++)cells.push('<div class="hotera-calendar-day muted"></div>');for(let day=1;day<=last;day++){const key=`${y}-${String(m+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;const dayBookings=bookings.filter(r=>String(r.checkIn)<=key&&String(r.checkOut)>=key).slice(0,3);const today=new Date().toISOString().slice(0,10);cells.push(`<div class="hotera-calendar-day ${key===today?'today':''}"><strong>${day}</strong>${dayBookings.map(r=>`<span class="hotera-calendar-booking" title="${r.guest||''} — غرفة ${r.id}">${r.guest||'حجز'} · ${r.id}</span>`).join('')}</div>`);}grid.innerHTML=cells.join('');const upcoming=bookings.filter(r=>String(r.checkOut)>=new Date().toISOString().slice(0,10)).sort((a,b)=>String(a.checkIn).localeCompare(String(b.checkIn))).slice(0,10);if(up)up.innerHTML=upcoming.length?upcoming.map(r=>`<div><span>${r.guest||'نزيل'} · غرفة ${r.id}<br><small style="color:#94a3b8">${r.checkIn||'—'} → ${r.checkOut||'—'}</small></span><b>${r.bookingRef||'حجز'}</b></div>`).join(''):'<div>لا توجد حجوزات قادمة</div>';}
+function renderHoteraCalendarAdvanced(){const grid=document.getElementById('hoteraCalendarGrid'),monthEl=document.getElementById('hoteraCalendarMonth'),up=document.getElementById('hoteraCalendarUpcoming'),filter=document.getElementById('hoteraCalendarStatusFilter');if(!grid)return;const cursor=window.hoteraCalendarCursor||new Date(),y=cursor.getFullYear(),m=cursor.getMonth(),selected=filter?.value||'all',today=new Date().toISOString().slice(0,10),monthNames=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];if(monthEl)monthEl.textContent=`${monthNames[m]} ${y}`;const rooms=Array.isArray(allRooms?.[currentHotelId])?allRooms[currentHotelId]:[],bookings=rooms.filter(r=>r&&r.guest&&r.checkIn&&r.checkOut).map(r=>({...r,_state:getHoteraBookingDisplayStatus(r,today)})).filter(r=>selected==='all'||r._state.key===selected);const first=new Date(y,m,1),start=(first.getDay()+6)%7,last=new Date(y,m+1,0).getDate(),cells=[];['الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت','الأحد'].forEach(d=>cells.push(`<div class="hotera-calendar-week">${d}</div>`));for(let i=0;i<start;i++)cells.push('<div class="hotera-calendar-day muted"></div>');for(let day=1;day<=last;day++){const key=`${y}-${String(m+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`,dayBookings=bookings.filter(r=>String(r.checkIn)<=key&&String(r.checkOut)>key).slice(0,4);cells.push(`<div class="hotera-calendar-day ${key===today?'today':''}"><strong>${day}</strong>${dayBookings.map(r=>`<span class="hotera-calendar-booking status-${r._state.key}" title="${escapeHoteraTaskText(r.guest||'حجز')} — غرفة ${escapeHoteraTaskText(r.id)} — ${r._state.label}">${escapeHoteraTaskText(r.guest||'حجز')} · ${escapeHoteraTaskText(r.id)}</span>`).join('')}</div>`);}grid.innerHTML=cells.join('');const upcoming=bookings.filter(r=>String(r.checkOut)>=today).sort((a,b)=>String(a.checkIn).localeCompare(String(b.checkIn))).slice(0,12);if(up)up.innerHTML=upcoming.length?upcoming.map(r=>`<div><span>${escapeHoteraTaskText(r.guest||'نزيل')} · غرفة ${escapeHoteraTaskText(r.id)}<br><small style="color:#94a3b8">${escapeHoteraTaskText(r.checkIn)} → ${escapeHoteraTaskText(r.checkOut)} · ${r._state.label}</small></span><b>${escapeHoteraTaskText(r.bookingRef||'حجز')}</b></div>`).join(''):'<div>لا توجد حجوزات مطابقة للمرشح</div>';}
 function openHoteraReportsPanel(){toggleTopSettingsPanel(false);const chip=document.getElementById('chipFinancial');if(typeof switchMainFeature==='function'&&chip)switchMainFeature('financial',chip);}
 
 
@@ -2202,7 +2209,20 @@ function toggleAllPinsVisibility() {
   renderSuperAdminControlPanel();
 }
 
+const HOTERA_PERMISSION_RULES = {
+  superadmin: ['superadmin'],
+  hotelAdmin: ['superadmin', 'manager'],
+  operations: ['superadmin', 'manager', 'staff', 'hr_supervisor', 'housekeeper'],
+  booking: ['superadmin', 'manager', 'staff']
+};
+function requireHoteraPermission(permission, message = 'هذا الإجراء غير متاح حسب صلاحية الحساب الحالية.') {
+  const allowed = HOTERA_PERMISSION_RULES[permission] || [];
+  if (!allowed.includes(currentRole)) { alert(`🔒 ${message}`); return false; }
+  return true;
+}
+
 function updateSuperAdminSettings() {
+  if (!requireHoteraPermission('superadmin', 'إدارة إعدادات المالك العام متاحة للسوبر أدمن فقط.')) return;
   const devNameInput = document.getElementById('editSuperDevName').value.trim();
   const devPhoneInput = document.getElementById('editSuperDevPhone').value.trim();
   const newKey = document.getElementById('newSuperAdminKeyInput').value.trim();
@@ -2225,6 +2245,7 @@ function updateSuperAdminSettings() {
 }
 
 function saveAboutViewSettings() {
+  if (!requireHoteraPermission('superadmin', 'تعديل محتوى النظام متاح للسوبر أدمن فقط.')) return;
   const newTitle = document.getElementById('editAboutTitleInput').value.trim();
   const newDesc = document.getElementById('editAboutDescInput').value.trim();
   if(newTitle) aboutPageTitleText = newTitle;
@@ -2244,6 +2265,7 @@ function toggleSubFields() {
 }
 
 function addNewHotelFacility() {
+  if (!requireHoteraPermission('superadmin', 'إضافة منشأة جديدة متاحة للسوبر أدمن فقط.')) return;
   const name = document.getElementById('newHotelName').value.trim();
   const cr = document.getElementById('newHotelCR').value.trim();
   const city = document.getElementById('newHotelCity').value.trim();
@@ -2340,23 +2362,26 @@ function renderSuperAdminControlPanel() {
   renderCompaniesAdmin();
 }
 
-function renderCompaniesAdmin(){const assign=document.getElementById('companyHotelAssignment');if(assign){assign.innerHTML=hotelsList.map(h=>`<label style="font-size:9px;color:#cbd5e1;background:rgba(255,255,255,.05);padding:5px;border-radius:7px"><input type="checkbox" value="${h.id}" class="company-hotel-check"> ${h.name}</label>`).join('');}const list=document.getElementById('companiesAdminList');if(list){list.innerHTML=companiesList.map(c=>`<div style="display:flex;justify-content:space-between;gap:6px;align-items:center;padding:6px 0;border-bottom:1px dashed rgba(255,255,255,.12);font-size:9px"><span>🏢 <strong>${c.name}</strong><br><small>${c.ownerName} · الفنادق: ${(c.hotelIds||[]).length}</small></span><button onclick="editCompanyHotels(${c.id})" style="background:#2563eb;color:#fff;border:0;border-radius:5px;padding:4px 7px;font-size:8px">تعديل الفنادق</button></div>`).join('');}}
+function renderCompaniesAdmin(){if(currentRole!=='superadmin')return;const assign=document.getElementById('companyHotelAssignment');if(assign){assign.innerHTML=hotelsList.map(h=>`<label style="font-size:9px;color:#cbd5e1;background:rgba(255,255,255,.05);padding:5px;border-radius:7px"><input type="checkbox" value="${h.id}" class="company-hotel-check"> ${h.name}</label>`).join('');}const list=document.getElementById('companiesAdminList');if(list){list.innerHTML=companiesList.map(c=>`<div style="display:flex;justify-content:space-between;gap:6px;align-items:center;padding:6px 0;border-bottom:1px dashed rgba(255,255,255,.12);font-size:9px"><span>🏢 <strong>${c.name}</strong><br><small>${c.ownerName} · الفنادق: ${(c.hotelIds||[]).length}</small></span><button onclick="editCompanyHotels(${c.id})" style="background:#2563eb;color:#fff;border:0;border-radius:5px;padding:4px 7px;font-size:8px">تعديل الفنادق</button></div>`).join('');}}
 function createCompanyFromSuperAdmin(){if(currentRole!=='superadmin')return alert('هذا الإجراء متاح للسوبر أدمن فقط.');const name=document.getElementById('newCompanyName').value.trim();const ownerName=document.getElementById('newCompanyOwnerName').value.trim();const ownerPin=document.getElementById('newCompanyOwnerPin').value.trim();const hotelIds=[...document.querySelectorAll('.company-hotel-check:checked')].map(x=>Number(x.value));if(!name||!ownerName||!ownerPin||!hotelIds.length)return alert('أكمل اسم الشركة واسم المالك والرمز وحدد فندقاً واحداً على الأقل.');companiesList.push({id:Date.now(),name,ownerName,ownerPin,hotelIds,status:'active'});saveData();uploadDataToCloud();document.getElementById('newCompanyName').value='';document.getElementById('newCompanyOwnerName').value='';document.getElementById('newCompanyOwnerPin').value='';renderCompaniesAdmin();alert('✅ تمت إضافة الشركة وربط فنادقها بنجاح.');}
 function editCompanyHotels(companyId){if(currentRole!=='superadmin')return alert('هذا الإجراء متاح للسوبر أدمن فقط.');const company=companiesList.find(c=>Number(c.id)===Number(companyId));if(!company)return;const ids=prompt(`أدخل أرقام الفنادق المسموح بها مفصولة بفواصل لشركة ${company.name}:`,(company.hotelIds||[]).join(','));if(ids===null)return;const parsed=ids.split(',').map(x=>Number(x.trim())).filter(id=>hotelsList.some(h=>h.id===id));if(!parsed.length)return alert('لم يتم حفظ التعديل: يجب اختيار فندق صالح واحد على الأقل.');company.hotelIds=[...new Set(parsed)];saveData();uploadDataToCloud();renderCompaniesAdmin();alert('✅ تم تحديث فنادق الشركة دون المساس ببيانات الفنادق.');}
 
 function resetManagerPinPrompt(hotelId) {
+  if (!requireHoteraPermission('superadmin', 'تغيير رموز الدخول متاح للسوبر أدمن فقط.')) return;
   const h = hotelsList.find(item => item.id === hotelId);
   if(!h) return;
   const newPin = prompt(`أدخل الرمز السري الجديد لمدير فندق (${h.name}):`, h.managerPin);
   if(newPin) { h.managerPin = newPin.trim(); saveData(); uploadDataToCloud(); renderSuperAdminControlPanel(); alert("✅ تم تحديث رمز المدير بنجاح!"); }
 }
 function resetHousePinPrompt(hotelId) {
+  if (!requireHoteraPermission('superadmin', 'تغيير رموز الدخول متاح للسوبر أدمن فقط.')) return;
   const h = hotelsList.find(item => item.id === hotelId);
   if(!h) return;
   const newPin = prompt(`أدخل رمز مشرف النظافة الجديد لـ (${h.name}):`, h.housePin || '0000');
   if(newPin) { h.housePin = newPin.trim(); saveData(); uploadDataToCloud(); renderSuperAdminControlPanel(); alert("✅ تم تحديث رمز الهاوس كيبنج بنجاح!"); }
 }
 function resetStaffPinPrompt(hotelId, sIdx) {
+  if (!requireHoteraPermission('superadmin', 'تغيير رموز الدخول متاح للسوبر أدمن فقط.')) return;
   const h = hotelsList.find(item => item.id === hotelId);
   if(!h || !h.staffList[sIdx]) return;
   const st = h.staffList[sIdx];
@@ -2364,10 +2389,12 @@ function resetStaffPinPrompt(hotelId, sIdx) {
   if(newPin) { st.pin = newPin.trim(); saveData(); uploadDataToCloud(); renderSuperAdminControlPanel(); alert("✅ تم تحديث رمز الموظف وحفظه بنجاح!"); }
 }
 function toggleHotelStatus(hotelId) {
+  if (!requireHoteraPermission('superadmin', 'تغيير حالة الفندق متاح للسوبر أدمن فقط.')) return;
   const h = hotelsList.find(item => item.id === hotelId);
   if(h) { h.status = (h.status === 'suspended') ? 'active' : 'suspended'; saveData(); uploadDataToCloud(); renderSuperAdminControlPanel(); initLoginHotelDropdown(); }
 }
 function switchHotelSession(id) {
+  if (!requireHoteraPermission('superadmin', 'الدخول المباشر للفنادق متاح للسوبر أدمن فقط.')) return;
   currentHotelId = id; currentRole = 'manager'; currentUsername = currentLang === 'ar' ? 'مدير الفندق' : 'Hotel Manager';
   document.getElementById('loginOverlay').style.display = 'none';
   updateHeaderInfo(); applyPermissions();
@@ -2375,7 +2402,7 @@ function switchHotelSession(id) {
   selectedFloor = 1; render();
 }
 
-function openStaffManagementModal() { document.getElementById('staffManagementModal').style.display = 'flex'; renderStaffTable(); }
+function openStaffManagementModal() { if (!requireHoteraPermission('hotelAdmin', 'إدارة الموظفين متاحة لمدير الفندق أو السوبر أدمن فقط.')) return; document.getElementById('staffManagementModal').style.display = 'flex'; renderStaffTable(); }
 function closeStaffManagementModal() { document.getElementById('staffManagementModal').style.display = 'none'; }
 function renderStaffTable() {
   const tbody = document.getElementById('staffTableBody'); tbody.innerHTML = '';
@@ -2386,6 +2413,7 @@ function renderStaffTable() {
   });
 }
 function addNewStaffMember() {
+  if (!requireHoteraPermission('hotelAdmin', 'إضافة الموظفين متاحة لمدير الفندق أو السوبر أدمن فقط.')) return;
   const idNum = document.getElementById('newStaffIdNum').value.trim() || `EMP-${Math.floor(Math.random()*900+100)}`;
   const name = document.getElementById('newStaffName').value.trim();
   const pin = document.getElementById('newStaffPin').value.trim();
@@ -2395,11 +2423,13 @@ function addNewStaffMember() {
   alert('✅ تمت إضافة الموظف الجديد بنجاح');
 }
 function deleteStaff(idx) {
+  if (!requireHoteraPermission('hotelAdmin', 'حذف الموظفين متاح لمدير الفندق أو السوبر أدمن فقط.')) return;
   hotelsList.find(h => h.id === currentHotelId).staffList.splice(idx, 1);
   saveData(); uploadDataToCloud(); renderStaffTable();
 }
 
 function openHotelSetupModal() {
+  if (!requireHoteraPermission('hotelAdmin', 'إعدادات الفندق متاحة لمدير الفندق أو السوبر أدمن فقط.')) return;
   const h = hotelsList.find(item => item.id === currentHotelId);
   if(h) {
     document.getElementById('setupHotelName').value = h.name;
@@ -2416,6 +2446,7 @@ function openHotelSetupModal() {
 }
 function closeHotelSetupModal() { document.getElementById('hotelSetupModal').style.display = 'none'; }
 function saveHotelSetupAndGenerateRooms() {
+  if (!requireHoteraPermission('hotelAdmin', 'حفظ إعدادات الفندق متاح لمدير الفندق أو السوبر أدمن فقط.')) return;
   const h = hotelsList.find(item => item.id === currentHotelId);
   h.name = document.getElementById('setupHotelName').value.trim() || h.name;
   h.cr = document.getElementById('setupHotelCR').value.trim() || h.cr;
@@ -2435,6 +2466,27 @@ function toggleHoteraTheme() {
   localStorage.setItem('hotera_theme', document.body.classList.contains('theme-light') ? 'light' : 'dark');
 }
 function restoreHoteraTheme() { if (localStorage.getItem('hotera_theme') === 'light') document.body.classList.add('theme-light'); }
+function escapeHoteraTaskText(value) { return String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])); }
+function openDailyTaskTarget(target) {
+  const map = { booking: ['booking', 'chipBooking'], rooms: ['rooms', 'chipRooms'], maintenance: ['maintenance', 'chipMaintenance'], invoices: ['invoices', 'chipInvoices'] };
+  const item = map[target]; if (!item) return;
+  const chip = document.getElementById(item[1]);
+  if (typeof switchMainFeature === 'function' && chip) switchMainFeature(item[0], chip);
+}
+function renderHoteraDailyTasks(rooms, invoices, today) {
+  const arrivals = rooms.filter(r => r && r.guest && String(r.checkIn) === today);
+  const departures = rooms.filter(r => r && r.guest && String(r.checkOut) === today);
+  const services = rooms.filter(r => r && (r.status === 'cleaning' || r.status === 'maintenance'));
+  const unpaid = invoices.filter(inv => inv && ['unpaid','pending','غير مدفوع','معلق'].includes(String(inv.status || '').toLowerCase()) || Number(inv.remaining || inv.balance || 0) > 0);
+  const set = (id, value) => { const el=document.getElementById(id); if(el) el.innerHTML=value; };
+  const names = list => list.slice(0,3).map(r => `غرفة ${escapeHoteraTaskText(r.id)}${r.guest ? ` · ${escapeHoteraTaskText(r.guest)}` : ''}`).join('<br>');
+  set('hoteraDailyTasksDate', new Date(`${today}T00:00:00`).toLocaleDateString('ar-SA',{weekday:'long',year:'numeric',month:'long',day:'numeric'}));
+  set('dailyArrivalsCount', arrivals.length); set('dailyDeparturesCount', departures.length); set('dailyServiceCount', services.length); set('dailyUnpaidCount', unpaid.length);
+  set('dailyArrivalsSummary', arrivals.length ? names(arrivals) : '<span class="hotera-daily-empty">لا توجد وصولات اليوم</span>');
+  set('dailyDeparturesSummary', departures.length ? names(departures) : '<span class="hotera-daily-empty">لا توجد مغادرات اليوم</span>');
+  set('dailyServiceSummary', services.length ? services.slice(0,3).map(r => `${r.status==='maintenance'?'🛠️':'🧹'} غرفة ${escapeHoteraTaskText(r.id)}`).join('<br>') : '<span class="hotera-daily-empty">لا توجد مهام معلقة</span>');
+  set('dailyUnpaidSummary', unpaid.length ? unpaid.slice(0,3).map(inv => escapeHoteraTaskText(inv.bookingRef || inv.id || 'فاتورة')).join('<br>') : '<span class="hotera-daily-empty">لا توجد فواتير معلقة</span>');
+}
 function renderCommandCenter() {
   const rooms = allRooms[currentHotelId] || [];
   const available = rooms.filter(r => r.status === 'vacant').length;
@@ -2453,7 +2505,8 @@ function renderCommandCenter() {
   const upcomingEl=document.getElementById('glassUpcomingBookings'); if(upcomingEl){ const upcoming=rooms.filter(r=>r&&r.guest&&r.checkIn&&String(r.checkIn)>=today).sort((a,b)=>String(a.checkIn).localeCompare(String(b.checkIn))).slice(0,5); upcomingEl.innerHTML=upcoming.length?upcoming.map(r=>`<div class="hotera-glass-list-row"><span>${r.guest||'نزيل'} · غرفة ${r.id}<br><small style="color:#8dd8f5">${r.checkIn||'—'}</small></span><strong>${r.bookingRef||'حجز'}</strong></div>`).join(''):'<div class="hotera-glass-list-row"><span>لا توجد حجوزات قادمة</span><strong>—</strong></div>'; }
   const hotelInvoices=allInvoices[currentHotelId]||[]; const todayInvoices=hotelInvoices.filter(i=>String(i.date||i.createdAt||'').startsWith(today)); const todayBookings=rooms.filter(r=>r.status==='occupied'&&String(r.checkIn||'').startsWith(today)); const guestCount=Object.keys(customerMemory||{}).length; const ratingsCount=(allRatings[currentHotelId]||[]).length; const invoiceTotal=hotelInvoices.reduce((sum,i)=>sum+Number(i.total||0),0); const todayRevenue=todayInvoices.reduce((sum,i)=>sum+Number(i.total||0),0); const avgBooking=todayBookings.length?todayRevenue/todayBookings.length:0; const occupancy=total?Math.round((occupied/total)*100):0; const lastInvoice=hotelInvoices.length?hotelInvoices[hotelInvoices.length-1]:null;
   set('premiumTodayBookings',todayBookings.length); set('premiumTodayRevenue',`${todayRevenue.toFixed(2)} ر.س`);
-  const revenueBars=document.getElementById('glassRevenueBars'); if(revenueBars){ const days=[]; for(let offset=6;offset>=0;offset--){const d=new Date();d.setDate(d.getDate()-offset);const key=d.toISOString().slice(0,10);days.push(hotelInvoices.filter(i=>String(i.date||i.createdAt||'').startsWith(key)).reduce((sum,i)=>sum+Number(i.total||0),0));} const maxDay=Math.max(...days,1); revenueBars.innerHTML=days.map((value,index)=>`<i title="${value.toFixed(2)} ر.س" style="height:${Math.max(12,Math.round((value/maxDay)*100))}%"></i>`).join(''); } set('premiumAvgBooking',`${avgBooking.toFixed(2)} ر.س`); set('premiumOccupancy',`${occupancy}%`); set('premiumOccupancyBar',`${occupancy}%`); const bar=document.getElementById('premiumOccupancyBar'); if(bar)bar.style.width=`${occupancy}%`; set('premiumVacant',available); set('premiumBooked',occupied); set('premiumInvoiceTotal',`${invoiceTotal.toFixed(2)} ر.س`); set('premiumInvoiceCount',hotelInvoices.length); set('premiumLastInvoice',lastInvoice?.number||lastInvoice?.id||'—'); set('premiumGuestCount',guestCount); set('premiumActiveGuests',Object.values(customerMemory||{}).filter(c=>c&&c.name).length); set('premiumRatingsCount',ratingsCount); set('premiumOperationStatus',alerts.length?'يحتاج متابعة':'مستقر'); set('premiumDataUpdated',new Date().toLocaleTimeString());
+  const revenueBars=document.getElementById('glassRevenueBars'); if(revenueBars){ const days=[]; for(let offset=6;offset>=0;offset--){const d=new Date();d.setDate(d.getDate()-offset);const key=d.toISOString().slice(0,10);days.push(hotelInvoices.filter(i=>String(i.date||i.createdAt||'').startsWith(key)).reduce((sum,i)=>sum+Number(i.total||0),0));} const maxDay=Math.max(...days,1); revenueBars.innerHTML=days.map((value,index)=>`<i title="${value.toFixed(2)} ر.س" style="height:${Math.max(12,Math.round((value/maxDay)*100))}%"></i>`).join(''); } set('premiumAvgBooking',`${avgBooking.toFixed(2)} ر.س`); set('premiumOccupancy',`${occupancy}%`); set('premiumOccupancyBar',`${occupancy}%`); const bar=document.getElementById('premiumOccupancyBar'); if(bar)bar.style.width=`${occupancy}%`;   set('premiumVacant',available); set('premiumBooked',occupied); set('premiumInvoiceTotal',`${invoiceTotal.toFixed(2)} ر.س`); set('premiumInvoiceCount',hotelInvoices.length); set('premiumLastInvoice',lastInvoice?.number||lastInvoice?.id||'—'); set('premiumGuestCount',guestCount); set('premiumActiveGuests',Object.values(customerMemory||{}).filter(c=>c&&c.name).length); set('premiumRatingsCount',ratingsCount); set('premiumOperationStatus',alerts.length?'يحتاج متابعة':'مستقر'); set('premiumDataUpdated',new Date().toLocaleTimeString());
+  renderHoteraDailyTasks(rooms, hotelInvoices, today);
 }
 function openRoomModalByCommand(roomId) { const room=(allRooms[currentHotelId]||[]).find(r=>r.id===roomId); if(room && typeof openRoomModal==='function') openRoomModal(room); }
 function openCommandCustomerProfile(){const phones=Object.keys(customerMemory||{});if(phones.length&&typeof openCustomerProfile==='function'){openCustomerProfile(phones[0]);return;}const input=document.getElementById('commandCustomerSearch');if(input){input.focus();input.scrollIntoView({behavior:'smooth',block:'center'});}const result=document.getElementById('commandCustomerResult');if(result)result.innerText='ابحث أولاً باسم العميل أو رقم الجوال لفتح ملفه الكامل.';}
@@ -2965,7 +3018,7 @@ function filterCheckoutAlerts() {
   });
 }
 
-function openManageRoomsModal() { document.getElementById('manageRoomsModal').style.display = 'flex'; renderEditRoomsTable(); }
+function openManageRoomsModal() { if (!requireHoteraPermission('hotelAdmin', 'إدارة الغرف متاحة لمدير الفندق أو السوبر أدمن فقط.')) return; document.getElementById('manageRoomsModal').style.display = 'flex'; renderEditRoomsTable(); }
 function closeManageRoomsModal() { document.getElementById('manageRoomsModal').style.display = 'none'; render(); }
 function renderEditRoomsTable() {
   const tbody = document.getElementById('editRoomsTableBody'); tbody.innerHTML = '';
@@ -2974,6 +3027,7 @@ function renderEditRoomsTable() {
   });
 }
 function addNewRoom() {
+  if (!requireHoteraPermission('hotelAdmin', 'إضافة الغرف متاحة لمدير الفندق أو السوبر أدمن فقط.')) return;
   const id = parseInt(document.getElementById('newRoomId').value);
   const type = document.getElementById('newRoomType').value;
   if(!id) return;
@@ -2981,6 +3035,7 @@ function addNewRoom() {
   saveData(); uploadDataToCloud(); renderEditRoomsTable();
 }
 function deleteRoom(idx) {
+  if (!requireHoteraPermission('hotelAdmin', 'حذف الغرف متاح لمدير الفندق أو السوبر أدمن فقط.')) return;
   allRooms[currentHotelId].splice(idx, 1);
   saveData(); uploadDataToCloud(); renderEditRoomsTable();
 }
@@ -3069,6 +3124,19 @@ function calculateTotalFromManual() {
   const grandTotal = n * p * selectedCount;
   document.getElementById('bookingTotalPriceDisplay').innerText = `${grandTotal.toFixed(2)} ر.س`;
 }
+function hoteraDateRangeOverlaps(startA, endA, startB, endB) {
+  if (!startA || !endA || !startB || !endB) return false;
+  return String(startA) < String(endB) && String(startB) < String(endA);
+}
+function findHoteraBookingConflicts(roomIds, checkIn, checkOut, editingRef = null) {
+  const rooms = allRooms[currentHotelId] || [];
+  return rooms.filter(room => roomIds.includes(Number(room.id)) && room.bookingRef && room.bookingRef !== editingRef && room.checkIn && room.checkOut && hoteraDateRangeOverlaps(checkIn, checkOut, room.checkIn, room.checkOut));
+}
+function validateHoteraBookingDates(checkIn, checkOut) {
+  if (!checkIn || !checkOut) return 'يرجى تحديد تاريخ الدخول وتاريخ الخروج.';
+  if (String(checkOut) <= String(checkIn)) return 'تاريخ الخروج يجب أن يكون بعد تاريخ الدخول.';
+  return '';
+}
 function reviewNewBooking() {
   const guest=document.getElementById('bookingGuestName').value.trim();
   const phone=document.getElementById('bookingGuestPhone').value.trim();
@@ -3080,6 +3148,10 @@ function reviewNewBooking() {
   const payment=document.getElementById('bookingPaymentMethod').value;
   if(!guest) return alert('الرجاء إدخال اسم العميل قبل المراجعة.');
   if(!rooms.length) return alert('الرجاء اختيار غرفة واحدة على الأقل قبل المراجعة.');
+  const dateError = validateHoteraBookingDates(checkIn, checkOut);
+  if (dateError) return alert(`⚠️ ${dateError}`);
+  const conflicts = findHoteraBookingConflicts(rooms.map(Number), checkIn, checkOut, window.hoteraEditingBookingRef || null);
+  if (conflicts.length) return alert(`⚠️ يوجد تعارض في مواعيد الغرف التالية: ${conflicts.map(r => r.id).join('، ')}. اختر تواريخ أو غرفًا أخرى.`);
   const box=document.getElementById('bookingReviewBox');
   box.innerHTML=`<strong style="color:var(--accent-solid)">مراجعة الحجز</strong><br>👤 ${guest} — 📞 ${phone||'بدون جوال'}<br>🛏️ الغرف: ${rooms.join('، ')}<br>📅 ${checkIn} إلى ${checkOut} — ${nights} ليلة<br>💳 الدفع: ${payment}<br>🎯 الغرض: ${document.getElementById('bookingPurpose').value}<br>📌 المصدر: ${document.getElementById('bookingSource').value}<br>👤 المنفذ: ${currentUsername||'المستخدم الحالي'}<br>💰 الإجمالي: <strong>${(rooms.length*nights*price).toFixed(2)} ر.س</strong>`;
   box.style.display='block'; document.getElementById('btnBkgReview').style.display='none'; document.getElementById('btnBkgSubmit').style.display='block';
@@ -3118,6 +3190,10 @@ function executeNewBooking() {
   const editingRef = window.hoteraEditingBookingRef || null;
   if(!guest) return alert('الرجاء إدخال اسم النزيل أو الجهة!');
   if(!selectedIds.length) return alert('الرجاء اختيار غرفة واحدة على الأقل للحجز!');
+  const dateError = validateHoteraBookingDates(checkIn, checkOut);
+  if (dateError) return alert(`⚠️ ${dateError}`);
+  const conflicts = findHoteraBookingConflicts(selectedIds, checkIn, checkOut, editingRef);
+  if (conflicts.length) return alert(`⚠️ لا يمكن تنفيذ الحجز بسبب تعارض الغرف: ${conflicts.map(r => r.id).join('، ')}.`);
   const bookingType = bookingTypeForCount(selectedIds.length);
   const rooms = allRooms[currentHotelId] || [];
   const originalBookingRoom = editingRef ? (rooms.find(r=>r.bookingRef===editingRef)||{}) : {};
@@ -3422,7 +3498,7 @@ const secureSyncInput=document.getElementById('secureSyncServerUrlInput');if(sec
 </div>
 
 
-<div id="hoteraCalendarModal" class="hotera-calendar-modal" role="dialog" aria-modal="true" aria-label="تقويم حجوزات HOTERA"><div class="hotera-calendar-box"><div class="hotera-calendar-head"><h3>🗓️ تقويم الحجوزات</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraCalendarModal()">إغلاق</button></div><div class="hotera-calendar-toolbar"><button type="button" onclick="hoteraCalendarShift(-1)">‹ السابق</button><span id="hoteraCalendarMonth" class="hotera-calendar-month"></span><button type="button" onclick="hoteraCalendarShift(1)">التالي ›</button><button type="button" onclick="hoteraCalendarToday()">اليوم</button></div><div id="hoteraCalendarGrid" class="hotera-calendar-grid"></div><div class="hotera-calendar-side"><h4>الحجوزات القادمة</h4><div id="hoteraCalendarUpcoming" class="hotera-calendar-list"></div></div></div></div>
+<div id="hoteraCalendarModal" class="hotera-calendar-modal" role="dialog" aria-modal="true" aria-label="تقويم حجوزات HOTERA"><div class="hotera-calendar-box"><div class="hotera-calendar-head"><h3>🗓️ تقويم الحجوزات</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraCalendarModal()">إغلاق</button></div><div class="hotera-calendar-toolbar"><button type="button" onclick="hoteraCalendarShift(-1)">‹ السابق</button><span id="hoteraCalendarMonth" class="hotera-calendar-month"></span><button type="button" onclick="hoteraCalendarShift(1)">التالي ›</button><button type="button" onclick="hoteraCalendarToday()">اليوم</button><select id="hoteraCalendarStatusFilter" onchange="renderHoteraCalendarAdvanced()" style="padding:6px 8px;border:1px solid rgba(148,163,184,.25);border-radius:9px;color:#e2e8f0;background:rgba(255,255,255,.06);font:inherit;font-size:10px"><option value="all">كل الحالات</option><option value="confirmed">مؤكد / قادم</option><option value="staying">مقيم</option><option value="departure">مغادرة اليوم</option><option value="completed">منتهي</option><option value="maintenance">صيانة / تنظيف</option></select></div><div id="hoteraCalendarGrid" class="hotera-calendar-grid"></div><div class="hotera-calendar-side"><h4>الحجوزات القادمة</h4><div id="hoteraCalendarUpcoming" class="hotera-calendar-list"></div></div></div></div>
 
 
 <div id="hoteraOperationsModal" class="hotera-ops-modal" role="dialog" aria-modal="true" aria-label="طلبات تشغيل HOTERA"><div class="hotera-ops-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3>🧹 طلبات التشغيل الداخلية</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraOperationsModal()">إغلاق</button></div><div class="hotera-ops-form"><input id="hoteraOpsRoom" placeholder="رقم الغرفة (اختياري)"><select id="hoteraOpsType"><option value="تنظيف">تنظيف</option><option value="صيانة">صيانة</option><option value="خدمة نزيل">خدمة نزيل</option><option value="أخرى">أخرى</option></select><textarea id="hoteraOpsNote" placeholder="وصف الطلب والتفاصيل"></textarea><button type="button" class="btn btn-gold" style="margin:0" onclick="createHoteraOperationsRequest()">إضافة الطلب</button></div><div id="hoteraOpsList" class="hotera-ops-list"></div></div></div>
