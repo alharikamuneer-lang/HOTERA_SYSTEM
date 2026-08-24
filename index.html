@@ -1603,10 +1603,32 @@ function applyCloudPayload(cloudData) {
   }
   if (Array.isArray(cloudData.companies)) companiesList = hoteraMergeCompanies(cloudData.companies);
   if (Array.isArray(cloudData.companyContracts)) writeHoteraCompanyContracts(hoteraMergeById(readHoteraCompanyContracts(),cloudData.companyContracts));
-  if (cloudData.rooms) allRooms = {...allRooms,...cloudData.rooms};
-  if (cloudData.invoices) allInvoices = cloudData.invoices;
-  if (cloudData.invoicePayments) hoteraInvoicePayments = cloudData.invoicePayments;
-  if (cloudData.invoiceServices) hoteraInvoiceServices = cloudData.invoiceServices;
+  if (cloudData.rooms && typeof cloudData.rooms === 'object') {
+    Object.entries(cloudData.rooms).forEach(([hotelId, remoteRooms]) => {
+      if (!Array.isArray(remoteRooms)) return;
+      const localRooms = Array.isArray(allRooms[hotelId]) ? allRooms[hotelId] : [];
+      allRooms[hotelId] = hoteraMergeById(localRooms, remoteRooms);
+    });
+  }
+  if (cloudData.invoices && typeof cloudData.invoices === 'object') {
+    Object.entries(cloudData.invoices).forEach(([hotelId, remoteInvoices]) => {
+      if (!Array.isArray(remoteInvoices)) return;
+      const localInvoices = Array.isArray(allInvoices[hotelId]) ? allInvoices[hotelId] : [];
+      allInvoices[hotelId] = hoteraMergeById(localInvoices, remoteInvoices);
+    });
+  }
+  if (cloudData.invoicePayments && typeof cloudData.invoicePayments === 'object') {
+    Object.entries(cloudData.invoicePayments).forEach(([hotelId, remotePayments]) => {
+      if (!Array.isArray(remotePayments)) return;
+      hoteraInvoicePayments[hotelId] = hoteraMergeById(Array.isArray(hoteraInvoicePayments[hotelId]) ? hoteraInvoicePayments[hotelId] : [], remotePayments);
+    });
+  }
+  if (cloudData.invoiceServices && typeof cloudData.invoiceServices === 'object') {
+    Object.entries(cloudData.invoiceServices).forEach(([hotelId, remoteServices]) => {
+      if (!Array.isArray(remoteServices)) return;
+      hoteraInvoiceServices[hotelId] = hoteraMergeById(Array.isArray(hoteraInvoiceServices[hotelId]) ? hoteraInvoiceServices[hotelId] : [], remoteServices);
+    });
+  }
   if (cloudData.invoiceAdjustments) hoteraInvoiceAdjustments = hoteraMergeById(hoteraInvoiceAdjustments, cloudData.invoiceAdjustments);
   if (cloudData.preventiveMaintenance && typeof cloudData.preventiveMaintenance==='object') Object.entries(cloudData.preventiveMaintenance).forEach(([hotelId,list])=>{if(Array.isArray(list))localStorage.setItem(`hotera_preventive_maintenance_${hotelId}`,JSON.stringify(list));});
   if (cloudData.cancelledBookings) cancelledBookingsData = cloudData.cancelledBookings;
@@ -1646,9 +1668,16 @@ async function fetchDataFromCloud(showError = false) {
     hoteraCreateLocalSnapshot('قبل رفع سحابي');
     const headers = { 'Content-Type': 'application/json' };
     if (config.key) headers['X-Master-Key'] = config.key;
+    const fetchStartedAtVersion = hoteraLocalMutationVersion;
     const response = await fetch(config.url, { method: 'GET', headers, cache: 'no-store' });
     if (!response.ok) throw new Error(`GET HTTP ${response.status}`);
     const result = await response.json();
+    // إذا تم حفظ حجز أو فاتورة أثناء انتظار الجلب، نرفض اللقطة القديمة ولا نطبقها.
+    if (fetchStartedAtVersion !== hoteraLocalMutationVersion) {
+      setCloudStatus('تم تجاهل لقطة سحابية قديمة لحماية الحجز المحلي', '#fbbf24');
+      hoteraRecordSyncConflict({kind:'stale-fetch',recordId:'local-mutation',summary:'تم منع استبدال بيانات محلية أحدث بلقطة سحابية قديمة',resolution:'تم الاحتفاظ بالحالة المحلية'});
+      return false;
+    }
     const cloudData = result.record || result;
     if (!applyCloudPayload(cloudData)) throw new Error('البيانات السحابية غير صالحة');
     setCloudStatus(`تم جلب آخر تحديث: ${new Date().toLocaleTimeString()}`); hoteraRecordSyncEvent('جلب من السحابة');
@@ -2256,6 +2285,8 @@ let allMaintenanceTickets = JSON.parse(localStorage.getItem('hotera_maint_ticket
 let allShifts = JSON.parse(localStorage.getItem('hotera_all_shifts')) || {};
 let allRatings = JSON.parse(localStorage.getItem('hotera_all_ratings')) || {};
 let allAuditLog = JSON.parse(localStorage.getItem('hotera_audit_log')) || {};
+// رقم إصدار محلي يمنع جلب سحابي قديم من الكتابة فوق حجز تم حفظه للتو.
+let hoteraLocalMutationVersion = 0;
 
 hotelsList.forEach(h => {
   if (h.status === undefined) h.status = "active";
@@ -2302,6 +2333,7 @@ function generateRoomsForHotel(hotelId, floors, perFloor) {
 }
 
 function saveData() {
+  hoteraLocalMutationVersion++;
   localStorage.setItem('hotera_all_hotels', JSON.stringify(hotelsList));
   localStorage.setItem('hotera_companies', JSON.stringify(companiesList));
   localStorage.setItem('hotera_all_rooms', JSON.stringify(allRooms));
