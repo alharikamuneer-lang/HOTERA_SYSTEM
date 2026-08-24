@@ -2150,14 +2150,24 @@ const hoteraNewUiTranslations={
  ja:{payCard:'支払いとサービス',paySmall:'前金、分割払い、追加サービス',fieldCard:'現場運用',fieldSmall:'ハウスキーピングと予防保守',payTitle:'💳 支払いと追加サービス',fieldTitle:'🧹 現場運用',services:'追加サービス',paid:'支払済み',remaining:'残額',close:'閉じる'},
  ko:{payCard:'결제 및 서비스',paySmall:'보증금, 할부, 추가 서비스',fieldCard:'현장 운영',fieldSmall:'하우스키핑 및 예방 정비',payTitle:'💳 결제 및 추가 서비스',fieldTitle:'🧹 현장 운영',services:'추가 서비스',paid:'결제됨',remaining:'잔액',close:'닫기'},
  pt:{payCard:'Pagamentos e serviços',paySmall:'Entrada, parcelas e extras',fieldCard:'Operações de campo',fieldSmall:'Limpeza e manutenção preventiva',payTitle:'💳 Pagamentos e serviços adicionais',fieldTitle:'🧹 Operações de campo',services:'Serviços adicionais',paid:'Pago',remaining:'Restante',close:'Fechar'}
+  };
+
+/* Merge the maintained language packs into the main UI dictionary. Operational records remain untouched. */
+Object.keys(hoteraLanguagePacks).forEach(code=>{translations[code]={...(translations[code]||translations.en),...hoteraLanguagePacks[code]};});
+const hoteraExtraUiTranslations={
+ ar:{paymentStatus:'حالة الدفع:',paidAmount:'المبلغ المدفوع (ر.س):',unpaid:'غير مدفوع',deposit:'عربون',partial:'دفعة جزئية',fullPaid:'مدفوع بالكامل',bulkTitle:'⚡ إضافة طابق وغرف بسرعة',floorNo:'رقم الطابق (مثال: 3)',roomStart:'أول رقم غرفة (301)',roomCount:'عدد الغرف',bulkCreate:'إنشاء الطابق والغرف دفعة واحدة ⚡'},
+ en:{paymentStatus:'Payment status:',paidAmount:'Paid amount (SAR):',unpaid:'Unpaid',deposit:'Deposit',partial:'Partial payment',fullPaid:'Paid in full',bulkTitle:'⚡ Add floor and rooms quickly',floorNo:'Floor number (e.g. 3)',roomStart:'First room number (301)',roomCount:'Number of rooms',bulkCreate:'Create floor and rooms ⚡'},
+ tr:{paymentStatus:'Ödeme durumu:',paidAmount:'Ödenen tutar (SAR):',unpaid:'Ödenmedi',deposit:'Kapora',partial:'Kısmi ödeme',fullPaid:'Tam ödendi',bulkTitle:'⚡ Kat ve odaları hızlı ekle',floorNo:'Kat numarası (ör. 3)',roomStart:'İlk oda numarası (301)',roomCount:'Oda sayısı',bulkCreate:'Kat ve odaları oluştur ⚡'},
+ fr:{paymentStatus:'État du paiement :',paidAmount:'Montant payé (SAR) :',unpaid:'Non payé',deposit:'Acompte',partial:'Paiement partiel',fullPaid:'Payé intégralement',bulkTitle:'⚡ Ajouter rapidement un étage et des chambres',floorNo:'Numéro de l’étage (ex. 3)',roomStart:'Première chambre (301)',roomCount:'Nombre de chambres',bulkCreate:'Créer l’étage et les chambres ⚡'}
 };
+function applyHoteraExtraUiTranslations(){const x=hoteraExtraUiTranslations[currentLang]||hoteraExtraUiTranslations.en;const set=(id,v)=>{const e=document.getElementById(id);if(e)e.innerText=v};const ph=(id,v)=>{const e=document.getElementById(id);if(e)e.placeholder=v};ph('bulkFloorNumber',x.floorNo);ph('bulkRoomStart',x.roomStart);ph('bulkRoomCount',x.roomCount);const bulkBtn=document.querySelector('#manageRoomsModal button[onclick="addRoomsBatch()"]');if(bulkBtn)bulkBtn.innerText=x.bulkCreate;const ps=document.getElementById('bookingPaymentStatus');if(ps){const vals=[x.unpaid,x.deposit,x.partial,x.fullPaid];[...ps.options].forEach((o,i)=>{if(vals[i])o.textContent=vals[i]})}const label=document.querySelector('#bookingPaymentStatus')?.parentElement?.querySelector('label');if(label)label.innerText=x.paymentStatus;const paidLabel=document.querySelector('#bookingPaidAmount')?.parentElement?.querySelector('label');if(paidLabel)paidLabel.innerText=x.paidAmount;}
 function applyHoteraNewUiTranslations(){const t=hoteraNewUiTranslations[currentLang]||hoteraNewUiTranslations.en;const set=(q,v)=>{const e=document.querySelector(q);if(e)e.innerText=v};const card=(q,title,small)=>{const e=document.querySelector(q);if(e){const sp=e.querySelector('span'),sm=e.querySelector('small');if(sp)sp.childNodes[0].textContent=title;if(sm)sm.innerText=small}};card('[onclick="openHoteraPaymentsServicesModal()"]',t.payCard,t.paySmall);card('[onclick="openHoteraFieldOperationsModal()"]',t.fieldCard,t.fieldSmall);set('#hoteraPaymentsServicesModal h3',t.payTitle);set('#hoteraFieldOperationsModal h3',t.fieldTitle);set('#invServicesTotal',document.getElementById('invServicesTotal')?.innerText||'0.00');set('#invPaidTotal',document.getElementById('invPaidTotal')?.innerText||'0.00');set('#invRemainingTotal',document.getElementById('invRemainingTotal')?.innerText||'0.00');['#hoteraPaymentsServicesModal .hotera-settings-close','#hoteraFieldOperationsModal .hotera-settings-close'].forEach(q=>set(q,t.close));const labels=document.querySelectorAll('#hoteraInvoiceExpandedSummary small');if(labels[0])labels[0].innerText=t.services;if(labels[1])labels[1].innerText=t.paid;if(labels[2])labels[2].innerText=t.remaining}
 
 function applyLanguage() {
   const root = document.getElementById('htmlRoot');
   root.setAttribute('dir', hoteraLanguages.find(l=>l.code===currentLang)?.dir || (currentLang === 'ar' ? 'rtl' : 'ltr'));
   root.setAttribute('lang', currentLang);
-  const t = translations[currentLang] || translations.en;
+  const t = translations[currentLang] || hoteraLanguagePacks[currentLang] || translations.en;
   document.documentElement.dataset.hoteraLanguage=currentLang;
   document.getElementById('pageTitle').innerText = t.pageTitle;
   document.getElementById('lblLoginSubtitle').innerText = t.loginSubtitle;
@@ -2209,6 +2219,7 @@ function applyLanguage() {
   document.getElementById('chipSuper').innerText = t.chipSuper;
   togglePinCodeField();
   applyHoteraNewUiTranslations();
+  applyHoteraExtraUiTranslations();
 }
 
 function togglePasswordVisibility(inputId, btn) {
