@@ -1716,8 +1716,28 @@ async function uploadDataToCloud(showError = false) {
   }
 }
 
+async function hoteraUploadWithRetry(context='تحديث البيانات') {
+  const config = getCloudConfig();
+  if (!config.url) {
+    setCloudStatus('محلي فقط — لم يتم إعداد رابط JSONBin على هذا الجهاز', '#fbbf24');
+    return {ok:false, reason:'not-configured'};
+  }
+  let lastError = null;
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const ok = await uploadDataToCloud(false);
+      if (ok) return {ok:true};
+    } catch (e) { lastError = e; }
+    await new Promise(resolve => setTimeout(resolve, 350 * attempt));
+  }
+  setCloudStatus(`تعذر رفع ${context} — بقي محفوظاً على هذا الجهاز فقط`, '#f87171');
+  hoteraRecordSyncConflict({kind:'upload-failed',recordId:context,summary:`فشل رفع ${context} إلى JSONBin`,resolution:'تم الاحتفاظ بالبيانات المحلية'});
+  return {ok:false, reason:'upload-failed', error:lastError};
+}
+
 async function syncAndFetchDataOnLoad() {
   if (getCloudConfig().url) await fetchDataFromCloud(false);
+  else setCloudStatus('محلي فقط — أدخل نفس رابط JSONBin والمفتاح على كل جهاز للمزامنة', '#fbbf24');
 }
 
 async function syncDataWithCloudNow() {
@@ -3012,7 +3032,8 @@ const hoteraPermissionMatrix={
   maintenance:['superadmin','manager','company_owner_manager','front_desk','housekeeper'],
   cancel:['superadmin','manager','company_owner_manager','front_desk']
 };
-function hoteraHasPermission(action){const role=String((typeof currentRole!=='undefined'?currentRole:'')||window.currentRole||'').trim();return !!role&&Array.isArray(hoteraPermissionMatrix[action])&&hoteraPermissionMatrix[action].includes(role)}
+function hoteraNormalizeRole(value){const raw=String(value||'').trim().toLowerCase();const aliases={'hotel_manager':'manager','hotel manager':'manager','مدير الفندق':'manager','مدير فندق':'manager','manager':'manager','super admin':'superadmin','سوبر أدمن':'superadmin','company owner manager':'company_owner_manager','front desk':'front_desk','موظف استقبال':'front_desk','housekeeper':'housekeeper','هاوس كيبنج':'housekeeper','hr supervisor':'hr_supervisor'};return aliases[raw]||raw}
+function hoteraHasPermission(action){const candidates=[typeof currentRole!=='undefined'?currentRole:'',window.currentRole||'',window.userRole||''].map(hoteraNormalizeRole).filter(Boolean);return candidates.some(role=>Array.isArray(hoteraPermissionMatrix[action])&&hoteraPermissionMatrix[action].includes(role))}
 function hoteraRequirePermission(action){if(hoteraHasPermission(action))return true;alert('🔒 لا تملك صلاحية تنفيذ هذه العملية حسب الدور الحالي.');return false}
 
 function saveNewExpense() {
@@ -3592,7 +3613,7 @@ function closeCustomerProfileModal(){document.getElementById('customerProfileMod
 function hoteraDatesOverlap(aStart,aEnd,bStart,bEnd){const a1=String(aStart||''),a2=String(aEnd||''),b1=String(bStart||''),b2=String(bEnd||'');return !!(a1&&a2&&b1&&b2&&a1<b2&&b1<a2)}
 function hoteraFindBookingConflicts(roomIds,checkIn,checkOut,editingRef){const rooms=Array.isArray(allRooms?.[currentHotelId])?allRooms[currentHotelId]:[];return rooms.filter(r=>roomIds.includes(Number(r.id))&&r.bookingRef&&String(r.bookingRef)!==String(editingRef||'')&&hoteraDatesOverlap(checkIn,checkOut,r.checkIn,r.checkOut)).map(r=>({roomId:r.id,bookingRef:r.bookingRef,guest:r.guest||'نزيل',checkIn:r.checkIn,checkOut:r.checkOut}))}
 
-function executeNewBooking() {
+async function executeNewBooking() {
   if(!hoteraRequirePermission('booking')) return;
   const guest = document.getElementById('bookingGuestName').value.trim();
   const phone = document.getElementById('bookingGuestPhone').value.trim();
@@ -3659,8 +3680,9 @@ function executeNewBooking() {
   recordHoteraAudit(editingRef?'تعديل حجز':'إنشاء حجز',{bookingRef,guest,rooms:roomsListDetails.map(r=>r.id),total:totalGrandAmount,bookingType});
   saveData();
   hoteraReconcileRoomStatusesFromBookings(currentHotelId);
-  uploadDataToCloud(); closeNewBookingModal(); window.hoteraEditingBookingRef=null; render(); if(document.getElementById('hoteraBookingManagementModal')?.classList.contains('open'))renderHoteraBookingManagement(); populateOfficialInvoiceModal(unifiedInvoice);
-  alert(`✅ تم ${editingRef?'تعديل':'تنفيذ'} الحجز (${bookingRef}) وتصنيفه: ${bookingType}.`);
+  const cloudResult = await hoteraUploadWithRetry(editingRef ? 'تعديل الحجز' : 'الحجز الجديد');
+  closeNewBookingModal(); window.hoteraEditingBookingRef=null; render(); if(document.getElementById('hoteraBookingManagementModal')?.classList.contains('open'))renderHoteraBookingManagement(); populateOfficialInvoiceModal(unifiedInvoice);
+  alert(`✅ تم ${editingRef?'تعديل':'تنفيذ'} الحجز (${bookingRef}) وتصنيفه: ${bookingType}.` + (cloudResult.ok ? '\\n☁️ تمت المزامنة مع الأجهزة.' : '\\n⚠️ محفوظ محلياً فقط — راجع إعدادات JSONBin على هذا الجهاز.'));
 }
 
 function copyHoteraBookingRef(ref){const value=String(ref||'').trim();if(!value)return;try{navigator.clipboard?.writeText(value);alert(`تم نسخ رقم الحجز ${value}`)}catch(e){prompt('رقم الحجز للنسخ:',value)}}
@@ -3796,7 +3818,7 @@ function confirmCancelBooking() {
 
     const canceledRef=r.bookingRef; const linked=(allInvoices[currentHotelId]||[]).find(i=>i.bookingRef===canceledRef); if(linked) linked.status='cancelled';
     r.status = 'vacant'; r.guest = ''; r.phone = ''; r.carType = ''; r.carPlate = ''; r.bookingRef = '';
-    saveData(); uploadDataToCloud(); closeCancelBookingModal(); render();
+    saveData(); if(typeof hoteraUploadWithRetry==='function') hoteraUploadWithRetry('إلغاء الحجز'); else uploadDataToCloud(); closeCancelBookingModal(); render();
     alert(`✅ تم إلغاء حجز الغرفة ${roomId} بنجاح.`);
   }
 }
@@ -3806,12 +3828,17 @@ function recordHoteraAudit(action, details = {}) {
   allAuditLog[currentHotelId].unshift({ id:`AUD-${Date.now()}`, action, details, staff:currentUsername, date:new Date().toISOString() });
   allAuditLog[currentHotelId] = allAuditLog[currentHotelId].slice(0, 500);
 }
-function completeRoomCheckout(room) {
+async function completeRoomCheckout(room) {
+  if(!hoteraHasPermission('financial') && !hoteraHasPermission('booking')) { alert('🔒 لا تملك صلاحية تسجيل الخروج أو تصفية الحساب حسب الدور الحالي.'); return false; }
   const checkoutDate=new Date().toISOString().split('T')[0];
   const previousGuest=room.guest||'غير معروف'; const bookingRef=room.bookingRef||'';
   recordHoteraAudit('تسجيل مغادرة', {roomId:room.id, guest:previousGuest, bookingRef});
   room.lastCheckoutAt=new Date().toISOString(); room.lastGuest=previousGuest; room.checkInStatus='checked-out'; room.checkOutStatus='checked-out'; room.checkedOutAt=room.lastCheckoutAt; room.checkedOutBy=currentUsername||'المستخدم الحالي'; room.status='cleaning'; room.guest=''; room.phone=''; room.carType=''; room.carPlate=''; room.bookingRef=''; room.checkOut=checkoutDate;
-  alert(`✅ تم تسجيل مغادرة ${previousGuest} من الغرفة ${room.id}.\nتم تحويل الغرفة إلى حالة «خروج/تحتاج تنظيف» تلقائياً.`);
+  saveData();
+  const syncResult=typeof hoteraUploadWithRetry==='function' ? await hoteraUploadWithRetry('تسجيل خروج وتصفية الحساب') : {ok:false};
+  closeModal(); render();
+  alert(`✅ تم تسجيل مغادرة ${previousGuest} من الغرفة ${room.id}.\\nتم تحويل الغرفة إلى حالة «خروج/تحتاج تنظيف» تلقائياً.` + (syncResult.ok ? '\\n☁️ تمت المزامنة مع الأجهزة.' : '\\n⚠️ تم الحفظ محلياً؛ راجع إعدادات السحابة على الأجهزة.'));
+  return true;
 }
 function downloadHoteraBackup(){
   const payload={version:1,createdAt:new Date().toISOString(),source:'HOTERA',localStorage:{}};
@@ -3825,7 +3852,7 @@ function openInvoiceQr(){
   if(!lastActiveInvoice)return; const h=hotelsList.find(x=>x.id===currentHotelId)||{}; const text=`HOTERA|${h.name||'الفندق'}|Invoice:${lastActiveInvoice.id}|Booking:${lastActiveInvoice.bookingRef||''}|Total:${Number(lastActiveInvoice.total||0).toFixed(2)}|Guest:${lastActiveInvoice.guest||''}`; window.open(`https://quickchart.io/qr?size=260&text=${encodeURIComponent(text)}`,'_blank');
 }
 
-function executeRoomAction() {
+async function executeRoomAction() {
   if (currentRoom.status === 'vacant') {
     const name = document.getElementById('mGuest').value.trim();
     const phone = document.getElementById('mGuestPhone').value.trim();
@@ -3851,7 +3878,7 @@ function executeRoomAction() {
     populateOfficialInvoiceModal(newInv);
     return;
   } else if (currentRoom.status === 'occupied') {
-    completeRoomCheckout(currentRoom);
+    await completeRoomCheckout(currentRoom);
   } else if (currentRoom.status === 'maintenance') {
     currentRoom.status = 'vacant'; currentRoom.maintUser = ''; currentRoom.maintIssue = '';
   } else {
