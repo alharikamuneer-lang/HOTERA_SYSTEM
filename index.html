@@ -738,7 +738,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     </div>
     <div style="display:flex; gap:6px; align-items:center; flex:1; max-width:260px;">
       <input type="text" id="searchRoomsBookingInput" class="form-input" placeholder="🔍 ابحث برقم الغرفة أو الحجز..." style="margin-bottom:0; padding:6px; font-size:10px;" oninput="filterRoomsByBookingRef(this.value)">
-      <select id="roomStatusFilter" class="form-select" aria-label="فلترة حالة الغرف" style="margin-bottom:0; padding:6px; font-size:10px; width:118px;" onchange="filterRoomsByBookingRef(document.getElementById('searchRoomsBookingInput')?.value||'')"><option value="all">كل الحالات</option><option value="vacant">متاحة</option><option value="occupied">محجوزة</option><option value="cleaning">خروج</option><option value="maintenance">صيانة</option><option value="checkoutToday">مغادرة اليوم</option></select>
+      <select id="roomStatusFilter" class="form-select" aria-label="فلترة حالة الغرف" style="margin-bottom:0; padding:6px; font-size:10px; width:118px;" onchange="filterRoomsByBookingRef(document.getElementById('searchRoomsBookingInput')?.value||'')"><option value="all">كل الحالات</option><option value="vacant">متاحة</option><option value="occupied">محجوزة</option><option value="cleaning">خروج</option><option value="maintenance">صيانة</option><option value="checkoutToday">مغادرة اليوم</option><option value="checkinToday">وصول اليوم</option><option value="activeStay">إقامة نشطة</option></select>
     </div>
     <div style="display:flex; gap:4px; flex-wrap:wrap;">
       <button class="btn btn-blue manager-only" style="width:auto; padding:4px 8px; margin:0; font-size:9px;" onclick="openStaffManagementModal()" id="btnStaffNav">👥 الموظفين</button>
@@ -1159,18 +1159,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     <h3 style="color:var(--accent-solid); margin-bottom:8px;" id="modManageRoomsTitle">⚙️ إدارة الغرف</h3>
     <input type="number" id="newRoomId" class="form-input" placeholder="رقم الغرفة (مثال: 301)">
     <select id="newRoomType" class="form-select"><option value="مفردة" id="optTypeSingle">مفردة</option><option value="مزدوجة" id="optTypeDouble">مزدوجة</option><option value="جناح" id="optTypeSuite">جناح</option></select>
-    <button class="btn btn-gold" onclick="addNewRoom()" id="btnAddRoomSubmit">إضافة غرفة واحدة ➕</button>
-    <div style="margin:8px 0;padding:9px;border:1px solid rgba(56,189,248,.28);border-radius:10px;background:rgba(56,189,248,.06)">
-      <div style="font-size:10px;color:#bae6fd;font-weight:800;margin-bottom:6px">⚡ إضافة طابق وغرف بسرعة</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">
-        <input type="number" id="bulkFloorNumber" class="form-input" min="1" placeholder="رقم الطابق (مثال: 3)" style="margin-bottom:0">
-        <input type="number" id="bulkRoomStart" class="form-input" min="1" placeholder="أول رقم غرفة (301)" style="margin-bottom:0">
-        <input type="number" id="bulkRoomCount" class="form-input" min="1" max="100" placeholder="عدد الغرف" style="margin-bottom:0">
-        <select id="bulkRoomType" class="form-select" style="margin-bottom:0"><option value="مفردة">مفردة</option><option value="مزدوجة">مزدوجة</option><option value="جناح">جناح</option></select>
-      </div>
-      <button class="btn btn-blue" type="button" onclick="addRoomsBatch()" style="margin-top:6px">إنشاء الطابق والغرف دفعة واحدة ⚡</button>
-      <small style="display:block;color:#94a3b8;font-size:9px;margin-top:5px">مثال: الطابق 3، البداية 301، العدد 10 = الغرف 301 إلى 310.</small>
-    </div>
+    <button class="btn btn-gold" onclick="addNewRoom()" id="btnAddRoomSubmit">إضافة غرفة ➕</button>
     <table class="table-box"><thead><tr><th id="thEditRoomNum">رقم</th><th id="thEditRoomType">نوع</th><th id="thEditRoomDel">حذف</th></tr></thead><tbody id="editRoomsTableBody"></tbody></table>
     <button class="btn btn-gray" style="margin-top:8px;" onclick="closeManageRoomsModal()" id="modManageRoomsClose">إغلاق</button>
   </div>
@@ -1217,11 +1206,6 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     </div>
     <div style="text-align:center; background:rgba(245,158,11,0.1); padding:6px; border-radius:8px; margin-bottom:6px;">
       <span id="lblBkgTotalText">الإجمالي الكلي (لكل الغرف): </span><strong id="bookingTotalPriceDisplay" style="color:var(--accent-solid);">0.00 ر.س</strong>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px;margin-bottom:6px;border:1px solid rgba(16,185,129,.28);border-radius:10px;background:rgba(16,185,129,.06);">
-      <div><label style="font-size:10px;color:var(--text-muted);">حالة الدفع:</label><select id="bookingPaymentStatus" class="form-select" onchange="calculateBookingPaymentSummary()"><option value="غير مدفوع">غير مدفوع</option><option value="عربون">عربون</option><option value="دفعة جزئية">دفعة جزئية</option><option value="مدفوع بالكامل">مدفوع بالكامل</option></select></div>
-      <div><label style="font-size:10px;color:var(--text-muted);">المبلغ المدفوع (ر.س):</label><input id="bookingPaidAmount" class="form-input" type="number" min="0" step="0.01" value="0" oninput="calculateBookingPaymentSummary()" style="margin-bottom:0"></div>
-      <div id="bookingPaymentSummary" style="grid-column:1/-1;text-align:center;padding:6px;border-radius:8px;background:rgba(2,6,23,.28);font-size:10px;color:#cbd5e1;">المدفوع: 0.00 ر.س · المتبقي: 0.00 ر.س</div>
     </div>
     <div id="bookingReviewBox" class="booking-note-box" style="display:none"></div>
     <button class="btn btn-blue" onclick="reviewNewBooking()" id="btnBkgReview">مراجعة بيانات الحجز قبل التأكيد 🔎</button>
@@ -1603,32 +1587,10 @@ function applyCloudPayload(cloudData) {
   }
   if (Array.isArray(cloudData.companies)) companiesList = hoteraMergeCompanies(cloudData.companies);
   if (Array.isArray(cloudData.companyContracts)) writeHoteraCompanyContracts(hoteraMergeById(readHoteraCompanyContracts(),cloudData.companyContracts));
-  if (cloudData.rooms && typeof cloudData.rooms === 'object') {
-    Object.entries(cloudData.rooms).forEach(([hotelId, remoteRooms]) => {
-      if (!Array.isArray(remoteRooms)) return;
-      const localRooms = Array.isArray(allRooms[hotelId]) ? allRooms[hotelId] : [];
-      allRooms[hotelId] = hoteraMergeById(localRooms, remoteRooms);
-    });
-  }
-  if (cloudData.invoices && typeof cloudData.invoices === 'object') {
-    Object.entries(cloudData.invoices).forEach(([hotelId, remoteInvoices]) => {
-      if (!Array.isArray(remoteInvoices)) return;
-      const localInvoices = Array.isArray(allInvoices[hotelId]) ? allInvoices[hotelId] : [];
-      allInvoices[hotelId] = hoteraMergeById(localInvoices, remoteInvoices);
-    });
-  }
-  if (cloudData.invoicePayments && typeof cloudData.invoicePayments === 'object') {
-    Object.entries(cloudData.invoicePayments).forEach(([hotelId, remotePayments]) => {
-      if (!Array.isArray(remotePayments)) return;
-      hoteraInvoicePayments[hotelId] = hoteraMergeById(Array.isArray(hoteraInvoicePayments[hotelId]) ? hoteraInvoicePayments[hotelId] : [], remotePayments);
-    });
-  }
-  if (cloudData.invoiceServices && typeof cloudData.invoiceServices === 'object') {
-    Object.entries(cloudData.invoiceServices).forEach(([hotelId, remoteServices]) => {
-      if (!Array.isArray(remoteServices)) return;
-      hoteraInvoiceServices[hotelId] = hoteraMergeById(Array.isArray(hoteraInvoiceServices[hotelId]) ? hoteraInvoiceServices[hotelId] : [], remoteServices);
-    });
-  }
+  if (cloudData.rooms) allRooms = {...allRooms,...cloudData.rooms};
+  if (cloudData.invoices) allInvoices = cloudData.invoices;
+  if (cloudData.invoicePayments) hoteraInvoicePayments = cloudData.invoicePayments;
+  if (cloudData.invoiceServices) hoteraInvoiceServices = cloudData.invoiceServices;
   if (cloudData.invoiceAdjustments) hoteraInvoiceAdjustments = hoteraMergeById(hoteraInvoiceAdjustments, cloudData.invoiceAdjustments);
   if (cloudData.preventiveMaintenance && typeof cloudData.preventiveMaintenance==='object') Object.entries(cloudData.preventiveMaintenance).forEach(([hotelId,list])=>{if(Array.isArray(list))localStorage.setItem(`hotera_preventive_maintenance_${hotelId}`,JSON.stringify(list));});
   if (cloudData.cancelledBookings) cancelledBookingsData = cloudData.cancelledBookings;
@@ -1668,16 +1630,9 @@ async function fetchDataFromCloud(showError = false) {
     hoteraCreateLocalSnapshot('قبل رفع سحابي');
     const headers = { 'Content-Type': 'application/json' };
     if (config.key) headers['X-Master-Key'] = config.key;
-    const fetchStartedAtVersion = hoteraLocalMutationVersion;
     const response = await fetch(config.url, { method: 'GET', headers, cache: 'no-store' });
     if (!response.ok) throw new Error(`GET HTTP ${response.status}`);
     const result = await response.json();
-    // إذا تم حفظ حجز أو فاتورة أثناء انتظار الجلب، نرفض اللقطة القديمة ولا نطبقها.
-    if (fetchStartedAtVersion !== hoteraLocalMutationVersion) {
-      setCloudStatus('تم تجاهل لقطة سحابية قديمة لحماية الحجز المحلي', '#fbbf24');
-      hoteraRecordSyncConflict({kind:'stale-fetch',recordId:'local-mutation',summary:'تم منع استبدال بيانات محلية أحدث بلقطة سحابية قديمة',resolution:'تم الاحتفاظ بالحالة المحلية'});
-      return false;
-    }
     const cloudData = result.record || result;
     if (!applyCloudPayload(cloudData)) throw new Error('البيانات السحابية غير صالحة');
     setCloudStatus(`تم جلب آخر تحديث: ${new Date().toLocaleTimeString()}`); hoteraRecordSyncEvent('جلب من السحابة');
@@ -2179,24 +2134,14 @@ const hoteraNewUiTranslations={
  ja:{payCard:'支払いとサービス',paySmall:'前金、分割払い、追加サービス',fieldCard:'現場運用',fieldSmall:'ハウスキーピングと予防保守',payTitle:'💳 支払いと追加サービス',fieldTitle:'🧹 現場運用',services:'追加サービス',paid:'支払済み',remaining:'残額',close:'閉じる'},
  ko:{payCard:'결제 및 서비스',paySmall:'보증금, 할부, 추가 서비스',fieldCard:'현장 운영',fieldSmall:'하우스키핑 및 예방 정비',payTitle:'💳 결제 및 추가 서비스',fieldTitle:'🧹 현장 운영',services:'추가 서비스',paid:'결제됨',remaining:'잔액',close:'닫기'},
  pt:{payCard:'Pagamentos e serviços',paySmall:'Entrada, parcelas e extras',fieldCard:'Operações de campo',fieldSmall:'Limpeza e manutenção preventiva',payTitle:'💳 Pagamentos e serviços adicionais',fieldTitle:'🧹 Operações de campo',services:'Serviços adicionais',paid:'Pago',remaining:'Restante',close:'Fechar'}
-  };
-
-/* Merge the maintained language packs into the main UI dictionary. Operational records remain untouched. */
-Object.keys(hoteraLanguagePacks).forEach(code=>{translations[code]={...(translations[code]||translations.en),...hoteraLanguagePacks[code]};});
-const hoteraExtraUiTranslations={
- ar:{paymentStatus:'حالة الدفع:',paidAmount:'المبلغ المدفوع (ر.س):',unpaid:'غير مدفوع',deposit:'عربون',partial:'دفعة جزئية',fullPaid:'مدفوع بالكامل',bulkTitle:'⚡ إضافة طابق وغرف بسرعة',floorNo:'رقم الطابق (مثال: 3)',roomStart:'أول رقم غرفة (301)',roomCount:'عدد الغرف',bulkCreate:'إنشاء الطابق والغرف دفعة واحدة ⚡'},
- en:{paymentStatus:'Payment status:',paidAmount:'Paid amount (SAR):',unpaid:'Unpaid',deposit:'Deposit',partial:'Partial payment',fullPaid:'Paid in full',bulkTitle:'⚡ Add floor and rooms quickly',floorNo:'Floor number (e.g. 3)',roomStart:'First room number (301)',roomCount:'Number of rooms',bulkCreate:'Create floor and rooms ⚡'},
- tr:{paymentStatus:'Ödeme durumu:',paidAmount:'Ödenen tutar (SAR):',unpaid:'Ödenmedi',deposit:'Kapora',partial:'Kısmi ödeme',fullPaid:'Tam ödendi',bulkTitle:'⚡ Kat ve odaları hızlı ekle',floorNo:'Kat numarası (ör. 3)',roomStart:'İlk oda numarası (301)',roomCount:'Oda sayısı',bulkCreate:'Kat ve odaları oluştur ⚡'},
- fr:{paymentStatus:'État du paiement :',paidAmount:'Montant payé (SAR) :',unpaid:'Non payé',deposit:'Acompte',partial:'Paiement partiel',fullPaid:'Payé intégralement',bulkTitle:'⚡ Ajouter rapidement un étage et des chambres',floorNo:'Numéro de l’étage (ex. 3)',roomStart:'Première chambre (301)',roomCount:'Nombre de chambres',bulkCreate:'Créer l’étage et les chambres ⚡'}
 };
-function applyHoteraExtraUiTranslations(){const x=hoteraExtraUiTranslations[currentLang]||hoteraExtraUiTranslations.en;const set=(id,v)=>{const e=document.getElementById(id);if(e)e.innerText=v};const ph=(id,v)=>{const e=document.getElementById(id);if(e)e.placeholder=v};ph('bulkFloorNumber',x.floorNo);ph('bulkRoomStart',x.roomStart);ph('bulkRoomCount',x.roomCount);const bulkBtn=document.querySelector('#manageRoomsModal button[onclick="addRoomsBatch()"]');if(bulkBtn)bulkBtn.innerText=x.bulkCreate;const ps=document.getElementById('bookingPaymentStatus');if(ps){const vals=[x.unpaid,x.deposit,x.partial,x.fullPaid];[...ps.options].forEach((o,i)=>{if(vals[i])o.textContent=vals[i]})}const label=document.querySelector('#bookingPaymentStatus')?.parentElement?.querySelector('label');if(label)label.innerText=x.paymentStatus;const paidLabel=document.querySelector('#bookingPaidAmount')?.parentElement?.querySelector('label');if(paidLabel)paidLabel.innerText=x.paidAmount;}
 function applyHoteraNewUiTranslations(){const t=hoteraNewUiTranslations[currentLang]||hoteraNewUiTranslations.en;const set=(q,v)=>{const e=document.querySelector(q);if(e)e.innerText=v};const card=(q,title,small)=>{const e=document.querySelector(q);if(e){const sp=e.querySelector('span'),sm=e.querySelector('small');if(sp)sp.childNodes[0].textContent=title;if(sm)sm.innerText=small}};card('[onclick="openHoteraPaymentsServicesModal()"]',t.payCard,t.paySmall);card('[onclick="openHoteraFieldOperationsModal()"]',t.fieldCard,t.fieldSmall);set('#hoteraPaymentsServicesModal h3',t.payTitle);set('#hoteraFieldOperationsModal h3',t.fieldTitle);set('#invServicesTotal',document.getElementById('invServicesTotal')?.innerText||'0.00');set('#invPaidTotal',document.getElementById('invPaidTotal')?.innerText||'0.00');set('#invRemainingTotal',document.getElementById('invRemainingTotal')?.innerText||'0.00');['#hoteraPaymentsServicesModal .hotera-settings-close','#hoteraFieldOperationsModal .hotera-settings-close'].forEach(q=>set(q,t.close));const labels=document.querySelectorAll('#hoteraInvoiceExpandedSummary small');if(labels[0])labels[0].innerText=t.services;if(labels[1])labels[1].innerText=t.paid;if(labels[2])labels[2].innerText=t.remaining}
 
 function applyLanguage() {
   const root = document.getElementById('htmlRoot');
   root.setAttribute('dir', hoteraLanguages.find(l=>l.code===currentLang)?.dir || (currentLang === 'ar' ? 'rtl' : 'ltr'));
   root.setAttribute('lang', currentLang);
-  const t = translations[currentLang] || hoteraLanguagePacks[currentLang] || translations.en;
+  const t = translations[currentLang] || translations.en;
   document.documentElement.dataset.hoteraLanguage=currentLang;
   document.getElementById('pageTitle').innerText = t.pageTitle;
   document.getElementById('lblLoginSubtitle').innerText = t.loginSubtitle;
@@ -2248,7 +2193,6 @@ function applyLanguage() {
   document.getElementById('chipSuper').innerText = t.chipSuper;
   togglePinCodeField();
   applyHoteraNewUiTranslations();
-  applyHoteraExtraUiTranslations();
 }
 
 function togglePasswordVisibility(inputId, btn) {
@@ -2285,8 +2229,6 @@ let allMaintenanceTickets = JSON.parse(localStorage.getItem('hotera_maint_ticket
 let allShifts = JSON.parse(localStorage.getItem('hotera_all_shifts')) || {};
 let allRatings = JSON.parse(localStorage.getItem('hotera_all_ratings')) || {};
 let allAuditLog = JSON.parse(localStorage.getItem('hotera_audit_log')) || {};
-// رقم إصدار محلي يمنع جلب سحابي قديم من الكتابة فوق حجز تم حفظه للتو.
-let hoteraLocalMutationVersion = 0;
 
 hotelsList.forEach(h => {
   if (h.status === undefined) h.status = "active";
@@ -2333,7 +2275,6 @@ function generateRoomsForHotel(hotelId, floors, perFloor) {
 }
 
 function saveData() {
-  hoteraLocalMutationVersion++;
   localStorage.setItem('hotera_all_hotels', JSON.stringify(hotelsList));
   localStorage.setItem('hotera_companies', JSON.stringify(companiesList));
   localStorage.setItem('hotera_all_rooms', JSON.stringify(allRooms));
@@ -2874,14 +2815,14 @@ function filterRoomsByBookingRef(query) {
   if(searchTerm) {
     filtered = rooms.filter(r => String(r.id || '').toLowerCase().includes(searchTerm) || (r.bookingRef || '').toLowerCase().includes(searchTerm) || (r.guest || '').toLowerCase().includes(searchTerm));
   }
-  if(statusFilter !== 'all') filtered = statusFilter === 'checkoutToday' ? filtered.filter(r => String(r.checkOut||'') === new Date().toISOString().slice(0,10)) : filtered.filter(r => r.status === statusFilter);
+  if(statusFilter !== 'all'){const today=new Date().toISOString().slice(0,10);if(statusFilter==='checkoutToday') filtered=filtered.filter(r=>String(r.checkOut||'')===today);else if(statusFilter==='checkinToday') filtered=filtered.filter(r=>String(r.checkIn||'')===today);else if(statusFilter==='activeStay') filtered=filtered.filter(r=>r.status==='occupied'&&(!r.checkOut||String(r.checkOut)>=today));else filtered=filtered.filter(r=>r.status===statusFilter);}
   let v = 0, o = 0, maint = 0, totalShown = 0;
   rooms.forEach(r => {
     if (r.status === 'vacant') v++;
     else if (r.status === 'occupied') o++;
     else if (r.status === 'maintenance') maint++;
   });
-  const statusText = {vacant:'متاحة',occupied:'محجوزة',cleaning:'خروج',maintenance:'صيانة',checkoutToday:'مغادرة اليوم'}[statusFilter] || '';
+  const statusText = {vacant:'متاحة',occupied:'محجوزة',cleaning:'خروج',maintenance:'صيانة',checkoutToday:'مغادرة اليوم',checkinToday:'وصول اليوم',activeStay:'إقامة نشطة'}[statusFilter] || '';
   const statusLabel = statusFilter === 'all' ? '' : ` · ${statusText}`;
   document.getElementById('currentFloorHeaderTitle').innerText = searchTerm ? (currentLang === 'ar' ? `🔍 نتائج البحث برقم الغرفة أو الحجز: "${searchTerm}"${statusLabel}` : `🔍 Room or Booking Search Results for: "${searchTerm}"${statusLabel}`) : (currentLang === 'ar' ? `🏢 غرف الطابق رقم ${selectedFloor}${statusLabel}` : `🏢 Floor Number ${selectedFloor} Rooms${statusLabel}`);
   
@@ -3388,26 +3329,6 @@ function renderEditRoomsTable() {
     tbody.innerHTML += `<tr><td>${r.id}</td><td>${r.type}</td><td><button onclick="deleteRoom(${idx})" style="background:#ef4444; color:white; border:none; padding:2px 4px; font-size:8px;">حذف</button></td></tr>`;
   });
 }
-function addRoomsBatch(){
-  if(!hoteraRequirePermission('roomAdmin')) return;
-  const hotel=hotelsList.find(item=>item.id===currentHotelId);
-  const floor=Math.max(1,parseInt(document.getElementById('bulkFloorNumber')?.value)||0);
-  const start=Math.max(1,parseInt(document.getElementById('bulkRoomStart')?.value)||0);
-  const count=Math.min(100,Math.max(1,parseInt(document.getElementById('bulkRoomCount')?.value)||0));
-  const type=document.getElementById('bulkRoomType')?.value||'مفردة';
-  if(!hotel||!floor||!start||!count) return alert('أدخل رقم الطابق ورقم أول غرفة وعدد الغرف.');
-  const list=allRooms[currentHotelId]||(allRooms[currentHotelId]=[]);
-  const existing=new Set(list.map(r=>String(r.id)));
-  const ids=Array.from({length:count},(_,i)=>start+i);
-  const duplicates=ids.filter(id=>existing.has(String(id)));
-  if(duplicates.length) return alert(`لم تتم الإضافة. أرقام الغرف موجودة مسبقاً: ${duplicates.slice(0,8).join('، ')}${duplicates.length>8?' ...':''}`);
-  ids.forEach(id=>list.push({id,floor,type,status:'vacant',guest:'',phone:'',carType:'',carPlate:'',bookingType:'فردي',bookingRef:'',maintUser:'',maintIssue:'',nights:1,nightPrice:200,totalAmount:200}));
-  hotel.floorsCount=Math.max(Number(hotel.floorsCount||0),floor);
-  selectedFloor=floor;
-  saveData(); uploadDataToCloud(); render(); renderEditRoomsTable();
-  document.getElementById('bulkRoomCount').value='';
-  alert(`✅ تم إنشاء الطابق ${floor} وإضافة ${ids.length} غرفة بنجاح.`);
-}
 function addNewRoom() {
   if(!hoteraRequirePermission('roomAdmin')) return;
   const id = parseInt(document.getElementById('newRoomId').value);
@@ -3460,8 +3381,6 @@ function openNewBookingModal(editRef) {
   document.getElementById('bookingAdults').value = sourceRoom?.adults || '1';
   document.getElementById('bookingChildren').value = sourceRoom?.children || '0';
   document.getElementById('bookingPaymentMethod').value = sourceRoom?.paymentMethod || 'نقدي';
-  document.getElementById('bookingPaymentStatus').value = sourceRoom?.paymentStatus || 'غير مدفوع';
-  document.getElementById('bookingPaidAmount').value = Number(sourceRoom?.paidAmount || 0).toFixed(2);
   document.getElementById('bookingPurpose').value = sourceRoom?.bookingPurpose || 'سياحة';
   document.getElementById('bookingSource').value = sourceRoom?.bookingSource || 'الاستقبال';
   document.getElementById('bookingCreatedByDisplay').innerText = sourceRoom?.bookingCreatedBy || sourceRoom?.staffName || currentUsername || 'المستخدم الحالي';
@@ -3479,7 +3398,6 @@ function openNewBookingModal(editRef) {
   document.getElementById('btnBkgReview').style.display = 'block';
   document.getElementById('btnBkgSubmit').style.display = 'none';
   calculateBookingDays();
-  calculateBookingPaymentSummary();
   updateBookingAutoTypeBadge(document.querySelectorAll('input[name=selectedBookingRoom]:checked').length);
   document.getElementById('bookingModal').style.display = 'flex';
 }
@@ -3510,20 +3428,6 @@ function calculateTotalFromManual() {
   const selectedCount = checkboxes.length > 0 ? checkboxes.length : 1;
   const grandTotal = n * p * selectedCount;
   document.getElementById('bookingTotalPriceDisplay').innerText = `${grandTotal.toFixed(2)} ر.س`;
-  calculateBookingPaymentSummary();
-}
-function calculateBookingPaymentSummary(){
-  const total=(parseFloat(document.getElementById('bookingNightsInput')?.value)||1)*(parseFloat(document.getElementById('bookingNightPriceInput')?.value)||200)*(document.querySelectorAll('input[name="selectedBookingRoom"]:checked').length||1);
-  const status=document.getElementById('bookingPaymentStatus')?.value||'غير مدفوع';
-  const paidInput=document.getElementById('bookingPaidAmount');
-  let paid=Math.max(0,parseFloat(paidInput?.value)||0);
-  if(status==='مدفوع بالكامل') paid=total;
-  paid=Math.min(paid,total);
-  if(paidInput && status==='مدفوع بالكامل') paidInput.value=paid.toFixed(2);
-  const remaining=Math.max(0,total-paid);
-  const summary=document.getElementById('bookingPaymentSummary');
-  if(summary) summary.innerHTML=`<strong style="color:#86efac">المدفوع: ${paid.toFixed(2)} ر.س</strong> &nbsp; · &nbsp; <strong style="color:${remaining>0?'#fbbf24':'#86efac'}">المتبقي: ${remaining.toFixed(2)} ر.س</strong>`;
-  return {total,paid,remaining,status};
 }
 function reviewNewBooking() {
   const guest=document.getElementById('bookingGuestName').value.trim();
@@ -3537,7 +3441,7 @@ function reviewNewBooking() {
   if(!guest) return alert('الرجاء إدخال اسم العميل قبل المراجعة.');
   if(!rooms.length) return alert('الرجاء اختيار غرفة واحدة على الأقل قبل المراجعة.');
   const box=document.getElementById('bookingReviewBox');
-  box.innerHTML=`<strong style="color:var(--accent-solid)">مراجعة الحجز</strong><br>👤 ${guest} — 📞 ${phone||'بدون جوال'}<br>🛏️ الغرف: ${rooms.join('، ')}<br>📅 ${checkIn} إلى ${checkOut} — ${nights} ليلة<br>💳 الدفع: ${payment}<br>🎯 الغرض: ${document.getElementById('bookingPurpose').value}<br>📌 المصدر: ${document.getElementById('bookingSource').value}<br>👤 المنفذ: ${currentUsername||'المستخدم الحالي'}<br>💰 الإجمالي: <strong>${(rooms.length*nights*price).toFixed(2)} ر.س</strong><br>💳 الحالة: ${document.getElementById('bookingPaymentStatus')?.value||'غير مدفوع'} · المدفوع: ${(calculateBookingPaymentSummary().paid||0).toFixed(2)} ر.س · المتبقي: ${(calculateBookingPaymentSummary().remaining||0).toFixed(2)} ر.س`;
+  box.innerHTML=`<strong style="color:var(--accent-solid)">مراجعة الحجز</strong><br>👤 ${guest} — 📞 ${phone||'بدون جوال'}<br>🛏️ الغرف: ${rooms.join('، ')}<br>📅 ${checkIn} إلى ${checkOut} — ${nights} ليلة<br>💳 الدفع: ${payment}<br>🎯 الغرض: ${document.getElementById('bookingPurpose').value}<br>📌 المصدر: ${document.getElementById('bookingSource').value}<br>👤 المنفذ: ${currentUsername||'المستخدم الحالي'}<br>💰 الإجمالي: <strong>${(rooms.length*nights*price).toFixed(2)} ر.س</strong>`;
   box.style.display='block'; document.getElementById('btnBkgReview').style.display='none'; document.getElementById('btnBkgSubmit').style.display='block';
 }
 
@@ -3565,10 +3469,6 @@ function executeNewBooking() {
   const adults = parseInt(document.getElementById('bookingAdults').value) || 1;
   const children = parseInt(document.getElementById('bookingChildren').value) || 0;
   const paymentMethod = document.getElementById('bookingPaymentMethod').value;
-  const paymentInfo = calculateBookingPaymentSummary();
-  const paymentStatus = paymentInfo.status;
-  const paidAmount = paymentInfo.paid;
-  const remainingAmount = paymentInfo.remaining;
   const bookingPurpose = document.getElementById('bookingPurpose').value;
   const bookingSource = document.getElementById('bookingSource').value;
   const bookingNotes = document.getElementById('bookingNotes').value.trim();
@@ -3589,7 +3489,6 @@ function executeNewBooking() {
   const selectedIds = checkboxes.map(chk=>parseInt(chk.value));
   if(!guest) return alert('الرجاء إدخال اسم النزيل أو الجهة!');
   if(!selectedIds.length) return alert('الرجاء اختيار غرفة واحدة على الأقل للحجز!');
-  if(paidAmount<0 || paidAmount>paymentInfo.total) return alert('قيمة المدفوع غير صحيحة. يجب أن تكون بين صفر والإجمالي.');
   const bookingType = bookingTypeForCount(selectedIds.length);
   const rooms = allRooms[currentHotelId] || [];
   const originalBookingRoom = editingRef ? (rooms.find(r=>r.bookingRef===editingRef)||{}) : {};
@@ -3607,18 +3506,14 @@ function executeNewBooking() {
   const roomsListDetails=[]; let totalGrandAmount=0;
   selectedIds.forEach(roomId=>{
     const target=rooms.find(r=>r.id===roomId); if(!target) return;
-    const priorCheckInStatus=target.checkInStatus; Object.assign(target,{status:'occupied',guest,phone,guestId,nationality,email,adults,children,paymentMethod,paymentStatus,paidAmount,remainingAmount,bookingNotes,carType,carPlate,bookingType,bookingRef,nights,nightPrice,baseNightPrice,pricingSource,contractDiscount,checkIn,checkOut,totalAmount:nights*nightPrice,staffName:currentUsername,bookingCreatedBy,bookingUpdatedBy,bookingPurpose,bookingSource,companyContractId,checkInStatus:priorCheckInStatus||(checkIn>new Date().toISOString().slice(0,10)?'scheduled':'checked-in'),checkedInAt:target.checkedInAt||((checkIn<=new Date().toISOString().slice(0,10))?new Date().toISOString():''),checkedInBy:target.checkedInBy||((checkIn<=new Date().toISOString().slice(0,10))?(currentUsername||'المستخدم الحالي'):'')});
+    const priorCheckInStatus=target.checkInStatus; Object.assign(target,{status:'occupied',guest,phone,guestId,nationality,email,adults,children,paymentMethod,bookingNotes,carType,carPlate,bookingType,bookingRef,nights,nightPrice,baseNightPrice,pricingSource,contractDiscount,checkIn,checkOut,totalAmount:nights*nightPrice,staffName:currentUsername,bookingCreatedBy,bookingUpdatedBy,bookingPurpose,bookingSource,companyContractId,checkInStatus:priorCheckInStatus||(checkIn>new Date().toISOString().slice(0,10)?'scheduled':'checked-in'),checkedInAt:target.checkedInAt||((checkIn<=new Date().toISOString().slice(0,10))?new Date().toISOString():''),checkedInBy:target.checkedInBy||((checkIn<=new Date().toISOString().slice(0,10))?(currentUsername||'المستخدم الحالي'):'')});
     roomsListDetails.push({id:target.id,type:target.type,nights,price:nightPrice}); totalGrandAmount += nights*nightPrice;
   });
   if(!allInvoices || typeof allInvoices!=='object') allInvoices={};
   if(!Array.isArray(allInvoices[currentHotelId])) allInvoices[currentHotelId]=[];
   let unifiedInvoice = allInvoices[currentHotelId].find(i=>i.bookingRef===bookingRef);
-  const invoiceData={bookingRef,room:roomsListDetails[0]?.id||'مجموعة',roomsList:roomsListDetails,guest,phone,guestId,nationality,email,adults,children,paymentMethod,paymentStatus,paidAmount,remainingAmount,bookingNotes,carType,carPlate,bookingType,nights,nightPrice,baseNightPrice,pricingSource,contractDiscount,bookingPurpose,bookingSource,companyContractId,total:totalGrandAmount,date:checkIn,checkIn,checkOut,status:'confirmed',staffName:currentUsername,bookingCreatedBy,bookingUpdatedBy};
+  const invoiceData={bookingRef,room:roomsListDetails[0]?.id||'مجموعة',roomsList:roomsListDetails,guest,phone,guestId,nationality,email,adults,children,paymentMethod,bookingNotes,carType,carPlate,bookingType,nights,nightPrice,baseNightPrice,pricingSource,contractDiscount,bookingPurpose,bookingSource,companyContractId,total:totalGrandAmount,date:checkIn,checkIn,checkOut,status:'confirmed',staffName:currentUsername,bookingCreatedBy,bookingUpdatedBy};
   if(unifiedInvoice) Object.assign(unifiedInvoice,invoiceData); else { unifiedInvoice={id:`INV-${Math.floor(Math.random()*9000+1000)}`,...invoiceData}; allInvoices[currentHotelId].unshift(unifiedInvoice); }
-  if(typeof hoteraInvoicePayments!=='object'||!hoteraInvoicePayments) hoteraInvoicePayments={};
-  if(!Array.isArray(hoteraInvoicePayments[currentHotelId])) hoteraInvoicePayments[currentHotelId]=[];
-  hoteraInvoicePayments[currentHotelId]=hoteraInvoicePayments[currentHotelId].filter(x=>x.bookingRef!==bookingRef||x.source!=='booking-payment');
-  if(paidAmount>0) hoteraInvoicePayments[currentHotelId].push({id:`PAY-${Date.now()}`,invoiceId:unifiedInvoice.id,bookingRef,amount:paidAmount,method:paymentMethod,status:paymentStatus,source:'booking-payment',createdBy:currentUsername||'المستخدم الحالي',createdAt:new Date().toISOString()});
   recordHoteraAudit(editingRef?'تعديل حجز':'إنشاء حجز',{bookingRef,guest,rooms:roomsListDetails.map(r=>r.id),total:totalGrandAmount,bookingType});
   saveData(); uploadDataToCloud(); closeNewBookingModal(); window.hoteraEditingBookingRef=null; render(); if(document.getElementById('hoteraBookingManagementModal')?.classList.contains('open'))renderHoteraBookingManagement(); populateOfficialInvoiceModal(unifiedInvoice);
   alert(`✅ تم ${editingRef?'تعديل':'تنفيذ'} الحجز (${bookingRef}) وتصنيفه: ${bookingType}.`);
