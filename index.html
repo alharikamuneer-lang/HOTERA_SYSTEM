@@ -1456,6 +1456,14 @@ function buildCloudPayload() {
 
 function applyCloudPayload(cloudData) {
   if (!cloudData || typeof cloudData !== 'object') return false;
+  // حماية من الكتابة العكسية: لا نطبق لقطة سحابية أقدم من آخر تعديل محلي.
+  // المفتاح جديد ولا يغيّر أي مفتاح سابق أو بنية بيانات قائمة.
+  const localMutationAt = Number(localStorage.getItem('hotera_local_mutation_at') || 0);
+  const cloudUpdatedAt = Date.parse(cloudData.updatedAt || '') || 0;
+  if (localMutationAt && cloudUpdatedAt && cloudUpdatedAt < localMutationAt) {
+    setCloudStatus('تم تجاهل لقطة سحابية أقدم للحفاظ على التعديلات المحلية ✅', '#fbbf24');
+    return false;
+  }
 
   if (Array.isArray(cloudData.hotels)) {
     hotelsList = cloudData.hotels;
@@ -1485,7 +1493,8 @@ function applyCloudPayload(cloudData) {
   if (cloudData.aboutTitle) aboutPageTitleText = cloudData.aboutTitle;
   if (cloudData.aboutDesc) aboutPageDescText = cloudData.aboutDesc;
 
-  saveData();
+  // حفظ البيانات المستلمة دون تسجيلها كتعديل محلي جديد، حتى لا تتغير أولوية المزامنة.
+  saveData(false);
   return true;
 }
 
@@ -2000,7 +2009,8 @@ function restoreHoteraBackup(event) {
   reader.readAsText(file, 'utf-8');
 }
 
-function saveData() {
+function saveData(markLocalMutation = true) {
+  if (markLocalMutation) localStorage.setItem('hotera_local_mutation_at', String(Date.now()));
   localStorage.setItem('hotera_all_hotels', JSON.stringify(hotelsList));
   localStorage.setItem('hotera_companies', JSON.stringify(companiesList));
   localStorage.setItem('hotera_all_rooms', JSON.stringify(allRooms));
