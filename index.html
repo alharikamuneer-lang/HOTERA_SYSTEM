@@ -430,7 +430,7 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
   <div class="hotera-visual-card"><span class="hotera-visual-icon">💰</span><span class="hotera-visual-label">الإيرادات</span><strong class="hotera-visual-value" id="visualRevenue">—</strong><span class="hotera-visual-note">من السجلات الحالية</span></div>
 </div>
 <div class="hotera-notification-bar" aria-live="polite"><div class="hotera-notification-title"><span>🔔 مركز الإشعارات</span><span class="hotera-notification-count" id="hoteraNotificationCount">0</span></div><button class="hotera-notification-button" type="button" onclick="toggleHoteraNotifications()">عرض التنبيهات</button></div>
-<div class="hotera-notification-drawer" id="hoteraNotificationDrawer"><div class="hotera-notification-item info"><i class="hotera-notification-dot"></i><span>يتم تحديث مؤشرات النظام من البيانات المحلية الحالية دون حذف أو استبدال أي سجل.</span></div><div id="hoteraSmartNotificationsList"></div></div>
+<div class="hotera-notification-drawer" id="hoteraNotificationDrawer"><div class="hotera-notification-item info"><i class="hotera-notification-dot"></i><span>يتم تحديث التنبيهات من البيانات المحلية الحالية دون حذف أو تعديل أي سجل.</span></div><select id="hoteraNotificationFilter" class="form-select" style="margin:6px 0;font-size:10px" onchange="setHoteraNotificationFilter(this.value)"><option value="all">كل التنبيهات</option><option value="danger">عاجلة</option><option value="warning">تحتاج متابعة</option><option value="info">معلومات</option></select><div id="hoteraSmartNotificationsSummary" style="font-size:9px;color:#94a3b8;margin:4px 0"></div><div id="hoteraSmartNotificationsList"></div></div>
 <div class="hotera-room-showcase" aria-label="صور مرجعية للغرف"><div class="hotera-room-image-card" style="background-image:url('https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=900&auto=format&fit=crop')"><span>غرف فندقية فاخرة<small>تصميم HOTERA</small></span></div><div class="hotera-room-image-card" style="background-image:url('https://images.unsplash.com/photo-1566665797739-1674de7a421a?q=80&w=900&auto=format&fit=crop')"><span>حالة الغرف<small>متابعة مباشرة</small></span></div><div class="hotera-room-image-card" style="background-image:url('https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=900&auto=format&fit=crop')"><span>تجربة فندقية<small>إدارة أذكى</small></span></div></div>
 
 <div class="quick-access-bar" id="quickAccessBar">
@@ -589,6 +589,7 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
     <div class="hotera-glass-kpis"><div class="hotera-glass-kpi"><small>إجمالي الغرف</small><strong id="cmdTotalRooms">0</strong><em>↗ حسب بيانات الفندق</em></div><div class="hotera-glass-kpi"><small>نسبة الإشغال</small><strong id="premiumOccupancy">0%</strong><em>↗ مقارنة مع أمس</em></div><div class="hotera-glass-kpi"><small>حجوزات اليوم</small><strong id="premiumTodayBookings">0</strong><em>↗ حجوزات جديدة</em></div><div class="hotera-glass-kpi"><small>إيرادات اليوم</small><strong id="premiumTodayRevenue">0 ر.س</strong><em>↗ أداء مالي</em></div><div class="hotera-glass-kpi"><small>تقييم النزلاء</small><strong id="premiumRatingsCount">0</strong><em>★ من السجلات الحالية</em></div></div>
     <section class="hotera-daily-tasks" aria-label="المهام اليومية"><div class="hotera-daily-head"><h3>📋 مهام اليوم التشغيلية</h3><span class="hotera-daily-date" id="hoteraDailyTasksDate">—</span></div><div class="hotera-daily-grid"><article class="hotera-daily-card"><h4>🛬 وصولات اليوم</h4><strong id="dailyArrivalsCount">0</strong><p id="dailyArrivalsSummary">لا توجد وصولات اليوم</p><button type="button" onclick="openDailyTaskTarget('booking')">فتح الحجوزات</button></article><article class="hotera-daily-card"><h4>🛫 مغادرات اليوم</h4><strong id="dailyDeparturesCount">0</strong><p id="dailyDeparturesSummary">لا توجد مغادرات اليوم</p><button type="button" onclick="openDailyTaskTarget('rooms')">فتح الغرف</button></article><article class="hotera-daily-card"><h4>🧹 تنظيف وصيانة</h4><strong id="dailyServiceCount">0</strong><p id="dailyServiceSummary">لا توجد مهام معلقة</p><button type="button" onclick="openDailyTaskTarget('maintenance')">فتح التشغيل</button></article><article class="hotera-daily-card"><h4>💳 فواتير تحتاج متابعة</h4><strong id="dailyUnpaidCount">0</strong><p id="dailyUnpaidSummary">لا توجد فواتير معلقة</p><button type="button" onclick="openDailyTaskTarget('invoices')">فتح الفواتير</button></article></div></section>
     <section class="hotera-executive-strip" aria-label="الملخص التنفيذي" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:10px 0"><article class="hotera-glass-panel" style="padding:10px"><small>💳 المتبقي للتحصيل</small><strong id="executiveOutstanding" style="display:block;color:#fbbf24;font-size:16px;margin-top:4px">0.00 ر.س</strong><span style="font-size:9px;color:#94a3b8">من الفواتير الحالية</span></article><article class="hotera-glass-panel" style="padding:10px"><small>⭐ متوسط الرضا</small><strong id="executiveRatingAverage" style="display:block;color:#34d399;font-size:16px;margin-top:4px">0.0 / 5</strong><span id="executiveRatingPositive" style="font-size:9px;color:#94a3b8">0% تقييمات إيجابية</span></article><article class="hotera-glass-panel" style="padding:10px"><small>🧑‍💼 طلبات النزلاء المفتوحة</small><strong id="executiveGuestCareOpen" style="display:block;color:#38bdf8;font-size:16px;margin-top:4px">0</strong><span style="font-size:9px;color:#94a3b8">شكاوى وخدمات ومفقودات</span></article><article class="hotera-glass-panel" style="padding:10px"><small>🔄 آخر إقفال وردية</small><strong id="executiveLastShift" style="display:block;color:#fbbf24;font-size:12px;margin-top:7px">—</strong><span id="executiveShiftVariance" style="font-size:9px;color:#94a3b8">لا يوجد فرق مسجل</span></article></section>
+    <section class="hotera-glass-panel" style="margin:10px 0;padding:12px"><div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap"><h3 style="margin:0">🏢 مقارنة أداء الفنادق</h3><div style="display:flex;gap:4px"><input type="month" id="executiveComparePeriod" class="form-input" style="width:auto;margin:0;padding:5px;font-size:10px" onchange="renderHotelComparison()"><button type="button" class="btn btn-blue" style="width:auto;margin:0;padding:5px 8px;font-size:9px" onclick="exportHotelComparison()">تصدير CSV</button><button type="button" class="btn btn-gold" style="width:auto;margin:0;padding:5px 8px;font-size:9px" onclick="printHotelComparison()">طباعة</button></div></div><div id="hotelComparisonSummary" style="font-size:9px;color:#94a3b8;margin:7px 0">مقارنة الفنادق حسب الفترة المحددة.</div><div style="overflow:auto"><table class="table-box" style="min-width:680px"><thead><tr><th>الفندق</th><th>الغرف</th><th>الإشغال</th><th>الفواتير</th><th>الإيرادات</th><th>المدفوع</th><th>المصروفات</th><th>الصافي</th></tr></thead><tbody id="hotelComparisonBody"></tbody></table></div></section>
     <div class="hotera-glass-grid">
       <section class="hotera-glass-panel"><h3>🔔 التنبيهات الذكية</h3><div id="commandAlertsList"></div></section><section class="hotera-glass-panel"><h3>▤ الحجوزات القادمة</h3><div id="glassUpcomingBookings" class="hotera-glass-list"><div class="hotera-glass-list-row"><span>لا توجد حجوزات قادمة</span><strong>—</strong></div></div></section>
       <section class="hotera-glass-panel"><h3>◉ مؤشر الإشغال</h3><div class="hotera-glass-donut-wrap"><div class="hotera-glass-donut" id="glassOccupancyDonut"><span id="glassOccupancyValue">0%</span></div></div><div class="hotera-glass-list-row"><span>متاحة</span><strong id="premiumVacant">0</strong></div><div class="hotera-glass-list-row"><span>محجوزة</span><strong id="premiumBooked">0</strong></div></section>
@@ -706,7 +707,7 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
     <div class="card" style="padding:12px; background:rgba(18,26,43,0.95); text-align:inherit;">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
         <h4 style="font-size:11px; color:var(--accent-solid); margin-bottom:0;" id="lblExpensesTitle">💸 إدارة المصروفات والاحتساب التلقائي</h4>
-        <button class="btn btn-gold" style="width:auto; padding:3px 8px; margin:0; font-size:9px;" onclick="openExpenseModal()" id="btnAddExpense">+ تسجيل مصروف</button>
+        <div style="display:flex;gap:4px"><button class="btn btn-gold" style="width:auto; padding:3px 8px; margin:0; font-size:9px;" onclick="openExpenseModal()" id="btnAddExpense">+ تسجيل مصروف</button><button class="btn btn-blue" style="width:auto; padding:3px 8px; margin:0; font-size:9px;" onclick="openCustodyModal()" id="btnAddCustody">+ عهدة موظف</button></div>
       </div>
       <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:4px; margin-bottom:8px; text-align:center;">
         <div style="background:rgba(8,12,20,0.8); padding:6px; border-radius:8px;"><small style="font-size:8px; color:var(--text-muted)" id="lblExpDaily">اليومي</small><strong id="expDailySum" style="font-size:10px; color:#38bdf8;">0 ر.س</strong></div>
@@ -714,7 +715,7 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
         <div style="background:rgba(8,12,20,0.8); padding:6px; border-radius:8px;"><small style="font-size:8px; color:var(--text-muted)" id="lblExpMonthly">الشهري</small><strong id="expMonthlySum" style="font-size:10px; color:var(--accent-solid);">0 ر.س</strong></div>
         <div style="background:rgba(8,12,20,0.8); padding:6px; border-radius:8px;"><small style="font-size:8px; color:var(--text-muted)" id="lblExpYearly">السنوي</small><strong id="expYearlySum" style="font-size:10px; color:#a855f7;">0 ر.س</strong></div>
       </div>
-      <table class="table-box"><thead><tr><th id="thExpReason">البند / السبب</th><th id="thExpAmount">المبلغ</th><th id="thExpDate">التاريخ</th><th id="thExpStaff">المسؤول</th></tr></thead><tbody id="expensesTableBody"></tbody></table>
+      <table class="table-box"><thead><tr><th id="thExpReason">البند / السبب</th><th id="thExpAmount">المبلغ</th><th id="thExpDate">التاريخ</th><th id="thExpStaff">المسؤول</th></tr></thead><tbody id="expensesTableBody"></tbody></table><h5 style="font-size:10px;color:var(--accent-solid);margin:9px 0 4px">🧾 سجل عهد الموظفين</h5><div id="custodySummary" style="font-size:9px;color:#cbd5e1;margin-bottom:4px"></div><table class="table-box"><thead><tr><th>الموظف</th><th>النوع</th><th>المبلغ</th><th>الحالة</th><th>التاريخ</th></tr></thead><tbody id="custodyTableBody"></tbody></table>
     </div>
   </div>
 
@@ -730,12 +731,12 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
 
   <div id="feat_maintenance" class="feature-panel" style="display:none;">
     <div class="card" style="padding:12px; background:rgba(18,26,43,0.95); text-align:inherit;">
-      <h4 style="font-size:11px; color:var(--accent-solid); margin-bottom:6px;" id="lblMaintTitle">🛠️ بلاغات أعطال الغرف والصيانة النشطة</h4>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap"><h4 style="font-size:11px; color:var(--accent-solid); margin-bottom:6px;" id="lblMaintTitle">🛠️ بلاغات أعطال الغرف والصيانة النشطة</h4><button class="btn btn-blue" style="width:auto;margin:0;padding:5px 8px;font-size:9px" onclick="openRoomChecklistModal()">قائمة فحص غرفة</button></div>
       <table class="table-box"><thead><tr><th id="thMaintRoom">الغرفة</th><th id="thMaintIssue">العطل</th><th id="thMaintReporter">المُبلغ</th><th id="thMaintStatus">الحالة</th><th id="thMaintAction">إجراء</th></tr></thead><tbody id="maintenanceTicketsTableBody"></tbody></table>
     </div>
   </div>
 
-  <div id="feat_guest_care" class="feature-panel" style="display:none;"><div class="card" style="padding:12px;background:rgba(18,26,43,.95);text-align:inherit;border-color:rgba(245,158,11,.35)"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap"><h4 style="font-size:12px;color:var(--accent-solid);margin:0">🧑‍💼 تجربة النزيل</h4><button class="btn btn-gray" style="width:auto;margin:0;padding:5px 8px;font-size:9px" onclick="renderHoteraGuestCareRecords()">تحديث</button></div><div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px"><select id="guestCareType" class="form-select"><option value="شكوى">شكوى</option><option value="مفقودات">مفقودات</option><option value="طلب خدمة">طلب خدمة</option></select><input id="guestCareRoom" class="form-input" placeholder="رقم الغرفة"><input id="guestCareGuest" class="form-input" placeholder="اسم النزيل"><select id="guestCarePriority" class="form-select"><option value="عادية">أولوية عادية</option><option value="عالية">أولوية عالية</option><option value="عاجلة">أولوية عاجلة</option></select><input id="guestCareAssignee" class="form-input" placeholder="الموظف المكلف"><textarea id="guestCareDetails" class="form-input" placeholder="تفاصيل البلاغ أو الطلب" style="grid-column:1/-1;min-height:60px"></textarea></div><button class="btn btn-gold" style="margin-top:2px" onclick="createHoteraGuestCareRecord()">حفظ البلاغ أو الطلب</button><div id="guestCareRecordsList" style="margin-top:10px"></div></div></div>
+  <div id="feat_guest_care" class="feature-panel" style="display:none;"><div class="card" style="padding:12px;background:rgba(18,26,43,.95);text-align:inherit;border-color:rgba(245,158,11,.35)"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap"><h4 style="font-size:12px;color:var(--accent-solid);margin:0">🧑‍💼 تجربة النزيل</h4><div style="display:flex;gap:4px"><button class="btn btn-blue" style="width:auto;margin:0;padding:5px 8px;font-size:9px" onclick="openGuestProfileModal()">ملف نزيل</button><button class="btn btn-gray" style="width:auto;margin:0;padding:5px 8px;font-size:9px" onclick="renderHoteraGuestCareRecords()">تحديث</button></div></div><div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px"><select id="guestCareType" class="form-select"><option value="شكوى">شكوى</option><option value="مفقودات">مفقودات</option><option value="طلب خدمة">طلب خدمة</option></select><input id="guestCareRoom" class="form-input" placeholder="رقم الغرفة"><input id="guestCareGuest" class="form-input" placeholder="اسم النزيل"><select id="guestCarePriority" class="form-select"><option value="عادية">أولوية عادية</option><option value="عالية">أولوية عالية</option><option value="عاجلة">أولوية عاجلة</option></select><input id="guestCareAssignee" class="form-input" placeholder="الموظف المكلف"><textarea id="guestCareDetails" class="form-input" placeholder="تفاصيل البلاغ أو الطلب" style="grid-column:1/-1;min-height:60px"></textarea></div><button class="btn btn-gold" style="margin-top:2px" onclick="createHoteraGuestCareRecord()">حفظ البلاغ أو الطلب</button><div id="guestCareRecordsList" style="margin-top:10px"></div></div></div>
 
   <div id="feat_integrations" class="feature-panel" style="display:none;">
     <div class="card" style="padding:16px; background:rgba(18,26,43,0.95); text-align:inherit; border-color:var(--accent-solid);">
@@ -906,6 +907,10 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
   </div>
 </div>
 
+<div class="modal" id="guestProfileModal"><div class="modal-body"><h3 style="color:var(--accent-solid);margin-bottom:8px">👤 الملف الموحد للنزيل</h3><input id="guestProfilePhone" class="form-input" placeholder="رقم جوال النزيل" inputmode="tel"><input id="guestProfileName" class="form-input" placeholder="اسم النزيل"><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><input id="guestProfileNationality" class="form-input" placeholder="الجنسية"><input id="guestProfileEmail" class="form-input" placeholder="البريد الإلكتروني (اختياري)"></div><input id="guestProfilePreferences" class="form-input" placeholder="التفضيلات الخاصة بالنزيل (اختياري)"><textarea id="guestProfileNotes" class="form-input" placeholder="ملاحظات الخدمة والمتابعة" style="height:70px;resize:none"></textarea><div id="guestProfileSummary" style="font-size:9px;color:#cbd5e1;margin:5px 0"></div><button class="btn btn-gold" onclick="saveGuestProfile()">حفظ الملف وتحديث السجل 💾</button><button class="btn btn-gray" onclick="closeGuestProfileModal()">إغلاق</button></div></div>
+
+<div class="modal" id="custodyModal"><div class="modal-body"><h3 style="color:var(--accent-solid);margin-bottom:8px">🧾 تسجيل عهدة أو تسوية موظف</h3><input type="text" id="custodyEmployee" class="form-input" placeholder="اسم الموظف"><input type="number" id="custodyAmount" class="form-input" placeholder="المبلغ (ر.س)"><select id="custodyType" class="form-select"><option value="تسليم عهدة">تسليم عهدة</option><option value="استرداد عهدة">استرداد عهدة</option><option value="تسوية عهدة">تسوية عهدة</option></select><input type="text" id="custodyReason" class="form-input" placeholder="البيان أو سبب التسوية"><button class="btn btn-gold" onclick="saveCustodyRecord()">حفظ سجل العهدة 💾</button><button class="btn btn-gray" onclick="closeCustodyModal()">إغلاق</button></div></div>
+
 <div class="modal" id="dailyCloseModal"><div class="modal-body" style="max-width:560px"><h3 style="color:var(--accent-solid);margin-bottom:7px">📊 الإقفال اليومي الشامل</h3><div style="font-size:9px;color:#94a3b8;margin-bottom:7px">ملخص قراءة فقط لليوم المحدد، ولا يغيّر أي سجل عند العرض.</div><input type="date" id="dailyCloseDate" class="form-input" onchange="renderDailyCloseSummary()"><div id="dailyCloseSummary" style="margin-top:8px"></div><div style="display:flex;gap:6px;margin-top:8px"><button class="btn btn-blue" style="flex:1" onclick="exportDailyCloseCsv()">تصدير CSV</button><button class="btn btn-gold" style="flex:1" onclick="saveDailyCloseRecord()">اعتماد ملخص اليوم</button></div><button class="btn btn-gray" onclick="closeDailyCloseModal()">إغلاق</button></div></div>
 
 <div class="modal" id="inventoryModal">
@@ -944,6 +949,7 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
     <div class="pin-input-group">
       <input type="text" id="newStaffPin" class="form-input" placeholder="رمز المرور الخاص بالموظف" style="margin-bottom:0;">
     </div>
+    <div style="margin:6px 0;padding:7px;border:1px solid rgba(212,175,55,.25);border-radius:8px;background:rgba(15,23,42,.45)"><label style="font-size:10px;color:var(--accent-solid);display:block;margin-bottom:5px">الصلاحيات التفصيلية الاختيارية</label><div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:10px"><label><input type="checkbox" class="new-staff-permission" value="booking" checked> الحجوزات</label><label><input type="checkbox" class="new-staff-permission" value="operations" checked> التشغيل</label><label><input type="checkbox" class="new-staff-permission" value="finance"> المالية</label><label><input type="checkbox" class="new-staff-permission" value="inventory"> المستودع</label><label><input type="checkbox" class="new-staff-permission" value="attendance"> الحضور</label><label><input type="checkbox" class="new-staff-permission" value="guestCare"> خدمة النزلاء</label></div><small style="display:block;color:#94a3b8;margin-top:4px">السجلات القديمة التي لا تحتوي على هذا الحقل تحتفظ بصلاحياتها السابقة.</small></div>
     <button class="btn btn-gold" onclick="addNewStaffMember()" id="modStaffAdd">إضافة موظف جديد وترحيل البيانات للسوبر ➕</button>
     <table class="table-box"><thead><tr><th id="thStaffColId">الرقم</th><th id="thStaffColName">الاسم والوظيفة</th><th id="thStaffColDept">القسم / الحالة</th><th id="thStaffColPin">الرمز</th><th id="thStaffColDel">إجراء</th></tr></thead><tbody id="staffTableBody"></tbody></table>
     <button class="btn btn-gray" style="margin-top:8px;" onclick="closeStaffManagementModal()" id="modStaffClose">إغلاق</button>
@@ -1141,12 +1147,14 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
   </div>
 </div>
 
+<div class="modal" id="roomChecklistModal"><div class="modal-body"><h3 style="color:var(--accent-solid);margin-bottom:8px">🧹 قائمة فحص وتجهيز الغرفة</h3><input id="checklistRoomId" class="form-input" placeholder="رقم الغرفة"><div id="roomChecklistItems" style="font-size:11px;line-height:2"><label><input type="checkbox" value="النظافة العامة"> النظافة العامة</label><br><label><input type="checkbox" value="الحمام والمستلزمات"> الحمام والمستلزمات</label><br><label><input type="checkbox" value="المفروشات"> المفروشات</label><br><label><input type="checkbox" value="الإضاءة والتكييف"> الإضاءة والتكييف</label><br><label><input type="checkbox" value="المياه والسباكة"> المياه والسباكة</label><br><label><input type="checkbox" value="الميني بار"> الميني بار</label></div><textarea id="checklistNotes" class="form-input" placeholder="ملاحظات الفحص" style="height:55px;resize:none"></textarea><button class="btn btn-gold" onclick="saveRoomChecklist()">اعتماد الفحص ✅</button><button class="btn btn-gray" onclick="closeRoomChecklistModal()">إغلاق</button></div></div>
+
 <div class="modal" id="maintenanceModal">
   <div class="modal-body">
     <h3 style="color:#f59e0b; margin-bottom:8px;" id="modMaintTitleSub">🛠️ تحويل الغرفة إلى صيانة وبلاغ عطل</h3>
     <p style="font-size:11px; color:var(--text-muted); margin-bottom:6px;"><span id="lblMaintRoomNumLabel">غرفة رقم:</span> <strong id="maintRoomIdDisplay" style="color:white;"></strong></p>
     <label style="font-size:10px; color:var(--text-muted); display:block; margin-bottom:4px;" id="lblMaintDescLabel">وصف عطل الصيانة:</label>
-    <textarea id="maintIssueInput" class="form-input" placeholder="اكتب تفاصيل عطل الصيانة أو سبب خروج الغرفة عن الخدمة..." style="height:70px; resize:none;"></textarea>
+    <textarea id="maintIssueInput" class="form-input" placeholder="اكتب تفاصيل عطل الصيانة أو سبب خروج الغرفة عن الخدمة..." style="height:70px; resize:none;"></textarea><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><select id="maintPriorityInput" class="form-select"><option value="عادية">أولوية عادية</option><option value="عالية">أولوية عالية</option><option value="عاجلة">أولوية عاجلة</option></select><input id="maintAssigneeInput" class="form-input" placeholder="المسؤول المكلف"></div><label style="font-size:10px;color:var(--text-muted);display:block;margin:2px 0 4px">موعد الاستحقاق</label><input type="datetime-local" id="maintDueAtInput" class="form-input">
     <button class="btn btn-gold" onclick="confirmRoomMaintenance()" id="btnMaintSubmit">تأكيد وإرسال للبلاغات 🛑</button>
     <button class="btn btn-gray" onclick="closeMaintenanceModal()" id="btnMaintBack">تراجع</button>
   </div>
@@ -1431,6 +1439,9 @@ function buildCloudPayload() {
   return {
     version: 2,
     updatedAt: new Date().toISOString(),
+    staffCustody: allStaffCustody,
+    roomChecklists: hoteraRoomChecklists,
+    guestProfiles: hoteraGuestProfiles,
     hotels: hotelsList,
     rooms: allRooms,
     invoices: allInvoices,
@@ -1481,6 +1492,9 @@ function applyCloudPayload(cloudData) {
   if (cloudData.attendance) attendanceRecords = cloudData.attendance;
   if (cloudData.customerMemory) customerMemory = cloudData.customerMemory;
   if (cloudData.expenses) allExpenses = cloudData.expenses;
+  if (cloudData.staffCustody && typeof cloudData.staffCustody === 'object') allStaffCustody = cloudData.staffCustody;
+  if (cloudData.roomChecklists && typeof cloudData.roomChecklists === 'object') { hoteraRoomChecklists = cloudData.roomChecklists; localStorage.setItem('hotera_room_checklists',JSON.stringify(hoteraRoomChecklists)); }
+  if (cloudData.guestProfiles && typeof cloudData.guestProfiles === 'object') hoteraGuestProfiles = cloudData.guestProfiles;
   if (cloudData.inventory) allInventory = cloudData.inventory;
   if (cloudData.maintenanceTickets) allMaintenanceTickets = cloudData.maintenanceTickets;
   if (cloudData.shifts) allShifts = cloudData.shifts;
@@ -1880,6 +1894,8 @@ let allTransactions = JSON.parse(localStorage.getItem('hotera_all_transactions')
 let attendanceRecords = JSON.parse(localStorage.getItem('hotera_attendance')) || {};
 let customerMemory = JSON.parse(localStorage.getItem('hotera_customer_memory')) || {};
 let allExpenses = JSON.parse(localStorage.getItem('hotera_all_expenses')) || {};
+let allStaffCustody = JSON.parse(localStorage.getItem('hotera_staff_custody')) || {};
+let hoteraGuestProfiles = JSON.parse(localStorage.getItem('hotera_guest_profiles')) || {};
 let allInventory = JSON.parse(localStorage.getItem('hotera_all_inventory')) || {};
 let inventoryMovements = JSON.parse(localStorage.getItem('hotera_inventory_movements')) || {};
 let allMaintenanceTickets = JSON.parse(localStorage.getItem('hotera_maint_tickets')) || {};
@@ -1933,7 +1949,7 @@ function generateRoomsForHotel(hotelId, floors, perFloor) {
 const HOTERA_BACKUP_KEYS = [
   'hotera_all_hotels','hotera_companies','hotera_all_rooms','hotera_all_invoices',
   'hotera_cancelled_bookings','hotera_refunded_invoices','hotera_all_transactions',
-  'hotera_attendance','hotera_customer_memory','hotera_all_expenses','hotera_all_inventory','hotera_inventory_movements',
+  'hotera_attendance','hotera_customer_memory','hotera_all_expenses','hotera_staff_custody','hotera_guest_profiles','hotera_room_checklists','hotera_all_inventory','hotera_inventory_movements',
   'hotera_maint_tickets','hotera_all_shifts','hotera_all_ratings','hotera_audit_log','hotera_guest_care_records','hotera_daily_closings',
   'hotera_master_key','hotera_dev_name','hotera_dev_phone','hotera_about_title','hotera_about_desc',
   'hotera_cloud_url','hotera_cloud_key','hotera_lang'
@@ -2021,6 +2037,9 @@ function saveData(markLocalMutation = true) {
   localStorage.setItem('hotera_attendance', JSON.stringify(attendanceRecords));
   localStorage.setItem('hotera_customer_memory', JSON.stringify(customerMemory));
   localStorage.setItem('hotera_all_expenses', JSON.stringify(allExpenses));
+  localStorage.setItem('hotera_staff_custody', JSON.stringify(allStaffCustody));
+  localStorage.setItem('hotera_room_checklists', JSON.stringify(hoteraRoomChecklists));
+  localStorage.setItem('hotera_guest_profiles', JSON.stringify(hoteraGuestProfiles));
   localStorage.setItem('hotera_all_inventory', JSON.stringify(allInventory));
   localStorage.setItem('hotera_inventory_movements', JSON.stringify(inventoryMovements));
   localStorage.setItem('hotera_maint_tickets', JSON.stringify(allMaintenanceTickets));
@@ -2180,6 +2199,7 @@ async function executeLogin() {
     const staffName = document.getElementById('loginStaffSelect').value;
     const staffObj = targetHotel.staffList.find(s => s.name === staffName);
     if (!staffObj || pinInput !== staffObj.pin) { alert("❌ كلمة المرور غير صحيحة!"); return; }
+    if (staffObj.status === 'موقوف') { alert("⛔ حساب الموظف موقوف حالياً. يرجى مراجعة مدير الفندق."); return; }
     currentRole = 'staff'; currentUsername = staffName; currentHotelId = hotelId;
   } else if (role === 'hr_supervisor') {
     if (pinInput !== targetHotel.hrPin) { alert("❌ رمز مشرف الموظفين غير صحيح!"); return; }
@@ -2254,11 +2274,14 @@ function unlockHoteraSession(){const pin=document.getElementById('hoteraSessionU
 
 function applyPermissions() {
   document.querySelectorAll('.superadmin-only').forEach(el => el.style.display = (currentRole === 'superadmin') ? 'block' : 'none');
+  const staffProfile=getCurrentStaffProfile(),custom=staffProfile&&Array.isArray(staffProfile.permissions)&&staffProfile.permissions.length>0;
+  const chipPermission={chipBooking:'booking',chipInvoices:'finance',chipFinancial:'finance',chipExpenses:'finance',chipInventory:'inventory',chipAttendance:'attendance',chipMaintenance:'operations',chipGuestCare:'guestCare',chipShifts:'operations'};
+  document.querySelectorAll('.quick-access-chip').forEach(el=>{if(currentRole==='staff'&&custom&&chipPermission[el.id])el.style.display=staffProfile.permissions.includes(chipPermission[el.id])?'':'none';});
   const hotelManagerRole = currentRole === 'manager' || currentRole === 'company_owner_manager';
   document.querySelectorAll('.manager-only').forEach(el => el.style.display = (currentRole === 'superadmin' || hotelManagerRole) ? 'block' : 'none');
   document.querySelectorAll('.hr-allowed').forEach(el => el.style.display = (currentRole === 'superadmin' || hotelManagerRole || currentRole === 'hr_supervisor') ? 'block' : 'none');
   document.querySelectorAll('.staff-only').forEach(el => el.style.display = (currentRole !== 'housekeeper' && currentRole !== 'company_owner') ? 'block' : 'none');
-  document.querySelectorAll('.quick-access-chip').forEach(el => { if (currentRole === 'company_owner') { el.style.display = ['chipCommandCenter','chipDashboard','chipAbout'].includes(el.id) ? 'block' : 'none'; } else if (el.id !== 'chipSuper') { el.style.display = ''; } });
+  document.querySelectorAll('.quick-access-chip').forEach(el => { if (currentRole === 'company_owner') { el.style.display = ['chipCommandCenter','chipDashboard','chipAbout'].includes(el.id) ? 'block' : 'none'; } else if (currentRole !== 'staff' || !custom) { if (el.id !== 'chipSuper') el.style.display = ''; } });
 }
 
 function toggleAllPinsVisibility() {
@@ -2270,13 +2293,16 @@ function toggleAllPinsVisibility() {
 
 const HOTERA_PERMISSION_RULES = {
   superadmin: ['superadmin'],
+  finance: ['superadmin', 'manager', 'staff'],
   hotelAdmin: ['superadmin', 'manager'],
   operations: ['superadmin', 'manager', 'staff', 'hr_supervisor', 'housekeeper'],
   booking: ['superadmin', 'manager', 'staff']
 };
+function getCurrentStaffProfile(){const hotel=hotelsList.find(h=>h.id===currentHotelId);return currentRole==='staff'?(hotel?.staffList||[]).find(s=>s.name===currentUsername):null;}
+function staffHasHoteraPermission(permission){const profile=getCurrentStaffProfile();if(!profile||!Array.isArray(profile.permissions)||profile.permissions.length===0)return true;return profile.permissions.includes(permission)||(permission==='operations'&&profile.permissions.includes('housekeeping'));}
 function requireHoteraPermission(permission, message = 'هذا الإجراء غير متاح حسب صلاحية الحساب الحالية.') {
   const allowed = HOTERA_PERMISSION_RULES[permission] || [];
-  if (!allowed.includes(currentRole)) { alert(`🔒 ${message}`); return false; }
+  if (!allowed.includes(currentRole) || (currentRole==='staff'&&!staffHasHoteraPermission(permission))) { alert(`🔒 ${message}`); return false; }
   return true;
 }
 
@@ -2479,8 +2505,9 @@ function addNewStaffMember() {
   const name = document.getElementById('newStaffName').value.trim();
   const pin = document.getElementById('newStaffPin').value.trim();
   const phone=document.getElementById('newStaffPhone')?.value.trim()||'',jobTitle=document.getElementById('newStaffJobTitle')?.value.trim()||'',department=document.getElementById('newStaffDepartment')?.value||'استقبال',status=document.getElementById('newStaffStatus')?.value||'نشط';
+  const permissions=[...document.querySelectorAll('.new-staff-permission:checked')].map(x=>x.value);
   if(!name || !pin) return alert('أدخل الاسم والرمز!');
-  hotelsList.find(h => h.id === currentHotelId).staffList.push({idNum, name, pin, phone, jobTitle, department, status});
+  hotelsList.find(h => h.id === currentHotelId).staffList.push({idNum, name, pin, phone, jobTitle, department, status, permissions});
   if(typeof recordHoteraAudit==='function')recordHoteraAudit('إضافة موظف',{idNum,name,department,status}); saveData(); uploadDataToCloud(); renderStaffTable();
   alert('✅ تمت إضافة الموظف الجديد بنجاح');
 }
@@ -2574,7 +2601,18 @@ function renderCommandCenter() {
   const ratings=allRatings[currentHotelId]||[],ratingSum=ratings.reduce((sum,r)=>sum+Math.max(1,Math.min(5,Number(r.stars)||0)),0),ratingAvg=ratings.length?ratingSum/ratings.length:0,ratingPositive=ratings.length?Math.round(ratings.filter(r=>Number(r.stars)>=4).length/ratings.length*100):0; set('executiveRatingAverage',`${ratingAvg.toFixed(1)} / 5`); set('executiveRatingPositive',`${ratingPositive}% تقييمات إيجابية`);
   const careStore=typeof hoteraGuestCareStore==='function'?hoteraGuestCareStore():{},careList=Array.isArray(careStore[currentHotelId])?careStore[currentHotelId]:[]; set('executiveGuestCareOpen',careList.filter(x=>x&&x.status!=='مكتمل').length);
   const shiftList=allShifts[currentHotelId]||[],lastShift=shiftList[0]; set('executiveLastShift',lastShift?.status==='مقفلة'?(lastShift.dateStr||'مقفلة'):'لا يوجد إقفال'); const shiftVar=document.getElementById('executiveShiftVariance'); if(shiftVar)shiftVar.innerText=lastShift&&lastShift.variance!==null&&lastShift.variance!==undefined?`الفرق: ${Number(lastShift.variance).toFixed(2)} ر.س`:'لا يوجد فرق مسجل';
+  renderHotelComparison();
 }
+function executiveComparisonData(period){const rows=(hotelsList||[]).map(h=>{const rooms=allRooms[h.id]||[],invoices=allInvoices[h.id]||[],expenses=allExpenses[h.id]||[];const inPeriod=x=>!period||String(x?.date||x?.createdAt||'').slice(0,7)===period;const pi=invoices.filter(inPeriod),pe=expenses.filter(inPeriod),revenue=pi.reduce((n,x)=>n+Number(x.total||0),0),paid=pi.reduce((n,x)=>n+(typeof hoteraPaymentState==='function'?hoteraPaymentState(x).paid:Number(x.paidAmount||0)),0),expense=pe.reduce((n,x)=>n+Number(x.amount||0),0),occupied=rooms.filter(r=>r.status==='occupied').length;return {hotel:h.name||`فندق ${h.id}`,rooms:rooms.length,occupancy:rooms.length?Math.round(occupied/rooms.length*100):0,invoices:pi.length,revenue,paid,expense,net:paid-expense};});return rows;}
+function renderHotelComparison(){const period=document.getElementById('executiveComparePeriod')?.value||new Date().toISOString().slice(0,7),rows=executiveComparisonData(period),body=document.getElementById('hotelComparisonBody');if(!body)return;const safe=x=>typeof hoteraGlobalSafe==='function'?hoteraGlobalSafe(x):String(x??'');body.innerHTML=rows.map(r=>`<tr><td>${safe(r.hotel)}</td><td>${r.rooms}</td><td style="color:${r.occupancy>=70?'#34d399':r.occupancy>=40?'#fbbf24':'#f87171'}">${r.occupancy}%</td><td>${r.invoices}</td><td>${r.revenue.toFixed(2)} ر.س</td><td>${r.paid.toFixed(2)} ر.س</td><td>${r.expense.toFixed(2)} ر.س</td><td style="color:${r.net>=0?'#34d399':'#f87171'}">${r.net.toFixed(2)} ر.س</td></tr>`).join('')||'<tr><td colspan="8">لا توجد بيانات للمقارنة.</td></tr>';const total=rows.reduce((n,r)=>n+r.revenue,0);const note=document.getElementById('hotelComparisonSummary');if(note)note.innerText=`الفترة: ${period} · عدد الفنادق: ${rows.length} · إجمالي الإيرادات: ${total.toFixed(2)} ر.س · التقرير للقراءة فقط.`;}
+function exportHotelComparison(){const period=document.getElementById('executiveComparePeriod')?.value||new Date().toISOString().slice(0,7),rows=executiveComparisonData(period),data=[['الفندق','الغرف','الإشغال','الفواتير','الإيرادات','المدفوع','المصروفات','الصافي'],...rows.map(r=>[r.hotel,r.rooms,`${r.occupancy}%`,r.invoices,r.revenue.toFixed(2),r.paid.toFixed(2),r.expense.toFixed(2),r.net.toFixed(2)])],csv='\\ufeff'+data.map(row=>row.map(v=>`"${String(v).replaceAll('"','""')}"`).join(',')).join('\\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=`HOTERA-hotel-comparison-${period}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
+
+function downloadHoteraCsv(rows,fileName){const csv='\\ufeff'+rows.map(row=>row.map(v=>`"${String(v??'').replaceAll('"','""')}"`).join(',')).join('\\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=fileName;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
+function printHoteraHtml(title,bodyHtml){const w=window.open('','_blank','width=1100,height=800');if(!w)return alert('تعذر فتح نافذة الطباعة. اسمح بالنوافذ المنبثقة ثم أعد المحاولة.');w.document.write(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>${hoteraGlobalSafe(title)}</title><style>body{font-family:Arial,Tahoma,sans-serif;color:#111;background:#fff;padding:18px;direction:rtl}h1{color:#9a6a00;border-bottom:2px solid #c58b22;padding-bottom:8px}table{width:100%;border-collapse:collapse;margin-top:12px;font-size:12px}th,td{border:1px solid #999;padding:7px;text-align:center}th{background:#f4e7c1}small{color:#555}@media print{body{padding:0}button{display:none}}</style></head><body><h1>HOTERA — ${hoteraGlobalSafe(title)}</h1><small>تاريخ الطباعة: ${new Date().toLocaleString('ar-SA')}</small>${bodyHtml}</body></html>`);w.document.close();w.focus();setTimeout(()=>w.print(),250);}
+function printHotelComparison(){const table=document.querySelector('#hotelComparisonBody')?.closest('table');if(table)printHoteraHtml('مقارنة أداء الفنادق',table.outerHTML);}
+function printCurrentFeature(featureKey){const panel=document.getElementById(`feat_${featureKey}`);if(panel)printHoteraHtml(document.getElementById('sectionTitleHeader')?.innerText||'تقرير HOTERA',panel.innerHTML);}
+function exportShiftCsv(){const rows=[['التاريخ','المسلم','المستلم','العهد النقدية','الفرق','الحالة','الملاحظات'],...(allShifts[currentHotelId]||[]).map(s=>[s.dateStr,s.outgoing,s.incoming,s.cash,s.variance??'',s.status,s.notes])];downloadHoteraCsv(rows,`HOTERA-shifts-${new Date().toISOString().slice(0,10)}.csv`);}
+function exportCustodyCsv(){const rows=[['الموظف','النوع','المبلغ','البيان','الحالة','التاريخ','المنشئ'],...(allStaffCustody[currentHotelId]||[]).map(c=>[c.employee,c.type,c.amount,c.reason,c.status,c.date,c.createdBy])];downloadHoteraCsv(rows,`HOTERA-custody-${new Date().toISOString().slice(0,10)}.csv`);}
 function hoteraDailyCloseData(dateKey){const invoices=allInvoices[currentHotelId]||[],transactions=allTransactions[currentHotelId]||[],expenses=allExpenses[currentHotelId]||[],rooms=allRooms[currentHotelId]||[],attendance=attendanceRecords[currentHotelId]?.[dateKey]||{},shifts=allShifts[currentHotelId]||[],inventory=allInventory[currentHotelId]||[];const dayMatch=x=>String(x?.date||x?.createdAt||x?.dateStr||'').slice(0,10)===dateKey;const dayInvoices=invoices.filter(dayMatch),dayExpenses=expenses.filter(dayMatch),dayTransactions=transactions.filter(dayMatch),paid=dayInvoices.reduce((n,i)=>n+hoteraPaymentState(i).paid,0),revenue=dayInvoices.reduce((n,i)=>n+Number(i.total||0),0),outstanding=dayInvoices.reduce((n,i)=>n+hoteraPaymentState(i).remaining,0),expenseTotal=dayExpenses.reduce((n,e)=>n+Number(e.amount||0),0),cashIn=dayTransactions.filter(x=>['in','قبض','دخل'].includes(x.type)).reduce((n,x)=>n+Number(x.amount||0),0),cashOut=dayTransactions.filter(x=>['out','صرف','خرج'].includes(x.type)).reduce((n,x)=>n+Number(x.amount||0),0),lowStock=inventory.filter(i=>Number(i.qty||0)<=Number(i.minLimit||0)).length,staff=Object.values(attendance),lastShift=shifts.find(s=>String(s.dateStr||'').slice(0,10)===dateKey)||shifts[0];return {dateKey,invoices:dayInvoices.length,revenue,paid,outstanding,expenseTotal,cashIn,cashOut,net:paid+cashIn-cashOut-expenseTotal,occupied:rooms.filter(r=>r.status==='occupied').length,totalRooms:rooms.length,occupancy:rooms.length?Math.round(rooms.filter(r=>r.status==='occupied').length/rooms.length*100):0,attendancePresent:staff.filter(x=>x.status==='حاضر').length,attendanceLate:staff.filter(x=>x.status==='متأخر').length,attendanceAbsent:staff.filter(x=>x.status==='غائب').length,lowStock,lastShiftStatus:lastShift?.status||'لا يوجد'};}
 function openDailyCloseModal(){const e=document.getElementById('dailyCloseDate');if(e)e.value=new Date().toISOString().slice(0,10);renderDailyCloseSummary();document.getElementById('dailyCloseModal').style.display='flex';}
 function closeDailyCloseModal(){document.getElementById('dailyCloseModal').style.display='none';}
@@ -2703,7 +2741,10 @@ function switchMainFeature(featureKey, chipElement) {
   renderReportsAndFinancials();
 }
 
-function openExpenseModal() { document.getElementById('expenseModal').style.display = 'flex'; }
+function openExpenseModal() { if(!requireHoteraPermission('finance','إدارة المصروفات متاحة للحسابات المالية المصرح لها.'))return; document.getElementById('expenseModal').style.display = 'flex'; }
+function openCustodyModal(){if(!requireHoteraPermission('finance','إدارة العهد متاحة للحسابات المالية المصرح لها.'))return;document.getElementById('custodyModal').style.display='flex';}
+function closeCustodyModal(){document.getElementById('custodyModal').style.display='none';}
+function saveCustodyRecord(){if(!requireHoteraPermission('finance','تسجيل العهد متاح للحسابات المالية المصرح لها.'))return;const employee=document.getElementById('custodyEmployee').value.trim()||currentUsername||'موظف غير محدد',amount=Number(document.getElementById('custodyAmount').value),type=document.getElementById('custodyType').value,reason=document.getElementById('custodyReason').value.trim();if(!Number.isFinite(amount)||amount<=0||!reason)return alert('أدخل الموظف والمبلغ والبيان بشكل صحيح.');if(!allStaffCustody[currentHotelId])allStaffCustody[currentHotelId]=[];allStaffCustody[currentHotelId].unshift({id:`CUS-${Date.now()}`,employee,amount,type,reason,status:type==='تسوية عهدة'?'مسواة':'مفتوحة',date:new Date().toISOString(),createdBy:currentUsername||'المستخدم الحالي'});if(typeof recordHoteraAudit==='function')recordHoteraAudit('تسجيل عهدة موظف',{employee,amount,type,reason});saveData();uploadDataToCloud();closeCustodyModal();renderReportsAndFinancials();alert('✅ تم حفظ سجل العهدة بنجاح.');}
 function closeExpenseModal() { document.getElementById('expenseModal').style.display = 'none'; }
 function saveNewExpense() {
   const reason = document.getElementById('expenseReason').value.trim();
@@ -2755,6 +2796,10 @@ function saveShiftHandoverRecord() {
   alert(status==='مقفلة'?'✅ تم إقفال وتسليم الوردية بنجاح!':'✅ تم تسجيل الوردية بنجاح!');
 }
 
+function openGuestProfileModal(){document.getElementById('guestProfileModal').style.display='flex';}
+function closeGuestProfileModal(){document.getElementById('guestProfileModal').style.display='none';}
+function saveGuestProfile(){const phone=document.getElementById('guestProfilePhone').value.trim(),name=document.getElementById('guestProfileName').value.trim();if(phone.length<5||!name)return alert('أدخل رقم الجوال والاسم بشكل صحيح.');const old=hoteraGuestProfiles[phone]||{},profile={...old,phone,name,nationality:document.getElementById('guestProfileNationality').value.trim(),email:document.getElementById('guestProfileEmail').value.trim(),preferences:document.getElementById('guestProfilePreferences').value.trim(),notes:document.getElementById('guestProfileNotes').value.trim(),updatedAt:new Date().toISOString(),updatedBy:currentUsername||'المستخدم الحالي'};hoteraGuestProfiles[phone]=profile;if(typeof customerMemory==='object'){customerMemory[phone]={...(customerMemory[phone]||{}),name,nationality:profile.nationality,email:profile.email};}if(typeof recordHoteraAudit==='function')recordHoteraAudit('تحديث ملف نزيل',{phone,name});saveData();uploadDataToCloud();renderGuestProfileSummary(phone);alert('✅ تم حفظ ملف النزيل بنجاح.');}
+function renderGuestProfileSummary(phone){const p=hoteraGuestProfiles[phone],el=document.getElementById('guestProfileSummary');if(!el)return;if(!p){el.innerText='لا يوجد ملف محفوظ بهذا الرقم.';return;}const invoices=Object.values(allInvoices||{}).flat().filter(i=>i&&String(i.phone||'')===String(phone)),care=Object.values((typeof hoteraGuestCareStore==='function'?hoteraGuestCareStore():{})||{}).flat().filter(x=>x&&String(x.guest||'')===String(p.name));el.innerText=`عدد الفواتير: ${invoices.length} · إجمالي التعاملات: ${invoices.reduce((n,i)=>n+Number(i.total||0),0).toFixed(2)} ر.س · طلبات الخدمة: ${care.length}`;}
 function hoteraGuestCareStore(){try{const data=JSON.parse(localStorage.getItem('hotera_guest_care_records')||'{}');return data&&typeof data==='object'?data:{};}catch(e){return {};}}
 function hoteraGuestCareSave(store){localStorage.setItem('hotera_guest_care_records',JSON.stringify(store));}
 function renderHoteraGuestCareRecords(){const el=document.getElementById('guestCareRecordsList');if(!el)return;const store=hoteraGuestCareStore(),list=Array.isArray(store[currentHotelId])?store[currentHotelId]:[],safe=v=>typeof hoteraGlobalSafe==='function'?hoteraGlobalSafe(v==null?'':String(v)):String(v==null?'':v);el.innerHTML=list.length?list.slice(0,30).map((x,i)=>`<div style="display:flex;justify-content:space-between;gap:8px;padding:8px;border:1px solid rgba(148,163,184,.18);border-radius:10px;margin-top:6px;font-size:9px;color:#dbeafe"><span><b style="color:${x.type==='شكوى'?'#f87171':x.type==='مفقودات'?'#fbbf24':'#38bdf8'}">${safe(x.type)}</b> · غرفة ${safe(x.room||'—')} · ${safe(x.guest||'غير محدد')}<br><small>${safe(x.details)} · المكلف: ${safe(x.assignee||'غير معين')} · الأولوية: ${safe(x.priority)} · ${safe(x.status||'مفتوح')}</small></span><button class="btn btn-green" style="width:auto;margin:0;padding:4px 7px;font-size:9px" onclick="resolveHoteraGuestCareRecord(${i})">${x.status==='مكتمل'?'مكتمل':'إنهاء'}</button></div>`).join(''):'<div style="color:#94a3b8;font-size:10px;padding:10px">لا توجد شكاوى أو مفقودات أو طلبات خدمة مسجلة.</div>';}
@@ -2837,7 +2882,8 @@ function renderReportsAndFinancials(){
     if(cancelledList.length === 0) { cancelledTbody.innerHTML = `<tr><td colspan="5" style="color:#94a3b8; font-size:10px;">لا توجد حجوزات ملغاة مسجلة</td></tr>`; }
   }
 
-  const expenses = allExpenses[currentHotelId] || [];
+    const expenses = allExpenses[currentHotelId] || [];
+    const custody=typeof allStaffCustody!=='undefined'?(allStaffCustody[currentHotelId]||[]):[]; const custodyBody=document.getElementById('custodyTableBody'); if(custodyBody){const safeC=x=>typeof hoteraGlobalSafe==='function'?hoteraGlobalSafe(x==null?'':String(x)):String(x==null?'':x); custodyBody.innerHTML=custody.slice(0,30).map(c=>`<tr><td>${safeC(c.employee)}</td><td>${safeC(c.type)}</td><td>${Number(c.amount||0).toFixed(2)} ر.س</td><td style="color:${c.status==='مسواة'?'#34d399':'#fbbf24'}">${safeC(c.status||'مفتوحة')}</td><td>${safeC(String(c.date||'').slice(0,16).replace('T',' '))}</td></tr>`).join('')||'<tr><td colspan="5" style="color:#94a3b8;font-size:10px">لا توجد عهد مسجلة</td></tr>'; const open=custody.filter(c=>c.status!=='مسواة').reduce((n,c)=>n+Number(c.amount||0),0),settled=custody.filter(c=>c.status==='مسواة').reduce((n,c)=>n+Number(c.amount||0),0);const cs=document.getElementById('custodySummary');if(cs)cs.innerText=`إجمالي السجلات: ${custody.length} · عهد مفتوحة: ${open.toFixed(2)} ر.س · مسواة: ${settled.toFixed(2)} ر.س`; }
   let expDaily = 0, expWeekly = 0, expMonthly = 0, expYearly = 0;
   const today = new Date(); const todayStr = today.toISOString().split('T')[0];
   const expTbody = document.getElementById('expensesTableBody');
@@ -2881,7 +2927,7 @@ function renderReportsAndFinancials(){
     maintTbody.innerHTML = '';
     const tickets = allMaintenanceTickets[currentHotelId] || [];
     tickets.forEach((t, idx) => {
-      maintTbody.innerHTML += `<tr><td><strong>غرفة ${t.roomId}</strong></td><td>${t.issue}</td><td>${t.staff}</td><td><span style="color:#f59e0b; font-weight:bold;">قيد الصيانة 🛠️</span></td><td><button class="btn btn-green" style="padding:2px 6px; font-size:8px; margin:0;" onclick="resolveMaintenanceTicket(${idx})">إصلاح وإعادة 🟢</button></td></tr>`;
+      const due=t.dueAt?new Date(t.dueAt):null,overdue=due&&due<new Date()&&t.status!=='مكتمل'; maintTbody.innerHTML += `<tr><td><strong>غرفة ${t.roomId}</strong></td><td>${t.issue}<br><small>${t.priority||'عادية'}${t.assignee?' · '+t.assignee:''}${due?' · '+due.toLocaleString('ar-SA'):''}</small></td><td>${t.staff}</td><td><span style="color:${overdue?'#ef4444':'#f59e0b'};font-weight:bold;">${overdue?'متأخر ⏰':'قيد الصيانة 🛠️'}</span></td><td><button class="btn btn-green" style="padding:2px 6px;font-size:8px;margin:0;" onclick="resolveMaintenanceTicket(${idx})">إصلاح وإعادة 🟢</button></td></tr>`;
     });
     if(tickets.length === 0) { maintTbody.innerHTML = `<tr><td colspan="5" style="color:#94a3b8; font-size:10px;">لا توجد أعطال مسجلة حالياً</td></tr>`; }
   }
@@ -3404,10 +3450,14 @@ function lookupModalCustomer(inputElem) {
   }
 }
 
+let hoteraRoomChecklists=JSON.parse(localStorage.getItem('hotera_room_checklists')||'{}')||{};
+function openRoomChecklistModal(){document.getElementById('roomChecklistModal').style.display='flex';document.getElementById('checklistRoomId').value='';document.getElementById('checklistNotes').value='';document.querySelectorAll('#roomChecklistItems input').forEach(x=>x.checked=false);}
+function closeRoomChecklistModal(){document.getElementById('roomChecklistModal').style.display='none';}
+function saveRoomChecklist(){const room=String(document.getElementById('checklistRoomId').value||'').trim(),items=[...document.querySelectorAll('#roomChecklistItems input:checked')].map(x=>x.value),notes=document.getElementById('checklistNotes').value.trim();if(!room)return alert('أدخل رقم الغرفة أولاً.');if(!items.length)return alert('حدد عناصر الفحص المنجزة.');if(!hoteraRoomChecklists[currentHotelId])hoteraRoomChecklists[currentHotelId]=[];const rec={id:`CHK-${Date.now()}`,room,items,notes,status:'معتمد',checkedBy:currentUsername||'المستخدم الحالي',checkedAt:new Date().toISOString()};hoteraRoomChecklists[currentHotelId].unshift(rec);localStorage.setItem('hotera_room_checklists',JSON.stringify(hoteraRoomChecklists));if(typeof recordHoteraAudit==='function')recordHoteraAudit('اعتماد قائمة فحص غرفة',{room,items:items.length});saveData();uploadDataToCloud();closeRoomChecklistModal();alert('✅ تم اعتماد قائمة الفحص دون تغيير حالة الحجز أو الفاتورة.');}
 function openMaintenanceModal(roomId) {
   closeModal();
   document.getElementById('maintRoomIdDisplay').innerText = roomId;
-  document.getElementById('maintIssueInput').value = '';
+  document.getElementById('maintIssueInput').value = ''; document.getElementById('maintPriorityInput').value = 'عادية'; document.getElementById('maintAssigneeInput').value = ''; document.getElementById('maintDueAtInput').value = '';
   document.getElementById('maintenanceModal').style.display = 'flex';
 }
 function closeMaintenanceModal() { document.getElementById('maintenanceModal').style.display = 'none'; }
@@ -3420,7 +3470,7 @@ function confirmRoomMaintenance() {
     r.status = 'maintenance'; r.guest = ''; r.phone = ''; r.carType = ''; r.carPlate = ''; r.bookingRef = '';
     r.maintUser = currentUsername; r.maintIssue = issue;
     if(!allMaintenanceTickets[currentHotelId]) allMaintenanceTickets[currentHotelId] = [];
-    allMaintenanceTickets[currentHotelId].push({ roomId, issue, staff: currentUsername });
+    const priority=document.getElementById('maintPriorityInput')?.value||'عادية',assignee=document.getElementById('maintAssigneeInput')?.value.trim()||'',dueAt=document.getElementById('maintDueAtInput')?.value||''; allMaintenanceTickets[currentHotelId].push({ roomId, issue, staff: currentUsername, priority, assignee, dueAt, createdAt:new Date().toISOString(), status:'مفتوح' });
     saveData(); uploadDataToCloud(); closeMaintenanceModal(); render();
     alert(`✅ تم تحويل الغرفة ${roomId} للصيانة.`);
   }
@@ -3576,7 +3626,8 @@ const secureSyncInput=document.getElementById('secureSyncServerUrlInput');if(sec
     const drawer=document.getElementById('hoteraNotificationDrawer');
     if(drawer) drawer.classList.toggle('open');
   };
-  window.renderHoteraSmartNotifications=function(roomList,invoices){const list=document.getElementById('hoteraSmartNotificationsList');if(!list)return;const today=new Date().toISOString().slice(0,10),items=[];roomList.filter(r=>r&&r.status==='maintenance').slice(0,8).forEach(r=>items.push({type:'danger',icon:'🛠️',text:`الغرفة ${r.id} في حالة صيانة وتحتاج متابعة.`}));roomList.filter(r=>r&&r.status==='cleaning').slice(0,8).forEach(r=>items.push({type:'warning',icon:'🧹',text:`الغرفة ${r.id} تحتاج تنظيفًا أو تجهيزًا.`}));roomList.filter(r=>r&&r.status==='occupied'&&String(r.checkOut||'')===today).slice(0,8).forEach(r=>items.push({type:'warning',icon:'⏰',text:`مغادرة اليوم: الغرفة ${r.id}${r.guest?' — '+r.guest:''}.`}));invoices.filter(i=>i&&hoteraPaymentState(i).remaining>0).slice(0,8).forEach(i=>items.push({type:'warning',icon:'💳',text:`الفاتورة ${i.id||'—'} لديها رصيد متبقٍ ${hoteraPaymentState(i).remaining.toFixed(2)} ر.س.`}));if(typeof readHoteraOperationsRequests==='function')readHoteraOperationsRequests().filter(x=>x&&x.status!=='مكتمل'&&x.status!=='ملغى').slice(0,8).forEach(x=>items.push({type:x.priority==='عاجلة'?'danger':'info',icon:x.type==='تنظيف'?'🧹':x.type==='صيانة'?'🛠️':'📌',text:`طلب تشغيل ${x.type||'—'}${x.room?' للغرفة '+x.room:''} — ${x.status||'مفتوح'}.`}));list.innerHTML=items.length?items.slice(0,20).map(x=>`<div class="hotera-notification-item ${x.type}"><i class="hotera-notification-dot"></i><span>${x.icon} ${hoteraGlobalSafe(x.text)}</span></div>`).join(''):'<div class="hotera-notification-item success"><i class="hotera-notification-dot"></i><span>✅ لا توجد تنبيهات تشغيلية عاجلة حاليًا. الحالة مستقرة.</span></div>';return items;};
+  window.setHoteraNotificationFilter=function(filter){window.hoteraNotificationFilter=filter||'all';if(typeof window.hoteraLastNotificationItems!=='undefined')window.renderHoteraSmartNotifications(window.hoteraLastNotificationRooms||[],window.hoteraLastNotificationInvoices||[]);};
+  window.renderHoteraSmartNotifications=function(roomList,invoices){const list=document.getElementById('hoteraSmartNotificationsList');if(!list)return;const today=new Date().toISOString().slice(0,10),items=[];window.hoteraLastNotificationRooms=roomList;window.hoteraLastNotificationInvoices=invoices;roomList.filter(r=>r&&r.status==='maintenance').slice(0,8).forEach(r=>items.push({type:'danger',icon:'🛠️',category:'صيانة',text:`الغرفة ${r.id} في حالة صيانة وتحتاج متابعة.`}));roomList.filter(r=>r&&r.status==='cleaning').slice(0,8).forEach(r=>items.push({type:'warning',icon:'🧹',category:'تدبير فندقي',text:`الغرفة ${r.id} تحتاج تنظيفًا أو تجهيزًا.`}));roomList.filter(r=>r&&r.status==='occupied'&&String(r.checkOut||'')===today).slice(0,8).forEach(r=>items.push({type:'warning',icon:'⏰',category:'مغادرة',text:`مغادرة اليوم: الغرفة ${r.id}${r.guest?' — '+r.guest:''}.`}));invoices.filter(i=>i&&hoteraPaymentState(i).remaining>0).slice(0,8).forEach(i=>items.push({type:'warning',icon:'💳',category:'تحصيل مالي',text:`الفاتورة ${i.id||'—'} لديها رصيد متبقٍ ${hoteraPaymentState(i).remaining.toFixed(2)} ر.س.`}));if(typeof readHoteraOperationsRequests==='function')readHoteraOperationsRequests().filter(x=>x&&x.status!=='مكتمل'&&x.status!=='ملغى').slice(0,8).forEach(x=>items.push({type:x.priority==='عاجلة'?'danger':'info',icon:x.type==='تنظيف'?'🧹':x.type==='صيانة'?'🛠️':'📌',category:'طلبات تشغيل',text:`طلب تشغيل ${x.type||'—'}${x.room?' للغرفة '+x.room:''} — ${x.status||'مفتوح'}.`}));const filter=window.hoteraNotificationFilter||'all',visible=filter==='all'?items:items.filter(x=>x.type===filter);list.innerHTML=visible.length?visible.slice(0,30).map(x=>`<div class="hotera-notification-item ${x.type}"><i class="hotera-notification-dot"></i><span>${x.icon} <b>${hoteraGlobalSafe(x.category)}</b> · ${hoteraGlobalSafe(x.text)}</span></div>`).join(''):'<div class="hotera-notification-item success"><i class="hotera-notification-dot"></i><span>✅ لا توجد تنبيهات ضمن الفلتر الحالي.</span></div>';const summary=document.getElementById('hoteraSmartNotificationsSummary');if(summary)summary.innerText=`الإجمالي: ${items.length} · عاجلة: ${items.filter(x=>x.type==='danger').length} · تحتاج متابعة: ${items.filter(x=>x.type==='warning').length} · معلومات: ${items.filter(x=>x.type==='info').length}`;return items;};
   window.refreshHoteraVisualDashboard=function(){
     const roomStore=typeof allRooms!=='undefined'&&allRooms&&typeof allRooms==='object'?allRooms:{};
     const roomList=typeof currentHotelId!=='undefined'&&Array.isArray(roomStore[currentHotelId])?roomStore[currentHotelId]:[];
