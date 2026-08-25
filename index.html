@@ -1225,10 +1225,19 @@ function setCloudStatus(message, color = '#34d399') {
   }
 }
 
+function normalizeHoteraCloudUrl(value) {
+  let url = String(value || '').trim();
+  // إزالة الأقواس والاقتباسات التي تُنسخ أحياناً مع رابط JSONBin من النص أو JSON.
+  url = url.replace(/^[\s"'`{}\[\]()<]+|[\s"'`{}\[\]()>]+$/g, '');
+  url = url.replace(/\s+/g, '').replace(/\/$/, '');
+  // السماح بلصق رقم Bin وحده وتحويله إلى رابط API كامل.
+  if (/^[A-Za-z0-9]+$/.test(url)) url = `https://api.jsonbin.io/v3/b/${url}`;
+  return url;
+}
 function getCloudConfig() {
   return {
-    url: (cloudApiUrl || AUTO_CLOUD_URL || '').trim().replace(/\/$/,''),
-    key: (cloudApiKey || AUTO_API_KEY || '').trim()
+    url: normalizeHoteraCloudUrl(cloudApiUrl || AUTO_CLOUD_URL || ''),
+    key: String(cloudApiKey || AUTO_API_KEY || '').trim().replace(/^[\s"'`{}\[\]()<]+|[\s"'`{}\[\]()>]+$/g, '')
   };
 }
 
@@ -1589,13 +1598,19 @@ async function syncDataWithCloudNow() {
 }
 
 async function saveCloudSettings() {
-  const url = document.getElementById('cloudApiUrlInput').value.trim();
+  const rawUrl = document.getElementById('cloudApiUrlInput').value;
+  const url = normalizeHoteraCloudUrl(rawUrl);
   const key = document.getElementById('cloudApiKeyInput').value.trim();
   if (!url) return alert('⚠️ أدخل رابط API السحابي.');
 
-  try { new URL(url); } catch (_) { return alert('⚠️ رابط API غير صحيح.'); }
+  try {
+    const parsed = new URL(url);
+    if (!/^https:\/\/api\\.jsonbin\\.io\/v3\/b\/[A-Za-z0-9]+$/.test(parsed.href)) throw new Error('JSONBin URL');
+  } catch (_) { return alert('⚠️ رابط JSONBin غير صحيح. استخدم https://api.jsonbin.io/v3/b/رقم_BIN فقط.'); }
   cloudApiUrl = url;
   cloudApiKey = key;
+  const urlInput = document.getElementById('cloudApiUrlInput');
+  if (urlInput) urlInput.value = url;
   saveData();
   setCloudStatus('جارٍ اختبار الربط...', '#fbbf24');
 
