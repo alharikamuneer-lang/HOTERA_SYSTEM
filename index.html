@@ -1467,17 +1467,21 @@ function buildCloudPayload() {
 
 function applyCloudPayload(cloudData) {
   if (!cloudData || typeof cloudData !== 'object') return false;
+  // توافق مع أغلفة API الشائعة دون تغيير مفاتيح HOTERA الداخلية.
+  cloudData = cloudData.hoteraData || cloudData.payload || cloudData.data || cloudData;
+  if (!cloudData || typeof cloudData !== 'object') return false;
   // حماية من الكتابة العكسية: لا نطبق لقطة سحابية أقدم من آخر تعديل محلي.
   // المفتاح جديد ولا يغيّر أي مفتاح سابق أو بنية بيانات قائمة.
   const localMutationAt = Number(localStorage.getItem('hotera_local_mutation_at') || 0);
   const cloudUpdatedAt = Date.parse(cloudData.updatedAt || '') || 0;
-  if (localMutationAt && cloudUpdatedAt && cloudUpdatedAt < localMutationAt) {
+  if (hoteraHadPersistedHotels && localMutationAt && cloudUpdatedAt && cloudUpdatedAt < localMutationAt) {
     setCloudStatus('تم تجاهل لقطة سحابية أقدم للحفاظ على التعديلات المحلية ✅', '#fbbf24');
     return false;
   }
 
-  if (Array.isArray(cloudData.hotels)) {
-    hotelsList = cloudData.hotels;
+  const cloudHotels = Array.isArray(cloudData.hotels) ? cloudData.hotels : (Array.isArray(cloudData.hotelsList) ? cloudData.hotelsList : (Array.isArray(cloudData.hotelList) ? cloudData.hotelList : null));
+  if (cloudHotels && (cloudHotels.length > 0 || !Array.isArray(hotelsList) || hotelsList.length === 0)) {
+    hotelsList = cloudHotels;
     hotelsList.forEach(h => {
       if (h.status === undefined) h.status = 'active';
       if (h.isActive === undefined) h.isActive = true;
@@ -1499,7 +1503,8 @@ function applyCloudPayload(cloudData) {
   if (cloudData.maintenanceTickets) allMaintenanceTickets = cloudData.maintenanceTickets;
   if (cloudData.shifts) allShifts = cloudData.shifts;
   if (cloudData.ratings) allRatings = cloudData.ratings;
-  if (Array.isArray(cloudData.devices)) cloudDevices = cloudData.devices;
+  const cloudDeviceList = Array.isArray(cloudData.devices) ? cloudData.devices : (Array.isArray(cloudData.cloudDevices) ? cloudData.cloudDevices : (Array.isArray(cloudData.deviceRegistry) ? cloudData.deviceRegistry : null));
+  if (cloudDeviceList && (cloudDeviceList.length > 0 || !Array.isArray(cloudDevices) || cloudDevices.length === 0)) cloudDevices = cloudDeviceList;
   if (cloudData.joinCode) { cloudJoinCode = cloudData.joinCode; localStorage.setItem('hotera_cloud_join_code', cloudJoinCode); }
   if (cloudData.masterKey) masterSuperKey = cloudData.masterKey;
   if (cloudData.developerName) developerName = cloudData.developerName;
@@ -1874,6 +1879,7 @@ function togglePasswordVisibility(inputId, btn) {
   else { input.type = 'password'; btn.innerText = '👁️'; }
 }
 
+const hoteraHadPersistedHotels = !!localStorage.getItem('hotera_all_hotels');
 let hotelsList = JSON.parse(localStorage.getItem('hotera_all_hotels'));
 if (!hotelsList || hotelsList.length === 0) {
   hotelsList = [
@@ -1903,6 +1909,8 @@ let allShifts = JSON.parse(localStorage.getItem('hotera_all_shifts')) || {};
 let allRatings = JSON.parse(localStorage.getItem('hotera_all_ratings')) || {};
 let allAuditLog = JSON.parse(localStorage.getItem('hotera_audit_log')) || {};
 let dailyClosingRecords = JSON.parse(localStorage.getItem('hotera_daily_closings')) || {};
+// يجب تعريفه قبل الحفظ الأولي حتى لا يتوقف السكربت قبل تهيئة قائمة الفنادق والأجهزة.
+let hoteraRoomChecklists = JSON.parse(localStorage.getItem('hotera_room_checklists')||'{}') || {};
 
 hotelsList.forEach(h => {
   if (h.status === undefined) h.status = "active";
@@ -1932,7 +1940,8 @@ hotelsList.forEach(h => {
   if (!allShifts[h.id]) allShifts[h.id] = [];
   if (!allRatings[h.id]) allRatings[h.id] = [{guest: "عادل الحربي", room: "101", stars: 5, comment: "إقامة رائعة ونظافة ممتازة"}];
 });
-saveData();
+// تهيئة أولية صامتة: لا تُعتبر إنشاءً لتعديل محلي يمنع جلب البيانات المركزية.
+saveData(false);
 
 function generateBookingReference() { return `BKG-${Math.floor(1000 + Math.random() * 9000)}`; }
 function generateRoomsForHotel(hotelId, floors, perFloor) {
@@ -3450,7 +3459,6 @@ function lookupModalCustomer(inputElem) {
   }
 }
 
-let hoteraRoomChecklists=JSON.parse(localStorage.getItem('hotera_room_checklists')||'{}')||{};
 function openRoomChecklistModal(){document.getElementById('roomChecklistModal').style.display='flex';document.getElementById('checklistRoomId').value='';document.getElementById('checklistNotes').value='';document.querySelectorAll('#roomChecklistItems input').forEach(x=>x.checked=false);}
 function closeRoomChecklistModal(){document.getElementById('roomChecklistModal').style.display='none';}
 function saveRoomChecklist(){const room=String(document.getElementById('checklistRoomId').value||'').trim(),items=[...document.querySelectorAll('#roomChecklistItems input:checked')].map(x=>x.value),notes=document.getElementById('checklistNotes').value.trim();if(!room)return alert('أدخل رقم الغرفة أولاً.');if(!items.length)return alert('حدد عناصر الفحص المنجزة.');if(!hoteraRoomChecklists[currentHotelId])hoteraRoomChecklists[currentHotelId]=[];const rec={id:`CHK-${Date.now()}`,room,items,notes,status:'معتمد',checkedBy:currentUsername||'المستخدم الحالي',checkedAt:new Date().toISOString()};hoteraRoomChecklists[currentHotelId].unshift(rec);localStorage.setItem('hotera_room_checklists',JSON.stringify(hoteraRoomChecklists));if(typeof recordHoteraAudit==='function')recordHoteraAudit('اعتماد قائمة فحص غرفة',{room,items:items.length});saveData();uploadDataToCloud();closeRoomChecklistModal();alert('✅ تم اعتماد قائمة الفحص دون تغيير حالة الحجز أو الفاتورة.');}
