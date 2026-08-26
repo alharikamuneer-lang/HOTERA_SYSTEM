@@ -477,6 +477,7 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
     </div>
     <div style="display:flex; gap:6px; align-items:center;">
       <button class="btn btn-gold" style="width:auto; margin-top:0; padding:8px 14px;" onclick="saveCloudSettings()">حفظ واختبار الربط السحابي 🔗</button>
+      <button class="btn btn-gray" style="width:auto; margin-top:0; padding:8px 14px;" onclick="resetHoteraCloudUrl()">ضبط الرابط تلقائياً</button>
       <button class="btn btn-blue" style="width:auto; margin-top:0; padding:8px 14px; background:#10b981;" onclick="syncDataWithCloudNow()">مزامنة البيانات الآن 🔄</button>
       <span id="cloudSyncStatusText" style="font-size:9px; color:#34d399; font-weight:bold;">الحالة: جاهز للربط المحلي/السحابي</span>
     </div>
@@ -1604,6 +1605,15 @@ async function syncDataWithCloudNow() {
   }
 }
 
+function resetHoteraCloudUrl() {
+  const input = document.getElementById('cloudApiUrlInput');
+  const url = normalizeHoteraCloudUrl(AUTO_CLOUD_URL);
+  if (input) input.value = url;
+  cloudApiUrl = url;
+  localStorage.setItem('hotera_cloud_url', url);
+  setCloudStatus('تم ضبط رابط Bin الافتراضي؛ أدخل المفتاح ثم اختبر الربط.', '#fbbf24');
+}
+
 async function saveCloudSettings() {
   const rawUrl = document.getElementById('cloudApiUrlInput').value;
   const url = normalizeHoteraCloudUrl(rawUrl || AUTO_CLOUD_URL);
@@ -1612,7 +1622,7 @@ async function saveCloudSettings() {
 
   try {
     const parsed = new URL(url);
-    if (!/^https:\/\/api\\.jsonbin\\.io\/v3\/b\/[A-Za-z0-9]+$/.test(parsed.href)) throw new Error('JSONBin URL');
+    if (parsed.protocol !== 'https:' || parsed.hostname !== 'api.jsonbin.io' || !/^\/v3\/b\/[A-Za-z0-9]+$/.test(parsed.pathname)) throw new Error('JSONBin URL');
   } catch (_) { return alert('⚠️ رابط JSONBin غير صحيح. استخدم https://api.jsonbin.io/v3/b/رقم_BIN فقط.'); }
   cloudApiUrl = url;
   cloudApiKey = key;
