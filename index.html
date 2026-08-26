@@ -1226,10 +1226,11 @@ function setCloudStatus(message, color = '#34d399') {
 }
 
 function normalizeHoteraCloudUrl(value) {
-  let url = String(value || '').trim();
-  // إزالة الأقواس والاقتباسات التي تُنسخ أحياناً مع رابط JSONBin من النص أو JSON.
-  url = url.replace(/^[\s"'`{}\[\]()<]+|[\s"'`{}\[\]()>]+$/g, '');
-  url = url.replace(/\s+/g, '').replace(/\/$/, '');
+  let raw = String(value || '').trim();
+  // استخراج رابط JSONBin من النص حتى لو نُسخ مع { } أو اقتباسات أو شرح إضافي.
+  const apiStart = raw.indexOf('https://api.jsonbin.io/v3/b/');
+  if (apiStart >= 0) raw = raw.slice(apiStart);
+  let url = raw.replace(/\s+/g, '').replace(/[\s"'`{}\[\]()<>,;]+$/g, '').replace(/\/$/, '');
   // السماح بلصق رقم Bin وحده وتحويله إلى رابط API كامل.
   if (/^[A-Za-z0-9]+$/.test(url)) url = `https://api.jsonbin.io/v3/b/${url}`;
   return url;
