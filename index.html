@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title id="pageTitle">HOTERA — Ultimate Multi-Hotel System</title>
-<!-- HOTERA MAINTENANCE MAP: HTML interface above; core logic in the first script; presentation helpers in the final script. Existing data keys and public function names are intentionally preserved. -->
 <style>
 :root {
   --bg-fallback: #080c14;
@@ -21,32 +20,10 @@
 }
 * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body {
-  background-image:
-    radial-gradient(circle at 18% 18%, rgba(245,158,11,.20) 0, transparent 28%),
-    radial-gradient(circle at 82% 76%, rgba(14,165,233,.18) 0, transparent 32%),
-    linear-gradient(135deg, rgba(5,11,21,.94), rgba(9,28,48,.78), rgba(5,11,21,.95)),
-    url('https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1920&auto=format&fit=crop');
-  background-size: 145% 145%, 165% 165%, 100% 100%, cover;
-  background-position: 0% 0%, 100% 100%, center, center;
-  background-attachment: fixed; background-repeat: no-repeat;
-  background-color: var(--bg-fallback); background-blend-mode: screen, screen, overlay, normal;
+  background-image: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1920&auto=format&fit=crop');
+  background-size: cover; background-position: center; background-attachment: fixed; background-repeat: no-repeat;
+  background-color: var(--bg-fallback); background-blend-mode: overlay;
   color: var(--text-main); width: 100%; min-height: 100vh; overflow-x: hidden;
-  animation: hoteraLuxuryBackground 18s ease-in-out infinite alternate;
-}
-@keyframes hoteraLuxuryBackground {
-  0% { background-position: 0% 0%, 100% 100%, center, center; }
-  50% { background-position: 45% 35%, 55% 65%, center, center; }
-  100% { background-position: 100% 100%, 0% 0%, center, center; }
-}
-html, body::before { content: ''; }
-body::before {
-  position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  background: repeating-linear-gradient(115deg, transparent 0 85px, rgba(245,158,11,.035) 86px 87px, transparent 88px 170px);
-  mix-blend-mode: screen; animation: hoteraLightSweep 22s linear infinite;
-}
-@keyframes hoteraLightSweep { from { transform: translateX(-8%) rotate(0deg); opacity: .35; } to { transform: translateX(8%) rotate(2deg); opacity: .8; } }
-@media (prefers-reduced-motion: reduce) {
-  html, body, body::before { animation: none !important; }
 }
 body { padding: 10px; padding-bottom: 85px; }
 #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(8, 12, 20, 0.96); backdrop-filter: blur(15px); display: flex; justify-content: center; align-items: center; z-index: 999; }
@@ -96,7 +73,6 @@ body { padding: 10px; padding-bottom: 85px; }
 .nav-item { background: none; border: none; color: var(--text-muted); font-size: 10px; cursor: pointer; flex: 1; }
 .nav-item.active { color: var(--accent-solid); font-weight: bold; }
 .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; padding: 12px; z-index: 100; }
-.hotera-backup-note{padding:10px;border:1px solid rgba(56,189,248,.3);border-radius:10px;background:rgba(14,165,233,.08);color:#dbeafe;font-size:10px;line-height:1.8;margin-bottom:9px}.hotera-backup-meta{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:#94a3b8;font-size:9px;margin:7px 0}.hotera-backup-file{width:100%;padding:9px;border:1px dashed rgba(245,158,11,.45);border-radius:9px;background:rgba(245,158,11,.06);color:#e2e8f0;font:inherit;font-size:10px}
 .modal-body { background: #121a2b; padding: 18px; border-radius: 18px; width: 100%; max-width: 420px; border: 1px solid var(--glass-border); max-height: 90vh; overflow-y: auto; text-align: inherit; }
 .btn { padding: 9px; border: none; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 6px; }
 .btn-gold { background: var(--accent-grad); color: white; }
@@ -220,8 +196,6 @@ body { padding: 10px; padding-bottom: 85px; }
 @media(max-width:650px){.hotera-glass-header,.hotera-glass-intro{display:block}.hotera-glass-meta{text-align:right;margin-top:12px}.hotera-glass-kpis{grid-template-columns:repeat(2,1fr)}.hotera-glass-grid{grid-template-columns:1fr}.hotera-glass-room-grid{grid-template-columns:repeat(4,1fr)}.hotera-glass-brand h1{font-size:22px}.hotera-glass-health{margin-top:12px}}
 
 
-.hotera-daily-tasks{margin:0 0 12px;padding:14px;border:1px solid rgba(245,158,11,.32);border-radius:19px;background:linear-gradient(145deg,rgba(18,43,68,.94),rgba(5,18,34,.96));box-shadow:0 12px 30px rgba(0,0,0,.22)}.hotera-daily-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}.hotera-daily-head h3{margin:0;color:#fbbf24;font-size:13px}.hotera-daily-date{color:#94a3b8;font-size:9px}.hotera-daily-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.hotera-daily-card{padding:10px;border:1px solid rgba(148,163,184,.2);border-radius:13px;background:rgba(255,255,255,.045);min-height:92px}.hotera-daily-card h4{margin:0 0 7px;color:#e2e8f0;font-size:10px}.hotera-daily-card strong{display:block;color:#fbbf24;font-size:22px;line-height:1}.hotera-daily-card p{margin:6px 0 0;color:#94a3b8;font-size:9px;line-height:1.6}.hotera-daily-card button{margin-top:7px;padding:5px 8px;border:1px solid rgba(56,189,248,.35);border-radius:8px;color:#bae6fd;background:rgba(14,165,233,.1);font:inherit;font-size:9px;cursor:pointer}.hotera-daily-empty{color:#34d399!important}.hotera-daily-list{margin-top:7px;max-height:52px;overflow:auto;color:#cbd5e1;font-size:9px;line-height:1.7}@media(max-width:700px){.hotera-daily-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:420px){.hotera-daily-grid{grid-template-columns:1fr}}
-
 /* Keep the command center visually focused while preserving the underlying modules. */
 body:has(#commandCenterView.active) .brand-header,body:has(#commandCenterView.active) .advice-ticker-bar,body:has(#commandCenterView.active) .hotera-visual-strip,body:has(#commandCenterView.active) .hotera-notification-bar,body:has(#commandCenterView.active) .hotera-room-showcase{display:none!important}
 body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2px}
@@ -259,24 +233,17 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
 /* HOTERA top settings panel */
 .hotera-topbar{position:relative;z-index:1200;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px;padding:8px 12px;border:1px solid rgba(56,189,248,.25);border-radius:15px;background:linear-gradient(135deg,rgba(10,30,52,.92),rgba(8,15,29,.92));box-shadow:0 8px 25px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.07);backdrop-filter:blur(10px)}
 .hotera-topbar-brand{display:flex;align-items:center;gap:7px;color:#e2e8f0;font-size:11px}.hotera-topbar-brand strong{color:#fbbf24;letter-spacing:.7px}.hotera-topbar-meta{color:#94a3b8;font-size:9px}.hotera-topbar-actions{display:flex;align-items:center;gap:5px;flex-wrap:wrap}.hotera-topbar-btn{border:1px solid rgba(245,158,11,.45);border-radius:10px;padding:6px 10px;color:#fbbf24;background:rgba(245,158,11,.1);font:inherit;font-size:10px;cursor:pointer;transition:transform .16s ease,background .16s ease,box-shadow .16s ease}.hotera-topbar-btn:hover{transform:translateY(-1px);background:rgba(245,158,11,.18);box-shadow:0 0 16px rgba(245,158,11,.16)}
-/* إخفاء خانة الإعدادات من الواجهة فقط مع إبقاء الدوال والبيانات كما هي */
-#hoteraTopSettingsBtn, #hoteraTopSettingsPanel, #btnSetupNav { display: none !important; }
 #hoteraTopSettingsPanel{display:none;position:absolute;top:calc(100% + 7px);right:10px;width:min(92vw,430px);padding:13px;border:1px solid rgba(245,158,11,.38);border-radius:18px;background:linear-gradient(145deg,rgba(13,38,62,.98),rgba(4,13,25,.98));box-shadow:0 20px 55px rgba(0,0,0,.55);backdrop-filter:blur(14px)}#hoteraTopSettingsPanel.open{display:block;animation:hoteraSettingsIn .2s ease}.hotera-settings-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.hotera-settings-head h3{margin:0;color:#fbbf24;font-size:15px}.hotera-settings-head span{color:#94a3b8;font-size:9px}.hotera-settings-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.hotera-settings-card{display:flex;align-items:center;gap:7px;padding:9px;border:1px solid rgba(148,163,184,.2);border-radius:12px;color:#e2e8f0;background:rgba(255,255,255,.045);cursor:pointer;text-align:right;font:inherit;font-size:10px;transition:border-color .16s ease,background .16s ease,transform .16s ease}.hotera-settings-card:hover{border-color:rgba(56,189,248,.6);background:rgba(56,189,248,.1);transform:translateY(-1px)}.hotera-settings-card b{font-size:17px}.hotera-settings-card small{display:block;color:#94a3b8;font-size:8px;margin-top:2px}.hotera-settings-close{width:100%;margin-top:9px;padding:7px;border:1px solid rgba(148,163,184,.25);border-radius:10px;color:#cbd5e1;background:rgba(255,255,255,.04);cursor:pointer;font:inherit;font-size:10px}@keyframes hoteraSettingsIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}@media(max-width:520px){.hotera-topbar{align-items:flex-start}.hotera-topbar-actions{width:100%}.hotera-topbar-btn{flex:1}.hotera-settings-grid{grid-template-columns:1fr}}
 
 
 .hotera-audit-modal{display:none;position:fixed;inset:0;z-index:2200;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.62);backdrop-filter:blur(7px)}.hotera-audit-modal.open{display:flex}.hotera-audit-box{width:min(94vw,760px);max-height:86vh;overflow:auto;border:1px solid rgba(245,158,11,.35);border-radius:18px;background:linear-gradient(145deg,rgba(13,38,62,.98),rgba(4,13,25,.98));box-shadow:0 25px 80px rgba(0,0,0,.6);padding:15px}.hotera-audit-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px}.hotera-audit-head h3{margin:0;color:#fbbf24;font-size:16px}.hotera-audit-filter{width:100%;padding:8px 10px;margin-bottom:9px;border:1px solid rgba(148,163,184,.22);border-radius:10px;color:#e2e8f0;background:rgba(255,255,255,.06);font:inherit;font-size:11px}.hotera-audit-row{display:grid;grid-template-columns:1.2fr 1fr 1fr 1.7fr;gap:7px;padding:8px 5px;border-bottom:1px solid rgba(148,163,184,.12);font-size:10px;color:#dbeafe}.hotera-audit-row small{color:#94a3b8}.hotera-audit-empty{padding:20px;text-align:center;color:#94a3b8;font-size:11px}@media(max-width:620px){.hotera-audit-row{grid-template-columns:1fr 1fr}.hotera-audit-row span:last-child{grid-column:1/-1}}
 
 
-.hotera-calendar-modal{display:none;position:fixed;inset:0;z-index:2200;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.62);backdrop-filter:blur(7px)}.hotera-calendar-modal.open{display:flex}.hotera-calendar-box{width:min(95vw,900px);max-height:88vh;overflow:auto;border:1px solid rgba(56,189,248,.35);border-radius:18px;background:linear-gradient(145deg,rgba(13,38,62,.98),rgba(4,13,25,.98));box-shadow:0 25px 80px rgba(0,0,0,.6);padding:15px}.hotera-calendar-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}.hotera-calendar-head h3{margin:0;color:#fbbf24;font-size:16px}.hotera-calendar-toolbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.hotera-calendar-toolbar button{padding:6px 10px;border:1px solid rgba(148,163,184,.25);border-radius:9px;color:#e2e8f0;background:rgba(255,255,255,.06);cursor:pointer;font:inherit;font-size:10px}.hotera-calendar-month{color:#bae6fd;font-size:12px;font-weight:bold;margin-inline:auto}.hotera-calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.hotera-calendar-day,.hotera-calendar-week{min-height:58px;padding:6px;border:1px solid rgba(148,163,184,.15);border-radius:9px}.hotera-calendar-week{min-height:auto;color:#94a3b8;text-align:center;font-size:9px;background:rgba(255,255,255,.04)}.hotera-calendar-day{color:#e2e8f0;background:rgba(255,255,255,.025);cursor:pointer}.hotera-calendar-day:hover{border-color:rgba(56,189,248,.65)}.hotera-calendar-day.muted{opacity:.32}.hotera-calendar-day.today{box-shadow:inset 0 0 0 1px #fbbf24}.hotera-calendar-day strong{font-size:11px}.hotera-calendar-booking{display:block;margin-top:4px;padding:2px 4px;border-radius:5px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:#0f172a;background:#7dd3fc;font-size:8px}.hotera-calendar-booking.status-staying{background:#34d399}.hotera-calendar-booking.status-departure{background:#fbbf24}.hotera-calendar-booking.status-confirmed{background:#7dd3fc}.hotera-calendar-booking.status-completed{background:#94a3b8}.hotera-calendar-booking.status-maintenance{background:#cbd5e1;color:#1e293b}.hotera-calendar-side{margin-top:12px;padding:10px;border:1px solid rgba(245,158,11,.22);border-radius:12px;background:rgba(245,158,11,.06)}.hotera-calendar-side h4{margin:0 0 7px;color:#fbbf24;font-size:12px}.hotera-calendar-list{display:grid;gap:5px}.hotera-calendar-list div{display:flex;justify-content:space-between;gap:8px;padding:6px;border-bottom:1px solid rgba(148,163,184,.12);color:#dbeafe;font-size:10px}@media(max-width:560px){.hotera-calendar-day{min-height:44px;padding:3px}.hotera-calendar-booking{font-size:7px}.hotera-calendar-grid{gap:3px}}
+.hotera-calendar-modal{display:none;position:fixed;inset:0;z-index:2200;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.62);backdrop-filter:blur(7px)}.hotera-calendar-modal.open{display:flex}.hotera-calendar-box{width:min(95vw,900px);max-height:88vh;overflow:auto;border:1px solid rgba(56,189,248,.35);border-radius:18px;background:linear-gradient(145deg,rgba(13,38,62,.98),rgba(4,13,25,.98));box-shadow:0 25px 80px rgba(0,0,0,.6);padding:15px}.hotera-calendar-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}.hotera-calendar-head h3{margin:0;color:#fbbf24;font-size:16px}.hotera-calendar-toolbar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px}.hotera-calendar-toolbar button{padding:6px 10px;border:1px solid rgba(148,163,184,.25);border-radius:9px;color:#e2e8f0;background:rgba(255,255,255,.06);cursor:pointer;font:inherit;font-size:10px}.hotera-calendar-month{color:#bae6fd;font-size:12px;font-weight:bold;margin-inline:auto}.hotera-calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.hotera-calendar-day,.hotera-calendar-week{min-height:58px;padding:6px;border:1px solid rgba(148,163,184,.15);border-radius:9px}.hotera-calendar-week{min-height:auto;color:#94a3b8;text-align:center;font-size:9px;background:rgba(255,255,255,.04)}.hotera-calendar-day{color:#e2e8f0;background:rgba(255,255,255,.025);cursor:pointer}.hotera-calendar-day:hover{border-color:rgba(56,189,248,.65)}.hotera-calendar-day.muted{opacity:.32}.hotera-calendar-day.today{box-shadow:inset 0 0 0 1px #fbbf24}.hotera-calendar-day strong{font-size:11px}.hotera-calendar-booking{display:block;margin-top:4px;padding:2px 4px;border-radius:5px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;color:#0f172a;background:#7dd3fc;font-size:8px}.hotera-calendar-side{margin-top:12px;padding:10px;border:1px solid rgba(245,158,11,.22);border-radius:12px;background:rgba(245,158,11,.06)}.hotera-calendar-side h4{margin:0 0 7px;color:#fbbf24;font-size:12px}.hotera-calendar-list{display:grid;gap:5px}.hotera-calendar-list div{display:flex;justify-content:space-between;gap:8px;padding:6px;border-bottom:1px solid rgba(148,163,184,.12);color:#dbeafe;font-size:10px}@media(max-width:560px){.hotera-calendar-day{min-height:44px;padding:3px}.hotera-calendar-booking{font-size:7px}.hotera-calendar-grid{gap:3px}}
 
 
 .hotera-ops-modal{display:none;position:fixed;inset:0;z-index:2200;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.62);backdrop-filter:blur(7px)}.hotera-ops-modal.open{display:flex}.hotera-ops-box{width:min(94vw,620px);max-height:88vh;overflow:auto;border:1px solid rgba(56,189,248,.35);border-radius:18px;background:linear-gradient(145deg,rgba(13,38,62,.98),rgba(4,13,25,.98));box-shadow:0 25px 80px rgba(0,0,0,.6);padding:15px}.hotera-ops-box h3{margin:0;color:#fbbf24;font-size:16px}.hotera-ops-form{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:12px 0}.hotera-ops-form input,.hotera-ops-form select,.hotera-ops-form textarea{width:100%;box-sizing:border-box;padding:8px;border:1px solid rgba(148,163,184,.22);border-radius:9px;color:#e2e8f0;background:rgba(255,255,255,.06);font:inherit;font-size:10px}.hotera-ops-form textarea{grid-column:1/-1;min-height:60px}.hotera-ops-list{display:grid;gap:6px}.hotera-ops-row{display:flex;justify-content:space-between;gap:8px;padding:8px;border:1px solid rgba(148,163,184,.15);border-radius:10px;color:#dbeafe;font-size:10px}.hotera-ops-row small{color:#94a3b8}.hotera-ops-row button{padding:3px 7px;border:1px solid rgba(52,211,153,.35);border-radius:7px;color:#bbf7d0;background:rgba(52,211,153,.1);cursor:pointer;font:inherit;font-size:9px}@media(max-width:520px){.hotera-ops-form{grid-template-columns:1fr}.hotera-ops-form textarea{grid-column:auto}}
 
-/* HOTERA responsive and print polish — presentation-only layer */
-@media (max-width: 900px){body{padding:8px;padding-bottom:76px}.hotera-glass-shell{padding-inline:0}.hotera-glass-kpis{grid-template-columns:repeat(3,1fr)}.hotera-glass-grid{grid-template-columns:1fr 1fr}.table-box{font-size:10px}.table-box th,.table-box td{padding:5px 4px}.modal{padding:8px}.modal-body{max-width:100%;padding:14px}}
-@media (max-width: 650px){body{padding:6px;padding-bottom:72px}.brand-header{padding:11px 8px}.quick-access-bar{gap:5px;padding-bottom:7px}.quick-access-chip{padding:7px 10px;font-size:10px}.hotera-glass-header,.hotera-glass-intro{padding:13px 12px;border-radius:17px}.hotera-glass-kpis{grid-template-columns:repeat(2,1fr);gap:6px}.hotera-glass-kpi{min-height:78px;padding:10px}.hotera-glass-kpi strong{font-size:20px}.hotera-glass-grid{grid-template-columns:1fr}.hotera-glass-room-grid{grid-template-columns:repeat(3,1fr)}.hotera-daily-grid{grid-template-columns:repeat(2,1fr)}.hotera-ops-form{grid-template-columns:1fr!important}.hotera-ops-row{align-items:flex-start;flex-direction:column}.hotera-ops-row>span:last-child{width:100%;display:flex;flex-direction:row!important}.hotera-calendar-toolbar{flex-wrap:wrap}.hotera-calendar-toolbar button,.hotera-calendar-toolbar select{flex:1;min-width:86px}.hotera-audit-box{overflow-x:auto}.table-box{display:block;overflow-x:auto;white-space:nowrap}.invoice-card-official{padding:14px;border-width:2px}.invoice-header-flex{gap:8px;flex-wrap:wrap}.bottom-nav{padding:6px 2px}.nav-item{font-size:9px;padding:3px 1px}}
-@media (max-width: 380px){.stats{grid-template-columns:repeat(2,1fr)}.hotera-glass-room-grid{grid-template-columns:repeat(2,1fr)}.hotera-daily-grid{grid-template-columns:1fr}.hotera-glass-brand h1{font-size:19px;letter-spacing:3px}.hotera-notification-bar{font-size:9px}.hotera-notification-button{padding:5px 7px}}
-@media print{ @page{size:A4;margin:12mm}html,body{background:#fff!important;color:#111!important;animation:none!important;padding:0!important;margin:0!important;min-height:auto!important}body::before,#luxuryEntryScreen,#hoteraLoadingScreen,#loginOverlay,.bottom-nav,.quick-access-bar,.advice-ticker-bar,.hotera-notification-bar,.hotera-notification-drawer,.hotera-room-showcase,.hotera-glass-nav,.hotera-glass-header .hotera-glass-actions,button,input,select,textarea,.modal:not(#invoiceModal),.hotera-settings-panel,.hotera-settings-card{display:none!important}.view-section{display:none!important}.view-section.active{display:block!important}.invoice-card-official{display:block!important;width:100%!important;max-width:none!important;color:#111!important;background:#fff!important;box-shadow:none!important;border:1px solid #c58b22!important;margin:0!important;padding:12mm!important}.invoice-card-official *{color:#111!important}.table-box{font-size:9pt!important;color:#111!important}.table-box th{background:#f4e7c1!important;color:#111!important}.table-box th,.table-box td{border:1px solid #999!important}.hotera-audit-box,.hotera-daily-tasks,.kpi-luxury-card,.command-panel,.hotera-glass-panel{box-shadow:none!important;background:#fff!important;color:#111!important;border:1px solid #bbb!important}.hotera-audit-box *,.hotera-daily-tasks *,.kpi-luxury-card *,.command-panel *,.hotera-glass-panel *{color:#111!important}.hotera-glass-shell{padding:0!important}.hotera-glass-kpis{grid-template-columns:repeat(4,1fr)!important}.hotera-glass-grid{grid-template-columns:1fr 1fr!important}.hotera-glass-wide{grid-column:span 2!important} }
 </style>
 </head>
 <body>
@@ -430,7 +397,7 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
   <div class="hotera-visual-card"><span class="hotera-visual-icon">💰</span><span class="hotera-visual-label">الإيرادات</span><strong class="hotera-visual-value" id="visualRevenue">—</strong><span class="hotera-visual-note">من السجلات الحالية</span></div>
 </div>
 <div class="hotera-notification-bar" aria-live="polite"><div class="hotera-notification-title"><span>🔔 مركز الإشعارات</span><span class="hotera-notification-count" id="hoteraNotificationCount">0</span></div><button class="hotera-notification-button" type="button" onclick="toggleHoteraNotifications()">عرض التنبيهات</button></div>
-<div class="hotera-notification-drawer" id="hoteraNotificationDrawer"><div class="hotera-notification-item info"><i class="hotera-notification-dot"></i><span>يتم تحديث مؤشرات النظام من البيانات المحلية الحالية دون حذف أو استبدال أي سجل.</span></div><div id="hoteraSmartNotificationsList"></div></div>
+<div class="hotera-notification-drawer" id="hoteraNotificationDrawer"><div class="hotera-notification-item info"><i class="hotera-notification-dot"></i><span>يتم تحديث مؤشرات النظام من البيانات المحلية الحالية دون حذف أو استبدال أي سجل.</span></div><div class="hotera-notification-item success"><i class="hotera-notification-dot"></i><span>حالة النظام مستقرة. يمكنك متابعة الغرف والحجوزات والتقارير من لوحة واحدة.</span></div><div class="hotera-notification-item danger" id="hoteraDynamicNotification"><i class="hotera-notification-dot"></i><span>سيتم عرض التنبيهات التشغيلية هنا عند وجود غرفة للصيانة أو التنظيف.</span></div></div>
 <div class="hotera-room-showcase" aria-label="صور مرجعية للغرف"><div class="hotera-room-image-card" style="background-image:url('https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=900&auto=format&fit=crop')"><span>غرف فندقية فاخرة<small>تصميم HOTERA</small></span></div><div class="hotera-room-image-card" style="background-image:url('https://images.unsplash.com/photo-1566665797739-1674de7a421a?q=80&w=900&auto=format&fit=crop')"><span>حالة الغرف<small>متابعة مباشرة</small></span></div><div class="hotera-room-image-card" style="background-image:url('https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=900&auto=format&fit=crop')"><span>تجربة فندقية<small>إدارة أذكى</small></span></div></div>
 
 <div class="quick-access-bar" id="quickAccessBar">
@@ -448,7 +415,6 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
   <div class="quick-access-chip hr-allowed" onclick="switchMainFeature('ratings', this)" id="chipRatings">⭐ التقييمات</div>
   <div class="quick-access-chip hr-allowed" onclick="switchMainFeature('attendance', this)" id="chipAttendance">📋 كشف الحضور</div>
   <div class="quick-access-chip hr-allowed" onclick="switchMainFeature('maintenance', this)" id="chipMaintenance">🛠️ بلاغات الأعطال</div>
-  <div class="quick-access-chip hr-allowed" onclick="switchMainFeature('guest_care', this)" id="chipGuestCare">🧑‍💼 تجربة النزيل</div>
   <div class="quick-access-chip hr-allowed" onclick="switchMainFeature('integrations', this)" id="chipIntegrations">🔌 منصات الربط الخارجي <span style="font-size:8px; background:#f59e0b; color:#080c14; padding:1px 4px; border-radius:4px; font-weight:bold; margin-right:4px;">قيد التحديث</span></div>
   <div class="quick-access-chip" onclick="switchTab('aboutView', null)" id="chipAbout">📖 حول النظام</div>
   <div class="quick-access-chip superadmin-only" onclick="switchTab('superAdminView', null)" id="chipSuper" style="display:none; color:#fbbf24;">👑 المالك العام</div>
@@ -577,7 +543,7 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
     <tbody id="hotelsTableBody"></tbody>
   </table>
   <div class="company-admin-panel" style="margin-top:14px;padding:12px;border:1px solid rgba(45,212,239,.28);border-radius:14px;background:rgba(14,165,233,.06);"><h4 style="margin:0 0 8px;color:#2dd4ef">🏢 الشركات ومالكوها</h4><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px"><input id="newCompanyName" class="form-input" placeholder="اسم الشركة"><input id="newCompanyOwnerName" class="form-input" placeholder="اسم مالك الشركة"><input id="newCompanyOwnerPin" class="form-input" placeholder="رمز مالك الشركة"></div><div id="companyHotelAssignment" style="display:flex;gap:5px;flex-wrap:wrap;margin:8px 0"></div><button class="btn btn-blue" style="width:auto;margin:0" onclick="createCompanyFromSuperAdmin()">إضافة الشركة وربط الفنادق</button><div id="companiesAdminList" style="margin-top:9px"></div><h4 style="margin:14px 0 7px;color:#fbbf24">🛡️ جدول الصلاحيات المعتمد</h4><div style="overflow:auto"><table id="permissionsMatrixTable" class="table-box" style="font-size:9px"><thead><tr><th>نوع الحساب</th><th>النطاق</th><th>القدرات الأساسية</th></tr></thead><tbody><tr><td>👑 السوبر أدمن</td><td>جميع الشركات والفنادق</td><td>إنشاء الشركات، ربط الفنادق، اعتماد الأجهزة، إدارة الصلاحيات</td></tr><tr><td>🏢 مالك الشركة</td><td>الشركة والفنادق المرتبطة فقط</td><td>لوحة إجمالية، متابعة كل فندق، الغرف، الحجوزات، الإيرادات والتنبيهات</td></tr><tr><td>⚡ مدير الفندق</td><td>الفندق المحدد فقط</td><td>الغرف، الحجوزات، الفواتير، التقارير وإدارة التشغيل</td></tr><tr><td>💼 الموظف</td><td>حسب الفندق والصلاحية</td><td>الوظائف التي يحددها مدير الفندق</td></tr></tbody></table></div></div>
-<div class="company-admin-panel" style="margin-top:14px;padding:12px;border:1px solid rgba(244,183,64,.28);border-radius:14px;background:rgba(244,183,64,.05);"><h4 style="margin:0 0 8px;color:#f4b740">🔐 المزامنة الآمنة الانتقالية</h4><p style="font-size:9px;color:#cbd5e1;margin:0 0 8px">تجهيز نسخة احتياطية وفحص خادم HOTERA دون حذف البيانات القديمة أو وضع مفتاح سري داخل GitHub.</p><input id="secureSyncServerUrlInput" class="form-input" placeholder="رابط خادم HOTERA الآمن — اختياري حالياً"><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="btn btn-blue" style="width:auto;margin:0" onclick="checkHoteraSecureServer()">فحص الخادم</button><button class="btn btn-gold" style="width:auto;margin:0" onclick="downloadHoteraLocalBackup()">تنزيل نسخة احتياطية</button><button class="btn btn-green" style="width:auto;margin:0" onclick="pushHoteraSecureSnapshot()">رفع لقطة آمنة</button><button class="btn btn-gray" style="width:auto;margin:0" onclick="compareHoteraLatestSnapshot()">مقارنة أحدث لقطة</button></div><div id="secureSyncStatusText" style="font-size:9px;color:#94a3b8;margin-top:8px">الحالة: لم يتم فحص الخادم بعد</div><div id="hoteraSyncDiffSummary" style="display:none;margin-top:8px;padding:8px;border:1px solid rgba(245,158,11,.25);border-radius:9px;background:rgba(245,158,11,.06);font-size:9px;color:#cbd5e1"></div></div>
+<div class="company-admin-panel" style="margin-top:14px;padding:12px;border:1px solid rgba(244,183,64,.28);border-radius:14px;background:rgba(244,183,64,.05);"><h4 style="margin:0 0 8px;color:#f4b740">🔐 المزامنة الآمنة الانتقالية</h4><p style="font-size:9px;color:#cbd5e1;margin:0 0 8px">تجهيز نسخة احتياطية وفحص خادم HOTERA دون حذف البيانات القديمة أو وضع مفتاح سري داخل GitHub.</p><input id="secureSyncServerUrlInput" class="form-input" placeholder="رابط خادم HOTERA الآمن — اختياري حالياً"><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="btn btn-blue" style="width:auto;margin:0" onclick="checkHoteraSecureServer()">فحص الخادم</button><button class="btn btn-gold" style="width:auto;margin:0" onclick="downloadHoteraLocalBackup()">تنزيل نسخة احتياطية</button><button class="btn btn-green" style="width:auto;margin:0" onclick="pushHoteraSecureSnapshot()">رفع لقطة آمنة</button><button class="btn btn-gray" style="width:auto;margin:0" onclick="compareHoteraLatestSnapshot()">مقارنة أحدث لقطة</button></div><div id="secureSyncStatusText" style="font-size:9px;color:#94a3b8;margin-top:8px">الحالة: لم يتم فحص الخادم بعد</div></div>
 </div>
 
 <div id="companyOwnerView" class="view-section company-owner-view" style="display:none;"><div class="company-owner-hero"><div><span class="company-owner-kicker">🏢 لوحة الشركة</span><h2>متابعة فنادقك من مكان واحد</h2><p>تظهر هنا الفنادق المرتبطة بشركتك فقط، مع مؤشرات الإشغال والحجوزات والإيرادات والتنبيهات لكل فندق.</p></div><div class="company-owner-badge" id="companyOwnerNameBadge">مالك الشركة</div></div><div class="company-owner-summary"><div><small>الفنادق التابعة</small><strong id="companyHotelCount">0</strong></div><div><small>إجمالي الغرف</small><strong id="companyRoomCount">0</strong></div><div><small>إجمالي الحجوزات</small><strong id="companyBookingCount">0</strong></div><div><small>إجمالي الإيرادات</small><strong id="companyRevenueTotal">0 ر.س</strong></div></div><div id="companyHotelsGrid" class="company-hotels-grid"></div></div>
@@ -585,10 +551,8 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
 <div id="commandCenterView" class="view-section command-center-view">
   <div class="hotera-glass-shell">
     <header class="hotera-glass-header"><div class="hotera-glass-brand"><div class="hotera-glass-mark">🏨</div><div><h1>HOTERA</h1><p>ULTIMATE HOTEL MANAGEMENT SYSTEM · GLASS EDITION</p></div></div><div class="hotera-glass-meta"><span>تطوير وهندسة البرمجيات</span><br><strong id="glassDeveloperName">م. منير الحارقة</strong> · <span id="glassDeveloperPhone">0566030594</span><div class="hotera-glass-actions"><button type="button" onclick="openLanguagePicker()" id="glassLanguageBtn">English</button><button type="button" onclick="logout()">⏻ متصل</button><button type="button" onclick="toggleHoteraTheme()">☼ الوضع الليلي</button></div></div></header>
-    <div class="hotera-glass-intro"><div><h2>لوحة القيادة الذكية</h2><p>رؤية فورية لأداء الفندق، الإشغال، الحجوزات، الإيرادات والتنبيهات.</p></div>    <div class="hotera-glass-health"><span id="commandCloudStatus">☁️ السحابة: محلي</span><span id="commandLastSync">⏱ آخر تحديث: الآن</span><span>🛡️ النسخ الاحتياطي آمن</span><button type="button" class="btn btn-gold" style="width:auto;margin:4px 0 0;padding:5px 8px;font-size:9px" onclick="openDailyCloseModal()">📊 الإقفال اليومي</button></div></div>
+    <div class="hotera-glass-intro"><div><h2>لوحة القيادة الذكية</h2><p>رؤية فورية لأداء الفندق، الإشغال، الحجوزات، الإيرادات والتنبيهات.</p></div><div class="hotera-glass-health"><span id="commandCloudStatus">☁️ السحابة: محلي</span><span id="commandLastSync">⏱ آخر تحديث: الآن</span><span>🛡️ النسخ الاحتياطي آمن</span></div></div>
     <div class="hotera-glass-kpis"><div class="hotera-glass-kpi"><small>إجمالي الغرف</small><strong id="cmdTotalRooms">0</strong><em>↗ حسب بيانات الفندق</em></div><div class="hotera-glass-kpi"><small>نسبة الإشغال</small><strong id="premiumOccupancy">0%</strong><em>↗ مقارنة مع أمس</em></div><div class="hotera-glass-kpi"><small>حجوزات اليوم</small><strong id="premiumTodayBookings">0</strong><em>↗ حجوزات جديدة</em></div><div class="hotera-glass-kpi"><small>إيرادات اليوم</small><strong id="premiumTodayRevenue">0 ر.س</strong><em>↗ أداء مالي</em></div><div class="hotera-glass-kpi"><small>تقييم النزلاء</small><strong id="premiumRatingsCount">0</strong><em>★ من السجلات الحالية</em></div></div>
-    <section class="hotera-daily-tasks" aria-label="المهام اليومية"><div class="hotera-daily-head"><h3>📋 مهام اليوم التشغيلية</h3><span class="hotera-daily-date" id="hoteraDailyTasksDate">—</span></div><div class="hotera-daily-grid"><article class="hotera-daily-card"><h4>🛬 وصولات اليوم</h4><strong id="dailyArrivalsCount">0</strong><p id="dailyArrivalsSummary">لا توجد وصولات اليوم</p><button type="button" onclick="openDailyTaskTarget('booking')">فتح الحجوزات</button></article><article class="hotera-daily-card"><h4>🛫 مغادرات اليوم</h4><strong id="dailyDeparturesCount">0</strong><p id="dailyDeparturesSummary">لا توجد مغادرات اليوم</p><button type="button" onclick="openDailyTaskTarget('rooms')">فتح الغرف</button></article><article class="hotera-daily-card"><h4>🧹 تنظيف وصيانة</h4><strong id="dailyServiceCount">0</strong><p id="dailyServiceSummary">لا توجد مهام معلقة</p><button type="button" onclick="openDailyTaskTarget('maintenance')">فتح التشغيل</button></article><article class="hotera-daily-card"><h4>💳 فواتير تحتاج متابعة</h4><strong id="dailyUnpaidCount">0</strong><p id="dailyUnpaidSummary">لا توجد فواتير معلقة</p><button type="button" onclick="openDailyTaskTarget('invoices')">فتح الفواتير</button></article></div></section>
-    <section class="hotera-executive-strip" aria-label="الملخص التنفيذي" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:10px 0"><article class="hotera-glass-panel" style="padding:10px"><small>💳 المتبقي للتحصيل</small><strong id="executiveOutstanding" style="display:block;color:#fbbf24;font-size:16px;margin-top:4px">0.00 ر.س</strong><span style="font-size:9px;color:#94a3b8">من الفواتير الحالية</span></article><article class="hotera-glass-panel" style="padding:10px"><small>⭐ متوسط الرضا</small><strong id="executiveRatingAverage" style="display:block;color:#34d399;font-size:16px;margin-top:4px">0.0 / 5</strong><span id="executiveRatingPositive" style="font-size:9px;color:#94a3b8">0% تقييمات إيجابية</span></article><article class="hotera-glass-panel" style="padding:10px"><small>🧑‍💼 طلبات النزلاء المفتوحة</small><strong id="executiveGuestCareOpen" style="display:block;color:#38bdf8;font-size:16px;margin-top:4px">0</strong><span style="font-size:9px;color:#94a3b8">شكاوى وخدمات ومفقودات</span></article><article class="hotera-glass-panel" style="padding:10px"><small>🔄 آخر إقفال وردية</small><strong id="executiveLastShift" style="display:block;color:#fbbf24;font-size:12px;margin-top:7px">—</strong><span id="executiveShiftVariance" style="font-size:9px;color:#94a3b8">لا يوجد فرق مسجل</span></article></section>
     <div class="hotera-glass-grid">
       <section class="hotera-glass-panel"><h3>🔔 التنبيهات الذكية</h3><div id="commandAlertsList"></div></section><section class="hotera-glass-panel"><h3>▤ الحجوزات القادمة</h3><div id="glassUpcomingBookings" class="hotera-glass-list"><div class="hotera-glass-list-row"><span>لا توجد حجوزات قادمة</span><strong>—</strong></div></div></section>
       <section class="hotera-glass-panel"><h3>◉ مؤشر الإشغال</h3><div class="hotera-glass-donut-wrap"><div class="hotera-glass-donut" id="glassOccupancyDonut"><span id="glassOccupancyValue">0%</span></div></div><div class="hotera-glass-list-row"><span>متاحة</span><strong id="premiumVacant">0</strong></div><div class="hotera-glass-list-row"><span>محجوزة</span><strong id="premiumBooked">0</strong></div></section>
@@ -635,13 +599,12 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
       <span style="font-size:12px; font-weight:bold; color:var(--accent-solid);" id="lblRoomsManagementTitle">🛏️ إدارة الغرف والحجوزات</span>
     </div>
     <div style="display:flex; gap:6px; align-items:center; flex:1; max-width:260px;">
-      <div style="display:flex;gap:5px;align-items:center"><input type="text" id="searchRoomsBookingInput" class="form-input" placeholder="🔍 ابحث برقم الغرفة أو الحجز..." style="margin-bottom:0; padding:6px; font-size:10px;" oninput="filterRoomsByBookingRef(this.value)"><button type="button" class="btn btn-blue" style="width:auto;margin:0;padding:6px 9px;font-size:9px" onclick="openHoteraGlobalSearch()">🔎 بحث شامل</button></div>
+      <input type="text" id="searchRoomsBookingInput" class="form-input" placeholder="🔍 ابحث برقم الغرفة أو الحجز..." style="margin-bottom:0; padding:6px; font-size:10px;" oninput="filterRoomsByBookingRef(this.value)">
     </div>
     <div style="display:flex; gap:4px; flex-wrap:wrap;">
       <button class="btn btn-blue manager-only" style="width:auto; padding:4px 8px; margin:0; font-size:9px;" onclick="openStaffManagementModal()" id="btnStaffNav">👥 الموظفين</button>
       <button class="btn btn-blue" style="width:auto; padding:4px 8px; margin:0; font-size:9px;" onclick="openCheckoutAlertModal()" id="btnCheckoutAlertNav">🔔 تنبيه المغادرات</button>
       <button class="btn btn-gold manager-only" style="width:auto; padding:4px 8px; margin:0; font-size:9px;" onclick="openHotelSetupModal()" id="btnSetupNav">⚙️ إعدادات</button>
-      <button class="btn btn-blue manager-only" style="width:auto; padding:4px 8px; margin:0; font-size:9px;" onclick="openHoteraBackupModal()" id="btnBackupNav">🛡️ النسخ الاحتياطي</button>
       <button class="btn btn-blue manager-only" style="width:auto; padding:4px 8px; margin:0; font-size:9px;" onclick="openManageRoomsModal()" id="btnAddRoomNav">➕ الغرف</button>
     </div>
   </div>
@@ -692,8 +655,6 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
     </div>
     <div class="card" style="padding:12px;background:linear-gradient(135deg,rgba(245,158,11,.10),rgba(14,165,233,.08));text-align:inherit;margin-bottom:8px"><h4 style="font-size:11px;color:var(--accent-solid);margin-bottom:8px">📈 التحليلات الذكية</h4><div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;text-align:center"><div class="stat-box"><small>نسبة الإشغال</small><strong id="analyticsOccupancy">0%</strong></div><div class="stat-box"><small>متوسط قيمة الحجز</small><strong id="analyticsAvgBooking">0 ر.س</strong></div><div class="stat-box"><small>الحجوزات هذا الشهر</small><strong id="analyticsMonthBookings">0</strong></div><div class="stat-box"><small>الاسترجاعات</small><strong id="analyticsRefunds">0 ر.س</strong></div></div><div id="analyticsPeriodNote" style="font-size:9px;color:var(--text-muted);margin-top:7px;text-align:center"></div></div>
 
-    <div class="card" style="padding:12px;background:linear-gradient(135deg,rgba(16,185,129,.10),rgba(245,158,11,.10));text-align:inherit;margin-bottom:8px"><h4 style="font-size:11px;color:var(--accent-solid);margin-bottom:8px">📋 التقرير الموحد للفترة</h4><div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><input type="month" id="advancedReportPeriod" class="form-input" style="margin:0;flex:1;min-width:150px"><button class="btn btn-blue" style="width:auto;margin:0;padding:6px 10px" onclick="renderAdvancedHotelReport()">عرض التقرير</button><button class="btn btn-green" style="width:auto;margin:0;padding:6px 10px" onclick="exportAdvancedHotelReport()">تصدير CSV</button></div><div id="advancedReportKpis" style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:8px;text-align:center"></div><div id="advancedReportNote" style="font-size:9px;color:var(--text-muted);margin-top:7px;text-align:center">التقرير للعرض والتصدير فقط ولا يغيّر البيانات.</div></div>
-
     <div class="card" style="padding:12px;background:linear-gradient(135deg,rgba(14,165,233,.10),rgba(168,85,247,.10));text-align:inherit;margin-bottom:8px"><h4 style="font-size:11px;color:var(--accent-solid);margin-bottom:8px">📊 مقارنة الأداء بين الفترات</h4><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><input type="month" id="comparePeriodA" class="form-input" style="margin:0"><input type="month" id="comparePeriodB" class="form-input" style="margin:0"></div><button class="btn btn-blue" style="margin-top:7px" onclick="compareHotelPeriods()">عرض المقارنة</button><div id="periodComparisonResult" style="margin-top:8px;font-size:10px;color:#cbd5e1"></div></div>
 
     <div class="card" style="padding:12px; background:rgba(18,26,43,0.95); text-align:inherit;">
@@ -724,7 +685,7 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
         <h4 style="font-size:11px; color:var(--accent-solid); margin-bottom:0;" id="lblInvTitle">📦 مخزون المستودع والمستهلكات</h4>
         <button class="btn btn-gold" style="width:auto; padding:3px 8px; margin:0; font-size:9px;" onclick="openInventoryModal()" id="btnAddInvItem">+ إضافة صنف</button>
       </div>
-      <div id="inventorySummary" style="display:flex;gap:6px;flex-wrap:wrap;margin:6px 0;font-size:9px;color:#cbd5e1"><span>الأصناف: <strong id="inventoryItemsCount">0</strong></span><span>منخفضة: <strong id="inventoryLowCount" style="color:#f87171">0</strong></span><span>الوحدات: <strong id="inventoryTotalUnits">0</strong></span></div><table class="table-box"><thead><tr><th id="thInvItem">الصنف</th><th id="thInvQty">الكمية المتاحة</th><th id="thInvMin">الحد الأدنى للتنبيه</th><th id="thInvStatus">الحالة</th><th id="thInvAction">إجراء</th></tr></thead><tbody id="inventoryTableBody"></tbody></table><h5 style="font-size:10px;color:var(--accent-solid);margin:9px 0 4px">آخر حركات المخزون</h5><div id="inventoryMovementsList" style="font-size:9px;color:#cbd5e1;max-height:100px;overflow:auto">لا توجد حركات مسجلة</div>
+      <table class="table-box"><thead><tr><th id="thInvItem">الصنف</th><th id="thInvQty">الكمية المتاحة</th><th id="thInvMin">الحد الأدنى للتنبيه</th><th id="thInvStatus">الحالة</th><th id="thInvAction">إجراء</th></tr></thead><tbody id="inventoryTableBody"></tbody></table>
     </div>
   </div>
 
@@ -734,8 +695,6 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
       <table class="table-box"><thead><tr><th id="thMaintRoom">الغرفة</th><th id="thMaintIssue">العطل</th><th id="thMaintReporter">المُبلغ</th><th id="thMaintStatus">الحالة</th><th id="thMaintAction">إجراء</th></tr></thead><tbody id="maintenanceTicketsTableBody"></tbody></table>
     </div>
   </div>
-
-  <div id="feat_guest_care" class="feature-panel" style="display:none;"><div class="card" style="padding:12px;background:rgba(18,26,43,.95);text-align:inherit;border-color:rgba(245,158,11,.35)"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap"><h4 style="font-size:12px;color:var(--accent-solid);margin:0">🧑‍💼 تجربة النزيل</h4><button class="btn btn-gray" style="width:auto;margin:0;padding:5px 8px;font-size:9px" onclick="renderHoteraGuestCareRecords()">تحديث</button></div><div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px"><select id="guestCareType" class="form-select"><option value="شكوى">شكوى</option><option value="مفقودات">مفقودات</option><option value="طلب خدمة">طلب خدمة</option></select><input id="guestCareRoom" class="form-input" placeholder="رقم الغرفة"><input id="guestCareGuest" class="form-input" placeholder="اسم النزيل"><select id="guestCarePriority" class="form-select"><option value="عادية">أولوية عادية</option><option value="عالية">أولوية عالية</option><option value="عاجلة">أولوية عاجلة</option></select><input id="guestCareAssignee" class="form-input" placeholder="الموظف المكلف"><textarea id="guestCareDetails" class="form-input" placeholder="تفاصيل البلاغ أو الطلب" style="grid-column:1/-1;min-height:60px"></textarea></div><button class="btn btn-gold" style="margin-top:2px" onclick="createHoteraGuestCareRecord()">حفظ البلاغ أو الطلب</button><div id="guestCareRecordsList" style="margin-top:10px"></div></div></div>
 
   <div id="feat_integrations" class="feature-panel" style="display:none;">
     <div class="card" style="padding:16px; background:rgba(18,26,43,0.95); text-align:inherit; border-color:var(--accent-solid);">
@@ -778,7 +737,7 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
         <h4 style="font-size:11px; color:var(--accent-solid); margin-bottom:0;" id="lblShiftsTitle">🔄 تسليم الورديات والمناوبات النقدية</h4>
         <button class="btn btn-gold" style="width:auto; padding:3px 8px; margin:0; font-size:9px;" onclick="openShiftHandoverModal()" id="btnAddShift">تسليم وردية جديدة 📝</button>
       </div>
-      <table class="table-box"><thead><tr><th id="thShiftDate">التاريخ والوردية</th><th id="thShiftOut">المسلم</th><th id="thShiftIn">المستلم</th><th id="thShiftCash">العهد النقدي</th><th>الفرق</th><th>الحالة</th><th id="thShiftNotes">الملاحظات</th></tr></thead><tbody id="shiftTableBody"></tbody></table>
+      <table class="table-box"><thead><tr><th id="thShiftDate">التاريخ والوردية</th><th id="thShiftOut">المسلم</th><th id="thShiftIn">المستلم</th><th id="thShiftCash">العهد النقدي</th><th id="thShiftNotes">الملاحظات</th></tr></thead><tbody id="shiftTableBody"></tbody></table>
     </div>
   </div>
 
@@ -786,7 +745,7 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
     <div class="card" style="padding:12px; background:rgba(18,26,43,0.95); text-align:inherit;">
       <div style="display:flex;justify-content:space-between;align-items:center"><h4 style="font-size:11px; color:var(--accent-solid); margin-bottom:6px;" id="lblRatingsTitle">⭐ تقييمات النزلاء ورضا العملاء</h4><button class="btn btn-blue superadmin-only" style="width:auto;margin:0;padding:4px 7px;font-size:9px" onclick="openReviewQr()">QR التقييم</button></div>
       <div style="font-size:10px; color:var(--text-muted); margin-bottom:6px;"><span id="lblAvgRatingText">متوسط التقييم العام:</span> <strong id="avgRatingDisplay" style="color:#fbbf24; font-size:12px;">0.0 / 5.0 ⭐</strong><span id="ratingBreakdownDisplay" style="margin-right:8px"></span></div>
-      <div id="ratingInsightsDisplay" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0;font-size:9px"><div style="padding:7px;border:1px solid rgba(245,158,11,.22);border-radius:9px;background:rgba(245,158,11,.06)">إجمالي التقييمات<br><strong id="ratingTotalDisplay" style="color:#fbbf24;font-size:14px">0</strong></div><div style="padding:7px;border:1px solid rgba(52,211,153,.22);border-radius:9px;background:rgba(52,211,153,.06)">تقييمات 4–5 ⭐<br><strong id="ratingPositiveDisplay" style="color:#34d399;font-size:14px">0%</strong></div><div style="padding:7px;border:1px solid rgba(56,189,248,.22);border-radius:9px;background:rgba(56,189,248,.06)">آخر تقييم<br><strong id="ratingLatestDisplay" style="color:#38bdf8;font-size:11px">—</strong></div></div><table class="table-box"><thead><tr><th id="thRateGuest">النزيل</th><th id="thRateRoom">الغرفة</th><th id="thRateStars">التقييم</th><th id="thRateComment">الملاحظة / التعليق</th><th>إجراء</th></tr></thead><tbody id="ratingsTableBody"></tbody></table>
+      <table class="table-box"><thead><tr><th id="thRateGuest">النزيل</th><th id="thRateRoom">الغرفة</th><th id="thRateStars">التقييم</th><th id="thRateComment">الملاحظة / التعليق</th><th>إجراء</th></tr></thead><tbody id="ratingsTableBody"></tbody></table>
     </div>
   </div>
 
@@ -796,9 +755,9 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
         <h4 style="font-size:11px; color:var(--accent-solid); margin-bottom:0;" id="lblAttendanceTitle">📋 كشف حضور وغياب الموظفين</h4>
         <span style="font-size:9px; color:var(--text-muted);" id="attendanceDateDisplay">التاريخ: اليوم</span>
       </div>
-      <div id="attendanceSummary" style="display:flex;gap:7px;flex-wrap:wrap;margin:6px 0;font-size:9px;color:#cbd5e1"><span>الحاضرون: <strong id="attPresentCount">0</strong></span><span>المتأخرون: <strong id="attLateCount" style="color:#fbbf24">0</strong></span><span>الغائبون: <strong id="attAbsentCount" style="color:#f87171">0</strong></span><span>إجمالي الموظفين: <strong id="attStaffCount">0</strong></span><button type="button" class="btn btn-blue" style="width:auto;margin:0;padding:3px 7px;font-size:8px" onclick="exportAttendanceCsv()">تصدير CSV</button></div><table class="table-box">
+      <table class="table-box">
         <thead>
-          <tr><th id="thAttId">الرقم الوظيفي</th><th id="thAttName">اسم الموظف</th><th id="thAttStatus">حالة الحضور</th><th id="thAttTimes">الدخول / الانصراف</th><th id="thAttReason">السبب (إن وجد)</th></tr>
+          <tr><th id="thAttId">الرقم الوظيفي</th><th id="thAttName">اسم الموظف</th><th id="thAttStatus">حالة الحضور</th><th id="thAttReason">السبب (إن وجد)</th></tr>
         </thead>
         <tbody id="attendanceTableBody"></tbody>
       </table>
@@ -906,13 +865,11 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
   </div>
 </div>
 
-<div class="modal" id="dailyCloseModal"><div class="modal-body" style="max-width:560px"><h3 style="color:var(--accent-solid);margin-bottom:7px">📊 الإقفال اليومي الشامل</h3><div style="font-size:9px;color:#94a3b8;margin-bottom:7px">ملخص قراءة فقط لليوم المحدد، ولا يغيّر أي سجل عند العرض.</div><input type="date" id="dailyCloseDate" class="form-input" onchange="renderDailyCloseSummary()"><div id="dailyCloseSummary" style="margin-top:8px"></div><div style="display:flex;gap:6px;margin-top:8px"><button class="btn btn-blue" style="flex:1" onclick="exportDailyCloseCsv()">تصدير CSV</button><button class="btn btn-gold" style="flex:1" onclick="saveDailyCloseRecord()">اعتماد ملخص اليوم</button></div><button class="btn btn-gray" onclick="closeDailyCloseModal()">إغلاق</button></div></div>
-
 <div class="modal" id="inventoryModal">
   <div class="modal-body">
     <h3 style="color:var(--accent-solid); margin-bottom:8px;" id="modInvTitle">📦 إضافة صنف للمستودع</h3>
     <input type="text" id="invItemName" class="form-input" placeholder="اسم الصنف (مثال: مناشف، شامبو)">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><input type="number" id="invItemQty" class="form-input" placeholder="الكمية الحالية" value="50"><input type="text" id="invItemUnit" class="form-input" placeholder="الوحدة (قطعة/كرتون)"></div>
+    <input type="number" id="invItemQty" class="form-input" placeholder="الكمية الحالية" value="50">
     <input type="number" id="invItemMin" class="form-input" placeholder="الحد الأدنى للتنبيه" value="10">
     <button class="btn btn-gold" onclick="saveNewInventoryItem()" id="modInvSave">حفظ الصنف 💾</button>
     <button class="btn btn-gray" onclick="closeInventoryModal()" id="modInvClose">إغلاق</button>
@@ -925,9 +882,6 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
     <input type="text" id="shiftOutgoing" class="form-input" placeholder="اسم الموظف المُسلم">
     <input type="text" id="shiftIncoming" class="form-input" placeholder="اسم الموظف المُستلم">
     <input type="number" id="shiftCash" class="form-input" placeholder="إجمالي عهدة النقدية في الدرج (ر.س)" value="1000">
-    <input type="number" id="shiftExpectedCash" class="form-input" placeholder="العهدة المتوقعة حسب النظام (ر.س) — اختياري">
-    <select id="shiftStatus" class="form-select"><option value="مفتوحة">وردية مفتوحة</option><option value="مقفلة">إقفال وتسليم الوردية</option></select>
-    <input type="text" id="shiftTasks" class="form-input" placeholder="المهام أو الملاحظات المطلوب تسليمها للوردية القادمة">
     <textarea id="shiftNotes" class="form-input" placeholder="الملاحظات والتوصيات للوردية القادمة..." style="height:70px; resize:none;"></textarea>
     <button class="btn btn-gold" onclick="saveShiftHandoverRecord()" id="modShiftSave">توثيق التسليم 💾</button>
     <button class="btn btn-gray" onclick="closeShiftHandoverModal()" id="modShiftClose">إغلاق</button>
@@ -939,13 +893,11 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
     <h3 style="color:var(--accent-solid); margin-bottom:8px;" id="modStaffTitle">👥 إدارة موظفي الاستقبال والأرقام الوظيفية</h3>
     <input type="text" id="newStaffIdNum" class="form-input" placeholder="الرقم الوظيفي (مثال: EMP-101)">
     <input type="text" id="newStaffName" class="form-input" placeholder="اسم الموظف الثلاثي">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><input type="text" id="newStaffPhone" class="form-input" placeholder="رقم الجوال (اختياري)"><input type="text" id="newStaffJobTitle" class="form-input" placeholder="المسمى الوظيفي (اختياري)"></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><select id="newStaffDepartment" class="form-select"><option value="استقبال">استقبال</option><option value="حجوزات">حجوزات</option><option value="هاوس كيبنج">هاوس كيبنج</option><option value="صيانة">صيانة</option><option value="إدارة">إدارة</option></select><select id="newStaffStatus" class="form-select"><option value="نشط">نشط</option><option value="موقوف">موقوف</option><option value="إجازة">إجازة</option></select></div>
     <div class="pin-input-group">
       <input type="text" id="newStaffPin" class="form-input" placeholder="رمز المرور الخاص بالموظف" style="margin-bottom:0;">
     </div>
     <button class="btn btn-gold" onclick="addNewStaffMember()" id="modStaffAdd">إضافة موظف جديد وترحيل البيانات للسوبر ➕</button>
-    <table class="table-box"><thead><tr><th id="thStaffColId">الرقم</th><th id="thStaffColName">الاسم والوظيفة</th><th id="thStaffColDept">القسم / الحالة</th><th id="thStaffColPin">الرمز</th><th id="thStaffColDel">إجراء</th></tr></thead><tbody id="staffTableBody"></tbody></table>
+    <table class="table-box"><thead><tr><th id="thStaffColId">الرقم</th><th id="thStaffColName">الاسم</th><th id="thStaffColPin">الرمز</th><th id="thStaffColDel">حذف</th></tr></thead><tbody id="staffTableBody"></tbody></table>
     <button class="btn btn-gray" style="margin-top:8px;" onclick="closeStaffManagementModal()" id="modStaffClose">إغلاق</button>
   </div>
 </div>
@@ -1042,16 +994,10 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
       <div style="display:flex; justify-content:space-between; align-items:center; background:#fffbeb; padding:10px; border-radius:8px; border:1px solid #f59e0b; margin-top:8px;">
         <span style="font-size:11px; color:#92400e; font-weight:bold;" id="invLabelGrandTotal">الإجمالي النهائي:</span>
         <strong id="invGrandTotal" style="color:#b45309; font-size:15px; font-weight:900;">0.00 ر.س</strong>
-      </div>
-      <div id="hoteraPaymentSummary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:7px;font-size:9px;text-align:center">
-        <div style="padding:6px;border-radius:7px;background:#ecfdf5;color:#047857"><small>المدفوع</small><br><strong id="invPaidAmount">0.00 ر.س</strong></div>
-        <div style="padding:6px;border-radius:7px;background:#fff7ed;color:#c2410c"><small>المتبقي</small><br><strong id="invRemainingAmount">0.00 ر.س</strong></div>
-        <div style="padding:6px;border-radius:7px;background:#eff6ff;color:#1d4ed8"><small>حالة السداد</small><br><strong id="invPaymentStatus">غير محدد</strong></div>
-      </div><div id="invoicePricingSummary" style="font-size:9px;color:#92400e;text-align:center;margin-top:6px">التسعير: عادي — الخصم: 0.00 ر.س — الضريبة: 0.00 ر.س</div><div class="invoice-footer-note">فاتورة صادرة من نظام HOTERA لإدارة المنشآت الفندقية.<br>نشكركم لاختياركم الفندق ونتمنى لكم إقامة سعيدة.</div>
+      </div><div class="invoice-footer-note">فاتورة صادرة من نظام HOTERA لإدارة المنشآت الفندقية.<br>نشكركم لاختياركم الفندق ونتمنى لكم إقامة سعيدة.</div>
     </div>
     <div style="display:flex; gap:6px; margin-top:10px;">
       <button class="btn btn-gold" style="flex:1; margin-top:0;" onclick="window.print()" id="btnPrintInv">طباعة 🖨️</button>
-      <button class="btn btn-blue" style="flex:1; margin-top:0;" onclick="recordHoteraInvoicePayment()" id="btnRecordInvoicePayment">تسجيل دفعة 💳</button>
       <button class="btn btn-green" style="flex:1; margin-top:0;" onclick="sendInvoiceWhatsApp()" id="btnWaInv">إرسال واتساب 📱</button>
       <button class="btn btn-blue" style="flex:1; margin-top:0; background:#0284c7;" onclick="openInvoiceQr()" id="btnInvoiceQr">QR الفاتورة</button>
       <button class="btn btn-blue" style="flex:1; margin-top:0; background:#0284c7;" onclick="openRefundInvoiceModalFromActive()" id="btnRefundInv">استرجاع الفاتورة ↩️</button>
@@ -1118,8 +1064,6 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
       <div><label style="font-size:9px; color:var(--text-muted);" id="lblBkgNights">عدد الليالي:</label><input type="number" id="bookingNightsInput" class="form-input" value="1" oninput="calculateTotalFromManual()"></div>
       <div><label style="font-size:9px; color:var(--text-muted);" id="lblBkgNightPrice">سعر الليلة (لكل غرفة):</label><input type="number" id="bookingNightPriceInput" class="form-input" value="200" oninput="calculateTotalFromManual()"></div>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px"><div><label style="font-size:9px;color:var(--text-muted)">الموسم</label><select id="bookingSeasonLabel" class="form-select"><option value="عادي">عادي</option><option value="موسم مرتفع">موسم مرتفع</option><option value="موسم منخفض">موسم منخفض</option></select></div><div><label style="font-size:9px;color:var(--text-muted)">خصم %</label><input type="number" id="bookingDiscountRate" class="form-input" min="0" max="100" value="0" oninput="calculateTotalFromManual()"></div><div><label style="font-size:9px;color:var(--text-muted)">ضريبة %</label><input type="number" id="bookingTaxRate" class="form-input" min="0" max="100" value="0" oninput="calculateTotalFromManual()"></div></div>
-    <div id="bookingPricingBreakdown" style="font-size:9px;color:var(--text-muted);text-align:center;margin:5px 0"></div>
     <div style="text-align:center; background:rgba(245,158,11,0.1); padding:6px; border-radius:8px; margin-bottom:6px;">
       <span id="lblBkgTotalText">الإجمالي الكلي (لكل الغرف): </span><strong id="bookingTotalPriceDisplay" style="color:var(--accent-solid);">0.00 ر.س</strong>
     </div>
@@ -1176,7 +1120,6 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
   </div>
 </div>
 
-<!-- HOTERA CORE LOGIC: storage, authentication, permissions, rooms, bookings, invoices, reports, audit, operations and synchronization. -->
 <script>
 // ==========================================
 // ☁️ إعدادات المزامنة والربط السحابي التلقائي
@@ -1322,7 +1265,6 @@ function readInviteFromUrl() {
 }
 
 async function generateDeviceInviteLink() {
-  if (!requireHoteraPermission('superadmin', 'إنشاء دعوات الأجهزة متاح للسوبر أدمن فقط.')) return;
   if (!cloudApiUrl || !cloudApiKey) return alert('⚠️ احفظ إعدادات السحابة أولاً.');
   cloudJoinCode = String(Math.floor(100000 + Math.random() * 900000));
   localStorage.setItem('hotera_cloud_join_code', cloudJoinCode);
@@ -1391,7 +1333,6 @@ async function toggleDeviceSuspension(id) {
 }
 
 async function deleteDeviceRecord(id) {
-  if (!requireHoteraPermission('superadmin', 'حذف الأجهزة المرتبطة متاح للسوبر أدمن فقط.')) return;
   if (!confirm('⚠️ هل أنت متأكد من حذف هذا الجهاز نهائياً؟ سيفقد الجهاز صلاحية الدخول فوراً.')) return;
   cloudDevices = cloudDevices.filter(d => d.id !== id);
   if (await uploadDataToCloud(true)) { renderDeviceApprovalPanel(); alert('✅ تم حذف الجهاز من السجل.'); }
@@ -1456,14 +1397,6 @@ function buildCloudPayload() {
 
 function applyCloudPayload(cloudData) {
   if (!cloudData || typeof cloudData !== 'object') return false;
-  // حماية من الكتابة العكسية: لا نطبق لقطة سحابية أقدم من آخر تعديل محلي.
-  // المفتاح جديد ولا يغيّر أي مفتاح سابق أو بنية بيانات قائمة.
-  const localMutationAt = Number(localStorage.getItem('hotera_local_mutation_at') || 0);
-  const cloudUpdatedAt = Date.parse(cloudData.updatedAt || '') || 0;
-  if (localMutationAt && cloudUpdatedAt && cloudUpdatedAt < localMutationAt) {
-    setCloudStatus('تم تجاهل لقطة سحابية أقدم للحفاظ على التعديلات المحلية ✅', '#fbbf24');
-    return false;
-  }
 
   if (Array.isArray(cloudData.hotels)) {
     hotelsList = cloudData.hotels;
@@ -1493,8 +1426,7 @@ function applyCloudPayload(cloudData) {
   if (cloudData.aboutTitle) aboutPageTitleText = cloudData.aboutTitle;
   if (cloudData.aboutDesc) aboutPageDescText = cloudData.aboutDesc;
 
-  // حفظ البيانات المستلمة دون تسجيلها كتعديل محلي جديد، حتى لا تتغير أولوية المزامنة.
-  saveData(false);
+  saveData();
   return true;
 }
 
@@ -1760,21 +1692,16 @@ document.addEventListener('click',e=>{const panel=document.getElementById('hoter
 
 function openHoteraAuditLogModal(){const modal=document.getElementById('hoteraAuditLogModal');if(!modal)return;modal.classList.add('open');renderHoteraAuditLog();}
 function closeHoteraAuditLogModal(){document.getElementById('hoteraAuditLogModal')?.classList.remove('open');}
-function hoteraAuditSafe(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function hoteraAuditFilteredLogs(){const q=(document.getElementById('hoteraAuditFilter')?.value||'').trim().toLowerCase(),date=document.getElementById('hoteraAuditDateFilter')?.value||'',action=document.getElementById('hoteraAuditActionFilter')?.value||'all',logs=Array.isArray(allAuditLog?.[currentHotelId])?allAuditLog[currentHotelId]:[];return logs.filter(x=>{const hay=JSON.stringify(x).toLowerCase(),day=String(x.date||'').slice(0,10);return (!q||hay.includes(q))&&(!date||day===date)&&(action==='all'||x.action===action);});}
-function renderHoteraAuditLog(){const list=document.getElementById('hoteraAuditLogList');if(!list)return;const logs=Array.isArray(allAuditLog?.[currentHotelId])?allAuditLog[currentHotelId]:[],actionSelect=document.getElementById('hoteraAuditActionFilter'),actions=[...new Set(logs.map(x=>x.action).filter(Boolean))];if(actionSelect){const current=actionSelect.value;actionSelect.innerHTML='<option value="all">كل العمليات</option>'+actions.map(a=>`<option value="${hoteraAuditSafe(a)}">${hoteraAuditSafe(a)}</option>`).join('');if(actions.includes(current))actionSelect.value=current;}const filtered=hoteraAuditFilteredLogs().slice(0,200),summary=document.getElementById('hoteraAuditSummary');if(summary)summary.innerText=`إجمالي السجل: ${logs.length} · النتائج المعروضة: ${filtered.length} · لا يتم حذف أو تعديل السجلات من هذه النافذة`;list.innerHTML=filtered.length?'<div class="hotera-audit-row" style="color:#fbbf24;font-weight:bold"><span>العملية</span><span>المستخدم</span><span>التاريخ</span><span>التفاصيل</span></div>'+filtered.map(x=>`<div class="hotera-audit-row"><span>${hoteraAuditSafe(x.action||'—')}</span><span>${hoteraAuditSafe(x.staff||'—')}</span><span><small>${x.date?hoteraAuditSafe(new Date(x.date).toLocaleString('ar-SA')):'—'}</small></span><span><small>${Object.entries(x.details||{}).map(([k,v])=>`${hoteraAuditSafe(k)}: ${hoteraAuditSafe(v)}`).join(' · ')||'—'}</small></span></div>`).join(''):'<div class="hotera-audit-empty">لا توجد عمليات مطابقة للبحث الحالي.</div>';}
-function exportHoteraAuditLog(){const logs=hoteraAuditFilteredLogs(),rows=[['المعرف','العملية','المستخدم','التاريخ','التفاصيل'],...logs.map(x=>[x.id||'',x.action||'',x.staff||'',x.date||'',Object.entries(x.details||{}).map(([k,v])=>`${k}: ${v}`).join(' · ')])],csv='data:text/csv;charset=utf-8,\uFEFF'+rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n'),a=document.createElement('a');a.href=encodeURI(csv);a.download=`HOTERA_Audit_${new Date().toISOString().slice(0,10)}.csv`;document.body.appendChild(a);a.click();a.remove();}
+function renderHoteraAuditLog(){const list=document.getElementById('hoteraAuditLogList');if(!list)return;const q=(document.getElementById('hoteraAuditFilter')?.value||'').trim().toLowerCase();const logs=Array.isArray(allAuditLog?.[currentHotelId])?allAuditLog[currentHotelId]:[];const filtered=logs.filter(x=>!q||JSON.stringify(x).toLowerCase().includes(q)).slice(0,100);list.innerHTML=filtered.length?'<div class="hotera-audit-row" style="color:#fbbf24;font-weight:bold"><span>العملية</span><span>المستخدم</span><span>التاريخ</span><span>التفاصيل</span></div>'+filtered.map(x=>`<div class="hotera-audit-row"><span>${x.action||'—'}</span><span>${x.staff||'—'}</span><span><small>${x.date?new Date(x.date).toLocaleString('ar-SA'):'—'}</small></span><span><small>${Object.entries(x.details||{}).map(([k,v])=>`${k}: ${v}`).join(' · ')||'—'}</small></span></div>`).join(''):'<div class="hotera-audit-empty">لا توجد عمليات مسجلة لهذا الفندق حتى الآن.</div>';}
 function openHoteraNotificationsPanel(){toggleTopSettingsPanel(false);if(typeof toggleHoteraNotifications==='function')toggleHoteraNotifications();else alert('مركز الإشعارات غير متاح حاليًا.');}
 
 
 window.hoteraCalendarCursor=new Date();
-function getHoteraBookingDisplayStatus(room, today = new Date().toISOString().slice(0,10)) { if (!room) return {key:'confirmed',label:'مؤكد'}; if (room.status === 'maintenance') return {key:'maintenance',label:'صيانة'}; if (room.status === 'cleaning') return {key:'maintenance',label:'تنظيف'}; if (room.checkOut && String(room.checkOut) < today) return {key:'completed',label:'منتهي'}; if (room.checkOut && String(room.checkOut) === today) return {key:'departure',label:'مغادرة اليوم'}; if (room.checkIn && String(room.checkIn) <= today && String(room.checkOut) > today) return {key:'staying',label:'مقيم'}; return {key:'confirmed',label:'مؤكد / قادم'}; }
-function openHoteraCalendarModal(){toggleTopSettingsPanel(false);document.getElementById('hoteraCalendarModal')?.classList.add('open');renderHoteraCalendarAdvanced();}
+function openHoteraCalendarModal(){toggleTopSettingsPanel(false);document.getElementById('hoteraCalendarModal')?.classList.add('open');renderHoteraCalendar();}
 function closeHoteraCalendarModal(){document.getElementById('hoteraCalendarModal')?.classList.remove('open');}
-function hoteraCalendarShift(delta){window.hoteraCalendarCursor.setMonth(window.hoteraCalendarCursor.getMonth()+delta);renderHoteraCalendarAdvanced();}
-function hoteraCalendarToday(){window.hoteraCalendarCursor=new Date();renderHoteraCalendarAdvanced();}
+function hoteraCalendarShift(delta){window.hoteraCalendarCursor.setMonth(window.hoteraCalendarCursor.getMonth()+delta);renderHoteraCalendar();}
+function hoteraCalendarToday(){window.hoteraCalendarCursor=new Date();renderHoteraCalendar();}
 function renderHoteraCalendar(){const grid=document.getElementById('hoteraCalendarGrid'),monthEl=document.getElementById('hoteraCalendarMonth'),up=document.getElementById('hoteraCalendarUpcoming');if(!grid)return;const cursor=window.hoteraCalendarCursor;const y=cursor.getFullYear(),m=cursor.getMonth();const monthNames=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];if(monthEl)monthEl.textContent=`${monthNames[m]} ${y}`;const rooms=Array.isArray(allRooms?.[currentHotelId])?allRooms[currentHotelId]:[];const bookings=rooms.filter(r=>r&&r.guest&&r.checkIn&&r.checkOut);const first=new Date(y,m,1),start=(first.getDay()+6)%7,last=new Date(y,m+1,0).getDate();const cells=[];['الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت','الأحد'].forEach(d=>cells.push(`<div class="hotera-calendar-week">${d}</div>`));for(let i=0;i<start;i++)cells.push('<div class="hotera-calendar-day muted"></div>');for(let day=1;day<=last;day++){const key=`${y}-${String(m+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;const dayBookings=bookings.filter(r=>String(r.checkIn)<=key&&String(r.checkOut)>=key).slice(0,3);const today=new Date().toISOString().slice(0,10);cells.push(`<div class="hotera-calendar-day ${key===today?'today':''}"><strong>${day}</strong>${dayBookings.map(r=>`<span class="hotera-calendar-booking" title="${r.guest||''} — غرفة ${r.id}">${r.guest||'حجز'} · ${r.id}</span>`).join('')}</div>`);}grid.innerHTML=cells.join('');const upcoming=bookings.filter(r=>String(r.checkOut)>=new Date().toISOString().slice(0,10)).sort((a,b)=>String(a.checkIn).localeCompare(String(b.checkIn))).slice(0,10);if(up)up.innerHTML=upcoming.length?upcoming.map(r=>`<div><span>${r.guest||'نزيل'} · غرفة ${r.id}<br><small style="color:#94a3b8">${r.checkIn||'—'} → ${r.checkOut||'—'}</small></span><b>${r.bookingRef||'حجز'}</b></div>`).join(''):'<div>لا توجد حجوزات قادمة</div>';}
-function renderHoteraCalendarAdvanced(){const grid=document.getElementById('hoteraCalendarGrid'),monthEl=document.getElementById('hoteraCalendarMonth'),up=document.getElementById('hoteraCalendarUpcoming'),filter=document.getElementById('hoteraCalendarStatusFilter');if(!grid)return;const cursor=window.hoteraCalendarCursor||new Date(),y=cursor.getFullYear(),m=cursor.getMonth(),selected=filter?.value||'all',today=new Date().toISOString().slice(0,10),monthNames=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];if(monthEl)monthEl.textContent=`${monthNames[m]} ${y}`;const rooms=Array.isArray(allRooms?.[currentHotelId])?allRooms[currentHotelId]:[],bookings=rooms.filter(r=>r&&r.guest&&r.checkIn&&r.checkOut).map(r=>({...r,_state:getHoteraBookingDisplayStatus(r,today)})).filter(r=>selected==='all'||r._state.key===selected);const first=new Date(y,m,1),start=(first.getDay()+6)%7,last=new Date(y,m+1,0).getDate(),cells=[];['الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت','الأحد'].forEach(d=>cells.push(`<div class="hotera-calendar-week">${d}</div>`));for(let i=0;i<start;i++)cells.push('<div class="hotera-calendar-day muted"></div>');for(let day=1;day<=last;day++){const key=`${y}-${String(m+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`,dayBookings=bookings.filter(r=>String(r.checkIn)<=key&&String(r.checkOut)>key).slice(0,4);cells.push(`<div class="hotera-calendar-day ${key===today?'today':''}"><strong>${day}</strong>${dayBookings.map(r=>`<span class="hotera-calendar-booking status-${r._state.key}" title="${escapeHoteraTaskText(r.guest||'حجز')} — غرفة ${escapeHoteraTaskText(r.id)} — ${r._state.label}">${escapeHoteraTaskText(r.guest||'حجز')} · ${escapeHoteraTaskText(r.id)}</span>`).join('')}</div>`);}grid.innerHTML=cells.join('');const upcoming=bookings.filter(r=>String(r.checkOut)>=today).sort((a,b)=>String(a.checkIn).localeCompare(String(b.checkIn))).slice(0,12);if(up)up.innerHTML=upcoming.length?upcoming.map(r=>`<div><span>${escapeHoteraTaskText(r.guest||'نزيل')} · غرفة ${escapeHoteraTaskText(r.id)}<br><small style="color:#94a3b8">${escapeHoteraTaskText(r.checkIn)} → ${escapeHoteraTaskText(r.checkOut)} · ${r._state.label}</small></span><b>${escapeHoteraTaskText(r.bookingRef||'حجز')}</b></div>`).join(''):'<div>لا توجد حجوزات مطابقة للمرشح</div>';}
 function openHoteraReportsPanel(){toggleTopSettingsPanel(false);const chip=document.getElementById('chipFinancial');if(typeof switchMainFeature==='function'&&chip)switchMainFeature('financial',chip);}
 
 
@@ -1783,11 +1710,9 @@ function readHoteraOperationsRequests(){try{return JSON.parse(localStorage.getIt
 function writeHoteraOperationsRequests(list){localStorage.setItem(hoteraOpsKey(),JSON.stringify(list.slice(0,300)));}
 function openHoteraOperationsModal(){toggleTopSettingsPanel(false);document.getElementById('hoteraOperationsModal')?.classList.add('open');renderHoteraOperationsRequests();}
 function closeHoteraOperationsModal(){document.getElementById('hoteraOperationsModal')?.classList.remove('open');}
-function hoteraOpsSafe(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function createHoteraOperationsRequest(){const room=(document.getElementById('hoteraOpsRoom')?.value||'').trim();const type=document.getElementById('hoteraOpsType')?.value||'أخرى';const priority=document.getElementById('hoteraOpsPriority')?.value||'عادية';const assignee=(document.getElementById('hoteraOpsAssignee')?.value||'').trim();const dueDate=document.getElementById('hoteraOpsDueDate')?.value||'';const note=(document.getElementById('hoteraOpsNote')?.value||'').trim();if(!note)return alert('اكتب تفاصيل الطلب أولاً.');const list=readHoteraOperationsRequests();list.unshift({id:`REQ-${Date.now()}`,room,type,priority,assignee,dueDate,note,status:'مفتوح',createdBy:currentUsername||'المستخدم الحالي',createdAt:new Date().toISOString()});writeHoteraOperationsRequests(list);recordHoteraAudit('إضافة طلب تشغيل',{room,type,priority,assignee,dueDate});['hoteraOpsRoom','hoteraOpsAssignee','hoteraOpsDueDate','hoteraOpsNote'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});renderHoteraOperationsRequests();}
-function updateHoteraOperationsRequest(id,field,value){const list=readHoteraOperationsRequests(),item=list.find(x=>x.id===id);if(!item)return;if(!['status','assignee','priority'].includes(field))return;item[field]=value;if(field==='status'&&value==='مكتمل'){item.completedBy=currentUsername||'المستخدم الحالي';item.completedAt=new Date().toISOString();}writeHoteraOperationsRequests(list);recordHoteraAudit('تحديث طلب تشغيل',{id,field,value});renderHoteraOperationsRequests();}
-function resolveHoteraOperationsRequest(id){updateHoteraOperationsRequest(id,'status','مكتمل');}
-function renderHoteraOperationsRequests(){const el=document.getElementById('hoteraOpsList');if(!el)return;const list=readHoteraOperationsRequests();el.innerHTML=list.length?list.slice(0,50).map(x=>`<div class="hotera-ops-row"><span><b>${hoteraOpsSafe(x.type)}</b> ${x.room?`· غرفة ${hoteraOpsSafe(x.room)}`:''} · <strong style="color:${x.priority==='عاجلة'?'#f87171':x.priority==='عالية'?'#fbbf24':'#94a3b8'}">${hoteraOpsSafe(x.priority||'عادية')}</strong><br><small>${hoteraOpsSafe(x.note)} · أنشأها ${hoteraOpsSafe(x.createdBy)}${x.dueDate?` · الموعد ${hoteraOpsSafe(x.dueDate)}`:''}</small><br><small>المكلف: ${hoteraOpsSafe(x.assignee||'غير معين')} · الحالة: ${hoteraOpsSafe(x.status||'مفتوح')}</small></span><span style="display:flex;flex-direction:column;gap:4px"><select onchange="updateHoteraOperationsRequest('${hoteraOpsSafe(x.id)}','status',this.value)" style="font:inherit;font-size:9px"><option ${x.status==='مفتوح'?'selected':''}>مفتوح</option><option ${x.status==='قيد التنفيذ'?'selected':''}>قيد التنفيذ</option><option ${x.status==='مكتمل'?'selected':''}>مكتمل</option><option ${x.status==='ملغى'?'selected':''}>ملغى</option></select><button type="button" onclick="resolveHoteraOperationsRequest('${hoteraOpsSafe(x.id)}')">${x.status==='مكتمل'?'مكتمل':'إنهاء'}</button></span></div>`).join(''):'<div class="hotera-audit-empty">لا توجد طلبات تشغيل حاليًا.</div>';}
+function createHoteraOperationsRequest(){const room=(document.getElementById('hoteraOpsRoom')?.value||'').trim();const type=document.getElementById('hoteraOpsType')?.value||'أخرى';const note=(document.getElementById('hoteraOpsNote')?.value||'').trim();if(!note)return alert('اكتب تفاصيل الطلب أولاً.');const list=readHoteraOperationsRequests();list.unshift({id:`REQ-${Date.now()}`,room,type,note,status:'مفتوح',createdBy:currentUsername||'المستخدم الحالي',createdAt:new Date().toISOString()});writeHoteraOperationsRequests(list);recordHoteraAudit('إضافة طلب تشغيل',{room,type,note});document.getElementById('hoteraOpsRoom').value='';document.getElementById('hoteraOpsNote').value='';renderHoteraOperationsRequests();}
+function resolveHoteraOperationsRequest(id){const list=readHoteraOperationsRequests();const item=list.find(x=>x.id===id);if(!item)return;item.status='مكتمل';item.completedBy=currentUsername||'المستخدم الحالي';item.completedAt=new Date().toISOString();writeHoteraOperationsRequests(list);recordHoteraAudit('إكمال طلب تشغيل',{id,type:item.type});renderHoteraOperationsRequests();}
+function renderHoteraOperationsRequests(){const el=document.getElementById('hoteraOpsList');if(!el)return;const list=readHoteraOperationsRequests();el.innerHTML=list.length?list.slice(0,30).map(x=>`<div class="hotera-ops-row"><span><b>${x.type}</b> ${x.room?`· غرفة ${x.room}`:''}<br><small>${x.note} · ${x.createdBy} · ${new Date(x.createdAt).toLocaleString('ar-SA')}</small></span><button type="button" onclick="resolveHoteraOperationsRequest('${x.id}')">${x.status==='مكتمل'?'مكتمل':'إنهاء'}</button></div>`).join(''):'<div class="hotera-audit-empty">لا توجد طلبات تشغيل حاليًا.</div>';}
 
 
 function runHoteraIntegrityCheck(){const issues=[];const hotels=Array.isArray(hotelsList)?hotelsList:[];if(!hotels.length)issues.push('لا توجد قائمة فنادق محملة');if(!allRooms||typeof allRooms!=='object')issues.push('مصدر الغرف غير صالح');if(!allInvoices||typeof allInvoices!=='object')issues.push('مصدر الفواتير غير صالح');if(!allAuditLog||typeof allAuditLog!=='object')issues.push('سجل التدقيق غير صالح');const rooms=Array.isArray(allRooms?.[currentHotelId])?allRooms[currentHotelId]:[];const invoices=Array.isArray(allInvoices?.[currentHotelId])?allInvoices[currentHotelId]:[];const duplicateRefs=rooms.filter(r=>r?.bookingRef).map(r=>r.bookingRef).filter((x,i,a)=>a.indexOf(x)!==i);recordHoteraAudit('فحص سلامة البيانات',{rooms:rooms.length,invoices:invoices.length,issues:issues.length});alert(issues.length?`⚠️ نتيجة الفحص:\n${issues.join('\n')}`:`✅ فحص سلامة البيانات ناجح.\nالغرف: ${rooms.length}\nالفواتير: ${invoices.length}\nالحجوزات المكررة المكتشفة في الغرف: ${duplicateRefs.length}\nلم يتم تعديل أو حذف أي بيانات.`);}
@@ -1881,12 +1806,10 @@ let attendanceRecords = JSON.parse(localStorage.getItem('hotera_attendance')) ||
 let customerMemory = JSON.parse(localStorage.getItem('hotera_customer_memory')) || {};
 let allExpenses = JSON.parse(localStorage.getItem('hotera_all_expenses')) || {};
 let allInventory = JSON.parse(localStorage.getItem('hotera_all_inventory')) || {};
-let inventoryMovements = JSON.parse(localStorage.getItem('hotera_inventory_movements')) || {};
 let allMaintenanceTickets = JSON.parse(localStorage.getItem('hotera_maint_tickets')) || {};
 let allShifts = JSON.parse(localStorage.getItem('hotera_all_shifts')) || {};
 let allRatings = JSON.parse(localStorage.getItem('hotera_all_ratings')) || {};
 let allAuditLog = JSON.parse(localStorage.getItem('hotera_audit_log')) || {};
-let dailyClosingRecords = JSON.parse(localStorage.getItem('hotera_daily_closings')) || {};
 
 hotelsList.forEach(h => {
   if (h.status === undefined) h.status = "active";
@@ -1930,87 +1853,7 @@ function generateRoomsForHotel(hotelId, floors, perFloor) {
   }
 }
 
-const HOTERA_BACKUP_KEYS = [
-  'hotera_all_hotels','hotera_companies','hotera_all_rooms','hotera_all_invoices',
-  'hotera_cancelled_bookings','hotera_refunded_invoices','hotera_all_transactions',
-  'hotera_attendance','hotera_customer_memory','hotera_all_expenses','hotera_all_inventory','hotera_inventory_movements',
-  'hotera_maint_tickets','hotera_all_shifts','hotera_all_ratings','hotera_audit_log','hotera_guest_care_records','hotera_daily_closings',
-  'hotera_master_key','hotera_dev_name','hotera_dev_phone','hotera_about_title','hotera_about_desc',
-  'hotera_cloud_url','hotera_cloud_key','hotera_lang'
-];
-
-function createHoteraBackupPayload() {
-  const data = {};
-  HOTERA_BACKUP_KEYS.forEach(key => {
-    const value = localStorage.getItem(key);
-    if (value !== null) data[key] = value;
-  });
-  return { format: 'HOTERA_BACKUP', version: 1, createdAt: new Date().toISOString(), data };
-}
-
-function downloadHoteraBackup(isAutomatic = false) {
-  try {
-    const payload = createHoteraBackupPayload();
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    const stamp = new Date().toISOString().replace(/[:.]/g, '-');
-    a.href = url;
-    a.download = `HOTERA-backup-${stamp}.json`;
-    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-    const status = document.getElementById('hoteraBackupStatus');
-    const date = document.getElementById('hoteraBackupLastDate');
-    if (status) status.textContent = isAutomatic ? 'تم إنشاء نسخة أمان تلقائية قبل الاستعادة' : 'تم تنزيل النسخة الاحتياطية بنجاح';
-    if (date) date.textContent = new Date().toLocaleString('ar-SA');
-    return true;
-  } catch (error) {
-    console.error('HOTERA backup failed:', error);
-    alert('تعذر إنشاء النسخة الاحتياطية. لم يتم تغيير أي بيانات.');
-    return false;
-  }
-}
-
-function openHoteraBackupModal() {
-  const modal = document.getElementById('hoteraBackupModal');
-  if (modal) { modal.style.display = 'flex'; }
-}
-function closeHoteraBackupModal() {
-  const modal = document.getElementById('hoteraBackupModal');
-  if (modal) modal.style.display = 'none';
-  const input = document.getElementById('hoteraBackupFileInput');
-  if (input) input.value = '';
-}
-
-function restoreHoteraBackup(event) {
-  const file = event?.target?.files?.[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    try {
-      const payload = JSON.parse(reader.result);
-      if (!payload || payload.format !== 'HOTERA_BACKUP' || payload.version !== 1 || !payload.data || typeof payload.data !== 'object') {
-        throw new Error('invalid backup format');
-      }
-      const entries = Object.entries(payload.data).filter(([key, value]) => HOTERA_BACKUP_KEYS.includes(key) && typeof value === 'string');
-      if (!entries.length) throw new Error('empty backup');
-      const approved = confirm(`تم العثور على ${entries.length} قسمًا من بيانات HOTERA. سيتم إنشاء نسخة أمان من الحالة الحالية ثم استعادة النسخة المختارة. هل تريد المتابعة؟`);
-      if (!approved) { event.target.value = ''; return; }
-      if (!downloadHoteraBackup(true)) { event.target.value = ''; return; }
-      entries.forEach(([key, value]) => localStorage.setItem(key, value));
-      alert('تمت الاستعادة بنجاح. سيتم إعادة تحميل النظام لتطبيق البيانات بأمان.');
-      window.location.reload();
-    } catch (error) {
-      console.error('HOTERA restore failed:', error);
-      alert('ملف النسخة الاحتياطية غير صالح أو غير متوافق. لم يتم تغيير أي بيانات.');
-      event.target.value = '';
-    }
-  };
-  reader.onerror = () => { alert('تعذر قراءة ملف النسخة الاحتياطية. لم يتم تغيير أي بيانات.'); event.target.value = ''; };
-  reader.readAsText(file, 'utf-8');
-}
-
-function saveData(markLocalMutation = true) {
-  if (markLocalMutation) localStorage.setItem('hotera_local_mutation_at', String(Date.now()));
+function saveData() {
   localStorage.setItem('hotera_all_hotels', JSON.stringify(hotelsList));
   localStorage.setItem('hotera_companies', JSON.stringify(companiesList));
   localStorage.setItem('hotera_all_rooms', JSON.stringify(allRooms));
@@ -2022,12 +1865,10 @@ function saveData(markLocalMutation = true) {
   localStorage.setItem('hotera_customer_memory', JSON.stringify(customerMemory));
   localStorage.setItem('hotera_all_expenses', JSON.stringify(allExpenses));
   localStorage.setItem('hotera_all_inventory', JSON.stringify(allInventory));
-  localStorage.setItem('hotera_inventory_movements', JSON.stringify(inventoryMovements));
   localStorage.setItem('hotera_maint_tickets', JSON.stringify(allMaintenanceTickets));
   localStorage.setItem('hotera_all_shifts', JSON.stringify(allShifts));
   localStorage.setItem('hotera_all_ratings', JSON.stringify(allRatings));
   localStorage.setItem('hotera_audit_log', JSON.stringify(allAuditLog || {}));
-  localStorage.setItem('hotera_daily_closings', JSON.stringify(dailyClosingRecords || {}));
   localStorage.setItem('hotera_master_key', masterSuperKey);
   localStorage.setItem('hotera_dev_name', developerName);
   localStorage.setItem('hotera_dev_phone', developerPhone);
@@ -2240,18 +2081,6 @@ function logout() {
   initLoginHotelDropdown();
 }
 
-function hoteraGlobalSafe(value){return String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function openHoteraGlobalSearch(){const m=document.getElementById('hoteraGlobalSearchModal');if(!m)return;m.classList.add('open');const i=document.getElementById('hoteraGlobalSearchInput');if(i){i.value='';renderHoteraGlobalSearch('');setTimeout(()=>i.focus(),30);}}
-function closeHoteraGlobalSearch(){document.getElementById('hoteraGlobalSearchModal')?.classList.remove('open');}
-function renderHoteraGlobalSearch(query){const el=document.getElementById('hoteraGlobalSearchResults');if(!el)return;const q=(query||'').trim().toLowerCase();if(!q){el.innerHTML='<div class="hotera-audit-empty">اكتب كلمة للبحث في بيانات الفندق الحالية.</div>';return;}const results=[],rooms=allRooms[currentHotelId]||[],invoices=allInvoices[currentHotelId]||[],ops=typeof readHoteraOperationsRequests==='function'?readHoteraOperationsRequests():[];rooms.forEach(r=>{if(JSON.stringify(r).toLowerCase().includes(q))results.push({kind:'غرفة',title:`غرفة ${r.id}`,detail:`${r.guest||'بدون نزيل'} · الحالة: ${r.status||'متاحة'} · الحجز: ${r.bookingRef||'—'}`,action:`openRoomModalByCommand(${Number(r.id)||0})`});});invoices.forEach(i=>{if(JSON.stringify(i).toLowerCase().includes(q))results.push({kind:'فاتورة',title:i.id||'فاتورة',detail:`${i.guest||'—'} · ${Number(i.total||0).toFixed(2)} ر.س · الحجز: ${i.bookingRef||'—'}`,action:`viewSpecificInvoice(${invoices.indexOf(i)})`});});ops.forEach(o=>{if(JSON.stringify(o).toLowerCase().includes(q))results.push({kind:'تشغيل',title:o.type||'طلب تشغيل',detail:`${o.room?'غرفة '+o.room+' · ':''}${o.status||'مفتوح'} · ${o.note||''}`,action:'openHoteraOperationsModal()'});});el.innerHTML=results.slice(0,50).map(r=>`<div class="hotera-ops-row"><span><b style="color:#fbbf24">${hoteraGlobalSafe(r.kind)}</b> · ${hoteraGlobalSafe(r.title)}<br><small>${hoteraGlobalSafe(r.detail)}</small></span><button type="button" onclick="${r.action};closeHoteraGlobalSearch()">فتح</button></div>`).join('')||'<div class="hotera-audit-empty">لم يتم العثور على نتائج مطابقة.</div>';}
-const hoteraSessionIdleMs=15*60*1000;let hoteraSessionLastActivity=Date.now(),hoteraSessionLocked=false;
-function closeHoteraSessionLock(){document.getElementById('hoteraSessionLockModal')?.classList.remove('open');hoteraSessionLocked=false;}
-function lockHoteraSession(){if(!currentRole||hoteraSessionLocked)return;hoteraSessionLocked=true;document.getElementById('hoteraSessionLockModal')?.classList.add('open');const i=document.getElementById('hoteraSessionUnlockPin');if(i){i.value='';setTimeout(()=>i.focus(),50);}if(typeof recordHoteraAudit==='function')recordHoteraAudit('قفل الجلسة تلقائيًا');}
-function hoteraSessionActivity(){if(!hoteraSessionLocked)hoteraSessionLastActivity=Date.now();}
-function validateHoteraSessionPin(pin){const hotel=hotelsList.find(h=>h.id===currentHotelId);if(currentRole==='superadmin')return pin===masterSuperKey;if(currentRole==='manager')return !!hotel&&pin===hotel.managerPin;if(currentRole==='hr_supervisor')return !!hotel&&pin===hotel.hrPin;if(currentRole==='housekeeper')return !!hotel&&pin===(hotel.housePin||'0000');if(currentRole==='staff'){const s=(hotel?.staffList||[]).find(x=>x.name===currentUsername);return !!s&&pin===s.pin;}return true;}
-function unlockHoteraSession(){const pin=document.getElementById('hoteraSessionUnlockPin')?.value||'',msg=document.getElementById('hoteraSessionLockMessage');if(!validateHoteraSessionPin(pin)){if(msg)msg.innerText='الرمز غير صحيح.';return;}hoteraSessionLastActivity=Date.now();closeHoteraSessionLock();if(typeof recordHoteraAudit==='function')recordHoteraAudit('فتح الجلسة بعد القفل');}
-['click','keydown','mousemove','touchstart'].forEach(evt=>document.addEventListener(evt,hoteraSessionActivity,{passive:true}));setInterval(()=>{if(currentRole&&!hoteraSessionLocked&&Date.now()-hoteraSessionLastActivity>=hoteraSessionIdleMs)lockHoteraSession();},30000);
-
 function applyPermissions() {
   document.querySelectorAll('.superadmin-only').forEach(el => el.style.display = (currentRole === 'superadmin') ? 'block' : 'none');
   const hotelManagerRole = currentRole === 'manager' || currentRole === 'company_owner_manager';
@@ -2268,20 +2097,7 @@ function toggleAllPinsVisibility() {
   renderSuperAdminControlPanel();
 }
 
-const HOTERA_PERMISSION_RULES = {
-  superadmin: ['superadmin'],
-  hotelAdmin: ['superadmin', 'manager'],
-  operations: ['superadmin', 'manager', 'staff', 'hr_supervisor', 'housekeeper'],
-  booking: ['superadmin', 'manager', 'staff']
-};
-function requireHoteraPermission(permission, message = 'هذا الإجراء غير متاح حسب صلاحية الحساب الحالية.') {
-  const allowed = HOTERA_PERMISSION_RULES[permission] || [];
-  if (!allowed.includes(currentRole)) { alert(`🔒 ${message}`); return false; }
-  return true;
-}
-
 function updateSuperAdminSettings() {
-  if (!requireHoteraPermission('superadmin', 'إدارة إعدادات المالك العام متاحة للسوبر أدمن فقط.')) return;
   const devNameInput = document.getElementById('editSuperDevName').value.trim();
   const devPhoneInput = document.getElementById('editSuperDevPhone').value.trim();
   const newKey = document.getElementById('newSuperAdminKeyInput').value.trim();
@@ -2304,7 +2120,6 @@ function updateSuperAdminSettings() {
 }
 
 function saveAboutViewSettings() {
-  if (!requireHoteraPermission('superadmin', 'تعديل محتوى النظام متاح للسوبر أدمن فقط.')) return;
   const newTitle = document.getElementById('editAboutTitleInput').value.trim();
   const newDesc = document.getElementById('editAboutDescInput').value.trim();
   if(newTitle) aboutPageTitleText = newTitle;
@@ -2324,7 +2139,6 @@ function toggleSubFields() {
 }
 
 function addNewHotelFacility() {
-  if (!requireHoteraPermission('superadmin', 'إضافة منشأة جديدة متاحة للسوبر أدمن فقط.')) return;
   const name = document.getElementById('newHotelName').value.trim();
   const cr = document.getElementById('newHotelCR').value.trim();
   const city = document.getElementById('newHotelCity').value.trim();
@@ -2421,26 +2235,23 @@ function renderSuperAdminControlPanel() {
   renderCompaniesAdmin();
 }
 
-function renderCompaniesAdmin(){if(currentRole!=='superadmin')return;const assign=document.getElementById('companyHotelAssignment');if(assign){assign.innerHTML=hotelsList.map(h=>`<label style="font-size:9px;color:#cbd5e1;background:rgba(255,255,255,.05);padding:5px;border-radius:7px"><input type="checkbox" value="${h.id}" class="company-hotel-check"> ${h.name}</label>`).join('');}const list=document.getElementById('companiesAdminList');if(list){list.innerHTML=companiesList.map(c=>`<div style="display:flex;justify-content:space-between;gap:6px;align-items:center;padding:6px 0;border-bottom:1px dashed rgba(255,255,255,.12);font-size:9px"><span>🏢 <strong>${c.name}</strong><br><small>${c.ownerName} · الفنادق: ${(c.hotelIds||[]).length}</small></span><button onclick="editCompanyHotels(${c.id})" style="background:#2563eb;color:#fff;border:0;border-radius:5px;padding:4px 7px;font-size:8px">تعديل الفنادق</button></div>`).join('');}}
+function renderCompaniesAdmin(){const assign=document.getElementById('companyHotelAssignment');if(assign){assign.innerHTML=hotelsList.map(h=>`<label style="font-size:9px;color:#cbd5e1;background:rgba(255,255,255,.05);padding:5px;border-radius:7px"><input type="checkbox" value="${h.id}" class="company-hotel-check"> ${h.name}</label>`).join('');}const list=document.getElementById('companiesAdminList');if(list){list.innerHTML=companiesList.map(c=>`<div style="display:flex;justify-content:space-between;gap:6px;align-items:center;padding:6px 0;border-bottom:1px dashed rgba(255,255,255,.12);font-size:9px"><span>🏢 <strong>${c.name}</strong><br><small>${c.ownerName} · الفنادق: ${(c.hotelIds||[]).length}</small></span><button onclick="editCompanyHotels(${c.id})" style="background:#2563eb;color:#fff;border:0;border-radius:5px;padding:4px 7px;font-size:8px">تعديل الفنادق</button></div>`).join('');}}
 function createCompanyFromSuperAdmin(){if(currentRole!=='superadmin')return alert('هذا الإجراء متاح للسوبر أدمن فقط.');const name=document.getElementById('newCompanyName').value.trim();const ownerName=document.getElementById('newCompanyOwnerName').value.trim();const ownerPin=document.getElementById('newCompanyOwnerPin').value.trim();const hotelIds=[...document.querySelectorAll('.company-hotel-check:checked')].map(x=>Number(x.value));if(!name||!ownerName||!ownerPin||!hotelIds.length)return alert('أكمل اسم الشركة واسم المالك والرمز وحدد فندقاً واحداً على الأقل.');companiesList.push({id:Date.now(),name,ownerName,ownerPin,hotelIds,status:'active'});saveData();uploadDataToCloud();document.getElementById('newCompanyName').value='';document.getElementById('newCompanyOwnerName').value='';document.getElementById('newCompanyOwnerPin').value='';renderCompaniesAdmin();alert('✅ تمت إضافة الشركة وربط فنادقها بنجاح.');}
 function editCompanyHotels(companyId){if(currentRole!=='superadmin')return alert('هذا الإجراء متاح للسوبر أدمن فقط.');const company=companiesList.find(c=>Number(c.id)===Number(companyId));if(!company)return;const ids=prompt(`أدخل أرقام الفنادق المسموح بها مفصولة بفواصل لشركة ${company.name}:`,(company.hotelIds||[]).join(','));if(ids===null)return;const parsed=ids.split(',').map(x=>Number(x.trim())).filter(id=>hotelsList.some(h=>h.id===id));if(!parsed.length)return alert('لم يتم حفظ التعديل: يجب اختيار فندق صالح واحد على الأقل.');company.hotelIds=[...new Set(parsed)];saveData();uploadDataToCloud();renderCompaniesAdmin();alert('✅ تم تحديث فنادق الشركة دون المساس ببيانات الفنادق.');}
 
 function resetManagerPinPrompt(hotelId) {
-  if (!requireHoteraPermission('superadmin', 'تغيير رموز الدخول متاح للسوبر أدمن فقط.')) return;
   const h = hotelsList.find(item => item.id === hotelId);
   if(!h) return;
   const newPin = prompt(`أدخل الرمز السري الجديد لمدير فندق (${h.name}):`, h.managerPin);
   if(newPin) { h.managerPin = newPin.trim(); saveData(); uploadDataToCloud(); renderSuperAdminControlPanel(); alert("✅ تم تحديث رمز المدير بنجاح!"); }
 }
 function resetHousePinPrompt(hotelId) {
-  if (!requireHoteraPermission('superadmin', 'تغيير رموز الدخول متاح للسوبر أدمن فقط.')) return;
   const h = hotelsList.find(item => item.id === hotelId);
   if(!h) return;
   const newPin = prompt(`أدخل رمز مشرف النظافة الجديد لـ (${h.name}):`, h.housePin || '0000');
   if(newPin) { h.housePin = newPin.trim(); saveData(); uploadDataToCloud(); renderSuperAdminControlPanel(); alert("✅ تم تحديث رمز الهاوس كيبنج بنجاح!"); }
 }
 function resetStaffPinPrompt(hotelId, sIdx) {
-  if (!requireHoteraPermission('superadmin', 'تغيير رموز الدخول متاح للسوبر أدمن فقط.')) return;
   const h = hotelsList.find(item => item.id === hotelId);
   if(!h || !h.staffList[sIdx]) return;
   const st = h.staffList[sIdx];
@@ -2448,12 +2259,10 @@ function resetStaffPinPrompt(hotelId, sIdx) {
   if(newPin) { st.pin = newPin.trim(); saveData(); uploadDataToCloud(); renderSuperAdminControlPanel(); alert("✅ تم تحديث رمز الموظف وحفظه بنجاح!"); }
 }
 function toggleHotelStatus(hotelId) {
-  if (!requireHoteraPermission('superadmin', 'تغيير حالة الفندق متاح للسوبر أدمن فقط.')) return;
   const h = hotelsList.find(item => item.id === hotelId);
   if(h) { h.status = (h.status === 'suspended') ? 'active' : 'suspended'; saveData(); uploadDataToCloud(); renderSuperAdminControlPanel(); initLoginHotelDropdown(); }
 }
 function switchHotelSession(id) {
-  if (!requireHoteraPermission('superadmin', 'الدخول المباشر للفنادق متاح للسوبر أدمن فقط.')) return;
   currentHotelId = id; currentRole = 'manager'; currentUsername = currentLang === 'ar' ? 'مدير الفندق' : 'Hotel Manager';
   document.getElementById('loginOverlay').style.display = 'none';
   updateHeaderInfo(); applyPermissions();
@@ -2461,38 +2270,31 @@ function switchHotelSession(id) {
   selectedFloor = 1; render();
 }
 
-function openStaffManagementModal() { if (!requireHoteraPermission('hotelAdmin', 'إدارة الموظفين متاحة لمدير الفندق أو السوبر أدمن فقط.')) return; document.getElementById('staffManagementModal').style.display = 'flex'; renderStaffTable(); }
+function openStaffManagementModal() { document.getElementById('staffManagementModal').style.display = 'flex'; renderStaffTable(); }
 function closeStaffManagementModal() { document.getElementById('staffManagementModal').style.display = 'none'; }
 function renderStaffTable() {
   const tbody = document.getElementById('staffTableBody'); tbody.innerHTML = '';
   const hotel = hotelsList.find(h => h.id === currentHotelId);
   if(!hotel || !hotel.staffList) return;
-  const safeStaff=value=>typeof hoteraGlobalSafe==='function'?hoteraGlobalSafe(value==null?'':String(value)):String(value==null?'':value);
   hotel.staffList.forEach((s, idx) => {
-    const status=s.status||'نشط', statusColor=status==='نشط'?'#34d399':status==='موقوف'?'#f87171':'#fbbf24';
-    tbody.innerHTML += `<tr><td><strong>${safeStaff(s.idNum || 'EMP-10'+idx)}</strong></td><td>${safeStaff(s.name)}<br><small style="color:#94a3b8">${safeStaff(s.jobTitle||'موظف')} ${s.phone?`· ${safeStaff(s.phone)}`:''}</small></td><td>${safeStaff(s.department||'غير محدد')}<br><span style="color:${statusColor};font-weight:bold">${safeStaff(status)}</span></td><td>••••</td><td><button onclick="toggleStaffStatus(${idx})" style="background:#2563eb;color:white;border:none;padding:2px 6px;border-radius:4px;font-size:8px;">تبديل الحالة</button><button onclick="deleteStaff(${idx})" style="background:#ef4444;color:white;border:none;padding:2px 6px;border-radius:4px;font-size:8px;margin-right:2px;">حذف</button></td></tr>`;
+    tbody.innerHTML += `<tr><td><strong>${s.idNum || 'EMP-10'+idx}</strong></td><td>${s.name}</td><td>${s.pin}</td><td><button onclick="deleteStaff(${idx})" style="background:#ef4444; color:white; border:none; padding:2px 6px; border-radius:4px; font-size:8px;">حذف</button></td></tr>`;
   });
 }
 function addNewStaffMember() {
-  if (!requireHoteraPermission('hotelAdmin', 'إضافة الموظفين متاحة لمدير الفندق أو السوبر أدمن فقط.')) return;
   const idNum = document.getElementById('newStaffIdNum').value.trim() || `EMP-${Math.floor(Math.random()*900+100)}`;
   const name = document.getElementById('newStaffName').value.trim();
   const pin = document.getElementById('newStaffPin').value.trim();
-  const phone=document.getElementById('newStaffPhone')?.value.trim()||'',jobTitle=document.getElementById('newStaffJobTitle')?.value.trim()||'',department=document.getElementById('newStaffDepartment')?.value||'استقبال',status=document.getElementById('newStaffStatus')?.value||'نشط';
   if(!name || !pin) return alert('أدخل الاسم والرمز!');
-  hotelsList.find(h => h.id === currentHotelId).staffList.push({idNum, name, pin, phone, jobTitle, department, status});
-  if(typeof recordHoteraAudit==='function')recordHoteraAudit('إضافة موظف',{idNum,name,department,status}); saveData(); uploadDataToCloud(); renderStaffTable();
+  hotelsList.find(h => h.id === currentHotelId).staffList.push({idNum, name, pin});
+  saveData(); uploadDataToCloud(); renderStaffTable();
   alert('✅ تمت إضافة الموظف الجديد بنجاح');
 }
-function toggleStaffStatus(idx){if(!requireHoteraPermission('hotelAdmin','تغيير حالة الموظف متاح لمدير الفندق أو السوبر أدمن فقط.'))return;const list=hotelsList.find(h=>h.id===currentHotelId)?.staffList||[],s=list[idx];if(!s)return;s.status=s.status==='نشط'?'موقوف':'نشط';if(typeof recordHoteraAudit==='function')recordHoteraAudit('تغيير حالة موظف',{name:s.name,status:s.status});saveData();uploadDataToCloud();renderStaffTable();}
 function deleteStaff(idx) {
-  if (!requireHoteraPermission('hotelAdmin', 'حذف الموظفين متاح لمدير الفندق أو السوبر أدمن فقط.')) return;
-  const list=hotelsList.find(h => h.id === currentHotelId)?.staffList||[],removed=list[idx]; if(!removed)return; if(!confirm('تأكيد حذف الموظف؟'))return;
-  list.splice(idx, 1); if(typeof recordHoteraAudit==='function')recordHoteraAudit('حذف موظف',{name:removed.name,idNum:removed.idNum}); saveData(); uploadDataToCloud(); renderStaffTable();
+  hotelsList.find(h => h.id === currentHotelId).staffList.splice(idx, 1);
+  saveData(); uploadDataToCloud(); renderStaffTable();
 }
 
 function openHotelSetupModal() {
-  if (!requireHoteraPermission('hotelAdmin', 'إعدادات الفندق متاحة لمدير الفندق أو السوبر أدمن فقط.')) return;
   const h = hotelsList.find(item => item.id === currentHotelId);
   if(h) {
     document.getElementById('setupHotelName').value = h.name;
@@ -2509,7 +2311,6 @@ function openHotelSetupModal() {
 }
 function closeHotelSetupModal() { document.getElementById('hotelSetupModal').style.display = 'none'; }
 function saveHotelSetupAndGenerateRooms() {
-  if (!requireHoteraPermission('hotelAdmin', 'حفظ إعدادات الفندق متاح لمدير الفندق أو السوبر أدمن فقط.')) return;
   const h = hotelsList.find(item => item.id === currentHotelId);
   h.name = document.getElementById('setupHotelName').value.trim() || h.name;
   h.cr = document.getElementById('setupHotelCR').value.trim() || h.cr;
@@ -2529,27 +2330,6 @@ function toggleHoteraTheme() {
   localStorage.setItem('hotera_theme', document.body.classList.contains('theme-light') ? 'light' : 'dark');
 }
 function restoreHoteraTheme() { if (localStorage.getItem('hotera_theme') === 'light') document.body.classList.add('theme-light'); }
-function escapeHoteraTaskText(value) { return String(value ?? '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])); }
-function openDailyTaskTarget(target) {
-  const map = { booking: ['booking', 'chipBooking'], rooms: ['rooms', 'chipRooms'], maintenance: ['maintenance', 'chipMaintenance'], invoices: ['invoices', 'chipInvoices'] };
-  const item = map[target]; if (!item) return;
-  const chip = document.getElementById(item[1]);
-  if (typeof switchMainFeature === 'function' && chip) switchMainFeature(item[0], chip);
-}
-function renderHoteraDailyTasks(rooms, invoices, today) {
-  const arrivals = rooms.filter(r => r && r.guest && String(r.checkIn) === today);
-  const departures = rooms.filter(r => r && r.guest && String(r.checkOut) === today);
-  const services = rooms.filter(r => r && (r.status === 'cleaning' || r.status === 'maintenance'));
-  const unpaid = invoices.filter(inv => inv && ['unpaid','pending','غير مدفوع','معلق'].includes(String(inv.status || '').toLowerCase()) || Number(inv.remaining || inv.balance || 0) > 0);
-  const set = (id, value) => { const el=document.getElementById(id); if(el) el.innerHTML=value; };
-  const names = list => list.slice(0,3).map(r => `غرفة ${escapeHoteraTaskText(r.id)}${r.guest ? ` · ${escapeHoteraTaskText(r.guest)}` : ''}`).join('<br>');
-  set('hoteraDailyTasksDate', new Date(`${today}T00:00:00`).toLocaleDateString('ar-SA',{weekday:'long',year:'numeric',month:'long',day:'numeric'}));
-  set('dailyArrivalsCount', arrivals.length); set('dailyDeparturesCount', departures.length); set('dailyServiceCount', services.length); set('dailyUnpaidCount', unpaid.length);
-  set('dailyArrivalsSummary', arrivals.length ? names(arrivals) : '<span class="hotera-daily-empty">لا توجد وصولات اليوم</span>');
-  set('dailyDeparturesSummary', departures.length ? names(departures) : '<span class="hotera-daily-empty">لا توجد مغادرات اليوم</span>');
-  set('dailyServiceSummary', services.length ? services.slice(0,3).map(r => `${r.status==='maintenance'?'🛠️':'🧹'} غرفة ${escapeHoteraTaskText(r.id)}`).join('<br>') : '<span class="hotera-daily-empty">لا توجد مهام معلقة</span>');
-  set('dailyUnpaidSummary', unpaid.length ? unpaid.slice(0,3).map(inv => escapeHoteraTaskText(inv.bookingRef || inv.id || 'فاتورة')).join('<br>') : '<span class="hotera-daily-empty">لا توجد فواتير معلقة</span>');
-}
 function renderCommandCenter() {
   const rooms = allRooms[currentHotelId] || [];
   const available = rooms.filter(r => r.status === 'vacant').length;
@@ -2568,19 +2348,8 @@ function renderCommandCenter() {
   const upcomingEl=document.getElementById('glassUpcomingBookings'); if(upcomingEl){ const upcoming=rooms.filter(r=>r&&r.guest&&r.checkIn&&String(r.checkIn)>=today).sort((a,b)=>String(a.checkIn).localeCompare(String(b.checkIn))).slice(0,5); upcomingEl.innerHTML=upcoming.length?upcoming.map(r=>`<div class="hotera-glass-list-row"><span>${r.guest||'نزيل'} · غرفة ${r.id}<br><small style="color:#8dd8f5">${r.checkIn||'—'}</small></span><strong>${r.bookingRef||'حجز'}</strong></div>`).join(''):'<div class="hotera-glass-list-row"><span>لا توجد حجوزات قادمة</span><strong>—</strong></div>'; }
   const hotelInvoices=allInvoices[currentHotelId]||[]; const todayInvoices=hotelInvoices.filter(i=>String(i.date||i.createdAt||'').startsWith(today)); const todayBookings=rooms.filter(r=>r.status==='occupied'&&String(r.checkIn||'').startsWith(today)); const guestCount=Object.keys(customerMemory||{}).length; const ratingsCount=(allRatings[currentHotelId]||[]).length; const invoiceTotal=hotelInvoices.reduce((sum,i)=>sum+Number(i.total||0),0); const todayRevenue=todayInvoices.reduce((sum,i)=>sum+Number(i.total||0),0); const avgBooking=todayBookings.length?todayRevenue/todayBookings.length:0; const occupancy=total?Math.round((occupied/total)*100):0; const lastInvoice=hotelInvoices.length?hotelInvoices[hotelInvoices.length-1]:null;
   set('premiumTodayBookings',todayBookings.length); set('premiumTodayRevenue',`${todayRevenue.toFixed(2)} ر.س`);
-  const revenueBars=document.getElementById('glassRevenueBars'); if(revenueBars){ const days=[]; for(let offset=6;offset>=0;offset--){const d=new Date();d.setDate(d.getDate()-offset);const key=d.toISOString().slice(0,10);days.push(hotelInvoices.filter(i=>String(i.date||i.createdAt||'').startsWith(key)).reduce((sum,i)=>sum+Number(i.total||0),0));} const maxDay=Math.max(...days,1); revenueBars.innerHTML=days.map((value,index)=>`<i title="${value.toFixed(2)} ر.س" style="height:${Math.max(12,Math.round((value/maxDay)*100))}%"></i>`).join(''); } set('premiumAvgBooking',`${avgBooking.toFixed(2)} ر.س`); set('premiumOccupancy',`${occupancy}%`); set('premiumOccupancyBar',`${occupancy}%`); const bar=document.getElementById('premiumOccupancyBar'); if(bar)bar.style.width=`${occupancy}%`;   set('premiumVacant',available); set('premiumBooked',occupied); set('premiumInvoiceTotal',`${invoiceTotal.toFixed(2)} ر.س`); set('premiumInvoiceCount',hotelInvoices.length); set('premiumLastInvoice',lastInvoice?.number||lastInvoice?.id||'—'); set('premiumGuestCount',guestCount); set('premiumActiveGuests',Object.values(customerMemory||{}).filter(c=>c&&c.name).length); set('premiumRatingsCount',ratingsCount); set('premiumOperationStatus',alerts.length?'يحتاج متابعة':'مستقر'); set('premiumDataUpdated',new Date().toLocaleTimeString());
-  renderHoteraDailyTasks(rooms, hotelInvoices, today);
-  const outstanding=hotelInvoices.reduce((sum,i)=>{const state=typeof hoteraPaymentState==='function'?hoteraPaymentState(i):{remaining:Math.max(0,Number(i.total||0)-Number(i.paidAmount||0))};return sum+Number(state.remaining||0);},0); set('executiveOutstanding',`${outstanding.toFixed(2)} ر.س`);
-  const ratings=allRatings[currentHotelId]||[],ratingSum=ratings.reduce((sum,r)=>sum+Math.max(1,Math.min(5,Number(r.stars)||0)),0),ratingAvg=ratings.length?ratingSum/ratings.length:0,ratingPositive=ratings.length?Math.round(ratings.filter(r=>Number(r.stars)>=4).length/ratings.length*100):0; set('executiveRatingAverage',`${ratingAvg.toFixed(1)} / 5`); set('executiveRatingPositive',`${ratingPositive}% تقييمات إيجابية`);
-  const careStore=typeof hoteraGuestCareStore==='function'?hoteraGuestCareStore():{},careList=Array.isArray(careStore[currentHotelId])?careStore[currentHotelId]:[]; set('executiveGuestCareOpen',careList.filter(x=>x&&x.status!=='مكتمل').length);
-  const shiftList=allShifts[currentHotelId]||[],lastShift=shiftList[0]; set('executiveLastShift',lastShift?.status==='مقفلة'?(lastShift.dateStr||'مقفلة'):'لا يوجد إقفال'); const shiftVar=document.getElementById('executiveShiftVariance'); if(shiftVar)shiftVar.innerText=lastShift&&lastShift.variance!==null&&lastShift.variance!==undefined?`الفرق: ${Number(lastShift.variance).toFixed(2)} ر.س`:'لا يوجد فرق مسجل';
+  const revenueBars=document.getElementById('glassRevenueBars'); if(revenueBars){ const days=[]; for(let offset=6;offset>=0;offset--){const d=new Date();d.setDate(d.getDate()-offset);const key=d.toISOString().slice(0,10);days.push(hotelInvoices.filter(i=>String(i.date||i.createdAt||'').startsWith(key)).reduce((sum,i)=>sum+Number(i.total||0),0));} const maxDay=Math.max(...days,1); revenueBars.innerHTML=days.map((value,index)=>`<i title="${value.toFixed(2)} ر.س" style="height:${Math.max(12,Math.round((value/maxDay)*100))}%"></i>`).join(''); } set('premiumAvgBooking',`${avgBooking.toFixed(2)} ر.س`); set('premiumOccupancy',`${occupancy}%`); set('premiumOccupancyBar',`${occupancy}%`); const bar=document.getElementById('premiumOccupancyBar'); if(bar)bar.style.width=`${occupancy}%`; set('premiumVacant',available); set('premiumBooked',occupied); set('premiumInvoiceTotal',`${invoiceTotal.toFixed(2)} ر.س`); set('premiumInvoiceCount',hotelInvoices.length); set('premiumLastInvoice',lastInvoice?.number||lastInvoice?.id||'—'); set('premiumGuestCount',guestCount); set('premiumActiveGuests',Object.values(customerMemory||{}).filter(c=>c&&c.name).length); set('premiumRatingsCount',ratingsCount); set('premiumOperationStatus',alerts.length?'يحتاج متابعة':'مستقر'); set('premiumDataUpdated',new Date().toLocaleTimeString());
 }
-function hoteraDailyCloseData(dateKey){const invoices=allInvoices[currentHotelId]||[],transactions=allTransactions[currentHotelId]||[],expenses=allExpenses[currentHotelId]||[],rooms=allRooms[currentHotelId]||[],attendance=attendanceRecords[currentHotelId]?.[dateKey]||{},shifts=allShifts[currentHotelId]||[],inventory=allInventory[currentHotelId]||[];const dayMatch=x=>String(x?.date||x?.createdAt||x?.dateStr||'').slice(0,10)===dateKey;const dayInvoices=invoices.filter(dayMatch),dayExpenses=expenses.filter(dayMatch),dayTransactions=transactions.filter(dayMatch),paid=dayInvoices.reduce((n,i)=>n+hoteraPaymentState(i).paid,0),revenue=dayInvoices.reduce((n,i)=>n+Number(i.total||0),0),outstanding=dayInvoices.reduce((n,i)=>n+hoteraPaymentState(i).remaining,0),expenseTotal=dayExpenses.reduce((n,e)=>n+Number(e.amount||0),0),cashIn=dayTransactions.filter(x=>['in','قبض','دخل'].includes(x.type)).reduce((n,x)=>n+Number(x.amount||0),0),cashOut=dayTransactions.filter(x=>['out','صرف','خرج'].includes(x.type)).reduce((n,x)=>n+Number(x.amount||0),0),lowStock=inventory.filter(i=>Number(i.qty||0)<=Number(i.minLimit||0)).length,staff=Object.values(attendance),lastShift=shifts.find(s=>String(s.dateStr||'').slice(0,10)===dateKey)||shifts[0];return {dateKey,invoices:dayInvoices.length,revenue,paid,outstanding,expenseTotal,cashIn,cashOut,net:paid+cashIn-cashOut-expenseTotal,occupied:rooms.filter(r=>r.status==='occupied').length,totalRooms:rooms.length,occupancy:rooms.length?Math.round(rooms.filter(r=>r.status==='occupied').length/rooms.length*100):0,attendancePresent:staff.filter(x=>x.status==='حاضر').length,attendanceLate:staff.filter(x=>x.status==='متأخر').length,attendanceAbsent:staff.filter(x=>x.status==='غائب').length,lowStock,lastShiftStatus:lastShift?.status||'لا يوجد'};}
-function openDailyCloseModal(){const e=document.getElementById('dailyCloseDate');if(e)e.value=new Date().toISOString().slice(0,10);renderDailyCloseSummary();document.getElementById('dailyCloseModal').style.display='flex';}
-function closeDailyCloseModal(){document.getElementById('dailyCloseModal').style.display='none';}
-function renderDailyCloseSummary(){const d=hoteraDailyCloseData(document.getElementById('dailyCloseDate')?.value||new Date().toISOString().slice(0,10)),el=document.getElementById('dailyCloseSummary');if(!el)return;el.innerHTML=`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;font-size:9px"><div style="padding:7px;background:#ecfdf5;border-radius:8px;color:#047857">الإيرادات<br><strong>${d.revenue.toFixed(2)} ر.س</strong></div><div style="padding:7px;background:#eff6ff;border-radius:8px;color:#1d4ed8">المدفوع<br><strong>${d.paid.toFixed(2)} ر.س</strong></div><div style="padding:7px;background:#fff7ed;border-radius:8px;color:#c2410c">المتبقي<br><strong>${d.outstanding.toFixed(2)} ر.س</strong></div><div style="padding:7px;background:#fef2f2;border-radius:8px;color:#b91c1c">المصروفات<br><strong>${d.expenseTotal.toFixed(2)} ر.س</strong></div><div style="padding:7px;background:#f8fafc;border-radius:8px;color:#334155">صافي تقديري<br><strong>${d.net.toFixed(2)} ر.س</strong></div><div style="padding:7px;background:#fefce8;border-radius:8px;color:#854d0e">الإشغال<br><strong>${d.occupancy}%</strong></div></div><div style="margin-top:7px;padding:8px;background:rgba(14,165,233,.08);border-radius:8px;font-size:9px">🧾 فواتير: ${d.invoices} · 💰 قبض: ${d.cashIn.toFixed(2)} · صرف: ${d.cashOut.toFixed(2)} · 👥 حاضر: ${d.attendancePresent} · متأخر: ${d.attendanceLate} · غائب: ${d.attendanceAbsent} · 📦 مخزون منخفض: ${d.lowStock} · 🔄 الوردية: ${d.lastShiftStatus}</div>`;}
-function exportDailyCloseCsv(){const d=hoteraDailyCloseData(document.getElementById('dailyCloseDate')?.value||new Date().toISOString().slice(0,10)),rows=[['المؤشر','القيمة'],['التاريخ',d.dateKey],['عدد الفواتير',d.invoices],['الإيرادات',d.revenue.toFixed(2)],['المدفوع',d.paid.toFixed(2)],['المتبقي',d.outstanding.toFixed(2)],['المصروفات',d.expenseTotal.toFixed(2)],['الصافي التقديري',d.net.toFixed(2)],['الإشغال',d.occupancy+'%'],['الحاضرون',d.attendancePresent],['المتأخرون',d.attendanceLate],['الغائبون',d.attendanceAbsent],['مخزون منخفض',d.lowStock]];const csv='\\ufeff'+rows.map(r=>r.map(v=>`"${String(v).replaceAll('"','""')}"`).join(',')).join('\\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=`HOTERA-daily-close-${d.dateKey}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
-function saveDailyCloseRecord(){const d=hoteraDailyCloseData(document.getElementById('dailyCloseDate')?.value||new Date().toISOString().slice(0,10));if(!dailyClosingRecords[currentHotelId])dailyClosingRecords[currentHotelId]=[];dailyClosingRecords[currentHotelId]=dailyClosingRecords[currentHotelId].filter(x=>x.dateKey!==d.dateKey);dailyClosingRecords[currentHotelId].unshift({...d,approvedBy:currentUsername||'المستخدم الحالي',approvedAt:new Date().toISOString()});if(typeof recordHoteraAudit==='function')recordHoteraAudit('اعتماد إقفال يومي',{date:d.dateKey,revenue:d.revenue,net:d.net});saveData();uploadDataToCloud();alert('✅ تم اعتماد ملخص الإقفال اليومي دون تغيير السجلات الأصلية.');}
 function openRoomModalByCommand(roomId) { const room=(allRooms[currentHotelId]||[]).find(r=>r.id===roomId); if(room && typeof openRoomModal==='function') openRoomModal(room); }
 function openCommandCustomerProfile(){const phones=Object.keys(customerMemory||{});if(phones.length&&typeof openCustomerProfile==='function'){openCustomerProfile(phones[0]);return;}const input=document.getElementById('commandCustomerSearch');if(input){input.focus();input.scrollIntoView({behavior:'smooth',block:'center'});}const result=document.getElementById('commandCustomerResult');if(result)result.innerText='ابحث أولاً باسم العميل أو رقم الجوال لفتح ملفه الكامل.';}
 function searchCommandCustomer(query) { const q=(query||'').trim().toLowerCase(); const el=document.getElementById('commandCustomerResult'); if(!el)return; if(!q){el.innerText='اكتب رقم الجوال أو اسم العميل لعرض ملخص سريع.';return;} const matches=Object.entries(customerMemory||{}).filter(([phone,c])=>phone.toLowerCase().includes(q)||(c.name||'').toLowerCase().includes(q)); if(!matches.length){el.innerText='لم يتم العثور على عميل محفوظ بهذا البحث.';return;} const [phone,c]=matches[0]; const invoices=Object.values(allInvoices||{}).flat().filter(inv=>inv.phone===phone||inv.guest===c.name); el.innerHTML=`<strong style="color:var(--accent-solid)">${c.name||'عميل'}</strong><br>📞 ${phone}<br>🧾 عدد الفواتير: ${invoices.length}<br>💰 إجمالي التعاملات: ${invoices.reduce((sum,i)=>sum+Number(i.total||0),0).toFixed(2)} ر.س<br><button class="btn btn-blue" style="margin-top:6px;padding:5px" onclick="openCustomerProfile('${phone}')">فتح الملف الكامل</button>`; }
@@ -2689,7 +2458,6 @@ function switchMainFeature(featureKey, chipElement) {
     expenses: currentLang === 'ar' ? '💸 إدارة المصروفات والاحتساب التلقائي' : '💸 Expenses Management',
     inventory: currentLang === 'ar' ? '📦 مخزون المستودع والمستهلكات' : '📦 Warehouse Inventory',
     maintenance: currentLang === 'ar' ? '🛠️ بلاغات أعطال الغرف والصيانة النشطة' : '🛠️ Maintenance Tickets',
-    guest_care: currentLang === 'ar' ? '🧑‍💼 تجربة النزيل والشكاوى والخدمات' : '🧑‍💼 Guest Care',
     integrations: currentLang === 'ar' ? '🔌 منصات الربط الخارجي (قيد التحديث)' : '🔌 External Integrations (Coming Soon)',
     shifts: currentLang === 'ar' ? '🔄 تسليم الورديات والمناوبات النقدية' : '🔄 Shift Handovers',
     ratings: currentLang === 'ar' ? '⭐ تقييمات النزلاء ورضا العملاء' : '⭐ Guest Ratings',
@@ -2699,7 +2467,6 @@ function switchMainFeature(featureKey, chipElement) {
     refunded_invoices: currentLang === 'ar' ? '↩️ سجل الفواتير المسترجعة' : '↩️ Refunded Invoices'
   };
   document.getElementById('sectionTitleHeader').innerText = titlesMap[featureKey] || 'إدارة القسم';
-  if(featureKey==='guest_care') renderHoteraGuestCareRecords();
   renderReportsAndFinancials();
 }
 
@@ -2718,21 +2485,23 @@ function saveNewExpense() {
 
 function openInventoryModal() { document.getElementById('inventoryModal').style.display = 'flex'; }
 function closeInventoryModal() { document.getElementById('inventoryModal').style.display = 'none'; }
-function inventoryMovementLog(itemName,delta,type){if(!inventoryMovements[currentHotelId])inventoryMovements[currentHotelId]=[];inventoryMovements[currentHotelId].unshift({itemName,delta,type,staff:currentUsername||'المستخدم الحالي',date:new Date().toISOString()});inventoryMovements[currentHotelId]=inventoryMovements[currentHotelId].slice(0,100);}
 function saveNewInventoryItem() {
   const name = document.getElementById('invItemName').value.trim();
-  const qty = Math.max(0,parseInt(document.getElementById('invItemQty').value) || 0);
-  const minLimit = Math.max(0,parseInt(document.getElementById('invItemMin').value) || 5);
-  const unit = document.getElementById('invItemUnit')?.value.trim() || 'وحدة';
+  const qty = parseInt(document.getElementById('invItemQty').value) || 0;
+  const minLimit = parseInt(document.getElementById('invItemMin').value) || 5;
   if(!name) return alert('أدخل اسم الصنف!');
   if(!allInventory[currentHotelId]) allInventory[currentHotelId] = [];
-  allInventory[currentHotelId].push({ name, qty, minLimit, unit }); inventoryMovementLog(name,qty,'إضافة صنف');
-  if(typeof recordHoteraAudit==='function')recordHoteraAudit('إضافة صنف مخزون',{name,qty,unit});
+  allInventory[currentHotelId].push({ name, qty, minLimit });
   saveData(); uploadDataToCloud(); closeInventoryModal(); renderReportsAndFinancials();
   alert('✅ تم إضافة الصنف للمستودع بنجاح!');
 }
-function adjustInventoryQty(idx,delta){const item=(allInventory[currentHotelId]||[])[idx];if(!item)return;const next=Math.max(0,Number(item.qty||0)+delta);if(next===Number(item.qty||0))return;item.qty=next;inventoryMovementLog(item.name,delta,delta>0?'توريد':'استهلاك');if(typeof recordHoteraAudit==='function')recordHoteraAudit(delta>0?'توريد مخزون':'استهلاك مخزون',{name:item.name,delta});saveData();uploadDataToCloud();renderReportsAndFinancials();}
-function reduceInventoryQty(idx) { adjustInventoryQty(idx,-1); }
+function reduceInventoryQty(idx) {
+  if(!allInventory[currentHotelId][idx]) return;
+  if(allInventory[currentHotelId][idx].qty > 0) {
+    allInventory[currentHotelId][idx].qty -= 1;
+    saveData(); uploadDataToCloud(); renderReportsAndFinancials();
+  }
+}
 
 function openShiftHandoverModal() { document.getElementById('shiftModal').style.display = 'flex'; }
 function closeShiftHandoverModal() { document.getElementById('shiftModal').style.display = 'none'; }
@@ -2740,26 +2509,13 @@ function saveShiftHandoverRecord() {
   const outgoing = document.getElementById('shiftOutgoing').value.trim() || currentUsername;
   const incoming = document.getElementById('shiftIncoming').value.trim() || "موظف الوردية القادمة";
   const cash = parseFloat(document.getElementById('shiftCash').value) || 0;
-  const expectedRaw = document.getElementById('shiftExpectedCash')?.value.trim() || '';
-  const expectedCash = expectedRaw==='' ? null : Number(expectedRaw);
-  if(expectedCash!==null && (!Number.isFinite(expectedCash)||expectedCash<0)) return alert('أدخل العهدة المتوقعة بقيمة صحيحة.');
-  const status = document.getElementById('shiftStatus')?.value || 'مقفلة';
-  const tasks = document.getElementById('shiftTasks')?.value.trim() || '';
   const notes = document.getElementById('shiftNotes').value.trim() || "لا توجد ملاحظات";
   const dateStr = new Date().toLocaleString();
-  const record = { dateStr, outgoing, incoming, cash, notes, status, tasks, expectedCash, variance: expectedCash===null?null:cash-expectedCash, closedBy:currentUsername||outgoing };
   if(!allShifts[currentHotelId]) allShifts[currentHotelId] = [];
-  allShifts[currentHotelId].unshift(record);
-  if(typeof recordHoteraAudit==='function') recordHoteraAudit('إقفال وتسليم وردية',{outgoing,incoming,cash,expectedCash,status});
+  allShifts[currentHotelId].unshift({ dateStr, outgoing, incoming, cash, notes });
   saveData(); uploadDataToCloud(); closeShiftHandoverModal(); renderReportsAndFinancials();
-  alert(status==='مقفلة'?'✅ تم إقفال وتسليم الوردية بنجاح!':'✅ تم تسجيل الوردية بنجاح!');
+  alert('✅ تم توثيق تسليم الوردية بنجاح!');
 }
-
-function hoteraGuestCareStore(){try{const data=JSON.parse(localStorage.getItem('hotera_guest_care_records')||'{}');return data&&typeof data==='object'?data:{};}catch(e){return {};}}
-function hoteraGuestCareSave(store){localStorage.setItem('hotera_guest_care_records',JSON.stringify(store));}
-function renderHoteraGuestCareRecords(){const el=document.getElementById('guestCareRecordsList');if(!el)return;const store=hoteraGuestCareStore(),list=Array.isArray(store[currentHotelId])?store[currentHotelId]:[],safe=v=>typeof hoteraGlobalSafe==='function'?hoteraGlobalSafe(v==null?'':String(v)):String(v==null?'':v);el.innerHTML=list.length?list.slice(0,30).map((x,i)=>`<div style="display:flex;justify-content:space-between;gap:8px;padding:8px;border:1px solid rgba(148,163,184,.18);border-radius:10px;margin-top:6px;font-size:9px;color:#dbeafe"><span><b style="color:${x.type==='شكوى'?'#f87171':x.type==='مفقودات'?'#fbbf24':'#38bdf8'}">${safe(x.type)}</b> · غرفة ${safe(x.room||'—')} · ${safe(x.guest||'غير محدد')}<br><small>${safe(x.details)} · المكلف: ${safe(x.assignee||'غير معين')} · الأولوية: ${safe(x.priority)} · ${safe(x.status||'مفتوح')}</small></span><button class="btn btn-green" style="width:auto;margin:0;padding:4px 7px;font-size:9px" onclick="resolveHoteraGuestCareRecord(${i})">${x.status==='مكتمل'?'مكتمل':'إنهاء'}</button></div>`).join(''):'<div style="color:#94a3b8;font-size:10px;padding:10px">لا توجد شكاوى أو مفقودات أو طلبات خدمة مسجلة.</div>';}
-function createHoteraGuestCareRecord(){const type=document.getElementById('guestCareType')?.value||'طلب خدمة',room=document.getElementById('guestCareRoom')?.value.trim()||'',guest=document.getElementById('guestCareGuest')?.value.trim()||'',priority=document.getElementById('guestCarePriority')?.value||'عادية',assignee=document.getElementById('guestCareAssignee')?.value.trim()||'',details=document.getElementById('guestCareDetails')?.value.trim()||'';if(!details)return alert('اكتب تفاصيل البلاغ أو الطلب أولاً.');const store=hoteraGuestCareStore();if(!Array.isArray(store[currentHotelId]))store[currentHotelId]=[];const record={id:`GC-${Date.now()}`,type,room,guest,priority,assignee,details,status:'مفتوح',createdAt:new Date().toISOString(),createdBy:currentUsername||'المستخدم الحالي'};store[currentHotelId].unshift(record);hoteraGuestCareSave(store);if(typeof recordHoteraAudit==='function')recordHoteraAudit('إضافة تجربة نزيل',{id:record.id,type,room,priority});renderHoteraGuestCareRecords();['guestCareRoom','guestCareGuest','guestCareAssignee','guestCareDetails'].forEach(id=>{const x=document.getElementById(id);if(x)x.value='';});alert('✅ تم حفظ البلاغ أو طلب الخدمة.');}
-function resolveHoteraGuestCareRecord(index){const store=hoteraGuestCareStore(),list=Array.isArray(store[currentHotelId])?store[currentHotelId]:[],record=list[index];if(!record)return;if(currentRole!=='manager'&&currentRole!=='superadmin'&&currentRole!=='company_owner_manager')return alert('هذا الإجراء متاح للمدير أو السوبر أدمن فقط.');record.status='مكتمل';record.completedAt=new Date().toISOString();record.completedBy=currentUsername||'المستخدم الحالي';hoteraGuestCareSave(store);if(typeof recordHoteraAudit==='function')recordHoteraAudit('إكمال تجربة نزيل',{id:record.id,type:record.type});renderHoteraGuestCareRecords();}
 
 function resolveMaintenanceTicket(idx) {
   const ticket = allMaintenanceTickets[currentHotelId][idx];
@@ -2787,16 +2543,12 @@ function deleteHotelRating(index){ if(currentRole!=='superadmin')return alert('�
 function getPeriodStats(period, hotelId=currentHotelId){
   const inv=(allInvoices[hotelId]||[]).filter(i=>(i.date||'').slice(0,7)===period); const rooms=allRooms[hotelId]||[]; const refunds=(refundedInvoicesData[hotelId]||[]).filter(r=>(r.date||'').slice(0,7)===period); const revenue=inv.reduce((n,i)=>n+Number(i.total||0),0); return {period,count:inv.length,revenue,refunds:refunds.reduce((n,r)=>n+Number(r.amount||0),0),occupancy:rooms.length?Math.round(rooms.filter(r=>r.status==='occupied').length/rooms.length*100):0};
 }
-function hoteraAdvancedReportData(period){ const invoices=allInvoices[currentHotelId]||[], expenses=typeof allExpenses!=='undefined'?(allExpenses[currentHotelId]||[]):[], transactions=allTransactions[currentHotelId]||[], rooms=allRooms[currentHotelId]||[], refunds=refundedInvoicesData[currentHotelId]||[]; const inPeriod=(x,dateKeys=['date','createdAt'])=>{const d=dateKeys.map(k=>x&&x[k]).find(Boolean);return !period||String(d||'').slice(0,7)===period;}; const periodInvoices=invoices.filter(x=>inPeriod(x)), periodExpenses=expenses.filter(x=>inPeriod(x)), periodTransactions=transactions.filter(x=>inPeriod(x)), periodRefunds=refunds.filter(x=>inPeriod(x)); const total=periodInvoices.reduce((n,x)=>n+Number(x.total||0),0), paid=periodInvoices.reduce((n,x)=>n+hoteraPaymentState(x).paid,0), remaining=periodInvoices.reduce((n,x)=>n+hoteraPaymentState(x).remaining,0), expenseTotal=periodExpenses.reduce((n,x)=>n+Number(x.amount||0),0), cashIn=periodTransactions.filter(x=>x.type==='in'||x.type==='قبض'||x.type==='دخل').reduce((n,x)=>n+Number(x.amount||0),0), cashOut=periodTransactions.filter(x=>x.type==='out'||x.type==='صرف'||x.type==='خرج').reduce((n,x)=>n+Number(x.amount||0),0), refundTotal=periodRefunds.reduce((n,x)=>n+Number(x.amount||0),0); return {period,invoices:periodInvoices.length,total,paid,remaining,expenseTotal,cashIn,cashOut,refundTotal,net:paid-expenseTotal-refundTotal,rooms:rooms.length,occupied:rooms.filter(r=>r.status==='occupied').length,occupancy:rooms.length?Math.round(rooms.filter(r=>r.status==='occupied').length/rooms.length*100):0}; }
-function renderAdvancedHotelReport(){ const period=document.getElementById('advancedReportPeriod')?.value||new Date().toISOString().slice(0,7),d=hoteraAdvancedReportData(period),el=document.getElementById('advancedReportKpis'); if(!el)return; const card=(label,value,color)=>`<div style="padding:7px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(148,163,184,.16)"><small>${label}</small><br><strong style="color:${color}">${value}</strong></div>`; el.innerHTML=card('الفواتير',d.invoices,'#38bdf8')+card('الإيرادات',`${d.total.toFixed(2)} ر.س`,'#fbbf24')+card('المدفوع',`${d.paid.toFixed(2)} ر.س`,'#34d399')+card('المتبقي',`${d.remaining.toFixed(2)} ر.س`,'#fb923c')+card('المصروفات',`${d.expenseTotal.toFixed(2)} ر.س`,'#f87171')+card('صافي تقديري',`${d.net.toFixed(2)} ر.س`,'#c084fc'); const note=document.getElementById('advancedReportNote');if(note)note.innerText=`الفترة ${period} · الإشغال الحالي ${d.occupancy}% · التقرير للقراءة والتصدير فقط.`; }
-function exportAdvancedHotelReport(){ const period=document.getElementById('advancedReportPeriod')?.value||new Date().toISOString().slice(0,7),d=hoteraAdvancedReportData(period); const rows=[['الفترة','عدد الفواتير','الإيرادات','المدفوع','المتبقي','المصروفات','المقبوضات','المدفوعات الخارجة','الاسترجاعات','الصافي التقديري','الإشغال'],[d.period,d.invoices,d.total.toFixed(2),d.paid.toFixed(2),d.remaining.toFixed(2),d.expenseTotal.toFixed(2),d.cashIn.toFixed(2),d.cashOut.toFixed(2),d.refundTotal.toFixed(2),d.net.toFixed(2),`${d.occupancy}%`]]; const csv='data:text/csv;charset=utf-8,\uFEFF'+rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n'); const link=document.createElement('a');link.href=encodeURI(csv);link.download=`HOTERA_Report_${period}.csv`;document.body.appendChild(link);link.click();link.remove(); }
 function compareHotelPeriods(){ const a=document.getElementById('comparePeriodA').value,b=document.getElementById('comparePeriodB').value,el=document.getElementById('periodComparisonResult'); if(!a||!b)return alert('اختر فترتين للمقارنة.'); const x=getPeriodStats(a),y=getPeriodStats(b); const delta=(v1,v2)=>{const d=v2-v1;return `${d>=0?'+':''}${d.toFixed(2)}`}; el.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;text-align:center"><div style="background:rgba(255,255,255,.06);padding:7px;border-radius:8px"><strong style="color:#38bdf8">${a}</strong><br>الحجوزات: ${x.count}<br>الإيرادات: ${x.revenue.toFixed(2)} ر.س<br>الإشغال: ${x.occupancy}%</div><div style="background:rgba(255,255,255,.06);padding:7px;border-radius:8px"><strong style="color:#c084fc">${b}</strong><br>الحجوزات: ${y.count}<br>الإيرادات: ${y.revenue.toFixed(2)} ر.س<br>الإشغال: ${y.occupancy}%</div></div><div style="margin-top:6px;text-align:center;color:#fbbf24">فرق الإيرادات: ${delta(x.revenue,y.revenue)} ر.س — فرق الحجوزات: ${y.count-x.count>=0?'+':''}${y.count-x.count}</div>`; }
 function renderActivityLog(){ const el=document.getElementById('activityLogPanel'); if(!el)return; const rows=Object.entries(allAuditLog||{}).flatMap(([hid,items])=>(items||[]).map(x=>({...x,hotelId:hid}))).sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,80); el.innerHTML=rows.length?rows.map(x=>`<div style="padding:6px 0;border-bottom:1px dashed rgba(255,255,255,.12)"><strong style="color:#c084fc">${x.action||'عملية'}</strong> — ${x.staff||'-'}<br><span style="color:#94a3b8">${new Date(x.date).toLocaleString('ar-SA')} — الفندق ${x.hotelId}</span></div>`).join(''):'لا توجد عمليات مسجلة بعد.'; }
 
-function renderReportsAndFinancials(){
+function renderReportsAndFinancials() {
   renderActivityLog();
   renderAdvancedAnalytics();
-  renderAdvancedHotelReport();
   const invoices = allInvoices[currentHotelId] || [];
   filterInvoicesTable(document.getElementById('searchBookingInput') ? document.getElementById('searchBookingInput').value : '');
   let sumInvoices = 0;
@@ -2868,12 +2620,11 @@ function renderReportsAndFinancials(){
   if(invTbody) {
     invTbody.innerHTML = '';
     const inventoryList = allInventory[currentHotelId] || [];
-    let lowCount=0,totalUnits=0; inventoryList.forEach((item, idx) => {
-      let isLow = Number(item.qty||0) <= Number(item.minLimit||0); if(isLow)lowCount++; totalUnits+=Number(item.qty||0);
+    inventoryList.forEach((item, idx) => {
+      let isLow = item.qty <= item.minLimit;
       let statusBadge = isLow ? `<span style="color:#ef4444; font-weight:bold;">⚠️ تنبيه نقص</span>` : `<span style="color:#34d399;">متوفر ✅</span>`;
-      invTbody.innerHTML += `<tr><td>${item.name}<br><small style="color:#94a3b8">${item.unit||'وحدة'}</small></td><td style="font-weight:bold;">${item.qty}</td><td>${item.minLimit}</td><td>${statusBadge}</td><td><button class="btn btn-green" style="padding:2px 6px;font-size:8px;margin:0 2px" onclick="adjustInventoryQty(${idx},1)">توريد +1</button><button class="btn btn-blue" style="padding:2px 6px; font-size:8px; margin:0;" onclick="reduceInventoryQty(${idx})">استهلاك -1</button></td></tr>`;
+      invTbody.innerHTML += `<tr><td>${item.name}</td><td style="font-weight:bold;">${item.qty}</td><td>${item.minLimit}</td><td>${statusBadge}</td><td><button class="btn btn-blue" style="padding:2px 6px; font-size:8px; margin:0;" onclick="reduceInventoryQty(${idx})">استهلاك (-1)</button></td></tr>`;
     });
-    const setInv=(id,v)=>{const e=document.getElementById(id);if(e)e.innerText=v;};setInv('inventoryItemsCount',inventoryList.length);setInv('inventoryLowCount',lowCount);setInv('inventoryTotalUnits',totalUnits); const mv=document.getElementById('inventoryMovementsList'),moves=inventoryMovements[currentHotelId]||[];if(mv)mv.innerHTML=moves.slice(0,8).map(m=>`<div style="padding:3px 0;border-bottom:1px solid rgba(255,255,255,.06)">${m.delta>0?'➕':'➖'} ${m.itemName}: ${m.delta>0?'+':''}${m.delta} — ${m.type} <small style="color:#94a3b8">${new Date(m.date).toLocaleString()}</small></div>`).join('')||'لا توجد حركات مسجلة';
   }
 
   const maintTbody = document.getElementById('maintenanceTicketsTableBody');
@@ -2890,13 +2641,10 @@ function renderReportsAndFinancials(){
   if(shiftTbody) {
     shiftTbody.innerHTML = '';
     const shifts = allShifts[currentHotelId] || [];
-    const safeShift=value=>typeof hoteraGlobalSafe==='function'?hoteraGlobalSafe(value==null?'':String(value)):String(value==null?'':value);
     shifts.forEach(s => {
-      const variance=s.variance===null||s.variance===undefined?'—':`${Number(s.variance).toFixed(2)} ر.س`;
-      const varianceColor=s.variance===null||s.variance===undefined?'#94a3b8':Number(s.variance)===0?'#34d399':Number(s.variance)<0?'#f87171':'#fbbf24';
-      shiftTbody.innerHTML += `<tr><td>${safeShift(s.dateStr)}</td><td>${safeShift(s.outgoing)}</td><td>${safeShift(s.incoming)}</td><td style="color:var(--accent-solid);font-weight:bold;">${Number(s.cash||0).toFixed(2)} ر.س</td><td style="color:${varianceColor};font-weight:bold;">${variance}</td><td>${safeShift(s.status||'مسجلة')}</td><td>${safeShift(s.notes)}${s.tasks?`<br><small>المهام: ${safeShift(s.tasks)}</small>`:''}</td></tr>`;
+      shiftTbody.innerHTML += `<tr><td>${s.dateStr}</td><td>${s.outgoing}</td><td>${s.incoming}</td><td style="color:var(--accent-solid); font-weight:bold;">${s.cash.toFixed(2)} ر.س</td><td>${s.notes}</td></tr>`;
     });
-    if(shifts.length === 0) { shiftTbody.innerHTML = `<tr><td colspan="7" style="color:#94a3b8; font-size:10px;">لا توجد تسليمات ورديات مسجلة</td></tr>`; }
+    if(shifts.length === 0) { shiftTbody.innerHTML = `<tr><td colspan="5" style="color:#94a3b8; font-size:10px;">لا توجد تسليمات ورديات مسجلة</td></tr>`; }
   }
 
   const ratingsTbody = document.getElementById('ratingsTableBody');
@@ -2904,19 +2652,14 @@ function renderReportsAndFinancials(){
     ratingsTbody.innerHTML = '';
     const ratings = allRatings[currentHotelId] || [];
     let sumStars = 0;
-    const safeRating=value=>typeof hoteraGlobalSafe==='function'?hoteraGlobalSafe(value==null?'':String(value)):String(value==null?'':value);
-    let positive=0;
     ratings.forEach(rt => {
-      const stars=Math.max(1,Math.min(5,Number(rt.stars)||0)); sumStars += stars; if(stars>=4)positive++;
-      let starsStr = '⭐'.repeat(stars);
-      const profileButton=rt.guestPhone&&typeof openCustomerProfile==='function'?`<button class="btn btn-blue" style="width:auto;margin:0;padding:3px 5px;font-size:8px" onclick="openCustomerProfile('${safeRating(rt.guestPhone)}')">ملف النزيل</button>`:'—';
-      ratingsTbody.innerHTML += `<tr><td>${safeRating(rt.guest)}</td><td>غرفة ${safeRating(rt.room)}</td><td>${starsStr} (${stars})</td><td>${safeRating(rt.comment || '-')}<br><small>${safeRating(rt.date||'')}</small></td><td>${profileButton}</td></tr>`;
+      sumStars += rt.stars;
+      let starsStr = '⭐'.repeat(rt.stars);
+      ratingsTbody.innerHTML += `<tr><td>${rt.guest}</td><td>غرفة ${rt.room}</td><td>${starsStr} (${rt.stars})</td><td>${rt.comment || '-'}</td></tr>`;
     });
     let avg = ratings.length > 0 ? (sumStars / ratings.length).toFixed(1) : "0.0";
     document.getElementById('avgRatingDisplay').innerText = `${avg} / 5.0 ⭐`;
-    const totalEl=document.getElementById('ratingTotalDisplay'),positiveEl=document.getElementById('ratingPositiveDisplay'),latestEl=document.getElementById('ratingLatestDisplay'); if(totalEl)totalEl.innerText=ratings.length; if(positiveEl)positiveEl.innerText=ratings.length?`${Math.round((positive/ratings.length)*100)}%`:'0%'; if(latestEl)latestEl.innerText=ratings[0]?.date?new Date(ratings[0].date).toLocaleDateString('ar-SA'):'—';
-    const breakdown=[5,4,3,2,1].map(n=>`${n}⭐: ${ratings.filter(r=>Number(r.stars)===n).length}`).join(' · '); const breakdownEl=document.getElementById('ratingBreakdownDisplay'); if(breakdownEl)breakdownEl.innerText=breakdown;
-    if(ratings.length === 0) { ratingsTbody.innerHTML = `<tr><td colspan="5" style="color:#94a3b8; font-size:10px;">لا توجد تقييمات مسجلة بعد</td></tr>`; }
+    if(ratings.length === 0) { ratingsTbody.innerHTML = `<tr><td colspan="4" style="color:#94a3b8; font-size:10px;">لا توجد تقييمات مسجلة بعد</td></tr>`; }
   }
 
   const hotel = hotelsList.find(h => h.id === currentHotelId);
@@ -2926,14 +2669,11 @@ function renderReportsAndFinancials(){
     const todayStrDate = new Date().toISOString().split('T')[0];
     document.getElementById('attendanceDateDisplay').innerText = `التاريخ: ${todayStrDate}`;
     if(!attendanceRecords[currentHotelId][todayStrDate]) { attendanceRecords[currentHotelId][todayStrDate] = {}; }
-      const dayAtt = attendanceRecords[currentHotelId][todayStrDate];
+    const dayAtt = attendanceRecords[currentHotelId][todayStrDate];
     const canEditAtt = (currentRole === 'superadmin' || currentRole === 'manager' || currentRole === 'hr_supervisor');
-    let attPresent=0,attLate=0,attAbsent=0; const attTotal=hotel.staffList.length;
     hotel.staffList.forEach((st, sIdx) => {
       if(!dayAtt[st.name]) { dayAtt[st.name] = { status: 'حاضر', note: '' }; }
       let rec = dayAtt[st.name];
-      if(rec.status==='حاضر')attPresent++; if(rec.status==='متأخر')attLate++; if(rec.status==='غائب')attAbsent++;
-      const safeAtt=typeof hoteraGlobalSafe==='function'?hoteraGlobalSafe:String; const staffArg=JSON.stringify(st.name); const clockButtons=canEditAtt?`<button class="btn btn-green" style="padding:2px 5px;font-size:8px;margin:1px" onclick="markAttendanceTime(${staffArg},'checkIn')">دخول</button><button class="btn btn-blue" style="padding:2px 5px;font-size:8px;margin:1px" onclick="markAttendanceTime(${staffArg},'checkOut')">انصراف</button>`:''; const timeText=`${rec.checkIn||'—'} / ${rec.checkOut||'—'}<br>${clockButtons}`;
       let statusBadge = canEditAtt ? `
         <select class="form-select" style="margin-bottom:0; padding:4px; font-size:10px;" onchange="updateStaffAttendance('${st.name}', this.value)">
           <option value="حاضر" ${rec.status==='حاضر'?'selected':''}>🟩 حاضر</option>
@@ -2943,16 +2683,11 @@ function renderReportsAndFinancials(){
         </select>
       ` : `<span style="font-weight:bold;">${rec.status}</span>`;
       let noteInput = canEditAtt ? `<input type="text" class="form-input" style="margin-bottom:0; padding:4px; font-size:10px;" placeholder="اكتب السبب..." value="${rec.note || ''}" onchange="updateStaffNote('${st.name}', this.value)">` : `<span>${rec.note || '-'}</span>`;
-      attTbody.innerHTML += `<tr><td><strong>${st.idNum || 'EMP-10'+sIdx}</strong></td><td>${safeAtt(st.name)}</td><td>${statusBadge}</td><td style="font-size:8px">${timeText}</td><td>${noteInput}</td></tr>`;
+      attTbody.innerHTML += `<tr><td><strong>${st.idNum || 'EMP-10'+sIdx}</strong></td><td>${st.name}</td><td>${statusBadge}</td><td>${noteInput}</td></tr>`;
     });
-    const setAtt=(id,v)=>{const e=document.getElementById(id);if(e)e.innerText=v;}; setAtt('attPresentCount',attPresent);setAtt('attLateCount',attLate);setAtt('attAbsentCount',attAbsent);setAtt('attStaffCount',attTotal);
   }
 }
-function markAttendanceTime(staffName,kind){const d=new Date(),dateKey=d.toISOString().split('T')[0],time=d.toLocaleTimeString('ar-SA',{hour:'2-digit',minute:'2-digit'});if(!attendanceRecords[currentHotelId][dateKey])attendanceRecords[currentHotelId][dateKey]={};if(!attendanceRecords[currentHotelId][dateKey][staffName])attendanceRecords[currentHotelId][dateKey][staffName]={status:'حاضر',note:''};attendanceRecords[currentHotelId][dateKey][staffName][kind]=time;if(typeof recordHoteraAudit==='function')recordHoteraAudit(kind==='checkIn'?'تسجيل حضور':'تسجيل انصراف',{staffName,time});saveData();uploadDataToCloud();renderReportsAndFinancials();}
-function exportAttendanceCsv(){const dateKey=new Date().toISOString().split('T')[0],hotel=hotelsList.find(h=>h.id===currentHotelId),day=attendanceRecords[currentHotelId]?.[dateKey]||{};const rows=[['التاريخ','الرقم الوظيفي','اسم الموظف','الحالة','الدخول','الانصراف','الملاحظة']];(hotel?.staffList||[]).forEach((s,i)=>{const r=day[s.name]||{status:'حاضر'};rows.push([dateKey,s.idNum||'EMP-10'+i,s.name,r.status||'حاضر',r.checkIn||'',r.checkOut||'',r.note||'']);});const csv='\\ufeff'+rows.map(r=>r.map(v=>`"${String(v).replaceAll('"','""')}"`).join(',')).join('\\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=`HOTERA-attendance-${dateKey}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);}
 
-function hoteraPaymentState(inv) { const total=Math.max(0,Number(inv?.total)||0); const paid=Math.min(total,Math.max(0,Number(inv?.paidAmount ?? inv?.amountPaid ?? 0)||0)); const remaining=Math.max(0,total-paid); const status=remaining<=0&&total>0?'مدفوع بالكامل':paid>0?'مدفوع جزئيًا':(inv?.paymentStatus||'غير مدفوع'); return {total,paid,remaining,status}; }
-function recordHoteraInvoicePayment() { const inv=lastActiveInvoice; if(!inv)return; const state=hoteraPaymentState(inv); if(state.remaining<=0)return alert('الفاتورة مدفوعة بالكامل.'); const raw=prompt(`أدخل مبلغ الدفعة — المتبقي ${state.remaining.toFixed(2)} ر.س:`,''); if(raw===null)return; const amount=Number(raw); if(!Number.isFinite(amount)||amount<=0||amount>state.remaining)return alert('أدخل مبلغًا صحيحًا لا يتجاوز الرصيد المتبقي.'); inv.paidAmount=state.paid+amount; inv.remainingAmount=state.remaining-amount; inv.paymentStatus=inv.remainingAmount<=0?'مدفوع بالكامل':'مدفوع جزئيًا'; inv.paymentHistory=Array.isArray(inv.paymentHistory)?inv.paymentHistory:[]; inv.paymentHistory.unshift({amount,date:new Date().toISOString(),method:inv.paymentMethod||'نقدي',staff:currentUsername||'المستخدم الحالي'}); if(typeof recordHoteraAudit==='function')recordHoteraAudit('تسجيل دفعة فاتورة',{invoiceId:inv.id,amount,remaining:inv.remainingAmount}); saveData(); uploadDataToCloud(); filterInvoicesTable(''); populateOfficialInvoiceModal(inv); alert('✅ تم تسجيل الدفعة وتحديث الرصيد المتبقي.'); }
 function filterInvoicesTable(query) {
   const invoices = allInvoices[currentHotelId] || [];
   const tbody = document.getElementById('invoicesTableBody');
@@ -2975,7 +2710,7 @@ function filterInvoicesTable(query) {
         <td><strong>غرف: ${roomsStr}</strong></td>
         <td>${inv.guest} (${inv.bookingType || 'فردي'})</td>
         <td>${inv.staffName || 'مدير'}</td>
-        <td style="color:#b45309; font-weight:bold;">${Number(inv.total||0).toFixed(2)} SAR<br><small style="color:#64748b">متبقي: ${hoteraPaymentState(inv).remaining.toFixed(2)} ر.س</small></td>
+        <td style="color:#b45309; font-weight:bold;">${inv.total.toFixed(2)} SAR</td>
         <td><button class="btn btn-blue" style="padding:2px 4px; font-size:8px; margin:0;" onclick="viewSpecificInvoice(${realIdx})">عرض الفاتورة</button></td>
       </tr>
     `;
@@ -3066,7 +2801,7 @@ function populateOfficialInvoiceModal(inv) {
       </tr>
     `;
   });
-  const paymentState=hoteraPaymentState(inv); document.getElementById('invGrandTotal').innerText = `${paymentState.total.toFixed(2)} ر.س`; document.getElementById('invPaidAmount').innerText = `${paymentState.paid.toFixed(2)} ر.س`; document.getElementById('invRemainingAmount').innerText = `${paymentState.remaining.toFixed(2)} ر.س`; document.getElementById('invPaymentStatus').innerText = paymentState.status; const pricingLine=document.getElementById('invoicePricingSummary'); if(pricingLine)pricingLine.innerText=`التسعير: ${inv.seasonLabel||'عادي'} — الخصم: ${Number(inv.discountAmount||0).toFixed(2)} ر.س — الضريبة: ${Number(inv.taxAmount||0).toFixed(2)} ر.س`; const payBtn=document.getElementById('btnRecordInvoicePayment'); if(payBtn)payBtn.style.display=paymentState.remaining>0?'block':'none';
+  document.getElementById('invGrandTotal').innerText = `${inv.total.toFixed(2)} ر.س`;
   document.getElementById('officialInvoiceModal').style.display = 'flex';
 }
 function closeOfficialInvoiceModal() { document.getElementById('officialInvoiceModal').style.display = 'none'; }
@@ -3125,7 +2860,7 @@ function filterCheckoutAlerts() {
   });
 }
 
-function openManageRoomsModal() { if (!requireHoteraPermission('hotelAdmin', 'إدارة الغرف متاحة لمدير الفندق أو السوبر أدمن فقط.')) return; document.getElementById('manageRoomsModal').style.display = 'flex'; renderEditRoomsTable(); }
+function openManageRoomsModal() { document.getElementById('manageRoomsModal').style.display = 'flex'; renderEditRoomsTable(); }
 function closeManageRoomsModal() { document.getElementById('manageRoomsModal').style.display = 'none'; render(); }
 function renderEditRoomsTable() {
   const tbody = document.getElementById('editRoomsTableBody'); tbody.innerHTML = '';
@@ -3134,7 +2869,6 @@ function renderEditRoomsTable() {
   });
 }
 function addNewRoom() {
-  if (!requireHoteraPermission('hotelAdmin', 'إضافة الغرف متاحة لمدير الفندق أو السوبر أدمن فقط.')) return;
   const id = parseInt(document.getElementById('newRoomId').value);
   const type = document.getElementById('newRoomType').value;
   if(!id) return;
@@ -3142,7 +2876,6 @@ function addNewRoom() {
   saveData(); uploadDataToCloud(); renderEditRoomsTable();
 }
 function deleteRoom(idx) {
-  if (!requireHoteraPermission('hotelAdmin', 'حذف الغرف متاح لمدير الفندق أو السوبر أدمن فقط.')) return;
   allRooms[currentHotelId].splice(idx, 1);
   saveData(); uploadDataToCloud(); renderEditRoomsTable();
 }
@@ -3216,7 +2949,6 @@ function lookupCustomerByPhone() {
     document.getElementById('bookingGuestName').value = customerMemory[phone].name;
   }
 }
-function hoteraBookingPricingSummary(){const n=parseFloat(document.getElementById('bookingNightsInput')?.value)||1,p=parseFloat(document.getElementById('bookingNightPriceInput')?.value)||200,count=document.querySelectorAll('input[name="selectedBookingRoom"]:checked').length||1, gross=n*p*count, discountRate=Math.min(100,Math.max(0,Number(document.getElementById('bookingDiscountRate')?.value)||0)), taxRate=Math.min(100,Math.max(0,Number(document.getElementById('bookingTaxRate')?.value)||0)), discount=gross*discountRate/100, taxable=Math.max(0,gross-discount), tax=taxable*taxRate/100, total=taxable+tax; return {n,p,count,gross,discountRate,discount,taxRate,tax,total,season:document.getElementById('bookingSeasonLabel')?.value||'عادي'};}
 function calculateBookingDays() {
   const d1 = new Date(document.getElementById('bookingCheckIn').value);
   const d2 = new Date(document.getElementById('bookingCheckOut').value);
@@ -3224,19 +2956,13 @@ function calculateBookingDays() {
   document.getElementById('bookingNightsInput').value = diff > 0 ? diff : 1;
   calculateTotalFromManual();
 }
-function calculateTotalFromManual() { const s=hoteraBookingPricingSummary(); document.getElementById('bookingTotalPriceDisplay').innerText=`${s.total.toFixed(2)} ر.س`; const b=document.getElementById('bookingPricingBreakdown'); if(b)b.innerText=`الإجمالي الأساسي ${s.gross.toFixed(2)} − الخصم ${s.discount.toFixed(2)} + الضريبة ${s.tax.toFixed(2)} = النهائي ${s.total.toFixed(2)} ر.س`; }
-function hoteraDateRangeOverlaps(startA, endA, startB, endB) {
-  if (!startA || !endA || !startB || !endB) return false;
-  return String(startA) < String(endB) && String(startB) < String(endA);
-}
-function findHoteraBookingConflicts(roomIds, checkIn, checkOut, editingRef = null) {
-  const rooms = allRooms[currentHotelId] || [];
-  return rooms.filter(room => roomIds.includes(Number(room.id)) && room.bookingRef && room.bookingRef !== editingRef && room.checkIn && room.checkOut && hoteraDateRangeOverlaps(checkIn, checkOut, room.checkIn, room.checkOut));
-}
-function validateHoteraBookingDates(checkIn, checkOut) {
-  if (!checkIn || !checkOut) return 'يرجى تحديد تاريخ الدخول وتاريخ الخروج.';
-  if (String(checkOut) <= String(checkIn)) return 'تاريخ الخروج يجب أن يكون بعد تاريخ الدخول.';
-  return '';
+function calculateTotalFromManual() {
+  const n = parseFloat(document.getElementById('bookingNightsInput').value) || 1;
+  const p = parseFloat(document.getElementById('bookingNightPriceInput').value) || 200;
+  const checkboxes = document.querySelectorAll('input[name="selectedBookingRoom"]:checked');
+  const selectedCount = checkboxes.length > 0 ? checkboxes.length : 1;
+  const grandTotal = n * p * selectedCount;
+  document.getElementById('bookingTotalPriceDisplay').innerText = `${grandTotal.toFixed(2)} ر.س`;
 }
 function reviewNewBooking() {
   const guest=document.getElementById('bookingGuestName').value.trim();
@@ -3249,12 +2975,8 @@ function reviewNewBooking() {
   const payment=document.getElementById('bookingPaymentMethod').value;
   if(!guest) return alert('الرجاء إدخال اسم العميل قبل المراجعة.');
   if(!rooms.length) return alert('الرجاء اختيار غرفة واحدة على الأقل قبل المراجعة.');
-  const dateError = validateHoteraBookingDates(checkIn, checkOut);
-  if (dateError) return alert(`⚠️ ${dateError}`);
-  const conflicts = findHoteraBookingConflicts(rooms.map(Number), checkIn, checkOut, window.hoteraEditingBookingRef || null);
-  if (conflicts.length) return alert(`⚠️ يوجد تعارض في مواعيد الغرف التالية: ${conflicts.map(r => r.id).join('، ')}. اختر تواريخ أو غرفًا أخرى.`);
   const box=document.getElementById('bookingReviewBox');
-  const pricing=hoteraBookingPricingSummary(); box.innerHTML=`<strong style="color:var(--accent-solid)">مراجعة الحجز</strong><br>👤 ${guest} — 📞 ${phone||'بدون جوال'}<br>🛏️ الغرف: ${rooms.join('، ')}<br>📅 ${checkIn} إلى ${checkOut} — ${nights} ليلة<br>💳 الدفع: ${payment}<br>🎯 الغرض: ${document.getElementById('bookingPurpose').value}<br>📌 المصدر: ${document.getElementById('bookingSource').value}<br>🏷️ الموسم: ${pricing.season}<br>💰 الأساسي: ${pricing.gross.toFixed(2)} ر.س — الخصم: ${pricing.discount.toFixed(2)} ر.س — الضريبة: ${pricing.tax.toFixed(2)} ر.س<br>✅ الإجمالي النهائي: <strong>${pricing.total.toFixed(2)} ر.س</strong>`;
+  box.innerHTML=`<strong style="color:var(--accent-solid)">مراجعة الحجز</strong><br>👤 ${guest} — 📞 ${phone||'بدون جوال'}<br>🛏️ الغرف: ${rooms.join('، ')}<br>📅 ${checkIn} إلى ${checkOut} — ${nights} ليلة<br>💳 الدفع: ${payment}<br>🎯 الغرض: ${document.getElementById('bookingPurpose').value}<br>📌 المصدر: ${document.getElementById('bookingSource').value}<br>👤 المنفذ: ${currentUsername||'المستخدم الحالي'}<br>💰 الإجمالي: <strong>${(rooms.length*nights*price).toFixed(2)} ر.س</strong>`;
   box.style.display='block'; document.getElementById('btnBkgReview').style.display='none'; document.getElementById('btnBkgSubmit').style.display='block';
 }
 
@@ -3262,14 +2984,8 @@ function openCustomerProfile(phoneOrName) {
   const q=(phoneOrName||'').trim().toLowerCase();
   const found=Object.entries(customerMemory||{}).find(([phone,c])=>phone.toLowerCase()===q||(c.name||'').toLowerCase()===q);
   if(!found) return alert('لم يتم العثور على ملف عميل محفوظ.');
-  const [phone,c]=found;
-  const safe=value=>typeof hoteraGlobalSafe==='function'?hoteraGlobalSafe(value==null?'':String(value)):String(value==null?'':value).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-  const invs=Object.values(allInvoices||{}).flat().filter(inv=>inv&&((inv.phone||'')===phone||(inv.guest||'')===c.name));
-  const stays=Object.values(allRooms||{}).flat().filter(room=>room&&((room.phone||'')===phone||(room.guest||'')===c.name||(room.lastGuest||'')===c.name));
-  const total=invs.reduce((n,i)=>n+Number(i.total||0),0),paid=invs.reduce((n,i)=>n+Number(i.paidAmount||0),0);
-  const invoiceRows=invs.slice(0,8).map(i=>`<div>📄 ${safe(i.id||'-')} — ${safe(i.date||i.checkIn||'-')} — ${Number(i.total||0).toFixed(2)} ر.س — ${safe(i.paymentStatus||'غير محدد')}</div>`).join('')||'لا توجد فواتير سابقة';
-  const stayRows=stays.slice(0,8).map(r=>`<div>🛏️ الغرفة ${safe(r.id||'-')} — ${safe(r.checkIn||'-')} إلى ${safe(r.checkOut||'-')} — ${safe(r.status||'غير محدد')}</div>`).join('')||'لا توجد إقامة مسجلة';
-  document.getElementById('customerProfileContent').innerHTML=`<div style="background:rgba(245,158,11,.1);padding:9px;border-radius:10px;margin-bottom:8px"><strong style="font-size:14px;color:var(--accent-solid)">${safe(c.name||'عميل')}</strong><br>📞 ${safe(phone)}<br>🪪 ${safe(c.guestId||'غير مسجل')} — 🌍 ${safe(c.nationality||'غير محدد')}<br>✉️ ${safe(c.email||'غير مسجل')}<br>👥 البالغون: ${safe(c.adults||'—')} — الأطفال: ${safe(c.children||'—')}</div><strong>ملخص التعاملات</strong><br>🧾 عدد الفواتير: ${invs.length}<br>💰 الإجمالي: ${total.toFixed(2)} ر.س<br>✅ المدفوع: ${paid.toFixed(2)} ر.س<br>⏳ المتبقي: ${Math.max(0,total-paid).toFixed(2)} ر.س<br><br><strong>سجل الإقامات</strong><div style="margin-top:5px;line-height:1.8">${stayRows}</div><br><strong>آخر الفواتير</strong><div style="margin-top:5px;line-height:1.8">${invoiceRows}</div><br><strong>ملاحظات وتفضيلات</strong><div style="margin-top:5px;color:#fbbf24">${safe(c.preferences||c.notes||'لا توجد ملاحظات محفوظة')}</div>`;
+  const [phone,c]=found; const invs=Object.values(allInvoices||{}).flat().filter(inv=>inv.phone===phone||inv.guest===c.name); const total=invs.reduce((n,i)=>n+Number(i.total||0),0);
+  document.getElementById('customerProfileContent').innerHTML=`<div style="background:rgba(245,158,11,.1);padding:9px;border-radius:10px;margin-bottom:8px"><strong style="font-size:14px;color:var(--accent-solid)">${c.name||'عميل'}</strong><br>📞 ${phone}<br>🪪 ${c.guestId||'غير مسجل'} — 🌍 ${c.nationality||'غير محدد'}<br>✉️ ${c.email||'غير مسجل'}</div><strong>ملخص التعاملات</strong><br>🧾 عدد الفواتير: ${invs.length}<br>💰 إجمالي التعاملات: ${total.toFixed(2)} ر.س<br><br>${invs.slice(0,8).map(i=>`📄 ${i.id||'-'} — ${i.date||'-'} — ${(i.total||0).toFixed(2)} ر.س`).join('<br>')||'لا توجد حجوزات سابقة'}`;
   document.getElementById('customerProfileModal').style.display='flex';
 }
 function closeCustomerProfileModal(){document.getElementById('customerProfileModal').style.display='none';}
@@ -3290,7 +3006,6 @@ function executeNewBooking() {
   const carPlate = document.getElementById('bookingCarPlate').value.trim();
   const nights = parseInt(document.getElementById('bookingNightsInput').value) || 1;
   const nightPrice = parseFloat(document.getElementById('bookingNightPriceInput').value) || 200;
-  const pricing = hoteraBookingPricingSummary();
   const checkIn = document.getElementById('bookingCheckIn').value;
   const checkOut = document.getElementById('bookingCheckOut').value;
   const checkboxes = [...document.querySelectorAll('input[name="selectedBookingRoom"]:checked')];
@@ -3298,10 +3013,6 @@ function executeNewBooking() {
   const editingRef = window.hoteraEditingBookingRef || null;
   if(!guest) return alert('الرجاء إدخال اسم النزيل أو الجهة!');
   if(!selectedIds.length) return alert('الرجاء اختيار غرفة واحدة على الأقل للحجز!');
-  const dateError = validateHoteraBookingDates(checkIn, checkOut);
-  if (dateError) return alert(`⚠️ ${dateError}`);
-  const conflicts = findHoteraBookingConflicts(selectedIds, checkIn, checkOut, editingRef);
-  if (conflicts.length) return alert(`⚠️ لا يمكن تنفيذ الحجز بسبب تعارض الغرف: ${conflicts.map(r => r.id).join('، ')}.`);
   const bookingType = bookingTypeForCount(selectedIds.length);
   const rooms = allRooms[currentHotelId] || [];
   const originalBookingRoom = editingRef ? (rooms.find(r=>r.bookingRef===editingRef)||{}) : {};
@@ -3320,7 +3031,7 @@ function executeNewBooking() {
     roomsListDetails.push({id:target.id,type:target.type,nights,price:nightPrice}); totalGrandAmount += nights*nightPrice;
   });
   let unifiedInvoice = (allInvoices[currentHotelId]||[]).find(i=>i.bookingRef===bookingRef);
-  const invoiceData={bookingRef,room:roomsListDetails[0]?.id||'مجموعة',roomsList:roomsListDetails,guest,phone,guestId,nationality,email,adults,children,paymentMethod,bookingNotes,carType,carPlate,bookingType,nights,nightPrice,bookingPurpose,bookingSource,total:pricing.total,grossTotal:pricing.gross,discountRate:pricing.discountRate,discountAmount:pricing.discount,taxRate:pricing.taxRate,taxAmount:pricing.tax,seasonLabel:pricing.season,date:checkIn,checkIn,checkOut,status:'confirmed',paymentStatus:'غير مدفوع',paidAmount:0,remainingAmount:pricing.total,paymentHistory:[],staffName:currentUsername,bookingCreatedBy,bookingUpdatedBy};
+  const invoiceData={bookingRef,room:roomsListDetails[0]?.id||'مجموعة',roomsList:roomsListDetails,guest,phone,guestId,nationality,email,adults,children,paymentMethod,bookingNotes,carType,carPlate,bookingType,nights,nightPrice,bookingPurpose,bookingSource,total:totalGrandAmount,date:checkIn,checkIn,checkOut,status:'confirmed',staffName:currentUsername,bookingCreatedBy,bookingUpdatedBy};
   if(unifiedInvoice) Object.assign(unifiedInvoice,invoiceData); else { unifiedInvoice={id:`INV-${Math.floor(Math.random()*9000+1000)}`,...invoiceData}; allInvoices[currentHotelId].unshift(unifiedInvoice); }
   recordHoteraAudit(editingRef?'تعديل حجز':'إنشاء حجز',{bookingRef,guest,rooms:roomsListDetails.map(r=>r.id),total:totalGrandAmount,bookingType});
   saveData(); uploadDataToCloud(); closeNewBookingModal(); window.hoteraEditingBookingRef=null; render(); populateOfficialInvoiceModal(unifiedInvoice);
@@ -3522,8 +3233,7 @@ function submitGuestRatingFromPortal() {
   const comment = document.getElementById('portalCommentInput').value.trim();
   if(!guest) return alert('الرجاء إدخال الاسم الكريم!');
   if(!allRatings[currentHotelId]) allRatings[currentHotelId] = [];
-  const guestPhone=Object.entries(customerMemory||{}).find(([phone,c])=>(c?.name||'').trim()===guest)?.[0]||'';
-  allRatings[currentHotelId].unshift({ guest, room: room || 'عام', stars, comment, date:new Date().toISOString(), guestPhone });
+  allRatings[currentHotelId].unshift({ guest, room: room || 'عام', stars, comment });
   saveData(); uploadDataToCloud();
   alert('🌟 شكراً جزيلاً لتقييمكم! تم استلامه بنجاح.');
   switchMainFeature('rooms', document.querySelector('.quick-access-chip'));
@@ -3564,11 +3274,10 @@ async function checkHoteraSecureServer(){const url=rememberSecureSyncServer();if
 async function hoteraPayloadChecksum(payload){const raw=JSON.stringify(payload);if(window.crypto?.subtle){const bytes=new TextEncoder().encode(raw);const digest=await crypto.subtle.digest('SHA-256',bytes);return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,'0')).join('');}return 'legacy-'+raw.length+'-'+Date.now();}
 function downloadHoteraLocalBackup(){try{const payload=buildCloudPayload();const backup={format:'HOTERA-LOCAL-BACKUP',schemaVersion:'legacy-v1',createdAt:new Date().toISOString(),sourceDeviceId:deviceId,payload};const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='HOTERA_BACKUP_'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);setSecureSyncStatus('تم تنزيل نسخة احتياطية محلية — لم تتغير بيانات النظام ✅','#34d399');}catch(e){setSecureSyncStatus('تعذر إنشاء النسخة الاحتياطية: '+e.message,'#f87171');}}
 async function pushHoteraSecureSnapshot(){const url=rememberSecureSyncServer();if(!url)return setSecureSyncStatus('أدخل رابط الخادم أولاً — لن يتم إرسال أي بيانات','#fbbf24');try{const payload=buildCloudPayload();const checksum=await hoteraPayloadChecksum(payload);setSecureSyncStatus('جارٍ إرسال لقطة جديدة دون حذف اللقطات السابقة...','#fbbf24');const r=await fetch(url+'/api/trpc/hoteraSync.push',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({json:{scopeKey:'hotera-default',sourceDeviceId:deviceId,sourceLabel:deviceName,schemaVersion:'legacy-v1',checksum,payload}})});if(r.status===401||r.status===403){setSecureSyncStatus('الخادم رفض الطلب: يلزم تسجيل دخول الخادم قبل الرفع الآمن','#f87171');return;}if(!r.ok)throw new Error('HTTP '+r.status);setSecureSyncStatus('تم حفظ لقطة آمنة جديدة دون حذف البيانات السابقة ✅','#34d399');}catch(e){setSecureSyncStatus('لم يتم الرفع الآمن: '+e.message,'#f87171');}}
-async function compareHoteraLatestSnapshot(){const url=rememberSecureSyncServer();const summary=document.getElementById('hoteraSyncDiffSummary');if(summary){summary.style.display='none';summary.innerHTML='';}if(!url)return setSecureSyncStatus('أدخل رابط الخادم أولاً — لن يتم جلب أي بيانات','#fbbf24');try{setSecureSyncStatus('جارٍ جلب بيانات المقارنة دون تطبيقها...','#fbbf24');const localPayload=buildCloudPayload(),localChecksum=await hoteraPayloadChecksum(localPayload);const r=await fetch(url+'/api/trpc/hoteraSync.latest?input='+encodeURIComponent(JSON.stringify({json:{scopeKey:'hotera-default'}})),{credentials:'include',cache:'no-store'});if(r.status===401||r.status===403){setSecureSyncStatus('المقارنة تتطلب تسجيل دخول الخادم — لم تُغيّر البيانات ✅','#fbbf24');return;}if(!r.ok)throw new Error('HTTP '+r.status);const body=await r.json(),latest=body?.result?.data?.json;if(!latest){setSecureSyncStatus('لا توجد لقطة خادم للمقارنة بعد — البيانات المحلية كما هي ✅','#34d399');return;}const serverChecksum=latest.checksum||'',same=localChecksum===serverChecksum;if(summary){summary.style.display='block';summary.innerHTML=`<strong style="color:${same?'#34d399':'#fbbf24'}">${same?'✅ لا توجد فروقات':'⚠️ توجد فروقات تحتاج مراجعة'}</strong><br><small>آخر لقطة: ${hoteraGlobalSafe(latest.createdAt||latest.updatedAt||'غير محدد')} · الجهاز: ${hoteraGlobalSafe(latest.sourceLabel||latest.sourceDeviceId||'غير محدد')}<br>المقارنة للعرض فقط؛ لم يتم تطبيق أي تغيير على البيانات المحلية.</small>`;}setSecureSyncStatus(same?'المقارنة ناجحة: البيانات المحلية مطابقة لآخر لقطة ✅':'توجد فروقات: لم يتم تطبيق أي تغيير على البيانات المحلية ⚠️',same?'#34d399':'#fbbf24');}catch(e){setSecureSyncStatus('تعذرت المقارنة: '+e.message,'#f87171');}}
+async function compareHoteraLatestSnapshot(){const url=rememberSecureSyncServer();if(!url)return setSecureSyncStatus('أدخل رابط الخادم أولاً — لن يتم جلب أي بيانات','#fbbf24');try{setSecureSyncStatus('جارٍ جلب بيانات المقارنة دون تطبيقها...','#fbbf24');const r=await fetch(url+'/api/trpc/hoteraSync.latest?input='+encodeURIComponent(JSON.stringify({json:{scopeKey:'hotera-default'}})),{credentials:'include',cache:'no-store'});if(r.status===401||r.status===403){setSecureSyncStatus('المقارنة تتطلب تسجيل دخول الخادم — لم تُغيّر البيانات ✅','#fbbf24');return;}if(!r.ok)throw new Error('HTTP '+r.status);const body=await r.json();const latest=body?.result?.data?.json;if(!latest){setSecureSyncStatus('لا توجد لقطة خادم للمقارنة بعد — البيانات المحلية كما هي ✅','#34d399');return;}const localChecksum=await hoteraPayloadChecksum(buildCloudPayload());const serverChecksum=latest.checksum||'';setSecureSyncStatus(localChecksum===serverChecksum?'المقارنة ناجحة: البيانات المحلية مطابقة لآخر لقطة ✅':'توجد فروقات: لم يتم تطبيق أي تغيير على البيانات المحلية ⚠️',localChecksum===serverChecksum?'#34d399':'#fbbf24');}catch(e){setSecureSyncStatus('تعذرت المقارنة: '+e.message,'#f87171');}}
 const secureSyncInput=document.getElementById('secureSyncServerUrlInput');if(secureSyncInput){secureSyncInput.value=localStorage.getItem('hotera_secure_sync_server')||'';}
 </script>
 
-<!-- HOTERA PRESENTATION LAYER: visual dashboard, notifications and presentation-only helpers. -->
 <script>
 (function(){
   function hoteraVisualNumber(value){return Number.isFinite(value)?value.toLocaleString('ar-SA'):'—';}
@@ -3576,7 +3285,6 @@ const secureSyncInput=document.getElementById('secureSyncServerUrlInput');if(sec
     const drawer=document.getElementById('hoteraNotificationDrawer');
     if(drawer) drawer.classList.toggle('open');
   };
-  window.renderHoteraSmartNotifications=function(roomList,invoices){const list=document.getElementById('hoteraSmartNotificationsList');if(!list)return;const today=new Date().toISOString().slice(0,10),items=[];roomList.filter(r=>r&&r.status==='maintenance').slice(0,8).forEach(r=>items.push({type:'danger',icon:'🛠️',text:`الغرفة ${r.id} في حالة صيانة وتحتاج متابعة.`}));roomList.filter(r=>r&&r.status==='cleaning').slice(0,8).forEach(r=>items.push({type:'warning',icon:'🧹',text:`الغرفة ${r.id} تحتاج تنظيفًا أو تجهيزًا.`}));roomList.filter(r=>r&&r.status==='occupied'&&String(r.checkOut||'')===today).slice(0,8).forEach(r=>items.push({type:'warning',icon:'⏰',text:`مغادرة اليوم: الغرفة ${r.id}${r.guest?' — '+r.guest:''}.`}));invoices.filter(i=>i&&hoteraPaymentState(i).remaining>0).slice(0,8).forEach(i=>items.push({type:'warning',icon:'💳',text:`الفاتورة ${i.id||'—'} لديها رصيد متبقٍ ${hoteraPaymentState(i).remaining.toFixed(2)} ر.س.`}));if(typeof readHoteraOperationsRequests==='function')readHoteraOperationsRequests().filter(x=>x&&x.status!=='مكتمل'&&x.status!=='ملغى').slice(0,8).forEach(x=>items.push({type:x.priority==='عاجلة'?'danger':'info',icon:x.type==='تنظيف'?'🧹':x.type==='صيانة'?'🛠️':'📌',text:`طلب تشغيل ${x.type||'—'}${x.room?' للغرفة '+x.room:''} — ${x.status||'مفتوح'}.`}));list.innerHTML=items.length?items.slice(0,20).map(x=>`<div class="hotera-notification-item ${x.type}"><i class="hotera-notification-dot"></i><span>${x.icon} ${hoteraGlobalSafe(x.text)}</span></div>`).join(''):'<div class="hotera-notification-item success"><i class="hotera-notification-dot"></i><span>✅ لا توجد تنبيهات تشغيلية عاجلة حاليًا. الحالة مستقرة.</span></div>';return items;};
   window.refreshHoteraVisualDashboard=function(){
     const roomStore=typeof allRooms!=='undefined'&&allRooms&&typeof allRooms==='object'?allRooms:{};
     const roomList=typeof currentHotelId!=='undefined'&&Array.isArray(roomStore[currentHotelId])?roomStore[currentHotelId]:[];
@@ -3592,7 +3300,9 @@ const secureSyncInput=document.getElementById('secureSyncServerUrlInput');if(sec
     set('visualBookingsToday',hoteraVisualNumber(bookings));
     set('visualOccupancy',roomList.length?Math.round((occupied/roomList.length)*100)+'%':'—');
     set('visualRevenue',revenue.toLocaleString('ar-SA',{maximumFractionDigits:0})+' ر.س');
-    const smartItems=window.renderHoteraSmartNotifications(roomList,invoices)||[]; set('hoteraNotificationCount',hoteraVisualNumber(smartItems.length));
+    set('hoteraNotificationCount',hoteraVisualNumber(actionable));
+    const note=document.querySelector('#hoteraDynamicNotification span');
+    if(note) note.textContent=actionable?`يوجد ${actionable.toLocaleString('ar-SA')} تنبيه تشغيلي يحتاج مراجعة في الغرف.`:'لا توجد تنبيهات تشغيلية عاجلة حاليًا. الحالة مستقرة.';
   };
   window.addEventListener('hotera:data-updated',()=>setTimeout(window.refreshHoteraVisualDashboard,0));
   window.addEventListener('storage',event=>{if(event.key&&event.key.startsWith('hotera_'))setTimeout(window.refreshHoteraVisualDashboard,0);});
@@ -3603,29 +3313,14 @@ const secureSyncInput=document.getElementById('secureSyncServerUrlInput');if(sec
 
 
 <div id="hoteraAuditLogModal" class="hotera-audit-modal" role="dialog" aria-modal="true" aria-label="سجل نشاط HOTERA">
-  <div class="hotera-audit-box"><div class="hotera-audit-head"><h3>🧾 سجل النشاط والتدقيق</h3><div style="display:flex;gap:5px"><button type="button" class="btn btn-blue" style="width:auto;margin:0;padding:5px 8px;font-size:9px" onclick="exportHoteraAuditLog()">تصدير CSV</button><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraAuditLogModal()">إغلاق</button></div></div><div style="display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:5px;margin-bottom:8px"><input id="hoteraAuditFilter" class="hotera-audit-filter" style="margin:0" placeholder="ابحث في العمليات أو التفاصيل..." oninput="renderHoteraAuditLog()"><input id="hoteraAuditDateFilter" class="hotera-audit-filter" style="margin:0" type="date" onchange="renderHoteraAuditLog()"><select id="hoteraAuditActionFilter" class="hotera-audit-filter" style="margin:0" onchange="renderHoteraAuditLog()"><option value="all">كل العمليات</option></select></div><div id="hoteraAuditSummary" style="font-size:9px;color:#94a3b8;margin-bottom:7px"></div><div id="hoteraAuditLogList"></div></div>
+  <div class="hotera-audit-box"><div class="hotera-audit-head"><h3>🧾 سجل النشاط والتدقيق</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraAuditLogModal()">إغلاق</button></div><input id="hoteraAuditFilter" class="hotera-audit-filter" placeholder="ابحث في العمليات أو المستخدمين..." oninput="renderHoteraAuditLog()"><div id="hoteraAuditLogList"></div></div>
 </div>
 
 
-<div id="hoteraCalendarModal" class="hotera-calendar-modal" role="dialog" aria-modal="true" aria-label="تقويم حجوزات HOTERA"><div class="hotera-calendar-box"><div class="hotera-calendar-head"><h3>🗓️ تقويم الحجوزات</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraCalendarModal()">إغلاق</button></div><div class="hotera-calendar-toolbar"><button type="button" onclick="hoteraCalendarShift(-1)">‹ السابق</button><span id="hoteraCalendarMonth" class="hotera-calendar-month"></span><button type="button" onclick="hoteraCalendarShift(1)">التالي ›</button><button type="button" onclick="hoteraCalendarToday()">اليوم</button><select id="hoteraCalendarStatusFilter" onchange="renderHoteraCalendarAdvanced()" style="padding:6px 8px;border:1px solid rgba(148,163,184,.25);border-radius:9px;color:#e2e8f0;background:rgba(255,255,255,.06);font:inherit;font-size:10px"><option value="all">كل الحالات</option><option value="confirmed">مؤكد / قادم</option><option value="staying">مقيم</option><option value="departure">مغادرة اليوم</option><option value="completed">منتهي</option><option value="maintenance">صيانة / تنظيف</option></select></div><div id="hoteraCalendarGrid" class="hotera-calendar-grid"></div><div class="hotera-calendar-side"><h4>الحجوزات القادمة</h4><div id="hoteraCalendarUpcoming" class="hotera-calendar-list"></div></div></div></div>
+<div id="hoteraCalendarModal" class="hotera-calendar-modal" role="dialog" aria-modal="true" aria-label="تقويم حجوزات HOTERA"><div class="hotera-calendar-box"><div class="hotera-calendar-head"><h3>🗓️ تقويم الحجوزات</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraCalendarModal()">إغلاق</button></div><div class="hotera-calendar-toolbar"><button type="button" onclick="hoteraCalendarShift(-1)">‹ السابق</button><span id="hoteraCalendarMonth" class="hotera-calendar-month"></span><button type="button" onclick="hoteraCalendarShift(1)">التالي ›</button><button type="button" onclick="hoteraCalendarToday()">اليوم</button></div><div id="hoteraCalendarGrid" class="hotera-calendar-grid"></div><div class="hotera-calendar-side"><h4>الحجوزات القادمة</h4><div id="hoteraCalendarUpcoming" class="hotera-calendar-list"></div></div></div></div>
 
 
-<div id="hoteraGlobalSearchModal" class="hotera-ops-modal" role="dialog" aria-modal="true" aria-label="البحث الشامل في HOTERA"><div class="hotera-ops-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3>🔎 البحث الشامل</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraGlobalSearch()">إغلاق</button></div><input id="hoteraGlobalSearchInput" class="hotera-audit-filter" placeholder="اسم النزيل، الجوال، الحجز، الغرفة، الفاتورة..." oninput="renderHoteraGlobalSearch(this.value)"><div id="hoteraGlobalSearchResults" class="hotera-ops-list"></div></div></div>
-<div id="hoteraSessionLockModal" class="hotera-ops-modal" role="dialog" aria-modal="true" aria-label="جلسة HOTERA مقفلة"><div class="hotera-ops-box" style="max-width:380px;text-align:center"><h3>🔒 الجلسة مقفلة مؤقتًا</h3><p style="font-size:11px;color:#94a3b8">تم قفل الشاشة لحماية النظام بعد فترة من عدم النشاط. البيانات محفوظة ولم يتم تسجيل الخروج.</p><input id="hoteraSessionUnlockPin" type="password" class="hotera-audit-filter" placeholder="أدخل الرمز السري للمتابعة" onkeydown="if(event.key==='Enter')unlockHoteraSession()"><button type="button" class="btn btn-gold" onclick="unlockHoteraSession()">فتح الجلسة</button><button type="button" class="btn btn-blue" onclick="logout()">تسجيل الخروج</button><div id="hoteraSessionLockMessage" style="font-size:10px;color:#f87171;margin-top:7px"></div></div></div>
-<div id="hoteraOperationsModal" class="hotera-ops-modal" role="dialog" aria-modal="true" aria-label="طلبات تشغيل HOTERA"><div class="hotera-ops-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3>🧹 طلبات التشغيل الداخلية</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraOperationsModal()">إغلاق</button></div><div class="hotera-ops-form"><input id="hoteraOpsRoom" placeholder="رقم الغرفة (اختياري)"><select id="hoteraOpsType"><option value="تنظيف">تنظيف</option><option value="صيانة">صيانة</option><option value="خدمة نزيل">خدمة نزيل</option><option value="أخرى">أخرى</option></select><select id="hoteraOpsPriority"><option value="عادية">أولوية عادية</option><option value="عالية">أولوية عالية</option><option value="عاجلة">عاجلة</option></select><input id="hoteraOpsAssignee" placeholder="الموظف المكلف (اختياري)"><input id="hoteraOpsDueDate" type="date"><textarea id="hoteraOpsNote" placeholder="وصف الطلب والتفاصيل"></textarea><button type="button" class="btn btn-gold" style="margin:0" onclick="createHoteraOperationsRequest()">إضافة الطلب</button></div><div id="hoteraOpsList" class="hotera-ops-list"></div></div></div>
+<div id="hoteraOperationsModal" class="hotera-ops-modal" role="dialog" aria-modal="true" aria-label="طلبات تشغيل HOTERA"><div class="hotera-ops-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3>🧹 طلبات التشغيل الداخلية</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraOperationsModal()">إغلاق</button></div><div class="hotera-ops-form"><input id="hoteraOpsRoom" placeholder="رقم الغرفة (اختياري)"><select id="hoteraOpsType"><option value="تنظيف">تنظيف</option><option value="صيانة">صيانة</option><option value="خدمة نزيل">خدمة نزيل</option><option value="أخرى">أخرى</option></select><textarea id="hoteraOpsNote" placeholder="وصف الطلب والتفاصيل"></textarea><button type="button" class="btn btn-gold" style="margin:0" onclick="createHoteraOperationsRequest()">إضافة الطلب</button></div><div id="hoteraOpsList" class="hotera-ops-list"></div></div></div>
 
-<div class="modal" id="hoteraBackupModal">
-  <div class="modal-body">
-    <h3 style="color:var(--accent-solid);margin-bottom:8px;">🛡️ النسخ الاحتياطي والاستعادة الآمنة</h3>
-    <div class="hotera-backup-note">يتم تصدير نسخة من البيانات الموجودة حاليًا فقط. لا يتم حذف أو تعديل بيانات النظام أثناء إنشاء النسخة. عند الاستعادة، سيتم إنشاء نسخة احتياطية تلقائية من الحالة الحالية أولًا.</div>
-    <div class="hotera-backup-meta"><span id="hoteraBackupStatus">جاهز لإنشاء نسخة احتياطية</span><span id="hoteraBackupLastDate">—</span></div>
-    <button type="button" class="btn btn-blue" onclick="downloadHoteraBackup(false)">⬇️ تنزيل نسخة احتياطية الآن</button>
-    <label style="display:block;margin-top:10px;margin-bottom:5px;color:var(--text-muted);font-size:10px;">اختر ملف نسخة HOTERA للاستعادة:</label>
-    <input class="hotera-backup-file" type="file" id="hoteraBackupFileInput" accept="application/json,.json" onchange="restoreHoteraBackup(event)">
-    <button type="button" class="btn btn-gray" onclick="closeHoteraBackupModal()">إغلاق</button>
-  </div>
-</div>
-
-<!-- HOTERA END OF APPLICATION: keep this single-file entry point stable for GitHub Pages. -->
 </body>
 </html>
