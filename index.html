@@ -20,32 +20,10 @@
 }
 * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body {
-  background-image:
-    radial-gradient(circle at 18% 18%, rgba(245,158,11,.20) 0, transparent 28%),
-    radial-gradient(circle at 82% 76%, rgba(14,165,233,.18) 0, transparent 32%),
-    linear-gradient(135deg, rgba(5,11,21,.94), rgba(9,28,48,.78), rgba(5,11,21,.95)),
-    url('https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1920&auto=format&fit=crop');
-  background-size: 145% 145%, 165% 165%, 100% 100%, cover;
-  background-position: 0% 0%, 100% 100%, center, center;
-  background-attachment: fixed; background-repeat: no-repeat;
-  background-color: var(--bg-fallback); background-blend-mode: screen, screen, overlay, normal;
+  background-image: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1920&auto=format&fit=crop');
+  background-size: cover; background-position: center; background-attachment: fixed; background-repeat: no-repeat;
+  background-color: var(--bg-fallback); background-blend-mode: overlay;
   color: var(--text-main); width: 100%; min-height: 100vh; overflow-x: hidden;
-  animation: hoteraLuxuryBackground 18s ease-in-out infinite alternate;
-}
-@keyframes hoteraLuxuryBackground {
-  0% { background-position: 0% 0%, 100% 100%, center, center; }
-  50% { background-position: 45% 35%, 55% 65%, center, center; }
-  100% { background-position: 100% 100%, 0% 0%, center, center; }
-}
-html, body::before { content: ''; }
-body::before {
-  position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  background: repeating-linear-gradient(115deg, transparent 0 85px, rgba(245,158,11,.035) 86px 87px, transparent 88px 170px);
-  mix-blend-mode: screen; animation: hoteraLightSweep 22s linear infinite;
-}
-@keyframes hoteraLightSweep { from { transform: translateX(-8%) rotate(0deg); opacity: .35; } to { transform: translateX(8%) rotate(2deg); opacity: .8; } }
-@media (prefers-reduced-motion: reduce) {
-  html, body, body::before { animation: none !important; }
 }
 body { padding: 10px; padding-bottom: 85px; }
 #loginOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(8, 12, 20, 0.96); backdrop-filter: blur(15px); display: flex; justify-content: center; align-items: center; z-index: 999; }
@@ -95,7 +73,6 @@ body { padding: 10px; padding-bottom: 85px; }
 .nav-item { background: none; border: none; color: var(--text-muted); font-size: 10px; cursor: pointer; flex: 1; }
 .nav-item.active { color: var(--accent-solid); font-weight: bold; }
 .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; padding: 12px; z-index: 100; }
-.hotera-backup-note{padding:10px;border:1px solid rgba(56,189,248,.3);border-radius:10px;background:rgba(14,165,233,.08);color:#dbeafe;font-size:10px;line-height:1.8;margin-bottom:9px}.hotera-backup-meta{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;color:#94a3b8;font-size:9px;margin:7px 0}.hotera-backup-file{width:100%;padding:9px;border:1px dashed rgba(245,158,11,.45);border-radius:9px;background:rgba(245,158,11,.06);color:#e2e8f0;font:inherit;font-size:10px}
 .modal-body { background: #121a2b; padding: 18px; border-radius: 18px; width: 100%; max-width: 420px; border: 1px solid var(--glass-border); max-height: 90vh; overflow-y: auto; text-align: inherit; }
 .btn { padding: 9px; border: none; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 6px; }
 .btn-gold { background: var(--accent-grad); color: white; }
@@ -256,8 +233,6 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
 /* HOTERA top settings panel */
 .hotera-topbar{position:relative;z-index:1200;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 10px;padding:8px 12px;border:1px solid rgba(56,189,248,.25);border-radius:15px;background:linear-gradient(135deg,rgba(10,30,52,.92),rgba(8,15,29,.92));box-shadow:0 8px 25px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.07);backdrop-filter:blur(10px)}
 .hotera-topbar-brand{display:flex;align-items:center;gap:7px;color:#e2e8f0;font-size:11px}.hotera-topbar-brand strong{color:#fbbf24;letter-spacing:.7px}.hotera-topbar-meta{color:#94a3b8;font-size:9px}.hotera-topbar-actions{display:flex;align-items:center;gap:5px;flex-wrap:wrap}.hotera-topbar-btn{border:1px solid rgba(245,158,11,.45);border-radius:10px;padding:6px 10px;color:#fbbf24;background:rgba(245,158,11,.1);font:inherit;font-size:10px;cursor:pointer;transition:transform .16s ease,background .16s ease,box-shadow .16s ease}.hotera-topbar-btn:hover{transform:translateY(-1px);background:rgba(245,158,11,.18);box-shadow:0 0 16px rgba(245,158,11,.16)}
-/* إخفاء خانة الإعدادات من الواجهة فقط مع إبقاء الدوال والبيانات كما هي */
-#hoteraTopSettingsBtn, #hoteraTopSettingsPanel, #btnSetupNav { display: none !important; }
 #hoteraTopSettingsPanel{display:none;position:absolute;top:calc(100% + 7px);right:10px;width:min(92vw,430px);padding:13px;border:1px solid rgba(245,158,11,.38);border-radius:18px;background:linear-gradient(145deg,rgba(13,38,62,.98),rgba(4,13,25,.98));box-shadow:0 20px 55px rgba(0,0,0,.55);backdrop-filter:blur(14px)}#hoteraTopSettingsPanel.open{display:block;animation:hoteraSettingsIn .2s ease}.hotera-settings-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.hotera-settings-head h3{margin:0;color:#fbbf24;font-size:15px}.hotera-settings-head span{color:#94a3b8;font-size:9px}.hotera-settings-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.hotera-settings-card{display:flex;align-items:center;gap:7px;padding:9px;border:1px solid rgba(148,163,184,.2);border-radius:12px;color:#e2e8f0;background:rgba(255,255,255,.045);cursor:pointer;text-align:right;font:inherit;font-size:10px;transition:border-color .16s ease,background .16s ease,transform .16s ease}.hotera-settings-card:hover{border-color:rgba(56,189,248,.6);background:rgba(56,189,248,.1);transform:translateY(-1px)}.hotera-settings-card b{font-size:17px}.hotera-settings-card small{display:block;color:#94a3b8;font-size:8px;margin-top:2px}.hotera-settings-close{width:100%;margin-top:9px;padding:7px;border:1px solid rgba(148,163,184,.25);border-radius:10px;color:#cbd5e1;background:rgba(255,255,255,.04);cursor:pointer;font:inherit;font-size:10px}@keyframes hoteraSettingsIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}@media(max-width:520px){.hotera-topbar{align-items:flex-start}.hotera-topbar-actions{width:100%}.hotera-topbar-btn{flex:1}.hotera-settings-grid{grid-template-columns:1fr}}
 
 
@@ -630,7 +605,6 @@ body:has(#commandCenterView.active) .quick-access-bar{margin-top:0;padding-top:2
       <button class="btn btn-blue manager-only" style="width:auto; padding:4px 8px; margin:0; font-size:9px;" onclick="openStaffManagementModal()" id="btnStaffNav">👥 الموظفين</button>
       <button class="btn btn-blue" style="width:auto; padding:4px 8px; margin:0; font-size:9px;" onclick="openCheckoutAlertModal()" id="btnCheckoutAlertNav">🔔 تنبيه المغادرات</button>
       <button class="btn btn-gold manager-only" style="width:auto; padding:4px 8px; margin:0; font-size:9px;" onclick="openHotelSetupModal()" id="btnSetupNav">⚙️ إعدادات</button>
-      <button class="btn btn-blue manager-only" style="width:auto; padding:4px 8px; margin:0; font-size:9px;" onclick="openHoteraBackupModal()" id="btnBackupNav">🛡️ النسخ الاحتياطي</button>
       <button class="btn btn-blue manager-only" style="width:auto; padding:4px 8px; margin:0; font-size:9px;" onclick="openManageRoomsModal()" id="btnAddRoomNav">➕ الغرف</button>
     </div>
   </div>
@@ -1291,7 +1265,6 @@ function readInviteFromUrl() {
 }
 
 async function generateDeviceInviteLink() {
-  if (!requireHoteraPermission('superadmin', 'إنشاء دعوات الأجهزة متاح للسوبر أدمن فقط.')) return;
   if (!cloudApiUrl || !cloudApiKey) return alert('⚠️ احفظ إعدادات السحابة أولاً.');
   cloudJoinCode = String(Math.floor(100000 + Math.random() * 900000));
   localStorage.setItem('hotera_cloud_join_code', cloudJoinCode);
@@ -1360,7 +1333,6 @@ async function toggleDeviceSuspension(id) {
 }
 
 async function deleteDeviceRecord(id) {
-  if (!requireHoteraPermission('superadmin', 'حذف الأجهزة المرتبطة متاح للسوبر أدمن فقط.')) return;
   if (!confirm('⚠️ هل أنت متأكد من حذف هذا الجهاز نهائياً؟ سيفقد الجهاز صلاحية الدخول فوراً.')) return;
   cloudDevices = cloudDevices.filter(d => d.id !== id);
   if (await uploadDataToCloud(true)) { renderDeviceApprovalPanel(); alert('✅ تم حذف الجهاز من السجل.'); }
@@ -1423,26 +1395,10 @@ function buildCloudPayload() {
   };
 }
 
-function hoteraCloudStoreHasData(value) {
-  if (Array.isArray(value)) return value.length > 0;
-  if (value && typeof value === 'object') return Object.keys(value).length > 0;
-  return value !== null && value !== undefined;
-}
-function hoteraShouldApplyCloudValue(incoming, current) {
-  return hoteraCloudStoreHasData(incoming) || !hoteraCloudStoreHasData(current);
-}
 function applyCloudPayload(cloudData) {
   if (!cloudData || typeof cloudData !== 'object') return false;
 
-  const localMutationAt = Number(localStorage.getItem('hotera_local_mutation_at') || 0);
-  const cloudUpdatedAt = Date.parse(cloudData.updatedAt || cloudData.metadata?.updatedAt || '') || 0;
-  if (localMutationAt && cloudUpdatedAt && cloudUpdatedAt < localMutationAt) {
-    console.warn('HOTERA: تم تجاهل لقطة سحابية أقدم من آخر تعديل محلي.');
-    return false;
-  }
-
-  window.hoteraApplyingCloudPayload = true;
-  if (Array.isArray(cloudData.hotels) && hoteraShouldApplyCloudValue(cloudData.hotels, hotelsList)) {
+  if (Array.isArray(cloudData.hotels)) {
     hotelsList = cloudData.hotels;
     hotelsList.forEach(h => {
       if (h.status === undefined) h.status = 'active';
@@ -1450,19 +1406,19 @@ function applyCloudPayload(cloudData) {
       if (!Array.isArray(h.staffList)) h.staffList = [];
     });
   }
-  if (hoteraShouldApplyCloudValue(cloudData.rooms, allRooms)) allRooms = cloudData.rooms;
-  if (hoteraShouldApplyCloudValue(cloudData.invoices, allInvoices)) allInvoices = cloudData.invoices;
-  if (hoteraShouldApplyCloudValue(cloudData.cancelledBookings, cancelledBookingsData)) cancelledBookingsData = cloudData.cancelledBookings;
-  if (hoteraShouldApplyCloudValue(cloudData.refundedInvoices, refundedInvoicesData)) refundedInvoicesData = cloudData.refundedInvoices;
-  if (hoteraShouldApplyCloudValue(cloudData.transactions, allTransactions)) allTransactions = cloudData.transactions;
-  if (hoteraShouldApplyCloudValue(cloudData.attendance, attendanceRecords)) attendanceRecords = cloudData.attendance;
-  if (hoteraShouldApplyCloudValue(cloudData.customerMemory, customerMemory)) customerMemory = cloudData.customerMemory;
-  if (hoteraShouldApplyCloudValue(cloudData.expenses, allExpenses)) allExpenses = cloudData.expenses;
-  if (hoteraShouldApplyCloudValue(cloudData.inventory, allInventory)) allInventory = cloudData.inventory;
-  if (hoteraShouldApplyCloudValue(cloudData.maintenanceTickets, allMaintenanceTickets)) allMaintenanceTickets = cloudData.maintenanceTickets;
-  if (hoteraShouldApplyCloudValue(cloudData.shifts, allShifts)) allShifts = cloudData.shifts;
-  if (hoteraShouldApplyCloudValue(cloudData.ratings, allRatings)) allRatings = cloudData.ratings;
-  if (Array.isArray(cloudData.devices) && hoteraShouldApplyCloudValue(cloudData.devices, cloudDevices)) cloudDevices = cloudData.devices;
+  if (cloudData.rooms) allRooms = cloudData.rooms;
+  if (cloudData.invoices) allInvoices = cloudData.invoices;
+  if (cloudData.cancelledBookings) cancelledBookingsData = cloudData.cancelledBookings;
+  if (cloudData.refundedInvoices) refundedInvoicesData = cloudData.refundedInvoices;
+  if (cloudData.transactions) allTransactions = cloudData.transactions;
+  if (cloudData.attendance) attendanceRecords = cloudData.attendance;
+  if (cloudData.customerMemory) customerMemory = cloudData.customerMemory;
+  if (cloudData.expenses) allExpenses = cloudData.expenses;
+  if (cloudData.inventory) allInventory = cloudData.inventory;
+  if (cloudData.maintenanceTickets) allMaintenanceTickets = cloudData.maintenanceTickets;
+  if (cloudData.shifts) allShifts = cloudData.shifts;
+  if (cloudData.ratings) allRatings = cloudData.ratings;
+  if (Array.isArray(cloudData.devices)) cloudDevices = cloudData.devices;
   if (cloudData.joinCode) { cloudJoinCode = cloudData.joinCode; localStorage.setItem('hotera_cloud_join_code', cloudJoinCode); }
   if (cloudData.masterKey) masterSuperKey = cloudData.masterKey;
   if (cloudData.developerName) developerName = cloudData.developerName;
@@ -1470,8 +1426,7 @@ function applyCloudPayload(cloudData) {
   if (cloudData.aboutTitle) aboutPageTitleText = cloudData.aboutTitle;
   if (cloudData.aboutDesc) aboutPageDescText = cloudData.aboutDesc;
 
-  saveData(false);
-  window.hoteraApplyingCloudPayload = false;
+  saveData();
   return true;
 }
 
@@ -1898,89 +1853,7 @@ function generateRoomsForHotel(hotelId, floors, perFloor) {
   }
 }
 
-const HOTERA_BACKUP_KEYS = [
-  'hotera_all_hotels','hotera_companies','hotera_all_rooms','hotera_all_invoices',
-  'hotera_cancelled_bookings','hotera_refunded_invoices','hotera_all_transactions',
-  'hotera_attendance','hotera_customer_memory','hotera_all_expenses','hotera_all_inventory',
-  'hotera_maint_tickets','hotera_all_shifts','hotera_all_ratings','hotera_audit_log',
-  'hotera_master_key','hotera_dev_name','hotera_dev_phone','hotera_about_title','hotera_about_desc',
-  'hotera_cloud_url','hotera_cloud_key','hotera_lang'
-];
-
-function createHoteraBackupPayload() {
-  const data = {};
-  HOTERA_BACKUP_KEYS.forEach(key => {
-    const value = localStorage.getItem(key);
-    if (value !== null) data[key] = value;
-  });
-  return { format: 'HOTERA_BACKUP', version: 1, createdAt: new Date().toISOString(), data };
-}
-
-function downloadHoteraBackup(isAutomatic = false) {
-  try {
-    const payload = createHoteraBackupPayload();
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    const stamp = new Date().toISOString().replace(/[:.]/g, '-');
-    a.href = url;
-    a.download = `HOTERA-backup-${stamp}.json`;
-    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-    const status = document.getElementById('hoteraBackupStatus');
-    const date = document.getElementById('hoteraBackupLastDate');
-    if (status) status.textContent = isAutomatic ? 'تم إنشاء نسخة أمان تلقائية قبل الاستعادة' : 'تم تنزيل النسخة الاحتياطية بنجاح';
-    if (date) date.textContent = new Date().toLocaleString('ar-SA');
-    return true;
-  } catch (error) {
-    console.error('HOTERA backup failed:', error);
-    alert('تعذر إنشاء النسخة الاحتياطية. لم يتم تغيير أي بيانات.');
-    return false;
-  }
-}
-
-function openHoteraBackupModal() {
-  const modal = document.getElementById('hoteraBackupModal');
-  if (modal) { modal.style.display = 'flex'; }
-}
-function closeHoteraBackupModal() {
-  const modal = document.getElementById('hoteraBackupModal');
-  if (modal) modal.style.display = 'none';
-  const input = document.getElementById('hoteraBackupFileInput');
-  if (input) input.value = '';
-}
-
-function restoreHoteraBackup(event) {
-  const file = event?.target?.files?.[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    try {
-      const payload = JSON.parse(reader.result);
-      if (!payload || payload.format !== 'HOTERA_BACKUP' || payload.version !== 1 || !payload.data || typeof payload.data !== 'object') {
-        throw new Error('invalid backup format');
-      }
-      const entries = Object.entries(payload.data).filter(([key, value]) => HOTERA_BACKUP_KEYS.includes(key) && typeof value === 'string');
-      if (!entries.length) throw new Error('empty backup');
-      const approved = confirm(`تم العثور على ${entries.length} قسمًا من بيانات HOTERA. سيتم إنشاء نسخة أمان من الحالة الحالية ثم استعادة النسخة المختارة. هل تريد المتابعة؟`);
-      if (!approved) { event.target.value = ''; return; }
-      if (!downloadHoteraBackup(true)) { event.target.value = ''; return; }
-      entries.forEach(([key, value]) => localStorage.setItem(key, value));
-      alert('تمت الاستعادة بنجاح. سيتم إعادة تحميل النظام لتطبيق البيانات بأمان.');
-      window.location.reload();
-    } catch (error) {
-      console.error('HOTERA restore failed:', error);
-      alert('ملف النسخة الاحتياطية غير صالح أو غير متوافق. لم يتم تغيير أي بيانات.');
-      event.target.value = '';
-    }
-  };
-  reader.onerror = () => { alert('تعذر قراءة ملف النسخة الاحتياطية. لم يتم تغيير أي بيانات.'); event.target.value = ''; };
-  reader.readAsText(file, 'utf-8');
-}
-
-function saveData(markLocalMutation = true) {
-  if (markLocalMutation && !window.hoteraApplyingCloudPayload) {
-    localStorage.setItem('hotera_local_mutation_at', String(Date.now()));
-  }
+function saveData() {
   localStorage.setItem('hotera_all_hotels', JSON.stringify(hotelsList));
   localStorage.setItem('hotera_companies', JSON.stringify(companiesList));
   localStorage.setItem('hotera_all_rooms', JSON.stringify(allRooms));
@@ -2224,20 +2097,7 @@ function toggleAllPinsVisibility() {
   renderSuperAdminControlPanel();
 }
 
-const HOTERA_PERMISSION_RULES = {
-  superadmin: ['superadmin'],
-  hotelAdmin: ['superadmin', 'manager'],
-  operations: ['superadmin', 'manager', 'staff', 'hr_supervisor', 'housekeeper'],
-  booking: ['superadmin', 'manager', 'staff']
-};
-function requireHoteraPermission(permission, message = 'هذا الإجراء غير متاح حسب صلاحية الحساب الحالية.') {
-  const allowed = HOTERA_PERMISSION_RULES[permission] || [];
-  if (!allowed.includes(currentRole)) { alert(`🔒 ${message}`); return false; }
-  return true;
-}
-
 function updateSuperAdminSettings() {
-  if (!requireHoteraPermission('superadmin', 'إدارة إعدادات المالك العام متاحة للسوبر أدمن فقط.')) return;
   const devNameInput = document.getElementById('editSuperDevName').value.trim();
   const devPhoneInput = document.getElementById('editSuperDevPhone').value.trim();
   const newKey = document.getElementById('newSuperAdminKeyInput').value.trim();
@@ -2260,7 +2120,6 @@ function updateSuperAdminSettings() {
 }
 
 function saveAboutViewSettings() {
-  if (!requireHoteraPermission('superadmin', 'تعديل محتوى النظام متاح للسوبر أدمن فقط.')) return;
   const newTitle = document.getElementById('editAboutTitleInput').value.trim();
   const newDesc = document.getElementById('editAboutDescInput').value.trim();
   if(newTitle) aboutPageTitleText = newTitle;
@@ -2280,7 +2139,6 @@ function toggleSubFields() {
 }
 
 function addNewHotelFacility() {
-  if (!requireHoteraPermission('superadmin', 'إضافة منشأة جديدة متاحة للسوبر أدمن فقط.')) return;
   const name = document.getElementById('newHotelName').value.trim();
   const cr = document.getElementById('newHotelCR').value.trim();
   const city = document.getElementById('newHotelCity').value.trim();
@@ -2377,26 +2235,23 @@ function renderSuperAdminControlPanel() {
   renderCompaniesAdmin();
 }
 
-function renderCompaniesAdmin(){if(currentRole!=='superadmin')return;const assign=document.getElementById('companyHotelAssignment');if(assign){assign.innerHTML=hotelsList.map(h=>`<label style="font-size:9px;color:#cbd5e1;background:rgba(255,255,255,.05);padding:5px;border-radius:7px"><input type="checkbox" value="${h.id}" class="company-hotel-check"> ${h.name}</label>`).join('');}const list=document.getElementById('companiesAdminList');if(list){list.innerHTML=companiesList.map(c=>`<div style="display:flex;justify-content:space-between;gap:6px;align-items:center;padding:6px 0;border-bottom:1px dashed rgba(255,255,255,.12);font-size:9px"><span>🏢 <strong>${c.name}</strong><br><small>${c.ownerName} · الفنادق: ${(c.hotelIds||[]).length}</small></span><button onclick="editCompanyHotels(${c.id})" style="background:#2563eb;color:#fff;border:0;border-radius:5px;padding:4px 7px;font-size:8px">تعديل الفنادق</button></div>`).join('');}}
+function renderCompaniesAdmin(){const assign=document.getElementById('companyHotelAssignment');if(assign){assign.innerHTML=hotelsList.map(h=>`<label style="font-size:9px;color:#cbd5e1;background:rgba(255,255,255,.05);padding:5px;border-radius:7px"><input type="checkbox" value="${h.id}" class="company-hotel-check"> ${h.name}</label>`).join('');}const list=document.getElementById('companiesAdminList');if(list){list.innerHTML=companiesList.map(c=>`<div style="display:flex;justify-content:space-between;gap:6px;align-items:center;padding:6px 0;border-bottom:1px dashed rgba(255,255,255,.12);font-size:9px"><span>🏢 <strong>${c.name}</strong><br><small>${c.ownerName} · الفنادق: ${(c.hotelIds||[]).length}</small></span><button onclick="editCompanyHotels(${c.id})" style="background:#2563eb;color:#fff;border:0;border-radius:5px;padding:4px 7px;font-size:8px">تعديل الفنادق</button></div>`).join('');}}
 function createCompanyFromSuperAdmin(){if(currentRole!=='superadmin')return alert('هذا الإجراء متاح للسوبر أدمن فقط.');const name=document.getElementById('newCompanyName').value.trim();const ownerName=document.getElementById('newCompanyOwnerName').value.trim();const ownerPin=document.getElementById('newCompanyOwnerPin').value.trim();const hotelIds=[...document.querySelectorAll('.company-hotel-check:checked')].map(x=>Number(x.value));if(!name||!ownerName||!ownerPin||!hotelIds.length)return alert('أكمل اسم الشركة واسم المالك والرمز وحدد فندقاً واحداً على الأقل.');companiesList.push({id:Date.now(),name,ownerName,ownerPin,hotelIds,status:'active'});saveData();uploadDataToCloud();document.getElementById('newCompanyName').value='';document.getElementById('newCompanyOwnerName').value='';document.getElementById('newCompanyOwnerPin').value='';renderCompaniesAdmin();alert('✅ تمت إضافة الشركة وربط فنادقها بنجاح.');}
 function editCompanyHotels(companyId){if(currentRole!=='superadmin')return alert('هذا الإجراء متاح للسوبر أدمن فقط.');const company=companiesList.find(c=>Number(c.id)===Number(companyId));if(!company)return;const ids=prompt(`أدخل أرقام الفنادق المسموح بها مفصولة بفواصل لشركة ${company.name}:`,(company.hotelIds||[]).join(','));if(ids===null)return;const parsed=ids.split(',').map(x=>Number(x.trim())).filter(id=>hotelsList.some(h=>h.id===id));if(!parsed.length)return alert('لم يتم حفظ التعديل: يجب اختيار فندق صالح واحد على الأقل.');company.hotelIds=[...new Set(parsed)];saveData();uploadDataToCloud();renderCompaniesAdmin();alert('✅ تم تحديث فنادق الشركة دون المساس ببيانات الفنادق.');}
 
 function resetManagerPinPrompt(hotelId) {
-  if (!requireHoteraPermission('superadmin', 'تغيير رموز الدخول متاح للسوبر أدمن فقط.')) return;
   const h = hotelsList.find(item => item.id === hotelId);
   if(!h) return;
   const newPin = prompt(`أدخل الرمز السري الجديد لمدير فندق (${h.name}):`, h.managerPin);
   if(newPin) { h.managerPin = newPin.trim(); saveData(); uploadDataToCloud(); renderSuperAdminControlPanel(); alert("✅ تم تحديث رمز المدير بنجاح!"); }
 }
 function resetHousePinPrompt(hotelId) {
-  if (!requireHoteraPermission('superadmin', 'تغيير رموز الدخول متاح للسوبر أدمن فقط.')) return;
   const h = hotelsList.find(item => item.id === hotelId);
   if(!h) return;
   const newPin = prompt(`أدخل رمز مشرف النظافة الجديد لـ (${h.name}):`, h.housePin || '0000');
   if(newPin) { h.housePin = newPin.trim(); saveData(); uploadDataToCloud(); renderSuperAdminControlPanel(); alert("✅ تم تحديث رمز الهاوس كيبنج بنجاح!"); }
 }
 function resetStaffPinPrompt(hotelId, sIdx) {
-  if (!requireHoteraPermission('superadmin', 'تغيير رموز الدخول متاح للسوبر أدمن فقط.')) return;
   const h = hotelsList.find(item => item.id === hotelId);
   if(!h || !h.staffList[sIdx]) return;
   const st = h.staffList[sIdx];
@@ -2404,12 +2259,10 @@ function resetStaffPinPrompt(hotelId, sIdx) {
   if(newPin) { st.pin = newPin.trim(); saveData(); uploadDataToCloud(); renderSuperAdminControlPanel(); alert("✅ تم تحديث رمز الموظف وحفظه بنجاح!"); }
 }
 function toggleHotelStatus(hotelId) {
-  if (!requireHoteraPermission('superadmin', 'تغيير حالة الفندق متاح للسوبر أدمن فقط.')) return;
   const h = hotelsList.find(item => item.id === hotelId);
   if(h) { h.status = (h.status === 'suspended') ? 'active' : 'suspended'; saveData(); uploadDataToCloud(); renderSuperAdminControlPanel(); initLoginHotelDropdown(); }
 }
 function switchHotelSession(id) {
-  if (!requireHoteraPermission('superadmin', 'الدخول المباشر للفنادق متاح للسوبر أدمن فقط.')) return;
   currentHotelId = id; currentRole = 'manager'; currentUsername = currentLang === 'ar' ? 'مدير الفندق' : 'Hotel Manager';
   document.getElementById('loginOverlay').style.display = 'none';
   updateHeaderInfo(); applyPermissions();
@@ -2417,7 +2270,7 @@ function switchHotelSession(id) {
   selectedFloor = 1; render();
 }
 
-function openStaffManagementModal() { if (!requireHoteraPermission('hotelAdmin', 'إدارة الموظفين متاحة لمدير الفندق أو السوبر أدمن فقط.')) return; document.getElementById('staffManagementModal').style.display = 'flex'; renderStaffTable(); }
+function openStaffManagementModal() { document.getElementById('staffManagementModal').style.display = 'flex'; renderStaffTable(); }
 function closeStaffManagementModal() { document.getElementById('staffManagementModal').style.display = 'none'; }
 function renderStaffTable() {
   const tbody = document.getElementById('staffTableBody'); tbody.innerHTML = '';
@@ -2428,7 +2281,6 @@ function renderStaffTable() {
   });
 }
 function addNewStaffMember() {
-  if (!requireHoteraPermission('hotelAdmin', 'إضافة الموظفين متاحة لمدير الفندق أو السوبر أدمن فقط.')) return;
   const idNum = document.getElementById('newStaffIdNum').value.trim() || `EMP-${Math.floor(Math.random()*900+100)}`;
   const name = document.getElementById('newStaffName').value.trim();
   const pin = document.getElementById('newStaffPin').value.trim();
@@ -2438,13 +2290,11 @@ function addNewStaffMember() {
   alert('✅ تمت إضافة الموظف الجديد بنجاح');
 }
 function deleteStaff(idx) {
-  if (!requireHoteraPermission('hotelAdmin', 'حذف الموظفين متاح لمدير الفندق أو السوبر أدمن فقط.')) return;
   hotelsList.find(h => h.id === currentHotelId).staffList.splice(idx, 1);
   saveData(); uploadDataToCloud(); renderStaffTable();
 }
 
 function openHotelSetupModal() {
-  if (!requireHoteraPermission('hotelAdmin', 'إعدادات الفندق متاحة لمدير الفندق أو السوبر أدمن فقط.')) return;
   const h = hotelsList.find(item => item.id === currentHotelId);
   if(h) {
     document.getElementById('setupHotelName').value = h.name;
@@ -2461,7 +2311,6 @@ function openHotelSetupModal() {
 }
 function closeHotelSetupModal() { document.getElementById('hotelSetupModal').style.display = 'none'; }
 function saveHotelSetupAndGenerateRooms() {
-  if (!requireHoteraPermission('hotelAdmin', 'حفظ إعدادات الفندق متاح لمدير الفندق أو السوبر أدمن فقط.')) return;
   const h = hotelsList.find(item => item.id === currentHotelId);
   h.name = document.getElementById('setupHotelName').value.trim() || h.name;
   h.cr = document.getElementById('setupHotelCR').value.trim() || h.cr;
@@ -3011,7 +2860,7 @@ function filterCheckoutAlerts() {
   });
 }
 
-function openManageRoomsModal() { if (!requireHoteraPermission('hotelAdmin', 'إدارة الغرف متاحة لمدير الفندق أو السوبر أدمن فقط.')) return; document.getElementById('manageRoomsModal').style.display = 'flex'; renderEditRoomsTable(); }
+function openManageRoomsModal() { document.getElementById('manageRoomsModal').style.display = 'flex'; renderEditRoomsTable(); }
 function closeManageRoomsModal() { document.getElementById('manageRoomsModal').style.display = 'none'; render(); }
 function renderEditRoomsTable() {
   const tbody = document.getElementById('editRoomsTableBody'); tbody.innerHTML = '';
@@ -3020,7 +2869,6 @@ function renderEditRoomsTable() {
   });
 }
 function addNewRoom() {
-  if (!requireHoteraPermission('hotelAdmin', 'إضافة الغرف متاحة لمدير الفندق أو السوبر أدمن فقط.')) return;
   const id = parseInt(document.getElementById('newRoomId').value);
   const type = document.getElementById('newRoomType').value;
   if(!id) return;
@@ -3028,7 +2876,6 @@ function addNewRoom() {
   saveData(); uploadDataToCloud(); renderEditRoomsTable();
 }
 function deleteRoom(idx) {
-  if (!requireHoteraPermission('hotelAdmin', 'حذف الغرف متاح لمدير الفندق أو السوبر أدمن فقط.')) return;
   allRooms[currentHotelId].splice(idx, 1);
   saveData(); uploadDataToCloud(); renderEditRoomsTable();
 }
@@ -3117,19 +2964,6 @@ function calculateTotalFromManual() {
   const grandTotal = n * p * selectedCount;
   document.getElementById('bookingTotalPriceDisplay').innerText = `${grandTotal.toFixed(2)} ر.س`;
 }
-function hoteraDateRangeOverlaps(startA, endA, startB, endB) {
-  if (!startA || !endA || !startB || !endB) return false;
-  return String(startA) < String(endB) && String(startB) < String(endA);
-}
-function findHoteraBookingConflicts(roomIds, checkIn, checkOut, editingRef = null) {
-  const rooms = allRooms[currentHotelId] || [];
-  return rooms.filter(room => roomIds.includes(Number(room.id)) && room.bookingRef && room.bookingRef !== editingRef && room.checkIn && room.checkOut && hoteraDateRangeOverlaps(checkIn, checkOut, room.checkIn, room.checkOut));
-}
-function validateHoteraBookingDates(checkIn, checkOut) {
-  if (!checkIn || !checkOut) return 'يرجى تحديد تاريخ الدخول وتاريخ الخروج.';
-  if (String(checkOut) <= String(checkIn)) return 'تاريخ الخروج يجب أن يكون بعد تاريخ الدخول.';
-  return '';
-}
 function reviewNewBooking() {
   const guest=document.getElementById('bookingGuestName').value.trim();
   const phone=document.getElementById('bookingGuestPhone').value.trim();
@@ -3141,10 +2975,6 @@ function reviewNewBooking() {
   const payment=document.getElementById('bookingPaymentMethod').value;
   if(!guest) return alert('الرجاء إدخال اسم العميل قبل المراجعة.');
   if(!rooms.length) return alert('الرجاء اختيار غرفة واحدة على الأقل قبل المراجعة.');
-  const dateError = validateHoteraBookingDates(checkIn, checkOut);
-  if (dateError) return alert(`⚠️ ${dateError}`);
-  const conflicts = findHoteraBookingConflicts(rooms.map(Number), checkIn, checkOut, window.hoteraEditingBookingRef || null);
-  if (conflicts.length) return alert(`⚠️ يوجد تعارض في مواعيد الغرف التالية: ${conflicts.map(r => r.id).join('، ')}. اختر تواريخ أو غرفًا أخرى.`);
   const box=document.getElementById('bookingReviewBox');
   box.innerHTML=`<strong style="color:var(--accent-solid)">مراجعة الحجز</strong><br>👤 ${guest} — 📞 ${phone||'بدون جوال'}<br>🛏️ الغرف: ${rooms.join('، ')}<br>📅 ${checkIn} إلى ${checkOut} — ${nights} ليلة<br>💳 الدفع: ${payment}<br>🎯 الغرض: ${document.getElementById('bookingPurpose').value}<br>📌 المصدر: ${document.getElementById('bookingSource').value}<br>👤 المنفذ: ${currentUsername||'المستخدم الحالي'}<br>💰 الإجمالي: <strong>${(rooms.length*nights*price).toFixed(2)} ر.س</strong>`;
   box.style.display='block'; document.getElementById('btnBkgReview').style.display='none'; document.getElementById('btnBkgSubmit').style.display='block';
@@ -3183,10 +3013,6 @@ function executeNewBooking() {
   const editingRef = window.hoteraEditingBookingRef || null;
   if(!guest) return alert('الرجاء إدخال اسم النزيل أو الجهة!');
   if(!selectedIds.length) return alert('الرجاء اختيار غرفة واحدة على الأقل للحجز!');
-  const dateError = validateHoteraBookingDates(checkIn, checkOut);
-  if (dateError) return alert(`⚠️ ${dateError}`);
-  const conflicts = findHoteraBookingConflicts(selectedIds, checkIn, checkOut, editingRef);
-  if (conflicts.length) return alert(`⚠️ لا يمكن تنفيذ الحجز بسبب تعارض الغرف: ${conflicts.map(r => r.id).join('، ')}.`);
   const bookingType = bookingTypeForCount(selectedIds.length);
   const rooms = allRooms[currentHotelId] || [];
   const originalBookingRoom = editingRef ? (rooms.find(r=>r.bookingRef===editingRef)||{}) : {};
@@ -3495,18 +3321,6 @@ const secureSyncInput=document.getElementById('secureSyncServerUrlInput');if(sec
 
 
 <div id="hoteraOperationsModal" class="hotera-ops-modal" role="dialog" aria-modal="true" aria-label="طلبات تشغيل HOTERA"><div class="hotera-ops-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3>🧹 طلبات التشغيل الداخلية</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraOperationsModal()">إغلاق</button></div><div class="hotera-ops-form"><input id="hoteraOpsRoom" placeholder="رقم الغرفة (اختياري)"><select id="hoteraOpsType"><option value="تنظيف">تنظيف</option><option value="صيانة">صيانة</option><option value="خدمة نزيل">خدمة نزيل</option><option value="أخرى">أخرى</option></select><textarea id="hoteraOpsNote" placeholder="وصف الطلب والتفاصيل"></textarea><button type="button" class="btn btn-gold" style="margin:0" onclick="createHoteraOperationsRequest()">إضافة الطلب</button></div><div id="hoteraOpsList" class="hotera-ops-list"></div></div></div>
-
-<div class="modal" id="hoteraBackupModal">
-  <div class="modal-body">
-    <h3 style="color:var(--accent-solid);margin-bottom:8px;">🛡️ النسخ الاحتياطي والاستعادة الآمنة</h3>
-    <div class="hotera-backup-note">يتم تصدير نسخة من البيانات الموجودة حاليًا فقط. لا يتم حذف أو تعديل بيانات النظام أثناء إنشاء النسخة. عند الاستعادة، سيتم إنشاء نسخة احتياطية تلقائية من الحالة الحالية أولًا.</div>
-    <div class="hotera-backup-meta"><span id="hoteraBackupStatus">جاهز لإنشاء نسخة احتياطية</span><span id="hoteraBackupLastDate">—</span></div>
-    <button type="button" class="btn btn-blue" onclick="downloadHoteraBackup(false)">⬇️ تنزيل نسخة احتياطية الآن</button>
-    <label style="display:block;margin-top:10px;margin-bottom:5px;color:var(--text-muted);font-size:10px;">اختر ملف نسخة HOTERA للاستعادة:</label>
-    <input class="hotera-backup-file" type="file" id="hoteraBackupFileInput" accept="application/json,.json" onchange="restoreHoteraBackup(event)">
-    <button type="button" class="btn btn-gray" onclick="closeHoteraBackupModal()">إغلاق</button>
-  </div>
-</div>
 
 </body>
 </html>
