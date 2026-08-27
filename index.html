@@ -3097,6 +3097,19 @@ function calculateTotalFromManual() {
   const grandTotal = n * p * selectedCount;
   document.getElementById('bookingTotalPriceDisplay').innerText = `${grandTotal.toFixed(2)} ر.س`;
 }
+function hoteraDateRangeOverlaps(startA, endA, startB, endB) {
+  if (!startA || !endA || !startB || !endB) return false;
+  return String(startA) < String(endB) && String(startB) < String(endA);
+}
+function findHoteraBookingConflicts(roomIds, checkIn, checkOut, editingRef = null) {
+  const rooms = allRooms[currentHotelId] || [];
+  return rooms.filter(room => roomIds.includes(Number(room.id)) && room.bookingRef && room.bookingRef !== editingRef && room.checkIn && room.checkOut && hoteraDateRangeOverlaps(checkIn, checkOut, room.checkIn, room.checkOut));
+}
+function validateHoteraBookingDates(checkIn, checkOut) {
+  if (!checkIn || !checkOut) return 'يرجى تحديد تاريخ الدخول وتاريخ الخروج.';
+  if (String(checkOut) <= String(checkIn)) return 'تاريخ الخروج يجب أن يكون بعد تاريخ الدخول.';
+  return '';
+}
 function reviewNewBooking() {
   const guest=document.getElementById('bookingGuestName').value.trim();
   const phone=document.getElementById('bookingGuestPhone').value.trim();
@@ -3108,6 +3121,10 @@ function reviewNewBooking() {
   const payment=document.getElementById('bookingPaymentMethod').value;
   if(!guest) return alert('الرجاء إدخال اسم العميل قبل المراجعة.');
   if(!rooms.length) return alert('الرجاء اختيار غرفة واحدة على الأقل قبل المراجعة.');
+  const dateError = validateHoteraBookingDates(checkIn, checkOut);
+  if (dateError) return alert(`⚠️ ${dateError}`);
+  const conflicts = findHoteraBookingConflicts(rooms.map(Number), checkIn, checkOut, window.hoteraEditingBookingRef || null);
+  if (conflicts.length) return alert(`⚠️ يوجد تعارض في مواعيد الغرف التالية: ${conflicts.map(r => r.id).join('، ')}. اختر تواريخ أو غرفًا أخرى.`);
   const box=document.getElementById('bookingReviewBox');
   box.innerHTML=`<strong style="color:var(--accent-solid)">مراجعة الحجز</strong><br>👤 ${guest} — 📞 ${phone||'بدون جوال'}<br>🛏️ الغرف: ${rooms.join('، ')}<br>📅 ${checkIn} إلى ${checkOut} — ${nights} ليلة<br>💳 الدفع: ${payment}<br>🎯 الغرض: ${document.getElementById('bookingPurpose').value}<br>📌 المصدر: ${document.getElementById('bookingSource').value}<br>👤 المنفذ: ${currentUsername||'المستخدم الحالي'}<br>💰 الإجمالي: <strong>${(rooms.length*nights*price).toFixed(2)} ر.س</strong>`;
   box.style.display='block'; document.getElementById('btnBkgReview').style.display='none'; document.getElementById('btnBkgSubmit').style.display='block';
@@ -3146,6 +3163,10 @@ function executeNewBooking() {
   const editingRef = window.hoteraEditingBookingRef || null;
   if(!guest) return alert('الرجاء إدخال اسم النزيل أو الجهة!');
   if(!selectedIds.length) return alert('الرجاء اختيار غرفة واحدة على الأقل للحجز!');
+  const dateError = validateHoteraBookingDates(checkIn, checkOut);
+  if (dateError) return alert(`⚠️ ${dateError}`);
+  const conflicts = findHoteraBookingConflicts(selectedIds, checkIn, checkOut, editingRef);
+  if (conflicts.length) return alert(`⚠️ لا يمكن تنفيذ الحجز بسبب تعارض الغرف: ${conflicts.map(r => r.id).join('، ')}.`);
   const bookingType = bookingTypeForCount(selectedIds.length);
   const rooms = allRooms[currentHotelId] || [];
   const originalBookingRoom = editingRef ? (rooms.find(r=>r.bookingRef===editingRef)||{}) : {};
