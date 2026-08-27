@@ -1423,10 +1423,26 @@ function buildCloudPayload() {
   };
 }
 
+function hoteraCloudStoreHasData(value) {
+  if (Array.isArray(value)) return value.length > 0;
+  if (value && typeof value === 'object') return Object.keys(value).length > 0;
+  return value !== null && value !== undefined;
+}
+function hoteraShouldApplyCloudValue(incoming, current) {
+  return hoteraCloudStoreHasData(incoming) || !hoteraCloudStoreHasData(current);
+}
 function applyCloudPayload(cloudData) {
   if (!cloudData || typeof cloudData !== 'object') return false;
 
-  if (Array.isArray(cloudData.hotels)) {
+  const localMutationAt = Number(localStorage.getItem('hotera_local_mutation_at') || 0);
+  const cloudUpdatedAt = Date.parse(cloudData.updatedAt || cloudData.metadata?.updatedAt || '') || 0;
+  if (localMutationAt && cloudUpdatedAt && cloudUpdatedAt < localMutationAt) {
+    console.warn('HOTERA: تم تجاهل لقطة سحابية أقدم من آخر تعديل محلي.');
+    return false;
+  }
+
+  window.hoteraApplyingCloudPayload = true;
+  if (Array.isArray(cloudData.hotels) && hoteraShouldApplyCloudValue(cloudData.hotels, hotelsList)) {
     hotelsList = cloudData.hotels;
     hotelsList.forEach(h => {
       if (h.status === undefined) h.status = 'active';
@@ -1434,19 +1450,19 @@ function applyCloudPayload(cloudData) {
       if (!Array.isArray(h.staffList)) h.staffList = [];
     });
   }
-  if (cloudData.rooms) allRooms = cloudData.rooms;
-  if (cloudData.invoices) allInvoices = cloudData.invoices;
-  if (cloudData.cancelledBookings) cancelledBookingsData = cloudData.cancelledBookings;
-  if (cloudData.refundedInvoices) refundedInvoicesData = cloudData.refundedInvoices;
-  if (cloudData.transactions) allTransactions = cloudData.transactions;
-  if (cloudData.attendance) attendanceRecords = cloudData.attendance;
-  if (cloudData.customerMemory) customerMemory = cloudData.customerMemory;
-  if (cloudData.expenses) allExpenses = cloudData.expenses;
-  if (cloudData.inventory) allInventory = cloudData.inventory;
-  if (cloudData.maintenanceTickets) allMaintenanceTickets = cloudData.maintenanceTickets;
-  if (cloudData.shifts) allShifts = cloudData.shifts;
-  if (cloudData.ratings) allRatings = cloudData.ratings;
-  if (Array.isArray(cloudData.devices)) cloudDevices = cloudData.devices;
+  if (hoteraShouldApplyCloudValue(cloudData.rooms, allRooms)) allRooms = cloudData.rooms;
+  if (hoteraShouldApplyCloudValue(cloudData.invoices, allInvoices)) allInvoices = cloudData.invoices;
+  if (hoteraShouldApplyCloudValue(cloudData.cancelledBookings, cancelledBookingsData)) cancelledBookingsData = cloudData.cancelledBookings;
+  if (hoteraShouldApplyCloudValue(cloudData.refundedInvoices, refundedInvoicesData)) refundedInvoicesData = cloudData.refundedInvoices;
+  if (hoteraShouldApplyCloudValue(cloudData.transactions, allTransactions)) allTransactions = cloudData.transactions;
+  if (hoteraShouldApplyCloudValue(cloudData.attendance, attendanceRecords)) attendanceRecords = cloudData.attendance;
+  if (hoteraShouldApplyCloudValue(cloudData.customerMemory, customerMemory)) customerMemory = cloudData.customerMemory;
+  if (hoteraShouldApplyCloudValue(cloudData.expenses, allExpenses)) allExpenses = cloudData.expenses;
+  if (hoteraShouldApplyCloudValue(cloudData.inventory, allInventory)) allInventory = cloudData.inventory;
+  if (hoteraShouldApplyCloudValue(cloudData.maintenanceTickets, allMaintenanceTickets)) allMaintenanceTickets = cloudData.maintenanceTickets;
+  if (hoteraShouldApplyCloudValue(cloudData.shifts, allShifts)) allShifts = cloudData.shifts;
+  if (hoteraShouldApplyCloudValue(cloudData.ratings, allRatings)) allRatings = cloudData.ratings;
+  if (Array.isArray(cloudData.devices) && hoteraShouldApplyCloudValue(cloudData.devices, cloudDevices)) cloudDevices = cloudData.devices;
   if (cloudData.joinCode) { cloudJoinCode = cloudData.joinCode; localStorage.setItem('hotera_cloud_join_code', cloudJoinCode); }
   if (cloudData.masterKey) masterSuperKey = cloudData.masterKey;
   if (cloudData.developerName) developerName = cloudData.developerName;
@@ -1454,7 +1470,8 @@ function applyCloudPayload(cloudData) {
   if (cloudData.aboutTitle) aboutPageTitleText = cloudData.aboutTitle;
   if (cloudData.aboutDesc) aboutPageDescText = cloudData.aboutDesc;
 
-  saveData();
+  saveData(false);
+  window.hoteraApplyingCloudPayload = false;
   return true;
 }
 
@@ -1960,7 +1977,10 @@ function restoreHoteraBackup(event) {
   reader.readAsText(file, 'utf-8');
 }
 
-function saveData() {
+function saveData(markLocalMutation = true) {
+  if (markLocalMutation && !window.hoteraApplyingCloudPayload) {
+    localStorage.setItem('hotera_local_mutation_at', String(Date.now()));
+  }
   localStorage.setItem('hotera_all_hotels', JSON.stringify(hotelsList));
   localStorage.setItem('hotera_companies', JSON.stringify(companiesList));
   localStorage.setItem('hotera_all_rooms', JSON.stringify(allRooms));
