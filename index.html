@@ -504,8 +504,11 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     </div>
     <p id="lblLoginSubtitle" style="font-size:11px; color:var(--text-muted); margin-bottom:12px;">نظام إدارة الفنادق الذكي والمستقل</p>
     
+    <label id="lblSelectEntity" style="font-size:10px; display:block; text-align:inherit; color:var(--accent-solid); margin-bottom:4px;">نوع المنشأة:</label>
+    <select id="loginEntityType" class="form-select" onchange="switchLoginEntityType()"><option value="hotel">🏨 إدارة الفنادق</option><option value="shop">🏪 إدارة المحلات التجارية</option></select>
     <label id="lblSelectHotel" style="font-size:10px; display:block; text-align:inherit; color:var(--text-muted); margin-bottom:4px;">اختر الفندق (المنشأة):</label>
     <select id="loginHotelSelect" class="form-select" onchange="updateLoginRoleOptions()"></select>
+    <div id="loginShopGroup" style="display:none"><label id="lblSelectShop" style="font-size:10px;display:block;text-align:inherit;color:var(--text-muted);margin:5px 0 4px">اختر المحل (المنشأة):</label><select id="loginShopSelect" class="form-select" onchange="updateLoginRoleOptions()"></select></div>
     <div id="companySelectGroup" style="display:none;"><label style="font-size:10px;display:block;text-align:inherit;color:var(--accent-solid);margin:5px 0 4px">اختر الشركة</label><select id="loginCompanySelect" class="form-select"></select></div>
 
     <label id="lblSelectRole" style="font-size:10px; display:block; text-align:inherit; color:var(--text-muted); margin-bottom:4px;">اختر الصلاحية / نوع الحساب:</label>
@@ -2583,6 +2586,8 @@ let dailySales = JSON.parse(localStorage.getItem('hotera_daily_sales')) || {};
 let dailyExpenses = JSON.parse(localStorage.getItem('hotera_daily_expenses')) || {};
 let otherRevenues = JSON.parse(localStorage.getItem('hotera_other_revenues')) || {};
 let shopAccounts = JSON.parse(localStorage.getItem('hotera_shop_accounts') || '{}');
+let loginEntityType = 'hotel';
+let currentShopId = null;
 let shopAuditLog = JSON.parse(localStorage.getItem('hotera_shop_audit')) || [];
 let allInventory = JSON.parse(localStorage.getItem('hotera_all_inventory')) || {};
 let allMaintenanceTickets = JSON.parse(localStorage.getItem('hotera_maint_tickets')) || {};
@@ -2725,23 +2730,12 @@ function updateGlobalDisplays() {
   document.getElementById('aboutCardDescDisplay').innerText = aboutPageDescText;
 }
 
-function updateLoginRoleOptions() {
-  const hotelId = parseInt(document.getElementById('loginHotelSelect').value);
-  const targetHotel = hotelsList.find(h => h.id === hotelId);
-  const staffSelect = document.getElementById('loginStaffSelect');
-  if(!targetHotel || !staffSelect) return;
-  staffSelect.innerHTML = '';
-  targetHotel.staffList.forEach(s => {
-    const opt = document.createElement('option');
-    opt.value = s.name;
-    opt.innerText = `${s.name} (${s.idNum || 'بدون رقم'})`;
-    staffSelect.appendChild(opt);
-  });
-  togglePinCodeField();
-}
+function switchLoginEntityType(){loginEntityType=document.getElementById('loginEntityType')?.value||'hotel';const hotelLabel=document.getElementById('lblSelectHotel'),hotelSelect=document.getElementById('loginHotelSelect'),shopGroup=document.getElementById('loginShopGroup'),entity=document.getElementById('loginEntityType');const shopMode=loginEntityType==='shop';if(hotelLabel)hotelLabel.style.display=shopMode?'none':'';if(hotelSelect)hotelSelect.style.display=shopMode?'none':'';if(shopGroup)shopGroup.style.display=shopMode?'block':'none';if(entity)entity.setAttribute('aria-label',shopMode?'إدارة المحلات التجارية':'إدارة الفنادق');const role=document.getElementById('loginRoleSelect');if(role){role.innerHTML=shopMode?'<option value="shop_manager">🧾 مدير المحل</option><option value="shop_employee">💼 موظف المحل</option><option value="shop_supervisor">📋 مشرف المحل</option><option value="superadmin">👑 المالك العام (السوبر أدمن)</option><option value="company_owner">🏢 مالك الشركة متعددة المحلات</option>':'<option value="manager">⚡ مدير الفندق</option><option value="staff">💼 موظف (استقبال / حجز)</option><option value="hr_supervisor">📋 مشرف الموظفين (التحضير)</option><option value="housekeeper">🧹 مشرف الهاوس كيبنج</option><option value="superadmin">👑 المالك العام (السوبر أدمن)</option><option value="company_owner">🏢 مالك الشركة متعددة الفنادق</option>';role.value=shopMode?'shop_manager':'manager'}updateLoginRoleOptions()}
+function updateLoginRoleOptions(){const shopMode=(document.getElementById('loginEntityType')?.value||loginEntityType)==='shop';loginEntityType=shopMode?'shop':'hotel';const staffSelect=document.getElementById('loginStaffSelect');if(shopMode){const ss=document.getElementById('loginShopSelect');if(ss){ss.innerHTML=(allShops||[]).map(x=>`<option value="${Number(x.id)}">${hoteraEscapeText(x.name)}${x.location?' — '+hoteraEscapeText(x.location):''}</option>`).join('');}const sid=Number(ss?.value||0), accounts=Array.isArray(shopAccounts[sid])?shopAccounts[sid]:[];if(staffSelect){staffSelect.innerHTML=accounts.map(a=>`<option value="${hoteraEscapeText(a.username)}">${hoteraEscapeText(a.username)}</option>`).join('');}togglePinCodeField();return}const hotelId=parseInt(document.getElementById('loginHotelSelect').value);const targetHotel=hotelsList.find(h=>h.id===hotelId);if(!targetHotel||!staffSelect)return;staffSelect.innerHTML='';(targetHotel.staffList||[]).forEach(x=>{const opt=document.createElement('option');opt.value=x.name;opt.innerText=`${x.name} (${x.idNum||'بدون رقم'})`;staffSelect.appendChild(opt)});togglePinCodeField()}
 
 function togglePinCodeField() {
   const role = document.getElementById('loginRoleSelect').value;
+  const shopMode = (document.getElementById('loginEntityType')?.value || loginEntityType) === 'shop';
   const pinGroup = document.getElementById('pinCodeGroup');
   const pinLabel = document.getElementById('pinLabel');
   const staffGroup = document.getElementById('staffSelectGroup');
@@ -2753,7 +2747,8 @@ function togglePinCodeField() {
   const hotelSelect = document.getElementById('loginHotelSelect');
   if (hotelLabel) hotelLabel.style.display = role === 'company_owner' ? 'none' : '';
   if (hotelSelect) hotelSelect.style.display = role === 'company_owner' ? 'none' : '';
-  if (role === 'superadmin') { staffGroup.style.display = 'none'; pinLabel.innerText = t.pinSuper; }
+  if (shopMode && ['shop_manager','shop_employee','shop_supervisor'].includes(role)) { staffGroup.style.display = 'block'; document.getElementById('lblSelectUser').innerText='اسم مستخدم المحل:'; pinLabel.innerText = role==='shop_manager'?'كلمة مرور مدير المحل':(role==='shop_employee'?'كلمة مرور موظف المحل':'كلمة مرور مشرف المحل'); }
+  else if (role === 'superadmin') { staffGroup.style.display = 'none'; pinLabel.innerText = t.pinSuper; }
   else if (role === 'manager') { staffGroup.style.display = 'none'; pinLabel.innerText = t.pinMgr; }
   else if (role === 'company_owner') { staffGroup.style.display = 'none'; pinLabel.innerText = 'رمز مالك الشركة'; }
   else if (role === 'staff') { staffGroup.style.display = 'block'; pinLabel.innerText = t.pinStaff; }
@@ -2789,6 +2784,15 @@ async function executeLogin() {
   const hotelId = parseInt(document.getElementById('loginHotelSelect').value);
   const role = document.getElementById('loginRoleSelect').value;
   const pinInput = document.getElementById('loginPinInput').value;
+  const entityType = document.getElementById('loginEntityType')?.value || 'hotel';
+  if (entityType === 'shop') {
+    const shopId = Number(document.getElementById('loginShopSelect')?.value || 0), shop = (allShops||[]).find(x=>Number(x.id)===shopId);
+    if (!shop) { hoteraRegisterLoginFailure(); return alert('❌ لم تتم إضافة أي محل أو لم يتم اختيار محل.'); }
+    if (role === 'superadmin') { if(pinInput!==masterSuperKey){hoteraRegisterLoginFailure();return alert('❌ رمز السوبر أدمن غير صحيح!')} currentRole='superadmin'; currentUsername='المالك العام — إدارة المحلات'; }
+    else if (role === 'company_owner') { return alert('🔒 دخول مالك الشركة للمحلات يتطلب ربط الشركة بالمحل من لوحة السوبر أدمن.'); }
+    else { const username=document.getElementById('loginStaffSelect')?.value||'', account=(Array.isArray(shopAccounts[shopId])?shopAccounts[shopId]:[]).find(a=>a.username===username); if(!account){hoteraRegisterLoginFailure();return alert('❌ لا يوجد مستخدم لهذا المحل. أنشئ الحساب من السوبر أدمن.')} if(account.role&&account.role!==role){hoteraRegisterLoginFailure();return alert('❌ هذا المستخدم لا يملك الصلاحية المختارة.')} const hash=await hoteraShopHash(pinInput); if(account.passwordHash!==hash){hoteraRegisterLoginFailure();return alert('❌ كلمة مرور مستخدم المحل غير صحيحة.')} currentRole=role; currentUsername=account.username; }
+    currentShopId=shopId; currentHotelId=null; loginEntityType='shop'; hoteraResetLoginGuard(); hoteraStartSession(); document.getElementById('loginOverlay').style.display='none'; updateHeaderInfo(); applyPermissions(); switchMainFeature('shops',document.getElementById('chipShops')); return;
+  }
 
   // محاولة تحديث البيانات، مع السماح بالدخول محلياً إذا تعذر الاتصال بالسحابة
   if (cloudApiUrl) {
@@ -2873,7 +2877,8 @@ function forgotPasswordAction() {
 function updateHeaderInfo() {
   const h = hotelsList.find(item => item.id === currentHotelId);
   const company = companiesList.find(c => Number(c.id) === Number(currentCompanyId));
-  if(h) { document.getElementById('activeHeaderHotelName').innerText = `🏨 ${h.name} • ${h.city}`; }
+  if(loginEntityType==='shop' && currentShopId){const sh=(allShops||[]).find(x=>Number(x.id)===Number(currentShopId));if(sh)document.getElementById('activeHeaderHotelName').innerText=`🏪 ${sh.name}${sh.location?' • '+sh.location:''}`;}
+  else if(h) { document.getElementById('activeHeaderHotelName').innerText = `🏨 ${h.name} • ${h.city}`; }
   else if (currentRole === 'company_owner' && company) { document.getElementById('activeHeaderHotelName').innerText = `🏢 ${company.name}`; }
   const rolesMap = {
     superadmin: currentLang === 'ar' ? "👑 مالك عام" : "👑 Super Admin",
@@ -2882,7 +2887,10 @@ function updateHeaderInfo() {
     staff: currentLang === 'ar' ? `💼 موظف: ${currentUsername}` : `💼 Staff: ${currentUsername}`,
     housekeeper: currentLang === 'ar' ? "🧹 مشرف النظافة" : "🧹 Housekeeper",
     company_owner: currentLang === 'ar' ? `🏢 مالك الشركة (${currentUsername})` : `🏢 Company Owner (${currentUsername})`,
-    company_owner_manager: currentLang === 'ar' ? `🏢 متابعة الفندق (${currentUsername})` : `🏢 Hotel Oversight (${currentUsername})`
+    company_owner_manager: currentLang === 'ar' ? `🏢 متابعة الفندق (${currentUsername})` : `🏢 Hotel Oversight (${currentUsername})`,
+    shop_manager: currentLang === 'ar' ? `🧾 مدير المحل (${currentUsername})` : `🧾 Shop Manager (${currentUsername})`,
+    shop_employee: currentLang === 'ar' ? `💼 موظف المحل (${currentUsername})` : `💼 Shop Employee (${currentUsername})`,
+    shop_supervisor: currentLang === 'ar' ? `📋 مشرف المحل (${currentUsername})` : `📋 Shop Supervisor (${currentUsername})`
   };
   document.getElementById('currentRoleBadge').innerText = rolesMap[currentRole];
 }
@@ -3055,8 +3063,8 @@ function renderSuperAdminControlPanel() {
 }
 
 function renderCompaniesAdmin(){const assign=document.getElementById('companyHotelAssignment');if(assign){assign.innerHTML=hotelsList.map(h=>`<label style="font-size:9px;color:#cbd5e1;background:rgba(255,255,255,.05);padding:5px;border-radius:7px"><input type="checkbox" value="${h.id}" class="company-hotel-check"> ${h.name}</label>`).join('');}const list=document.getElementById('companiesAdminList');if(list){list.innerHTML=companiesList.map(c=>`<div style="display:flex;justify-content:space-between;gap:6px;align-items:center;padding:6px 0;border-bottom:1px dashed rgba(255,255,255,.12);font-size:9px"><span>🏢 <strong>${c.name}</strong><br><small>${c.ownerName} · الفنادق: ${(c.hotelIds||[]).length}</small></span><button onclick="editCompanyHotels(${c.id})" style="background:#2563eb;color:#fff;border:0;border-radius:5px;padding:4px 7px;font-size:8px">تعديل الفنادق</button></div>`).join('');}}
-function createCompanyFromSuperAdmin(){if(currentRole!=='superadmin')return alert('هذا الإجراء متاح للسوبر أدمن فقط.');const name=document.getElementById('newCompanyName').value.trim();const ownerName=document.getElementById('newCompanyOwnerName').value.trim();const ownerPin=document.getElementById('newCompanyOwnerPin').value.trim();const hotelIds=[...document.querySelectorAll('.company-hotel-check:checked')].map(x=>Number(x.value));if(!name||!ownerName||!ownerPin||!hotelIds.length)return alert('أكمل اسم الشركة واسم المالك والرمز وحدد فندقاً واحداً على الأقل.');companiesList.push({id:Date.now(),name,ownerName,ownerPin,hotelIds,status:'active',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});saveData();uploadDataToCloud(true);document.getElementById('newCompanyName').value='';document.getElementById('newCompanyOwnerName').value='';document.getElementById('newCompanyOwnerPin').value='';renderCompaniesAdmin();alert('✅ تمت إضافة الشركة وربط فنادقها بنجاح.');}
-function editCompanyHotels(companyId){if(currentRole!=='superadmin')return alert('هذا الإجراء متاح للسوبر أدمن فقط.');const company=companiesList.find(c=>Number(c.id)===Number(companyId));if(!company)return;const ids=prompt(`أدخل أرقام الفنادق المسموح بها مفصولة بفواصل لشركة ${company.name}:`,(company.hotelIds||[]).join(','));if(ids===null)return;const parsed=ids.split(',').map(x=>Number(x.trim())).filter(id=>hotelsList.some(h=>h.id===id));if(!parsed.length)return alert('لم يتم حفظ التعديل: يجب اختيار فندق صالح واحد على الأقل.');company.hotelIds=[...new Set(parsed)];company.updatedAt=new Date().toISOString();saveData();uploadDataToCloud(true);renderCompaniesAdmin();alert('✅ تم تحديث فنادق الشركة دون المساس ببيانات الفنادق.');}
+function createCompanyFromSuperAdmin(){if(!['superadmin','shop_manager','shop_employee','shop_supervisor'].includes(currentRole))return alert('هذا الإجراء غير متاح لهذا الحساب.');const name=document.getElementById('newCompanyName').value.trim();const ownerName=document.getElementById('newCompanyOwnerName').value.trim();const ownerPin=document.getElementById('newCompanyOwnerPin').value.trim();const hotelIds=[...document.querySelectorAll('.company-hotel-check:checked')].map(x=>Number(x.value));if(!name||!ownerName||!ownerPin||!hotelIds.length)return alert('أكمل اسم الشركة واسم المالك والرمز وحدد فندقاً واحداً على الأقل.');companiesList.push({id:Date.now(),name,ownerName,ownerPin,hotelIds,status:'active',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()});saveData();uploadDataToCloud(true);document.getElementById('newCompanyName').value='';document.getElementById('newCompanyOwnerName').value='';document.getElementById('newCompanyOwnerPin').value='';renderCompaniesAdmin();alert('✅ تمت إضافة الشركة وربط فنادقها بنجاح.');}
+function editCompanyHotels(companyId){if(!['superadmin','shop_manager','shop_employee','shop_supervisor'].includes(currentRole))return alert('هذا الإجراء غير متاح لهذا الحساب.');const company=companiesList.find(c=>Number(c.id)===Number(companyId));if(!company)return;const ids=prompt(`أدخل أرقام الفنادق المسموح بها مفصولة بفواصل لشركة ${company.name}:`,(company.hotelIds||[]).join(','));if(ids===null)return;const parsed=ids.split(',').map(x=>Number(x.trim())).filter(id=>hotelsList.some(h=>h.id===id));if(!parsed.length)return alert('لم يتم حفظ التعديل: يجب اختيار فندق صالح واحد على الأقل.');company.hotelIds=[...new Set(parsed)];company.updatedAt=new Date().toISOString();saveData();uploadDataToCloud(true);renderCompaniesAdmin();alert('✅ تم تحديث فنادق الشركة دون المساس ببيانات الفنادق.');}
 
 function resetManagerPinPrompt(hotelId) {
   const h = hotelsList.find(item => item.id === hotelId);
@@ -3286,10 +3294,10 @@ async function issueShopAccessCode(){if(currentRole!=='superadmin')return alert(
 async function unlockShopModule(){if(!hoteraHasPermission('shops'))return alert('🔒 لا تملك صلاحية الوصول إلى وحدة المحلات.');if(currentRole==='superadmin'&&!document.getElementById('shopAccessCodeInput')?.value){sessionStorage.setItem('hotera_shop_access_until',String(Date.now()+1800000));return revealShopModule()}const code=(document.getElementById('shopAccessCodeInput')?.value||'').trim(),hash=localStorage.getItem('hotera_shop_access_hash'),expires=Number(localStorage.getItem('hotera_shop_access_expires')||0);if(!code||!hash||expires<Date.now()||await hoteraShopHash(code)!==hash)return alert('❌ رمز الدخول غير صحيح أو منتهي الصلاحية.');sessionStorage.setItem('hotera_shop_access_until',String(Date.now()+1800000));hoteraShopAudit('فتح وحدة المحلات',{role:currentRole});revealShopModule()}
 function revealShopModule(){document.getElementById('shopAccessGate')?.style.setProperty('display','none');document.getElementById('shopsProtectedContent')?.style.setProperty('display','block');const b=document.getElementById('issueShopAccessBtn');if(b)b.style.display=currentRole==='superadmin'?'inline-block':'none';renderShopAccounts();renderShopsDashboard()}
 function renderShopAccounts(){const box=document.getElementById('shopAccountsPanel');if(!box)return;box.innerHTML=(allShops||[]).map(shop=>{const list=Array.isArray(shopAccounts[shop.id])?shopAccounts[shop.id]:[];return `<div class="card" style="padding:8px;margin:5px 0;background:rgba(8,12,20,.55);border-color:rgba(245,158,11,.22)"><div style="display:flex;justify-content:space-between;gap:6px;align-items:center"><strong style="color:#fbbf24;font-size:11px">${hoteraEscapeText(shop.name)}</strong><button type="button" class="btn btn-blue" style="width:auto;margin:0;padding:4px 7px;font-size:9px" onclick="addShopAccount(${Number(shop.id)})">+ مستخدم</button></div><div style="margin-top:6px">${list.length?list.map(a=>`<div style="font-size:10px;color:#cbd5e1;border-top:1px solid rgba(255,255,255,.06);padding:5px 0">المستخدم: <b>${hoteraEscapeText(a.username)}</b> · كلمة السر: <span style="color:#94a3b8">مشفرة ومخفية</span></div>`).join(''):'<span style="font-size:9px;color:#94a3b8">لا توجد حسابات لهذا المحل بعد.</span>'}</div></div>`}).join('')||'<span style="color:#94a3b8;font-size:10px">أضف محلاً أولاً.</span>'}
-async function addShopAccount(shopId){if(currentRole!=='superadmin')return alert('إدارة مستخدمي المحلات متاحة للسوبر أدمن فقط.');const shop=(allShops||[]).find(x=>Number(x.id)===Number(shopId));if(!shop)return;const username=(prompt(`اسم المستخدم لمحل ${shop.name}:`,'')||'').trim(),password=(prompt('كلمة المرور (لن يتم عرضها بعد الحفظ):','')||'').trim();if(!username||password.length<6)return alert('اسم المستخدم مطلوب وكلمة المرور يجب ألا تقل عن 6 أحرف.');const list=Array.isArray(shopAccounts[shopId])?shopAccounts[shopId]:[];if(list.some(x=>x.username===username))return alert('اسم المستخدم موجود لهذا المحل.');list.push({id:`SA-${Date.now()}`,username,passwordHash:await hoteraShopHash(password),createdAt:new Date().toISOString(),createdBy:currentUsername||'السوبر أدمن'});shopAccounts[shopId]=list;hoteraSafeSetItem('hotera_shop_accounts',JSON.stringify(shopAccounts));hoteraShopAudit('إضافة مستخدم محل',{shop_id:shopId,username});renderShopAccounts();alert('✅ تم إنشاء المستخدم وحفظ كلمة المرور بصيغة مشفرة.')}
-function hoteraShopSelected(){const raw=prompt(`اختر رقم المحل:\n${(allShops||[]).map(x=>`${x.id}: ${x.name}`).join('\n')}`,(allShops||[])[0]?.id||'');const id=Number(raw);return allShops.find(x=>Number(x.id)===id)}
+async function addShopAccount(shopId){if(currentRole!=='superadmin')return alert('إدارة مستخدمي المحلات متاحة للسوبر أدمن فقط.');const shop=(allShops||[]).find(x=>Number(x.id)===Number(shopId));if(!shop)return;const username=(prompt(`اسم المستخدم لمحل ${shop.name}:`,'')||'').trim(),password=(prompt('كلمة المرور (لن يتم عرضها بعد الحفظ):','')||'').trim(),role=(prompt('دور المستخدم: shop_manager أو shop_employee أو shop_supervisor:','shop_employee')||'').trim();if(!username||password.length<6||!['shop_manager','shop_employee','shop_supervisor'].includes(role))return alert('اسم المستخدم مطلوب، وكلمة المرور 6 أحرف على الأقل، والدور يجب أن يكون مدير أو موظف أو مشرف محل.');const list=Array.isArray(shopAccounts[shopId])?shopAccounts[shopId]:[];if(list.some(x=>x.username===username))return alert('اسم المستخدم موجود لهذا المحل.');list.push({id:`SA-${Date.now()}`,username,role,passwordHash:await hoteraShopHash(password),createdAt:new Date().toISOString(),createdBy:currentUsername||'السوبر أدمن'});shopAccounts[shopId]=list;hoteraSafeSetItem('hotera_shop_accounts',JSON.stringify(shopAccounts));hoteraShopAudit('إضافة مستخدم محل',{shop_id:shopId,username});renderShopAccounts();alert('✅ تم إنشاء المستخدم وحفظ كلمة المرور بصيغة مشفرة.')}
+function hoteraShopSelected(){if(currentShopId)return (allShops||[]).find(x=>Number(x.id)===Number(currentShopId));const raw=prompt(`اختر رقم المحل:\n${(allShops||[]).map(x=>`${x.id}: ${x.name}`).join('\n')}`,(allShops||[])[0]?.id||'');const id=Number(raw);return allShops.find(x=>Number(x.id)===id)}
 function hoteraShopAudit(action,details={}){shopAuditLog.unshift({id:`SHOP-AUD-${Date.now()}`,action,details,staff:currentUsername||'السوبر أدمن',date:new Date().toISOString()});shopAuditLog=shopAuditLog.slice(0,1000)}
-function createShopRecord(){if(currentRole!=='superadmin')return alert('هذا الإجراء متاح للسوبر أدمن فقط.');const name=(prompt('اسم المحل:','')||'').trim();if(!name)return alert('اسم المحل مطلوب.');const category=(prompt('النشاط أو التصنيف:','')||'').trim();const location=(prompt('الموقع:','')||'').trim();const id=allShops.length?Math.max(...allShops.map(x=>Number(x.id)||0))+1:1;allShops.push({id,name,category,location,status:'active',createdAt:new Date().toISOString()});hoteraShopEnsure(id);hoteraShopAudit('إضافة محل',{shop_id:id,name});saveData();renderShopsDashboard();alert('✅ تمت إضافة المحل دون المساس ببيانات الفنادق.')}
+function createShopRecord(){if(!['superadmin','shop_manager','shop_employee','shop_supervisor'].includes(currentRole))return alert('هذا الإجراء غير متاح لهذا الحساب.');const name=(prompt('اسم المحل:','')||'').trim();if(!name)return alert('اسم المحل مطلوب.');const category=(prompt('النشاط أو التصنيف:','')||'').trim();const location=(prompt('الموقع:','')||'').trim();const id=allShops.length?Math.max(...allShops.map(x=>Number(x.id)||0))+1:1;allShops.push({id,name,category,location,status:'active',createdAt:new Date().toISOString()});hoteraShopEnsure(id);hoteraShopAudit('إضافة محل',{shop_id:id,name});saveData();renderShopsDashboard();alert('✅ تمت إضافة المحل دون المساس ببيانات الفنادق.')}
 function recordShopSale(){if(currentRole!=='superadmin')return alert('هذا الإجراء متاح للسوبر أدمن فقط.');const shop=hoteraShopSelected();if(!shop)return alert('لم يتم اختيار محل.');const date=hoteraShopDateKey(prompt('تاريخ المبيعات بصيغة YYYY-MM-DD:',hoteraLocalDateKey()));const total=Math.max(0,Number(prompt('إجمالي المبيعات:', '0')||0)||0);if(!total)return alert('أدخل إجمالي مبيعات صحيح.');const cash=Math.max(0,Number(prompt('النقدي:','0')||0)||0),card=Math.max(0,Number(prompt('شبكة/بطاقة:','0')||0)||0),transfer=Math.max(0,Number(prompt('تحويل:','0')||0)||0);if(Math.abs(cash+card+transfer-total)>0.01)return alert('مجموع طرق الدفع يجب أن يساوي إجمالي المبيعات.');const note=(prompt('ملاحظة اختيارية:','')||'').trim();hoteraShopEnsure(shop.id);dailySales[shop.id].unshift({id:`SALE-${Date.now()}`,shop_id:shop.id,date,total,cash,card,transfer,note,createdBy:currentUsername||'السوبر أدمن',createdAt:new Date().toISOString()});hoteraShopAudit('إضافة مبيعات يومية',{shop_id:shop.id,date,total});saveData();renderShopsDashboard();alert('✅ تم تسجيل المبيعات اليومية.')}
 function recordShopExpense(){if(currentRole!=='superadmin')return alert('هذا الإجراء متاح للسوبر أدمن فقط.');const shop=hoteraShopSelected();if(!shop)return alert('لم يتم اختيار محل.');const date=hoteraShopDateKey(prompt('تاريخ المصروف بصيغة YYYY-MM-DD:',hoteraLocalDateKey()));const category=(prompt('تصنيف المصروف:','مشتريات')||'').trim();const amount=Math.max(0,Number(prompt('المبلغ:','0')||0)||0);const description=(prompt('الوصف:','')||'').trim();if(!category||!amount||!description)return alert('التصنيف والمبلغ والوصف مطلوبة.');hoteraShopEnsure(shop.id);dailyExpenses[shop.id].unshift({id:`EXP-${Date.now()}`,shop_id:shop.id,date,category,amount,description,createdBy:currentUsername||'السوبر أدمن',createdAt:new Date().toISOString()});hoteraShopAudit('إضافة مصروف محل',{shop_id:shop.id,date,amount,category});saveData();renderShopsDashboard();alert('✅ تم تسجيل المصروف.')}
 function recordShopOtherRevenue(){if(currentRole!=='superadmin')return alert('هذا الإجراء متاح للسوبر أدمن فقط.');const shop=hoteraShopSelected();if(!shop)return alert('لم يتم اختيار محل.');const date=hoteraShopDateKey(prompt('تاريخ الإيراد بصيغة YYYY-MM-DD:',hoteraLocalDateKey()));const source=(prompt('مصدر الإيراد:','')||'').trim();const amount=Math.max(0,Number(prompt('المبلغ:','0')||0)||0);if(!source||!amount)return alert('مصدر الإيراد والمبلغ مطلوبان.');hoteraShopEnsure(shop.id);otherRevenues[shop.id].unshift({id:`REV-${Date.now()}`,shop_id:shop.id,date,source,amount,createdBy:currentUsername||'السوبر أدمن',createdAt:new Date().toISOString()});hoteraShopAudit('إضافة إيراد آخر لمحل',{shop_id:shop.id,date,amount,source});saveData();renderShopsDashboard();alert('✅ تم تسجيل الإيراد الآخر.')}
@@ -3353,7 +3361,7 @@ function closeExpenseModal() { document.getElementById('expenseModal').style.dis
 
 /* Permission guards: deny only unauthorized mutations; never alter stored records. */
 const hoteraPermissionMatrix={
-  shops:['superadmin','manager','company_owner_manager','front_desk','hr_supervisor'],
+  shops:['superadmin','manager','company_owner_manager','front_desk','hr_supervisor','shop_manager','shop_employee','shop_supervisor'],
   booking:['superadmin','manager','company_owner_manager','front_desk'],
   financial:['superadmin','manager','company_owner_manager','front_desk'],
   expense:['superadmin','manager','company_owner_manager'],
