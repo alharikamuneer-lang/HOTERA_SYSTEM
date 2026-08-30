@@ -471,6 +471,8 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
 #feat_shops #shopAccessGate h3{font-size:16px!important;color:#ffe7a3!important}#feat_shops #shopAccessGate p{font-size:10px!important;color:#cbd5e1!important}
 #feat_shops .btn-gold{background:linear-gradient(135deg,#ffe08a,#d58a13 58%,#8b4e08)!important}#feat_shops .form-input{background:rgba(4,12,23,.9);border-color:rgba(246,196,83,.22)}
 @media(max-width:700px){#feat_shops #shopsKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}#feat_shops #shopsProtectedContent>div:first-child>div{align-items:flex-start!important}}
+\n/* HOTEL COMMAND CENTER INSIGHTS — presentation and derived metrics only */
+.hotera-insights-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:0 0 10px}.hotera-insights-strip>div{padding:12px 10px;border-radius:15px;background:linear-gradient(145deg,rgba(17,35,57,.9),rgba(5,15,28,.95));border:1px solid rgba(246,196,83,.2);box-shadow:0 10px 24px rgba(0,0,0,.22)}.hotera-insights-strip small{display:block;color:#b9c7d8;font-size:9px}.hotera-insights-strip strong{display:block;color:#ffe7a3;font-size:15px;margin-top:5px}.hotera-insights-strip em{display:block;color:#7dd3fc;font-size:8px;font-style:normal;margin-top:4px}@media(max-width:800px){.hotera-insights-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 <body>
@@ -538,6 +540,7 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
     <select id="loginHotelSelect" class="form-select" onchange="updateLoginRoleOptions()"></select>
     <div id="loginShopGroup" style="display:none"><label id="lblSelectShop" style="font-size:10px;display:block;text-align:inherit;color:var(--text-muted);margin:5px 0 4px">اختر المحل (المنشأة):</label><select id="loginShopSelect" class="form-select" onchange="updateLoginRoleOptions()"></select></div>
     <div id="companySelectGroup" style="display:none;"><label style="font-size:10px;display:block;text-align:inherit;color:var(--accent-solid);margin:5px 0 4px">اختر الشركة</label><select id="loginCompanySelect" class="form-select"></select></div>
+    <div id="shopUsernameGroup" style="display:none"><label id="lblShopUsername" style="font-size:10px;display:block;text-align:inherit;color:var(--accent-solid);margin:5px 0 4px">اسم مستخدم المحل:</label><input id="loginShopUsername" class="form-input" type="text" autocomplete="username" placeholder="أدخل اسم مستخدم المحل" style="margin-bottom:0"></div>
 
     <label id="lblSelectRole" style="font-size:10px; display:block; text-align:inherit; color:var(--text-muted); margin-bottom:4px;">اختر الصلاحية / نوع الحساب:</label>
     <select id="loginRoleSelect" class="form-select" onchange="togglePinCodeField()">
@@ -774,6 +777,7 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
     <header class="hotera-glass-header"><div class="hotera-glass-brand"><div class="hotera-glass-mark">🏨</div><div><h1>HOTERA</h1><p>ULTIMATE HOTEL MANAGEMENT SYSTEM · GLASS EDITION</p></div></div><div class="hotera-glass-meta"><span>تطوير وهندسة البرمجيات</span><br><strong id="glassDeveloperName">م. منير الحارقة</strong> · <span id="glassDeveloperPhone">0566030594</span><div class="hotera-glass-actions"><button type="button" onclick="openLanguagePicker()" id="glassLanguageBtn">English</button><button type="button" onclick="logout()">⏻ متصل</button><button type="button" onclick="toggleHoteraTheme()">☼ الوضع الليلي</button></div></div></header>
     <div class="hotera-glass-intro"><div><h2>لوحة القيادة الذكية</h2><p>رؤية فورية لأداء الفندق، الإشغال، الحجوزات، الإيرادات والتنبيهات.</p></div><div class="hotera-glass-health"><span id="commandCloudStatus">☁️ السحابة: محلي</span><span id="commandLastSync">⏱ آخر تحديث: الآن</span><span>🛡️ النسخ الاحتياطي آمن</span></div></div>
     <div class="hotera-glass-kpis"><div class="hotera-glass-kpi"><small>إجمالي الغرف</small><strong id="cmdTotalRooms">0</strong><em>↗ حسب بيانات الفندق</em></div><div class="hotera-glass-kpi"><small>نسبة الإشغال</small><strong id="premiumOccupancy">0%</strong><em>↗ مقارنة مع أمس</em></div><div class="hotera-glass-kpi"><small>حجوزات اليوم</small><strong id="premiumTodayBookings">0</strong><em>↗ حجوزات جديدة</em></div><div class="hotera-glass-kpi"><small>إيرادات اليوم</small><strong id="premiumTodayRevenue">0 ر.س</strong><em>↗ أداء مالي</em></div><div class="hotera-glass-kpi"><small>تقييم النزلاء</small><strong id="premiumRatingsCount">0</strong><em>★ من السجلات الحالية</em></div></div>
+    <section class="hotera-insights-strip" id="hoteraHotelInsights"><div><small>الوصول اليوم</small><strong id="insightArrivals">0</strong><em>حجوزات تبدأ اليوم</em></div><div><small>المغادرة اليوم</small><strong id="insightDepartures">0</strong><em>تحتاج متابعة</em></div><div><small>الرصيد المستحق</small><strong id="insightOutstanding">0 ر.س</strong><em>من الفواتير الحالية</em></div><div><small>متوسط الحجز</small><strong id="insightAverageBooking">0 ر.س</strong><em>حسب الفواتير المسجلة</em></div><div><small>حالة التشغيل</small><strong id="insightOperationState">مستقر</strong><em>آخر قراءة فورية</em></div></section>
     <div class="hotera-glass-grid">
       <section class="hotera-glass-panel"><h3>🔔 التنبيهات الذكية</h3><div id="commandAlertsList"></div></section><section class="hotera-glass-panel"><h3>▤ الحجوزات القادمة</h3><div id="glassUpcomingBookings" class="hotera-glass-list"><div class="hotera-glass-list-row"><span>لا توجد حجوزات قادمة</span><strong>—</strong></div></div></section>
       <section class="hotera-glass-panel"><h3>◉ مؤشر الإشغال</h3><div class="hotera-glass-donut-wrap"><div class="hotera-glass-donut" id="glassOccupancyDonut"><span id="glassOccupancyValue">0%</span></div></div><div class="hotera-glass-list-row"><span>متاحة</span><strong id="premiumVacant">0</strong></div><div class="hotera-glass-list-row"><span>محجوزة</span><strong id="premiumBooked">0</strong></div></section>
@@ -1319,6 +1323,7 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
       <div><label style="font-size:10px;color:var(--text-muted);">مصدر الحجز:</label><select id="bookingSource" class="form-select" style="margin-bottom:0;"><option value="الاستقبال">الاستقبال</option><option value="الموقع الإلكتروني">الموقع الإلكتروني</option><option value="Booking.com">Booking.com</option><option value="Agoda">Agoda</option><option value="Expedia">Expedia</option><option value="Airbnb">Airbnb</option><option value="Trip.com">Trip.com</option><option value="المسافر (Almosafer)">المسافر (Almosafer)</option><option value="المطار (Almatar)">المطار (Almatar)</option><option value="ترافيلستارت">ترافيلستارت</option><option value="أخرى">أخرى</option></select></div>
     </div>
     <div style="display:flex;align-items:center;gap:7px;padding:7px 9px;margin-bottom:6px;border:1px solid rgba(56,189,248,.2);border-radius:9px;background:rgba(56,189,248,.06);font-size:10px;color:#bae6fd;"><span>👤 منفذ الحجز:</span><strong id="bookingCreatedByDisplay">—</strong></div>
+    <div><label style="font-size:10px;color:var(--text-muted);">حالة الحجز:</label><select id="bookingStatusSelect" class="form-select" style="margin-bottom:0;"><option value="confirmed">✅ مؤكد</option><option value="pending">⏳ قيد الانتظار</option><option value="cancelled">❌ ملغى</option><option value="no_show">⚠️ عدم حضور</option><option value="completed">🏁 مكتمل</option></select></div>
     <textarea id="bookingNotes" class="form-input" placeholder="ملاحظات الحجز والطلبات الخاصة..." style="height:55px;resize:vertical"></textarea>
     <label style="font-size:10px; color:var(--accent-solid); font-weight:bold; display:block; margin-top:4px;" id="lblBkgCar">🚗 بيانات السيارات (إذا وجدت):</label>
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-bottom:6px;">
@@ -1335,6 +1340,7 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
       <div><label style="font-size:9px; color:var(--text-muted);" id="lblBkgNights">عدد الليالي:</label><input type="number" id="bookingNightsInput" class="form-input" value="1" oninput="calculateTotalFromManual()"></div>
       <div><label style="font-size:9px; color:var(--text-muted);" id="lblBkgNightPrice">سعر الليلة (لكل غرفة):</label><input type="number" id="bookingNightPriceInput" class="form-input" value="200" oninput="calculateTotalFromManual()"></div>
     </div>
+    <div style="display:flex;gap:6px;align-items:end;margin-top:6px;margin-bottom:6px"><div style="flex:1"><label style="font-size:9px;color:var(--text-muted)">السعر الموسمي (اختياري):</label><select id="bookingSeasonalRateSelect" class="form-select" style="margin-bottom:0" onchange="applySelectedBookingSeasonalRate()"><option value="">استخدام السعر الأساسي</option></select></div><small id="bookingSeasonalRateHint" style="font-size:8px;color:#7dd3fc;max-width:170px">لا يتم تطبيق أي سعر تلقائياً.</small></div>
     <div style="text-align:center; background:rgba(245,158,11,0.1); padding:6px; border-radius:8px; margin-bottom:6px;">
       <span id="lblBkgTotalText">الإجمالي الكلي (لكل الغرف): </span><strong id="bookingTotalPriceDisplay" style="color:var(--accent-solid);">0.00 ر.س</strong>
     </div>
@@ -1731,6 +1737,8 @@ async function handleDeviceAccess() {
 function hoteraMergeById(localList,remoteList){const map=new Map();(Array.isArray(localList)?localList:[]).forEach(x=>{if(x&&x.id!==undefined)map.set(String(x.id),x)});(Array.isArray(remoteList)?remoteList:[]).forEach(x=>{if(!x||x.id===undefined)return;const key=String(x.id),old=map.get(key);if(!old){map.set(key,x);return;}const lt=new Date(old.updatedAt||old.createdAt||old.date||0).getTime(),rt=new Date(x.updatedAt||x.createdAt||x.date||0).getTime();if(lt&&rt&&lt>rt){try{if(typeof hoteraRecordSyncConflict==='function')hoteraRecordSyncConflict({kind:'merge',recordId:key,summary:`تم الاحتفاظ بتعديل محلي أحدث للسجل ${key}`,resolution:'لم يتم استبدال السجل الأحدث'})}catch(e){};map.set(key,{...x,...old});}else map.set(key,{...old,...x})});return [...map.values()]}
 function hoteraMergeCompanies(remoteCompanies){const merged=hoteraMergeById(companiesList,remoteCompanies);merged.forEach(c=>{if(!Array.isArray(c.hotelIds))c.hotelIds=[];c.hotelIds=[...new Set(c.hotelIds.map(Number).filter(id=>hotelsList.some(h=>Number(h.id)===id)))];if(!c.status)c.status='active'});return merged}
 
+function hoteraMergeDataMap(localMap, remoteMap) { const out = (localMap && typeof localMap === 'object') ? {...localMap} : {}; if (!remoteMap || typeof remoteMap !== 'object') return out; Object.entries(remoteMap).forEach(([key, remote]) => { if (Array.isArray(remote)) out[key] = hoteraMergeById(Array.isArray(out[key]) ? out[key] : [], remote); else if (remote && typeof remote === 'object' && !Array.isArray(remote)) out[key] = {...(out[key] && typeof out[key] === 'object' ? out[key] : {}), ...remote}; else if (out[key] === undefined) out[key] = remote; }); return out; }
+
 function buildCloudPayload() {
   return {
     version: 3,
@@ -1751,6 +1759,15 @@ function buildCloudPayload() {
     customerMemory,
     expenses: allExpenses,
     inventory: allInventory,
+    purchases: allPurchases,
+    purchaseOrders: allPurchaseOrders,
+    goodsReceipts: allGoodsReceipts,
+    supplierReturns: allSupplierReturns,
+    suppliers: allSuppliers,
+    financialAdjustments: allFinancialAdjustments,
+    periodClosures: allPeriodClosures,
+    auditLog: allAuditLog,
+    shopAuditLog,
     maintenanceTickets: allMaintenanceTickets,
     shifts: allShifts,
     ratings: allRatings,
@@ -1812,30 +1829,39 @@ function applyCloudPayload(cloudData) {
       hoteraInvoiceServices[hotelId] = hoteraMergeById(Array.isArray(hoteraInvoiceServices[hotelId]) ? hoteraInvoiceServices[hotelId] : [], remoteServices);
     });
   }
-  if (cloudData.invoiceAdjustments) hoteraInvoiceAdjustments = hoteraMergeById(hoteraInvoiceAdjustments, cloudData.invoiceAdjustments);
-  if (cloudData.preventiveMaintenance && typeof cloudData.preventiveMaintenance==='object') Object.entries(cloudData.preventiveMaintenance).forEach(([hotelId,list])=>{if(Array.isArray(list))hoteraSafeSetItem(`hotera_preventive_maintenance_${hotelId}`,JSON.stringify(list));});
-  if (cloudData.cancelledBookings) cancelledBookingsData = cloudData.cancelledBookings;
-  if (cloudData.refundedInvoices) refundedInvoicesData = cloudData.refundedInvoices;
-  if (cloudData.transactions) allTransactions = cloudData.transactions;
-  if (cloudData.attendance) attendanceRecords = cloudData.attendance;
-  if (cloudData.customerMemory) customerMemory = cloudData.customerMemory;
-  if (cloudData.expenses) allExpenses = cloudData.expenses;
+  if (cloudData.invoiceAdjustments && typeof cloudData.invoiceAdjustments === 'object') hoteraInvoiceAdjustments = hoteraMergeDataMap(hoteraInvoiceAdjustments, cloudData.invoiceAdjustments);
+  if (cloudData.preventiveMaintenance && typeof cloudData.preventiveMaintenance==='object') Object.entries(cloudData.preventiveMaintenance).forEach(([hotelId,list])=>{if(!Array.isArray(list))return;const key=`hotera_preventive_maintenance_${hotelId}`,local=(()=>{try{return JSON.parse(localStorage.getItem(key)||'[]')}catch(e){return[]}})();hoteraSafeSetItem(key,JSON.stringify(hoteraMergeById(local,list)));});
+  if (cloudData.cancelledBookings && typeof cloudData.cancelledBookings === 'object') cancelledBookingsData = hoteraMergeDataMap(cancelledBookingsData, cloudData.cancelledBookings);
+  if (cloudData.refundedInvoices && typeof cloudData.refundedInvoices === 'object') refundedInvoicesData = hoteraMergeDataMap(refundedInvoicesData, cloudData.refundedInvoices);
+  if (cloudData.transactions && typeof cloudData.transactions === 'object') allTransactions = hoteraMergeDataMap(allTransactions, cloudData.transactions);
+  if (cloudData.attendance && typeof cloudData.attendance === 'object') attendanceRecords = hoteraMergeDataMap(attendanceRecords, cloudData.attendance);
+  if (cloudData.customerMemory && typeof cloudData.customerMemory === 'object') customerMemory = {...customerMemory, ...cloudData.customerMemory};
+  if (cloudData.expenses && typeof cloudData.expenses === 'object') allExpenses = hoteraMergeDataMap(allExpenses, cloudData.expenses);
   if (Array.isArray(cloudData.shops)) allShops = hoteraMergeById(allShops, cloudData.shops);
-  if (cloudData.shopSales && typeof cloudData.shopSales === 'object') dailySales = cloudData.shopSales;
-  if (cloudData.shopExpenses && typeof cloudData.shopExpenses === 'object') dailyExpenses = cloudData.shopExpenses;
-  if (cloudData.shopOtherRevenues && typeof cloudData.shopOtherRevenues === 'object') otherRevenues = cloudData.shopOtherRevenues;
-  if (cloudData.shopAccounts && typeof cloudData.shopAccounts === 'object') shopAccounts = cloudData.shopAccounts;
-  if (cloudData.inventory) allInventory = cloudData.inventory;
-  if (cloudData.maintenanceTickets) allMaintenanceTickets = cloudData.maintenanceTickets;
-  if (cloudData.shifts) allShifts = cloudData.shifts;
-  if (cloudData.ratings) allRatings = cloudData.ratings;
+  if (cloudData.shopSales && typeof cloudData.shopSales === 'object') dailySales = hoteraMergeDataMap(dailySales, cloudData.shopSales);
+  if (cloudData.shopExpenses && typeof cloudData.shopExpenses === 'object') dailyExpenses = hoteraMergeDataMap(dailyExpenses, cloudData.shopExpenses);
+  if (cloudData.shopOtherRevenues && typeof cloudData.shopOtherRevenues === 'object') otherRevenues = hoteraMergeDataMap(otherRevenues, cloudData.shopOtherRevenues);
+  if (cloudData.shopAccounts && typeof cloudData.shopAccounts === 'object') shopAccounts = hoteraMergeDataMap(shopAccounts, cloudData.shopAccounts);
+  if (cloudData.inventory && typeof cloudData.inventory === 'object') allInventory = hoteraMergeDataMap(allInventory, cloudData.inventory);
+  if (cloudData.maintenanceTickets && typeof cloudData.maintenanceTickets === 'object') allMaintenanceTickets = hoteraMergeDataMap(allMaintenanceTickets, cloudData.maintenanceTickets);
+  if (cloudData.shifts && typeof cloudData.shifts === 'object') allShifts = hoteraMergeDataMap(allShifts, cloudData.shifts);
+  if (cloudData.ratings && typeof cloudData.ratings === 'object') allRatings = hoteraMergeDataMap(allRatings, cloudData.ratings);
+  if (cloudData.purchases && typeof cloudData.purchases === 'object') allPurchases = hoteraMergeDataMap(allPurchases, cloudData.purchases);
+  if (cloudData.purchaseOrders && typeof cloudData.purchaseOrders === 'object') allPurchaseOrders = hoteraMergeDataMap(allPurchaseOrders, cloudData.purchaseOrders);
+  if (cloudData.goodsReceipts && typeof cloudData.goodsReceipts === 'object') allGoodsReceipts = hoteraMergeDataMap(allGoodsReceipts, cloudData.goodsReceipts);
+  if (cloudData.supplierReturns && typeof cloudData.supplierReturns === 'object') allSupplierReturns = hoteraMergeDataMap(allSupplierReturns, cloudData.supplierReturns);
+  if (cloudData.suppliers && typeof cloudData.suppliers === 'object') allSuppliers = hoteraMergeDataMap(allSuppliers, cloudData.suppliers);
+  if (cloudData.financialAdjustments && typeof cloudData.financialAdjustments === 'object') allFinancialAdjustments = hoteraMergeDataMap(allFinancialAdjustments, cloudData.financialAdjustments);
+  if (cloudData.periodClosures && typeof cloudData.periodClosures === 'object') allPeriodClosures = hoteraMergeDataMap(allPeriodClosures, cloudData.periodClosures);
+  if (cloudData.auditLog && typeof cloudData.auditLog === 'object') allAuditLog = hoteraMergeDataMap(allAuditLog, cloudData.auditLog);
+  if (Array.isArray(cloudData.shopAuditLog)) shopAuditLog = hoteraMergeById(shopAuditLog, cloudData.shopAuditLog);
   if (Array.isArray(cloudData.seasonalRates)) writeHoteraSeasonalRates(hoteraMergeById(readHoteraSeasonalRates(),cloudData.seasonalRates));
   if (Array.isArray(cloudData.customerProfiles)) writeHoteraCustomerProfiles(hoteraMergeById(readHoteraCustomerProfiles(),cloudData.customerProfiles));
   if (Array.isArray(cloudData.guestAccessTokens)) writeHoteraGuestAccessTokens(hoteraMergeById(readHoteraGuestAccessTokens(),cloudData.guestAccessTokens));
   if (cloudData.serviceRequests && typeof cloudData.serviceRequests==='object') Object.entries(cloudData.serviceRequests).forEach(([hotelId,list])=>{if(!Array.isArray(list))return;const key=`hotera_service_requests_${hotelId}`,local=(()=>{try{return JSON.parse(localStorage.getItem(key)||'[]')}catch(e){return[]}})();hoteraSafeSetItem(key,JSON.stringify(hoteraMergeById(local,list).sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||''))).slice(0,300)));});
-  if (Array.isArray(cloudData.devices)) cloudDevices = cloudData.devices;
+  if (Array.isArray(cloudData.devices)) cloudDevices = hoteraMergeById(cloudDevices, cloudData.devices);
   if (cloudData.joinCode) { cloudJoinCode = cloudData.joinCode; hoteraSafeSetItem('hotera_cloud_join_code', cloudJoinCode); }
-  if (cloudData.masterKey) masterSuperKey = cloudData.masterKey;
+
   if (cloudData.developerName) developerName = cloudData.developerName;
   if (cloudData.developerPhone) developerPhone = cloudData.developerPhone;
   if (cloudData.aboutTitle) aboutPageTitleText = cloudData.aboutTitle;
@@ -2775,7 +2801,9 @@ function togglePinCodeField() {
   const hotelSelect = document.getElementById('loginHotelSelect');
   if (hotelLabel) hotelLabel.style.display = role === 'company_owner' ? 'none' : '';
   if (hotelSelect) hotelSelect.style.display = role === 'company_owner' ? 'none' : '';
-  if (shopMode && ['shop_manager','shop_employee','shop_supervisor'].includes(role)) { staffGroup.style.display = 'block'; document.getElementById('lblSelectUser').innerText='اسم مستخدم المحل:'; pinLabel.innerText = role==='shop_manager'?'كلمة مرور مدير المحل':(role==='shop_employee'?'كلمة مرور موظف المحل':'كلمة مرور مشرف المحل'); }
+  const shopUsernameGroup = document.getElementById('shopUsernameGroup');
+  if (shopUsernameGroup) shopUsernameGroup.style.display = shopMode && ['shop_manager','shop_employee','shop_supervisor'].includes(role) ? 'block' : 'none';
+  if (shopMode && ['shop_manager','shop_employee','shop_supervisor'].includes(role)) { staffGroup.style.display = 'none'; document.getElementById('lblShopUsername').innerText='اسم مستخدم المحل:'; pinLabel.innerText = role==='shop_manager'?'كلمة مرور مدير المحل':(role==='shop_employee'?'كلمة مرور موظف المحل':'كلمة مرور مشرف المحل'); }
   else if (role === 'superadmin') { staffGroup.style.display = 'none'; pinLabel.innerText = t.pinSuper; }
   else if (role === 'manager') { staffGroup.style.display = 'none'; pinLabel.innerText = t.pinMgr; }
   else if (role === 'company_owner') { staffGroup.style.display = 'none'; pinLabel.innerText = 'رمز مالك الشركة'; }
@@ -2818,7 +2846,7 @@ async function executeLogin() {
     if (!shop) { hoteraRegisterLoginFailure(); return alert('❌ لم تتم إضافة أي محل أو لم يتم اختيار محل.'); }
     if (role === 'superadmin') { if(pinInput!==masterSuperKey){hoteraRegisterLoginFailure();return alert('❌ رمز السوبر أدمن غير صحيح!')} currentRole='superadmin'; currentUsername='المالك العام — إدارة المحلات'; }
     else if (role === 'company_owner') { const companyId=Number(document.getElementById('loginCompanySelect')?.value||0), company=companiesList.find(c=>Number(c.id)===companyId); if(!company||company.status==='suspended'||pinInput!==company.ownerPin)return alert('❌ بيانات مالك الشركة متعددة المحلات غير صحيحة.'); currentRole='shop_company_owner'; currentUsername=company.ownerName||'مالك الشركة متعددة المحلات'; currentCompanyId=company.id; }
-    else { const username=document.getElementById('loginStaffSelect')?.value||'', account=(Array.isArray(shopAccounts[shopId])?shopAccounts[shopId]:[]).find(a=>a.username===username); if(!account){hoteraRegisterLoginFailure();return alert('❌ لا يوجد مستخدم لهذا المحل. أنشئ الحساب من السوبر أدمن.')} if(account.role&&account.role!==role){hoteraRegisterLoginFailure();return alert('❌ هذا المستخدم لا يملك الصلاحية المختارة.')} const hash=await hoteraShopHash(pinInput); if(account.passwordHash!==hash){hoteraRegisterLoginFailure();return alert('❌ كلمة مرور مستخدم المحل غير صحيحة.')} currentRole=role; currentUsername=account.username; }
+    else { const username=(document.getElementById('loginShopUsername')?.value||document.getElementById('loginStaffSelect')?.value||'').trim(), account=(Array.isArray(shopAccounts[shopId])?shopAccounts[shopId]:[]).find(a=>String(a.username||'').trim().toLowerCase()===username.toLowerCase()); if(!username){hoteraRegisterLoginFailure();return alert('❌ أدخل اسم مستخدم المحل.')} if(!account){hoteraRegisterLoginFailure();return alert('❌ لا يوجد مستخدم بهذا الاسم لهذا المحل. أنشئ الحساب من السوبر أدمن.')} if(account.role&&account.role!==role){hoteraRegisterLoginFailure();return alert('❌ هذا المستخدم لا يملك الصلاحية المختارة.')} const hash=await hoteraShopHash(pinInput); if(account.passwordHash!==hash){hoteraRegisterLoginFailure();return alert('❌ كلمة مرور مستخدم المحل غير صحيحة.')} currentRole=role; currentUsername=account.username; }
     currentShopId=shopId; currentHotelId=null; loginEntityType='shop'; hoteraResetLoginGuard(); hoteraStartSession(); document.getElementById('loginOverlay').style.display='none'; updateHeaderInfo(); applyPermissions(); switchMainFeature('shops',document.getElementById('chipShops')); return;
   }
 
@@ -3202,7 +3230,7 @@ function renderCommandCenter() {
   const revenue = invoices.reduce((sum, inv) => sum + hoteraGetInvoiceFinancialSummary(inv).total, 0);
   hoteraRenderOperationsSummary(rooms,invoices);
   const set = (id, value) => { const el=document.getElementById(id); if(el) el.innerText=value; };
-  set('cmdTotalRooms', total); set('cmdAvailableRooms', available); set('cmdOccupiedRooms', occupied); set('cmdRevenue', `${revenue.toFixed(2)} ر.س`);
+  set('cmdTotalRooms', total); set('cmdAvailableRooms', available); set('cmdOccupiedRooms', occupied); set('cmdRevenue', `${revenue.toFixed(2)} ر.س`); const arrivals=rooms.filter(r=>String(r.checkIn||'')===today&&r.bookingRef).length,departures=rooms.filter(r=>String(r.checkOut||'')===today&&r.bookingRef).length,outstanding=invoices.reduce((n,i)=>n+hoteraGetInvoiceFinancialSummary(i).remaining,0),avgInvoice=invoices.length?revenue/invoices.length:0; set('insightArrivals',arrivals); set('insightDepartures',departures); set('insightOutstanding',`${outstanding.toFixed(2)} ر.س`); set('insightAverageBooking',`${avgInvoice.toFixed(2)} ر.س`); set('insightOperationState',(alertsCount=rooms.filter(r=>r.status==='cleaning'||r.status==='maintenance').length)?'يحتاج متابعة':'مستقر');
   const status = document.getElementById('commandCloudStatus'); if(status) status.innerText = `☁️ السحابة: ${(typeof cloudApiUrl !== 'undefined' && cloudApiUrl) ? 'متصل' : 'محلي'}`;
   const sync = document.getElementById('commandLastSync'); if(sync) sync.innerText = `⏱ آخر تحديث: ${new Date().toLocaleTimeString()}`;
   const map = document.getElementById('commandRoomMap'); if(map) { map.innerHTML = rooms.slice(0, 80).map(r => `<div class="command-room ${r.status || 'vacant'}" onclick="openRoomModalByCommand(${r.id})"><strong>${r.id}</strong><br><span>${r.status==='occupied'?'محجوز':r.status==='maintenance'?'صيانة':r.status==='cleaning'?'خروج':'متاح'}</span></div>`).join('') || '<div style="font-size:10px;color:#94a3b8">لا توجد غرف</div>'; }
@@ -3902,6 +3930,9 @@ function updateBookingAutoTypeBadge(count) {
   badge.style.display=count?'block':'none';
   const select=document.getElementById('bookingTypeSelect'); if(select) select.value=type==='مفرد'?'فردي':(type==='جماعي'?'شركة/مجموعات':'متعدد الغرف');
 }
+function populateBookingSeasonalRates(){const sel=document.getElementById('bookingSeasonalRateSelect');if(!sel)return;const today=document.getElementById('bookingCheckIn')?.value||hoteraLocalDateKey(),list=readHoteraSeasonalRates().filter(x=>x.status==='active'&&String(x.start)<=today&&today<=String(x.end));sel.innerHTML='<option value="">استخدام السعر الأساسي</option>'+list.map(x=>`<option value="${hoteraEscapeText(x.id)}">${hoteraEscapeText(x.name)} — ${Number(x.rate||0).toFixed(2)} ر.س${Number(x.discount||0)?` — خصم ${Number(x.discount)}%`:''}</option>`).join('');}
+function applySelectedBookingSeasonalRate(){const id=document.getElementById('bookingSeasonalRateSelect')?.value||'',item=readHoteraSeasonalRates().find(x=>String(x.id)===String(id)),input=document.getElementById('bookingNightPriceInput'),hint=document.getElementById('bookingSeasonalRateHint');if(!input)return;if(!item){input.value=input.dataset.baseRate||input.value||200;if(hint)hint.innerText='لا يتم تطبيق أي سعر تلقائياً.';}else{input.dataset.baseRate=input.dataset.baseRate||input.value;const discount=Math.max(0,Math.min(100,Number(item.discount||0)));input.value=(Number(item.rate||0)*(1-discount/100)).toFixed(2);if(hint)hint.innerText=`تم اختيار ${item.name} لهذا الحجز فقط.`;}calculateTotalFromManual();}
+
 function openNewBookingModal(editRef) {
   if(typeof hoteraReconcileRoomStatusesFromBookings==='function') hoteraReconcileRoomStatusesFromBookings(currentHotelId);
   window.hoteraEditingBookingRef = editRef || null;
@@ -3932,6 +3963,7 @@ function openNewBookingModal(editRef) {
   document.getElementById('bookingPaidAmount').value = Number(sourceRoom?.paidAmount || 0).toFixed(2);
   document.getElementById('bookingPurpose').value = sourceRoom?.bookingPurpose || 'سياحة';
   document.getElementById('bookingSource').value = sourceRoom?.bookingSource || 'الاستقبال';
+  document.getElementById('bookingStatusSelect').value = sourceRoom?.bookingStatus || 'confirmed';
   document.getElementById('bookingCreatedByDisplay').innerText = sourceRoom?.bookingCreatedBy || sourceRoom?.staffName || currentUsername || 'المستخدم الحالي';
   document.getElementById('bookingNotes').value = sourceRoom?.bookingNotes || '';
   document.getElementById('bookingCarType').value = sourceRoom?.carType || '';
@@ -3940,7 +3972,7 @@ function openNewBookingModal(editRef) {
   let tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
   document.getElementById('bookingCheckOut').value = sourceRoom?.checkOut || tomorrow.toISOString().split('T')[0];
   document.getElementById('bookingNightsInput').value = sourceRoom?.nights || 1;
-  document.getElementById('bookingNightPriceInput').value = sourceRoom?.nightPrice || 200;
+  document.getElementById('bookingNightPriceInput').value = sourceRoom?.nightPrice || 200; document.getElementById('bookingNightPriceInput').dataset.baseRate = String(sourceRoom?.nightPrice || 200); populateBookingSeasonalRates();
   document.getElementById('bookingTypeSelect').value = sourceRoom?.bookingType || 'فردي';
   document.getElementById('modBookingTitle').innerText = editRef ? `✏️ تعديل الحجز ${editRef}` : '➕ حجز جماعي أو فردي متعدد الغرف';
   document.getElementById('bookingReviewBox').style.display = 'none';
@@ -4008,7 +4040,7 @@ function reviewNewBooking() {
   if(!guest) return alert('الرجاء إدخال اسم العميل قبل المراجعة.');
   if(!rooms.length) return alert('الرجاء اختيار غرفة واحدة على الأقل قبل المراجعة.');
   const box=document.getElementById('bookingReviewBox');
-  box.innerHTML=`<strong style="color:var(--accent-solid)">مراجعة الحجز</strong><br>👤 ${hoteraEscapeText(guest)} — 📞 ${hoteraEscapeText(phone||'بدون جوال')}<br>🛏️ الغرف: ${rooms.join('، ')}<br>📅 ${checkIn} إلى ${checkOut} — ${nights} ليلة<br>💳 الدفع: ${payment}<br>🎯 الغرض: ${hoteraEscapeText(document.getElementById('bookingPurpose').value)}<br>📌 المصدر: ${hoteraEscapeText(document.getElementById('bookingSource').value)}<br>👤 المنفذ: ${hoteraEscapeText(currentUsername||'المستخدم الحالي')}<br>💰 الإجمالي: <strong>${(rooms.length*nights*price).toFixed(2)} ر.س</strong><br>💳 الحالة: ${document.getElementById('bookingPaymentStatus')?.value||'غير مدفوع'} · المدفوع: ${(calculateBookingPaymentSummary().paid||0).toFixed(2)} ر.س · المتبقي: ${(calculateBookingPaymentSummary().remaining||0).toFixed(2)} ر.س`;
+  box.innerHTML=`<strong style="color:var(--accent-solid)">مراجعة الحجز</strong><br>👤 ${hoteraEscapeText(guest)} — 📞 ${hoteraEscapeText(phone||'بدون جوال')}<br>🛏️ الغرف: ${rooms.join('، ')}<br>📅 ${checkIn} إلى ${checkOut} — ${nights} ليلة<br>💳 الدفع: ${payment}<br>🎯 الغرض: ${hoteraEscapeText(document.getElementById('bookingPurpose').value)}<br>📌 المصدر: ${hoteraEscapeText(document.getElementById('bookingSource').value)}<br>📍 الحالة: ${hoteraEscapeText(document.getElementById('bookingStatusSelect')?.selectedOptions?.[0]?.text||'مؤكد')}<br>👤 المنفذ: ${hoteraEscapeText(currentUsername||'المستخدم الحالي')}<br>💰 الإجمالي: <strong>${(rooms.length*nights*price).toFixed(2)} ر.س</strong><br>💳 الحالة: ${document.getElementById('bookingPaymentStatus')?.value||'غير مدفوع'} · المدفوع: ${(calculateBookingPaymentSummary().paid||0).toFixed(2)} ر.س · المتبقي: ${(calculateBookingPaymentSummary().remaining||0).toFixed(2)} ر.س`;
   box.style.display='block'; document.getElementById('btnBkgReview').style.display='none'; document.getElementById('btnBkgSubmit').style.display='block';
 }
 
@@ -4042,6 +4074,7 @@ async function executeNewBooking() {
   const remainingAmount = paymentInfo.remaining;
   const bookingPurpose = document.getElementById('bookingPurpose').value;
   const bookingSource = document.getElementById('bookingSource').value;
+  const bookingStatus = document.getElementById('bookingStatusSelect')?.value || 'confirmed';
   const bookingNotes = document.getElementById('bookingNotes').value.trim();
   const editingRef = window.hoteraEditingBookingRef || null;
   const companyContractId = document.getElementById('bookingCompanyContract')?.value || '';
@@ -4051,11 +4084,13 @@ async function executeNewBooking() {
   const carPlate = document.getElementById('bookingCarPlate').value.trim();
   const nights = parseInt(document.getElementById('bookingNightsInput').value) || 1;
   const baseNightPrice = parseFloat(document.getElementById('bookingNightPriceInput').value) || 200;
+  const seasonalRateId = document.getElementById('bookingSeasonalRateSelect')?.value || '';
   const contractDiscount = selectedContract ? Math.max(0,Math.min(100,Number(selectedContract.discount||0))) : 0;
   const nightPrice = applyCompanyRate && selectedContract && Number(selectedContract.rate)>0 ? Number(selectedContract.rate)*(1-contractDiscount/100) : baseNightPrice;
-  const pricingSource = applyCompanyRate && selectedContract ? 'عقد شركة' : 'السعر الأساسي';
+  const pricingSource = applyCompanyRate && selectedContract ? 'عقد شركة' : (seasonalRateId ? 'سعر موسمي' : 'السعر الأساسي');
   const checkIn = document.getElementById('bookingCheckIn').value;
   const checkOut = document.getElementById('bookingCheckOut').value;
+  populateBookingSeasonalRates();
   const checkboxes = [...document.querySelectorAll('input[name="selectedBookingRoom"]:checked')];
   const selectedIds = checkboxes.map(chk=>parseInt(chk.value));
   const bookingValidation=hoteraValidateBookingInputs(checkIn,checkOut,nights,baseNightPrice);
@@ -4081,13 +4116,13 @@ async function executeNewBooking() {
   const roomsListDetails=[]; let totalGrandAmount=0;
   selectedIds.forEach(roomId=>{
     const target=rooms.find(r=>r.id===roomId); if(!target) return;
-    const priorCheckInStatus=target.checkInStatus; Object.assign(target,{status:'occupied',guest,phone,guestId,nationality,email,adults,children,paymentMethod,paymentStatus,paidAmount,remainingAmount,bookingNotes,carType,carPlate,bookingType,bookingRef,nights,nightPrice,baseNightPrice,pricingSource,contractDiscount,checkIn,checkOut,totalAmount:nights*nightPrice,staffName:currentUsername,bookingCreatedBy,bookingUpdatedBy,bookingPurpose,bookingSource,companyContractId,checkInStatus:priorCheckInStatus||(checkIn>hoteraLocalDateKey()?'scheduled':'checked-in'),checkedInAt:target.checkedInAt||((checkIn<=hoteraLocalDateKey())?new Date().toISOString():''),checkedInBy:target.checkedInBy||((checkIn<=hoteraLocalDateKey())?(currentUsername||'المستخدم الحالي'):'')});
+    const priorCheckInStatus=target.checkInStatus; Object.assign(target,{status:'occupied',guest,phone,guestId,nationality,email,adults,children,paymentMethod,paymentStatus,paidAmount,remainingAmount,bookingNotes,carType,carPlate,bookingType,bookingRef,nights,nightPrice,baseNightPrice,pricingSource,contractDiscount,checkIn,checkOut,totalAmount:nights*nightPrice,staffName:currentUsername,bookingCreatedBy,bookingUpdatedBy,bookingPurpose,bookingSource,bookingStatus,seasonalRateId,companyContractId,checkInStatus:priorCheckInStatus||(checkIn>hoteraLocalDateKey()?'scheduled':'checked-in'),checkedInAt:target.checkedInAt||((checkIn<=hoteraLocalDateKey())?new Date().toISOString():''),checkedInBy:target.checkedInBy||((checkIn<=hoteraLocalDateKey())?(currentUsername||'المستخدم الحالي'):'')});
     roomsListDetails.push({id:target.id,type:target.type,nights,price:nightPrice}); totalGrandAmount += nights*nightPrice;
   });
   if(!allInvoices || typeof allInvoices!=='object') allInvoices={};
   if(!Array.isArray(allInvoices[currentHotelId])) allInvoices[currentHotelId]=[];
   let unifiedInvoice = allInvoices[currentHotelId].find(i=>i.bookingRef===bookingRef);
-  const invoiceData={bookingRef,room:roomsListDetails[0]?.id||'مجموعة',roomsList:roomsListDetails,guest,phone,guestId,nationality,email,adults,children,paymentMethod,paymentStatus,paidAmount,remainingAmount,bookingNotes,carType,carPlate,bookingType,nights,nightPrice,baseNightPrice,pricingSource,contractDiscount,bookingPurpose,bookingSource,companyContractId,total:totalGrandAmount,date:checkIn,checkIn,checkOut,status:'confirmed',staffName:currentUsername,bookingCreatedBy,bookingUpdatedBy};
+  const invoiceData={bookingRef,room:roomsListDetails[0]?.id||'مجموعة',roomsList:roomsListDetails,guest,phone,guestId,nationality,email,adults,children,paymentMethod,paymentStatus,paidAmount,remainingAmount,bookingNotes,carType,carPlate,bookingType,nights,nightPrice,baseNightPrice,pricingSource,contractDiscount,bookingPurpose,bookingSource,seasonalRateId,companyContractId,total:totalGrandAmount,date:checkIn,checkIn,checkOut,status:'confirmed',bookingStatus,staffName:currentUsername,bookingCreatedBy,bookingUpdatedBy};
   if(unifiedInvoice) Object.assign(unifiedInvoice,invoiceData); else { unifiedInvoice={id:`INV-${Math.floor(Math.random()*9000+1000)}`,...invoiceData}; allInvoices[currentHotelId].unshift(unifiedInvoice); }
   if(typeof hoteraInvoicePayments!=='object'||!hoteraInvoicePayments) hoteraInvoicePayments={};
   if(!Array.isArray(hoteraInvoicePayments[currentHotelId])) hoteraInvoicePayments[currentHotelId]=[];
