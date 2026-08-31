@@ -667,7 +667,7 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
     </div>
     <div style="display:flex; gap:6px; align-items:center;">
       <button class="btn btn-gold" style="width:auto; margin-top:0; padding:8px 14px;" onclick="saveCloudSettings()">حفظ واختبار الربط السحابي 🔗</button><div style="margin-top:8px;padding:8px;border:1px dashed rgba(245,158,11,.45);border-radius:8px;background:rgba(245,158,11,.05)"><label style="font-size:9px;color:#fbbf24">🛡️ رابط خادم HOTERA العام (ليس مفتاحًا سريًا):</label><input type="url" id="hoteraServerUrlInput" class="form-input" placeholder="https://api.example.com" style="margin:5px 0 4px;direction:ltr;text-align:left"><div style="display:flex;gap:6px;align-items:center"><button class="btn btn-blue" style="width:auto;margin:0;padding:6px 10px;background:#0284c7" onclick="saveHoteraServerUrl()">حفظ رابط الخادم</button><button class="btn btn-green" style="width:auto;margin:0;padding:6px 10px" onclick="checkHoteraServerHealth()">فحص الخادم</button><span id="hoteraServerStatusText" style="font-size:9px;color:#94a3b8">لم يتم إعداد خادم مركزي</span></div><small style="display:block;color:#94a3b8;font-size:8px;margin-top:4px">لا تضع API Key هنا أو داخل GitHub؛ يوضع المفتاح داخل خادم HOTERA كمتغير سري.</small></div>
-      <button class="btn btn-blue" style="width:auto; margin-top:0; padding:8px 14px; background:#10b981;" onclick="syncDataWithCloudNow()">مزامنة البيانات الآن 🔄</button>
+      <button class="btn btn-blue" style="width:auto; margin-top:0; padding:8px 14px; background:#10b981;" onclick="syncDataWithCloudNow()">مزامنة البيانات الآن 🔄</button><button class="btn btn-gold" style="width:auto; margin-top:0; padding:8px 14px;" onclick="downloadHoteraBackup()">تنزيل HOTERA_BACKUP 🛡️</button>
       <span id="cloudSyncStatusText" style="font-size:9px; color:#34d399; font-weight:bold;">الحالة: جاهز للربط المحلي/السحابي</span>
     </div>
   </div>
@@ -1568,7 +1568,7 @@ function renderDeviceApprovalPanel() {
     return;
   }
   panel.innerHTML = cloudDevices.map(d => {
-    const status = d.status === 'approved' ? 'معتمد ✅' : (d.status === 'suspended' ? 'موقوف مؤقتاً 🔴' : (d.status === 'rejected' ? 'مرفوض ⛔' : 'بانتظار الموافقة ⏳'));
+    const status = d.status === 'approved' ? 'معتمد ✅' : (d.status === 'suspended' ? 'موقوف مؤقتاً 🔴' : (d.status === 'rejected' ? 'مرفوض ⛔' : (d.status === 'awaiting_code' ? 'تمت الموافقة — بانتظار رمز الدخول 🔐' : 'طلب اعتماد جديد ⏳')));
     const color = d.status === 'approved' ? '#34d399' : (d.status === 'rejected' ? '#f87171' : '#fbbf24');
     const isCurrent = d.id === deviceId;
     const isApproved = d.status === 'approved';
@@ -1578,8 +1578,9 @@ function renderDeviceApprovalPanel() {
     if (isCurrent) {
       actions = '<span style="font-size:8px;color:#38bdf8;">جهازك الحالي</span>';
     } else {
-      if (d.status === 'pending') {
-        actions = `<button onclick="issueDeviceApprovalCode('${d.id}')" style="background:#0284c7;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;">إرسال كود</button> <button onclick="approveDevice('${d.id}')" style="background:#10b981;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;">اعتماد مباشر</button> <button onclick="rejectDevice('${d.id}')" style="background:#ef4444;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;">رفض</button>`;
+      if (d.status === 'pending' || d.status === 'awaiting_code') {
+        const codeState = d.status === 'awaiting_code' ? 'تم إصدار الرمز — بانتظار إدخاله' : 'طلب اعتماد جديد';
+        actions = `<small style="color:#fbbf24;margin-left:4px">${codeState}</small> <button onclick="approveDevice('${d.id}')" style="background:#10b981;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;">موافقة وإصدار كود</button> <button onclick="issueDeviceApprovalCode('${d.id}')" style="background:#0284c7;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;">إعادة إرسال كود</button> <button onclick="rejectDevice('${d.id}')" style="background:#ef4444;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;">رفض</button>`;
       } else if (isApproved) {
         actions = `<button onclick="toggleDeviceSuspension('${d.id}')" style="background:#f59e0b;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;">إيقاف 🔴</button>`;
       } else if (isSuspended) {
@@ -1660,12 +1661,12 @@ async function saveDeviceCloudAndRequest() {
     setDeviceStatusText('تم رفض هذا الجهاز من السوبر أدمن ⛔', '#f87171');
     return alert('⛔ تم رفض اعتماد هذا الجهاز.');
   }
-  if (record && record.status === 'pending' && record.approvalCodeHash) {
+  if (record && (record.status === 'pending' || record.status === 'awaiting_code') && record.approvalCodeHash) {
     const enteredHash = await hoteraHashApprovalCode(deviceJoinCode);
     const expires = record.approvalExpiresAt ? new Date(record.approvalExpiresAt).getTime() > Date.now() : false;
     if (enteredHash === record.approvalCodeHash && expires) {
       record.status='approved'; record.approvedAt=new Date().toISOString(); record.approvedBy='superadmin-code'; delete record.approvalCodeHash; delete record.approvalExpiresAt;
-      await uploadDataToCloud(true); setDeviceStatusText('تم اعتماد الجهاز بالكود ✅','#34d399'); return alert('✅ تم اعتماد هذا الجهاز بالكود المؤقت. يمكنك تسجيل الدخول.');
+      await uploadDataToCloud(true); await fetchDataFromCloud(false); handleDeviceAccess(); setDeviceStatusText('تم اعتماد الجهاز وربطه ومزامنته ✅','#34d399'); return alert('✅ تم اعتماد وربط الجهاز بالكود. تمت المزامنة تلقائياً ويمكنك تسجيل الدخول.');
     }
     if (deviceJoinCode && record.approvalCodeHash) return alert('⛔ الكود غير صحيح أو انتهت صلاحيته. اطلب كودًا جديدًا.');
   }
@@ -1700,26 +1701,41 @@ async function toggleDeviceSuspension(id) {
 }
 
 async function deleteDeviceRecord(id) {
+  if(currentRole!=='superadmin')return alert('حذف الأجهزة متاح للسوبر أدمن فقط.');
   if (!confirm('⚠️ هل أنت متأكد من حذف هذا الجهاز نهائياً؟ سيفقد الجهاز صلاحية الدخول فوراً.')) return;
-  cloudDevices = cloudDevices.filter(d => d.id !== id);
-  if (await uploadDataToCloud(true)) { renderDeviceApprovalPanel(); alert('✅ تم حذف الجهاز من السجل.'); }
+  const previous = Array.isArray(cloudDevices) ? [...cloudDevices] : [];
+  cloudDevices = previous.filter(d => d.id !== id);
+  if (await uploadDataToCloud(true)) { renderDeviceApprovalPanel(); alert('✅ تم حذف الجهاز من سجل الاعتماد.'); }
+  else { cloudDevices = previous; renderDeviceApprovalPanel(); alert('⚠️ تعذر الحفظ؛ تم إبقاء سجل الجهاز دون تغيير.'); }
 }
 
 async function hoteraHashApprovalCode(code){const data=new TextEncoder().encode(String(code));const digest=await crypto.subtle.digest('SHA-256',data);return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,'0')).join('')}
-async function issueDeviceApprovalCode(id){if(currentRole!=='superadmin')return alert('هذه العملية للسوبر أدمن فقط.');const item=cloudDevices.find(d=>d.id===id);if(!item)return;const code=String(Math.floor(100000+Math.random()*900000));item.approvalCodeHash=await hoteraHashApprovalCode(code);item.approvalIssuedAt=new Date().toISOString();item.approvalExpiresAt=new Date(Date.now()+15*60*1000).toISOString();item.status='pending';if(await uploadDataToCloud(true)){renderDeviceApprovalPanel();prompt('أرسل هذا الكود للموظف عبر قناة آمنة. صالح لمدة 15 دقيقة:',code)}}
+async function issueDeviceApprovalCode(id){
+  if(currentRole!=='superadmin')return alert('هذه العملية للسوبر أدمن فقط.');
+  const item=cloudDevices.find(d=>d.id===id);if(!item)return;
+  const code=String(Math.floor(100000+Math.random()*900000));
+  const previous={...item};
+  item.approvalCodeHash=await hoteraHashApprovalCode(code);item.approvalIssuedAt=new Date().toISOString();item.approvalExpiresAt=new Date(Date.now()+15*60*1000).toISOString();item.status='awaiting_code';
+  if(await uploadDataToCloud(true)){renderDeviceApprovalPanel();prompt(`رمز اعتماد الجهاز ${item.name||item.id} — صالح لمدة 15 دقيقة. أرسله للجهاز الجديد ليُدخل في خانة الكود:`,code)}
+  else {Object.assign(item,previous);renderDeviceApprovalPanel();alert('⚠️ تعذر حفظ رمز الاعتماد؛ لم تتغير حالة الجهاز.');}
+}
 
 async function approveDevice(id) {
+  if(currentRole!=='superadmin')return alert('اعتماد الأجهزة متاح للسوبر أدمن فقط.');
   const item = cloudDevices.find(d => d.id === id);
   if (!item) return;
-  item.status = 'approved'; item.approvedAt = new Date().toISOString();
-  if (await uploadDataToCloud(true)) { renderDeviceApprovalPanel(); alert('✅ تمت الموافقة على الجهاز.'); }
+  if (item.status === 'approved') return alert('هذا الجهاز معتمد مسبقاً.');
+  return issueDeviceApprovalCode(id);
 }
 
 async function rejectDevice(id) {
+  if(currentRole!=='superadmin')return alert('رفض الأجهزة متاح للسوبر أدمن فقط.');
   const item = cloudDevices.find(d => d.id === id);
   if (!item) return;
-  item.status = 'rejected'; item.rejectedAt = new Date().toISOString();
-  if (await uploadDataToCloud(true)) { renderDeviceApprovalPanel(); alert('⛔ تم رفض الجهاز.'); }
+  const previous={...item};
+  item.status = 'rejected'; item.rejectedAt = new Date().toISOString(); delete item.approvalCodeHash; delete item.approvalExpiresAt;
+  if (await uploadDataToCloud(true)) { renderDeviceApprovalPanel(); alert('⛔ تم رفض طلب الجهاز.'); }
+  else {Object.assign(item,previous);renderDeviceApprovalPanel();alert('⚠️ تعذر حفظ الرفض؛ لم تتغير حالة الجهاز.');}
 }
 
 async function handleDeviceAccess() {
@@ -1739,7 +1755,25 @@ async function handleDeviceAccess() {
 }
 
 
-function hoteraMergeById(localList,remoteList){const map=new Map();(Array.isArray(localList)?localList:[]).forEach(x=>{if(x&&x.id!==undefined)map.set(String(x.id),x)});(Array.isArray(remoteList)?remoteList:[]).forEach(x=>{if(!x||x.id===undefined)return;const key=String(x.id),old=map.get(key);if(!old){map.set(key,x);return;}const lt=new Date(old.updatedAt||old.createdAt||old.date||0).getTime(),rt=new Date(x.updatedAt||x.createdAt||x.date||0).getTime();if(lt&&rt&&lt>rt){try{if(typeof hoteraRecordSyncConflict==='function')hoteraRecordSyncConflict({kind:'merge',recordId:key,summary:`تم الاحتفاظ بتعديل محلي أحدث للسجل ${key}`,resolution:'لم يتم استبدال السجل الأحدث'})}catch(e){};map.set(key,{...x,...old});}else map.set(key,{...old,...x})});return [...map.values()]}
+function hoteraMergeById(localList,remoteList){
+  const local=Array.isArray(localList)?localList:[], remote=Array.isArray(remoteList)?remoteList:[];
+  const map=new Map(), noId=[];
+  const add=(x,isRemote)=>{
+    if(!x||typeof x!=='object')return;
+    if(x.id===undefined||x.id===null||x.id===''){
+      const fingerprint=JSON.stringify(x);
+      if(!noId.some(item=>JSON.stringify(item)===fingerprint))noId.push(x);
+      return;
+    }
+    const key=String(x.id),old=map.get(key);
+    if(!old){map.set(key,x);return;}
+    const lt=new Date(old.updatedAt||old.createdAt||old.date||0).getTime(),rt=new Date(x.updatedAt||x.createdAt||x.date||0).getTime();
+    if(isRemote&&lt&&rt&&lt>rt){try{if(typeof hoteraRecordSyncConflict==='function')hoteraRecordSyncConflict({kind:'merge',recordId:key,summary:`تم الاحتفاظ بتعديل محلي أحدث للسجل ${key}`,resolution:'لم يتم استبدال السجل الأحدث'})}catch(e){};map.set(key,{...x,...old});}
+    else map.set(key,{...old,...x});
+  };
+  local.forEach(x=>add(x,false)); remote.forEach(x=>add(x,true));
+  return [...map.values(),...noId];
+}
 function hoteraMergeCompanies(remoteCompanies){const merged=hoteraMergeById(companiesList,remoteCompanies);merged.forEach(c=>{if(!Array.isArray(c.hotelIds))c.hotelIds=[];c.hotelIds=[...new Set(c.hotelIds.map(Number).filter(id=>hotelsList.some(h=>Number(h.id)===id)))];if(!c.status)c.status='active'});return merged}
 
 function hoteraMergeDataMap(localMap, remoteMap) { const out = (localMap && typeof localMap === 'object') ? {...localMap} : {}; if (!remoteMap || typeof remoteMap !== 'object') return out; Object.entries(remoteMap).forEach(([key, remote]) => { if (Array.isArray(remote)) out[key] = hoteraMergeById(Array.isArray(out[key]) ? out[key] : [], remote); else if (remote && typeof remote === 'object' && !Array.isArray(remote)) out[key] = {...(out[key] && typeof out[key] === 'object' ? out[key] : {}), ...remote}; else if (out[key] === undefined) out[key] = remote; }); return out; }
@@ -4330,10 +4364,21 @@ async function completeRoomCheckout(room) {
   alert(`✅ تم تسجيل مغادرة ${previousGuest} من الغرفة ${room.id}.\nتحولت الغرفة إلى حالة «خروج» بانتظار التنظيف. بقي سجل الحجز والفاتورة محفوظًا للمراجعة المالية.` + (syncResult.ok ? '\n☁️ تمت المزامنة مع الأجهزة.' : '\n⚠️ تم الحفظ محلياً؛ راجع إعدادات السحابة على الأجهزة.'));
   return true;
 }
+function buildHoteraBackupPackage(){
+  const localStorageData={};
+  for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key&&key.startsWith('hotera_'))localStorageData[key]=localStorage.getItem(key);}
+  const payload=buildCloudPayload();
+  return {format:'HOTERA-BACKUP',schemaVersion:'hotera-v4',version:4,createdAt:new Date().toISOString(),source:'HOTERA',sourceDeviceId:deviceId||'',hotelId:currentHotelId||null,payload,localStorage:localStorageData,notes:'نسخة تصدير كاملة للبيانات المحلية وحمولة المزامنة. لا يتم حذف أو تعديل البيانات عند الإنشاء.'};
+}
 function downloadHoteraBackup(){
-  const payload={version:1,createdAt:new Date().toISOString(),source:'HOTERA',localStorage:{}};
-  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i); if(k && k.startsWith('hotera_')) payload.localStorage[k]=localStorage.getItem(k);}
-  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`HOTERA_BACKUP_${hoteraLocalDateKey()}.json`; a.click(); URL.revokeObjectURL(a.href); recordHoteraAudit('إنشاء نسخة احتياطية'); saveData(); alert('✅ تم تنزيل النسخة الاحتياطية بنجاح.');
+  if(currentRole!=='superadmin')return alert('🔒 تنزيل النسخة الاحتياطية متاح للسوبر أدمن فقط.');
+  try{
+    const backup=buildHoteraBackupPackage(),json=JSON.stringify(backup,null,2),blob=new Blob([json],{type:'application/json;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+    a.href=url;a.download=`HOTERA_BACKUP_${new Date().toISOString().replace(/[:.]/g,'-')}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    try{recordHoteraAudit('تنزيل نسخة HOTERA احتياطية',{format:backup.format,version:backup.version,bytes:json.length});saveData();}catch(e){}
+    setSecureSyncStatus&&setSecureSyncStatus('تم تنزيل نسخة HOTERA كاملة — لم تتغير البيانات الحالية ✅','#34d399');
+    alert('✅ تم تنزيل HOTERA_BACKUP بنجاح. لم يتم حذف أو تعديل أي بيانات.');
+  }catch(e){console.error('HOTERA backup error',e);alert('❌ تعذر إنشاء النسخة الاحتياطية: '+e.message);}
 }
 function restoreHoteraBackup(input){
   const file=input.files&&input.files[0]; if(!file)return; const reader=new FileReader(); reader.onload=()=>{try{const backup=JSON.parse(reader.result); if(!backup.localStorage)throw new Error('صيغة النسخة غير صحيحة'); if(!confirm('سيتم دمج بيانات النسخة الاحتياطية مع البيانات الحالية دون حذف المفاتيح الأخرى. هل تريد المتابعة؟'))return; Object.entries(backup.localStorage).forEach(([k,v])=>{if(k.startsWith('hotera_'))hoteraSafeSetItem(k,v);}); recordHoteraAudit('استعادة نسخة احتياطية',{createdAt:backup.createdAt}); alert('✅ تمت الاستعادة. أعد تحميل الصفحة لتطبيق البيانات.'); location.reload();}catch(e){alert('❌ تعذر استعادة النسخة: '+e.message);}}; reader.readAsText(file); input.value='';
@@ -4430,7 +4475,7 @@ function setSecureSyncStatus(message,color='#94a3b8'){const el=document.getEleme
 function rememberSecureSyncServer(){const url=getSecureSyncServerUrl();if(url)hoteraSafeSetItem('hotera_secure_sync_server',url);return url;}
 async function checkHoteraSecureServer(){const url=rememberSecureSyncServer();if(!url)return setSecureSyncStatus('أدخل رابط خادم HOTERA أولاً','#fbbf24');try{setSecureSyncStatus('جارٍ فحص الخادم...','#fbbf24');const r=await fetch(url+'/api/trpc/hoteraSync.health',{credentials:'include',cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const body=await r.json();setSecureSyncStatus('الخادم جاهز — المزامنة append-only مفعلة ✅','#34d399');return body;}catch(e){setSecureSyncStatus('تعذر الاتصال بالخادم: '+e.message,'#f87171');return null;}}
 async function hoteraPayloadChecksum(payload){const raw=JSON.stringify(payload);if(window.crypto?.subtle){const bytes=new TextEncoder().encode(raw);const digest=await crypto.subtle.digest('SHA-256',bytes);return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,'0')).join('');}return 'legacy-'+raw.length+'-'+Date.now();}
-function downloadHoteraLocalBackup(){try{const payload=buildCloudPayload();const backup={format:'HOTERA-LOCAL-BACKUP',schemaVersion:'legacy-v1',createdAt:new Date().toISOString(),sourceDeviceId:deviceId,payload};const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='HOTERA_BACKUP_'+new Date().toISOString().replace(/[:.]/g,'-')+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);setSecureSyncStatus('تم تنزيل نسخة احتياطية محلية — لم تتغير بيانات النظام ✅','#34d399');}catch(e){setSecureSyncStatus('تعذر إنشاء النسخة الاحتياطية: '+e.message,'#f87171');}}
+function downloadHoteraLocalBackup(){return downloadHoteraBackup();}
 async function pushHoteraSecureSnapshot(){const url=rememberSecureSyncServer();if(!url)return setSecureSyncStatus('أدخل رابط الخادم أولاً — لن يتم إرسال أي بيانات','#fbbf24');try{const payload=buildCloudPayload();const checksum=await hoteraPayloadChecksum(payload);setSecureSyncStatus('جارٍ إرسال لقطة جديدة دون حذف اللقطات السابقة...','#fbbf24');const r=await fetch(url+'/api/trpc/hoteraSync.push',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({json:{scopeKey:'hotera-default',sourceDeviceId:deviceId,sourceLabel:deviceName,schemaVersion:'legacy-v1',checksum,payload}})});if(r.status===401||r.status===403){setSecureSyncStatus('الخادم رفض الطلب: يلزم تسجيل دخول الخادم قبل الرفع الآمن','#f87171');return;}if(!r.ok)throw new Error('HTTP '+r.status);setSecureSyncStatus('تم حفظ لقطة آمنة جديدة دون حذف البيانات السابقة ✅','#34d399');}catch(e){setSecureSyncStatus('لم يتم الرفع الآمن: '+e.message,'#f87171');}}
 async function compareHoteraLatestSnapshot(){const url=rememberSecureSyncServer();if(!url)return setSecureSyncStatus('أدخل رابط الخادم أولاً — لن يتم جلب أي بيانات','#fbbf24');try{setSecureSyncStatus('جارٍ جلب بيانات المقارنة دون تطبيقها...','#fbbf24');const r=await fetch(url+'/api/trpc/hoteraSync.latest?input='+encodeURIComponent(JSON.stringify({json:{scopeKey:'hotera-default'}})),{credentials:'include',cache:'no-store'});if(r.status===401||r.status===403){setSecureSyncStatus('المقارنة تتطلب تسجيل دخول الخادم — لم تُغيّر البيانات ✅','#fbbf24');return;}if(!r.ok)throw new Error('HTTP '+r.status);const body=await r.json();const latest=body?.result?.data?.json;if(!latest){setSecureSyncStatus('لا توجد لقطة خادم للمقارنة بعد — البيانات المحلية كما هي ✅','#34d399');return;}const localChecksum=await hoteraPayloadChecksum(buildCloudPayload());const serverChecksum=latest.checksum||'';setSecureSyncStatus(localChecksum===serverChecksum?'المقارنة ناجحة: البيانات المحلية مطابقة لآخر لقطة ✅':'توجد فروقات: لم يتم تطبيق أي تغيير على البيانات المحلية ⚠️',localChecksum===serverChecksum?'#34d399':'#fbbf24');}catch(e){setSecureSyncStatus('تعذرت المقارنة: '+e.message,'#f87171');}}
 const secureSyncInput=document.getElementById('secureSyncServerUrlInput');if(secureSyncInput){secureSyncInput.value=localStorage.getItem('hotera_secure_sync_server')||'';}
