@@ -1605,9 +1605,10 @@ function readInviteFromUrl() {
       return;
     }
     if (data.url) cloudApiUrl = data.url;
-    const legacyInvite = !!data.key;
-    if (legacyInvite) cloudApiKey = data.key;
+    const hasInviteKey = !!data.key;
+    if (hasInviteKey) cloudApiKey = data.key;
     if (data.code) deviceJoinCode = data.code;
+    if (window.history?.replaceState) window.history.replaceState({}, document.title, window.location.pathname);
     hoteraSafeSetItem('hotera_cloud_url', cloudApiUrl);
     hoteraSafeSetItem('hotera_cloud_key', cloudApiKey);
     hoteraSafeSetItem('hotera_join_code', deviceJoinCode);
@@ -1617,7 +1618,7 @@ function readInviteFromUrl() {
     if (u) u.value = cloudApiUrl;
     if (k) k.value = cloudApiKey;
     if (c) c.value = deviceJoinCode;
-    setDeviceStatusText(legacyInvite ? 'تم التعرف على رابط دعوة قديم؛ أنشئ رابطاً جديداً بعد تحديث النظام لحماية المفتاح.' : 'تم التعرف على الدعوة بدون مفتاح؛ أدخل مفتاح السحابة يدوياً ثم الرمز واطلب اعتماد الجهاز ⏳', legacyInvite ? '#fbbf24' : '#38bdf8');
+    setDeviceStatusText(hasInviteKey ? 'تم التعرف على رابط الدعوة وإعدادات الربط؛ أدخل الرمز أو أرسل طلب الاعتماد ⏳' : 'تم التعرف على الدعوة بدون مفتاح؛ أدخل مفتاح السحابة يدوياً ثم الرمز واطلب اعتماد الجهاز ⏳', hasInviteKey ? '#38bdf8' : '#fbbf24');
   } catch (e) { setDeviceStatusText('رابط الدعوة غير صالح؛ اطلب رابطاً جديداً.', '#f87171'); }
 }
 
@@ -1627,15 +1628,15 @@ async function generateDeviceInviteLink() {
   hoteraSafeSetItem('hotera_cloud_join_code', cloudJoinCode);
   const ok = await uploadDataToCloud(true);
   if (!ok) return;
-  const payload = encodeURIComponent(btoa(JSON.stringify({ url: cloudApiUrl, code: cloudJoinCode, expiresAt: Date.now() + 15 * 60 * 1000, format: 'hotera-invite-v2' })));
+  const payload = encodeURIComponent(btoa(JSON.stringify({ url: cloudApiUrl, key: cloudApiKey, code: cloudJoinCode, expiresAt: Date.now() + 15 * 60 * 1000, format: 'hotera-invite-v3' })));
   const link = `${window.location.origin}${window.location.pathname}?hoteraInvite=${payload}`;
   const input = document.getElementById('generatedInviteLink');
   if (input) { input.value = link; input.style.display = 'block'; input.select(); }
   const notice = document.getElementById('inviteLinkStatus');
-  if (notice) notice.title = 'لأسباب أمنية لا يحتوي الرابط على مفتاح السحابة؛ أدخل المفتاح يدوياً في الجهاز الجديد.';
+  if (notice) notice.title = 'رابط الدعوة مؤقت وصالح لمدة 15 دقيقة؛ لا تشاركه خارج الجهاز المطلوب ربطه.';
   try { await navigator.clipboard.writeText(link); } catch (_) {}
   const status = document.getElementById('inviteLinkStatus');
-  if (status) status.innerText = `تم إنشاء رابط آمن ونسخه — رمز الدعوة: ${cloudJoinCode} — أدخل مفتاح السحابة يدوياً في الجهاز الجديد`;
+  if (status) status.innerText = `تم إنشاء رابط دعوة مؤقت ونسخه — رمز الدعوة: ${cloudJoinCode} — صالح لمدة 15 دقيقة`;
   alert('✅ تم إنشاء رابط الدعوة ونسخه. أرسله للمستخدم، ثم وافق على الجهاز من قائمة الطلبات.');
 }
 
@@ -1676,8 +1677,13 @@ async function saveDeviceCloudAndRequest() {
   }
   const ok = await uploadDataToCloud(true);
   if (ok) {
-    setDeviceStatusText('تم إرسال الطلب، بانتظار موافقة السوبر أدمن ⏳');
-    alert('✅ تم إرسال طلب اعتماد الجهاز. بعد موافقة السوبر أدمن اضغط مزامنة أو أعد تحميل الصفحة.');
+    hoteraSafeSetItem('hotera_pending_device_request', JSON.stringify({deviceId,requestedAt:new Date().toISOString(),status:'sent'}));
+    setDeviceStatusText('تم إرسال الطلب للسوبر أدمن، بانتظار الموافقة ⏳');
+    alert('✅ تم إرسال طلب اعتماد الجهاز للسوبر أدمن. بعد الموافقة سيصلك رمز من 6 أرقام.');
+  } else {
+    hoteraSafeSetItem('hotera_pending_device_request', JSON.stringify({deviceId,requestedAt:new Date().toISOString(),status:'waiting_for_connection'}));
+    setDeviceStatusText('تم حفظ الطلب محلياً؛ تعذر الرفع بسبب إعدادات المصادقة أو الاتصال ⚠️','#fbbf24');
+    alert('⚠️ تعذر رفع طلب اعتماد الجهاز (401). افتح رابط الدعوة الذي أنشأه السوبر أدمن، أو تأكد من رابط السحابة والمفتاح. تم الاحتفاظ بالطلب محلياً دون فقدانه.');
   }
 }
 
@@ -1943,6 +1949,19 @@ async function fetchDataFromCloud(showError = false) {
   }
 }
 
+async function hoteraMergeLatestDevicesBeforeUpload(config, headers){
+  try{
+    const response=await fetch(config.url,{method:'GET',headers,cache:'no-store'});
+    if(!response.ok)throw new Error(`GET HTTP ${response.status}`);
+    const result=await response.json(),remote=result.record||result;
+    if(Array.isArray(remote.devices))cloudDevices=hoteraMergeById(Array.isArray(cloudDevices)?cloudDevices:[],remote.devices);
+    return true;
+  }catch(error){
+    console.warn('تعذر دمج أحدث طلبات الأجهزة قبل الرفع؛ ستبقى البيانات المحلية كما هي:',error);
+    return false;
+  }
+}
+
 async function uploadDataToCloud(showError = false) {
   const config = getCloudConfig();
   if (!config.url) return false;
@@ -1952,6 +1971,9 @@ async function uploadDataToCloud(showError = false) {
   try {
     const headers = { 'Content-Type': 'application/json' };
     if (config.key) headers['X-Master-Key'] = config.key;
+    // تحديث سجل الجهاز الحالي ثم دمج آخر سجل سحابي قبل الكتابة؛ هذا يمنع جهازاً جديداً من استبدال طلبات الأجهزة الأخرى.
+    cloudDevices=hoteraMergeById(Array.isArray(cloudDevices)?cloudDevices:[],getDeviceRegistryForUpload());
+    await hoteraMergeLatestDevicesBeforeUpload(config,headers);
     const response = await fetch(config.url, {
       method: 'PUT',
       headers,
