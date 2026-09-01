@@ -1527,6 +1527,7 @@ function getDeviceRegistryForUpload() {
   if (existing) {
     existing.name = deviceName;
     existing.lastSeen = new Date().toISOString();
+    existing.updatedAt = new Date().toISOString();
   } else {
     registry.push({
       id: deviceId,
@@ -1534,7 +1535,8 @@ function getDeviceRegistryForUpload() {
       platform: navigator.platform || 'unknown',
       requestedAt: new Date().toISOString(),
       lastSeen: new Date().toISOString(),
-      status: registry.length === 0 ? 'approved' : 'pending'
+      status: registry.length === 0 ? 'approved' : 'pending',
+      updatedAt: new Date().toISOString()
     });
   }
   return registry;
@@ -1646,7 +1648,7 @@ async function generateDeviceInviteLink() {
 async function saveDeviceCloudAndRequest() {
   const url = (document.getElementById('deviceCloudUrlInput')?.value || cloudApiUrl || localStorage.getItem('hotera_cloud_url') || '').trim();
   const key = (document.getElementById('deviceCloudKeyInput')?.value || cloudApiKey || localStorage.getItem('hotera_cloud_key') || '').trim();
-  deviceJoinCode = (document.getElementById('deviceJoinCodeInput')?.value || '').trim();
+  deviceJoinCode = (document.getElementById('deviceJoinCodeInput')?.value || '').replace(/\D/g,'').slice(0,6).trim();
   const inviteVerified = localStorage.getItem('hotera_invite_verified') === '1' || !!new URLSearchParams(window.location.search).get('hoteraInvite');
   const existingRecord = getCurrentDeviceRecord();
   if (!deviceJoinCode && !inviteVerified && !(existingRecord && existingRecord.approvalCodeHash)) return alert('⚠️ افتح رابط الدعوة المرسل من السوبر أدمن أولاً.');
@@ -1671,14 +1673,14 @@ async function saveDeviceCloudAndRequest() {
     const enteredHash = await hoteraHashApprovalCode(deviceJoinCode);
     const expires = record.approvalExpiresAt ? new Date(record.approvalExpiresAt).getTime() > Date.now() : false;
     if (enteredHash === record.approvalCodeHash && expires) {
-      record.status='approved'; record.approvedAt=new Date().toISOString(); record.approvedBy='superadmin-code'; delete record.approvalCodeHash; delete record.approvalExpiresAt;
+      record.status='approved'; record.approvedAt=new Date().toISOString(); record.approvedBy='superadmin-code'; record.updatedAt=new Date().toISOString(); delete record.approvalCodeHash; delete record.approvalExpiresAt;
       await uploadDataToCloud(true); await fetchDataFromCloud(false); handleDeviceAccess(); setDeviceStatusText('تم اعتماد الجهاز وربطه ومزامنته ✅','#34d399'); return alert('✅ تم اعتماد وربط الجهاز بالكود. تمت المزامنة تلقائياً ويمكنك تسجيل الدخول.');
     }
     if (deviceJoinCode && record.approvalCodeHash) return alert('⛔ الكود غير صحيح أو انتهت صلاحيته. اطلب كودًا جديدًا.');
   }
   if (!Array.isArray(cloudDevices)) cloudDevices = [];
   if (!cloudDevices.find(d => d.id === deviceId)) {
-    cloudDevices.push({ id: deviceId, name: deviceName, platform: navigator.platform || 'unknown', requestedAt: new Date().toISOString(), lastSeen: new Date().toISOString(), status: 'pending' });
+    cloudDevices.push({ id: deviceId, name: deviceName, platform: navigator.platform || 'unknown', requestedAt: new Date().toISOString(), lastSeen: new Date().toISOString(), updatedAt: new Date().toISOString(), status: 'pending' });
   }
   const ok = await uploadDataToCloud(true);
   if (ok) {
@@ -1726,7 +1728,7 @@ async function issueDeviceApprovalCode(id){
   const item=cloudDevices.find(d=>d.id===id);if(!item)return;
   const code=String(Math.floor(100000+Math.random()*900000));
   const previous={...item};
-  item.approvalCodeHash=await hoteraHashApprovalCode(code);item.approvalIssuedAt=new Date().toISOString();item.approvalExpiresAt=new Date(Date.now()+15*60*1000).toISOString();item.status='awaiting_code';
+  item.approvalCodeHash=await hoteraHashApprovalCode(code);item.approvalIssuedAt=new Date().toISOString();item.approvalExpiresAt=new Date(Date.now()+15*60*1000).toISOString();item.updatedAt=new Date().toISOString();item.status='awaiting_code';
   if(await uploadDataToCloud(true)){renderDeviceApprovalPanel();prompt(`رمز اعتماد الجهاز ${item.name||item.id} — صالح لمدة 15 دقيقة. أرسله للجهاز الجديد ليُدخل في خانة الكود:`,code)}
   else {Object.assign(item,previous);renderDeviceApprovalPanel();alert('⚠️ تعذر حفظ رمز الاعتماد؛ لم تتغير حالة الجهاز.');}
 }
@@ -1744,7 +1746,7 @@ async function rejectDevice(id) {
   const item = cloudDevices.find(d => d.id === id);
   if (!item) return;
   const previous={...item};
-  item.status = 'rejected'; item.rejectedAt = new Date().toISOString(); delete item.approvalCodeHash; delete item.approvalExpiresAt;
+  item.status = 'rejected'; item.rejectedAt = new Date().toISOString(); item.updatedAt = new Date().toISOString(); delete item.approvalCodeHash; delete item.approvalExpiresAt;
   if (await uploadDataToCloud(true)) { renderDeviceApprovalPanel(); alert('⛔ تم رفض طلب الجهاز.'); }
   else {Object.assign(item,previous);renderDeviceApprovalPanel();alert('⚠️ تعذر حفظ الرفض؛ لم تتغير حالة الجهاز.');}
 }
@@ -1779,7 +1781,7 @@ function hoteraMergeById(localList,remoteList){
     const key=String(x.id),old=map.get(key);
     if(!old){map.set(key,x);return;}
     const lt=new Date(old.updatedAt||old.createdAt||old.date||0).getTime(),rt=new Date(x.updatedAt||x.createdAt||x.date||0).getTime();
-    if(isRemote&&lt&&rt&&lt>rt){try{if(typeof hoteraRecordSyncConflict==='function')hoteraRecordSyncConflict({kind:'merge',recordId:key,summary:`تم الاحتفاظ بتعديل محلي أحدث للسجل ${key}`,resolution:'لم يتم استبدال السجل الأحدث'})}catch(e){};map.set(key,{...x,...old});}
+    if(isRemote&&lt&&(!rt||lt>rt)){try{if(typeof hoteraRecordSyncConflict==='function')hoteraRecordSyncConflict({kind:'merge',recordId:key,summary:`تم الاحتفاظ بتعديل محلي أحدث للسجل ${key}`,resolution:'لم يتم استبدال السجل الأحدث'})}catch(e){};map.set(key,{...x,...old});}
     else map.set(key,{...old,...x});
   };
   local.forEach(x=>add(x,false)); remote.forEach(x=>add(x,true));
@@ -1924,6 +1926,26 @@ function applyCloudPayload(cloudData) {
   return true;
 }
 
+async function hoteraFetchWithRetry(url, options={}, attempts=3){
+  let lastError=null;
+  for(let attempt=0;attempt<attempts;attempt++){
+    try{
+      const response=await fetch(url,options);
+      if(![408,425,429,500,502,503,504].includes(response.status))return response;
+      lastError=new Error(`HTTP ${response.status}`);
+    }catch(error){lastError=error;}
+    if(attempt<attempts-1)await new Promise(resolve=>setTimeout(resolve,700*Math.pow(2,attempt)));
+  }
+  throw lastError||new Error('فشل الاتصال');
+}
+function hoteraValidateCloudConfig(config){
+  if(!config?.url)return {ok:false,message:'لم يتم إدخال رابط JSONBin'};
+  try{const u=new URL(config.url);if(!/^https:$/.test(u.protocol)||!/jsonbin\.io$/i.test(u.hostname)||!/^\/v3\/b\//.test(u.pathname))return {ok:false,message:'رابط JSONBin غير صحيح'};}catch(_){return {ok:false,message:'رابط JSONBin غير صحيح'};}
+  if(!config.key)return {ok:false,message:'مفتاح JSONBin غير موجود'};
+  if(/example\.com/i.test(config.url))return {ok:false,message:'الرابط التجريبي غير صالح'};
+  return {ok:true};
+}
+
 async function fetchDataFromCloud(showError = false) {
   const config = getCloudConfig();
   if (!config.url) return false;
@@ -1933,8 +1955,11 @@ async function fetchDataFromCloud(showError = false) {
     const headers = { 'Content-Type': 'application/json' };
     if (config.key) headers['X-Master-Key'] = config.key;
     const fetchStartedAtVersion = hoteraLocalMutationVersion;
-    const response = await fetch(config.url, { method: 'GET', headers, cache: 'no-store' });
+    const validation=hoteraValidateCloudConfig(config);
+    if(!validation.ok)throw new Error(validation.message);
+    const response = await hoteraFetchWithRetry(config.url, { method: 'GET', headers, cache: 'no-store' });
     if (!response.ok) throw new Error(`GET HTTP ${response.status}`);
+    hoteraCloudEtag=response.headers.get('ETag')||hoteraCloudEtag;
     const result = await response.json();
     // إذا تم حفظ حجز أو فاتورة أثناء انتظار الجلب، نرفض اللقطة القديمة ولا نطبقها.
     if (fetchStartedAtVersion !== hoteraLocalMutationVersion) {
@@ -1956,8 +1981,9 @@ async function fetchDataFromCloud(showError = false) {
 
 async function hoteraMergeLatestDevicesBeforeUpload(config, headers){
   try{
-    const response=await fetch(config.url,{method:'GET',headers,cache:'no-store'});
+    const response=await hoteraFetchWithRetry(config.url,{method:'GET',headers,cache:'no-store'});
     if(!response.ok)throw new Error(`GET HTTP ${response.status}`);
+    hoteraCloudEtag=response.headers.get('ETag')||hoteraCloudEtag;
     const result=await response.json(),remote=result.record||result;
     if(Array.isArray(remote.devices))cloudDevices=hoteraMergeById(Array.isArray(cloudDevices)?cloudDevices:[],remote.devices);
     return true;
@@ -1974,20 +2000,28 @@ async function uploadDataToCloud(showError = false) {
 
   cloudSyncInProgress = true;
   try {
+    const validation=hoteraValidateCloudConfig(config);
+    if(!validation.ok)throw new Error(validation.message);
     const headers = { 'Content-Type': 'application/json' };
+    if(hoteraCloudEtag)headers['If-Match']=hoteraCloudEtag;
     if (config.key) headers['X-Master-Key'] = config.key;
     // تحديث سجل الجهاز الحالي ثم دمج آخر سجل سحابي قبل الكتابة؛ هذا يمنع جهازاً جديداً من استبدال طلبات الأجهزة الأخرى.
     cloudDevices=hoteraMergeById(Array.isArray(cloudDevices)?cloudDevices:[],getDeviceRegistryForUpload());
     await hoteraMergeLatestDevicesBeforeUpload(config,headers);
-    const response = await fetch(config.url, {
+    const response = await hoteraFetchWithRetry(config.url, {
       method: 'PUT',
       headers,
       body: JSON.stringify(buildCloudPayload())
     });
+    if (response.status === 412) {
+      hoteraCloudEtag='';
+      throw new Error('تعارض تحديث: توجد نسخة أحدث في السحابة، أعد المزامنة ثم أعد المحاولة');
+    }
     if (!response.ok) {
       if (response.status === 401 || response.status === 403) throw new Error(`PUT HTTP ${response.status} — مفتاح JSONBin غير صحيح أو لا يملك صلاحية الكتابة`);
       throw new Error(`PUT HTTP ${response.status}`);
     }
+    hoteraCloudEtag=response.headers.get('ETag')||hoteraCloudEtag;
     setCloudStatus(`تم الرفع لجميع الأجهزة: ${new Date().toLocaleTimeString()}`); hoteraRecordSyncEvent('رفع إلى السحابة');
     return true;
   } catch (error) {
@@ -2079,6 +2113,7 @@ let deviceId = localStorage.getItem('hotera_device_id') || (crypto.randomUUID ? 
 hoteraSafeSetItem('hotera_device_id', deviceId);
 let deviceName = localStorage.getItem('hotera_device_name') || `${navigator.platform || 'جهاز'} — ${new Date().toLocaleDateString()}`;
 let cloudDevices = [];
+let hoteraCloudEtag = '';
 let deviceAccessStatus = 'pending';
 let deviceJoinCode = localStorage.getItem('hotera_join_code') || '';
 let cloudJoinCode = localStorage.getItem('hotera_cloud_join_code') || '';
