@@ -654,7 +654,7 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
 
   <div class="card" style="padding:12px; margin-bottom:10px; text-align:inherit; background:rgba(18,26,43,0.95); border-color:var(--accent-solid);">
     <h4 style="font-size:11px; color:#38bdf8; margin-bottom:6px;">☁️ خانة ربط النظام بالبيانات السحابية المجانية (Cloud Sync):</h4>
-    <p style="font-size:9px; color:var(--text-muted); margin-bottom:6px;">قم بإدخال رابط الخدمة السحابية (مثل JSONBin) ومفتاح التوثيق للربط الفوري:</p>
+    <p style="font-size:9px; color:var(--text-muted); margin-bottom:6px;">أدخل رابط JSONBin الحقيقي ومفتاح JSONBin الرئيسي (X-Master-Key) الذي يملك صلاحية القراءة والكتابة:</p>
     <div style="display:grid; grid-template-columns: 2fr 1fr; gap:6px; margin-bottom:6px;">
       <div>
         <label style="font-size:9px; color:var(--text-muted);">رابط الـ API السحابي:</label>
@@ -668,12 +668,12 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
     <div style="display:flex; gap:6px; align-items:center;">
       <button class="btn btn-gold" style="width:auto; margin-top:0; padding:8px 14px;" onclick="saveCloudSettings()">حفظ واختبار الربط السحابي 🔗</button><div style="margin-top:8px;padding:8px;border:1px dashed rgba(245,158,11,.45);border-radius:8px;background:rgba(245,158,11,.05)"><label style="font-size:9px;color:#fbbf24">🛡️ رابط خادم HOTERA العام (ليس مفتاحًا سريًا):</label><input type="url" id="hoteraServerUrlInput" class="form-input" placeholder="https://api.example.com" style="margin:5px 0 4px;direction:ltr;text-align:left"><div style="display:flex;gap:6px;align-items:center"><button class="btn btn-blue" style="width:auto;margin:0;padding:6px 10px;background:#0284c7" onclick="saveHoteraServerUrl()">حفظ رابط الخادم</button><button class="btn btn-green" style="width:auto;margin:0;padding:6px 10px" onclick="checkHoteraServerHealth()">فحص الخادم</button><span id="hoteraServerStatusText" style="font-size:9px;color:#94a3b8">لم يتم إعداد خادم مركزي</span></div><small style="display:block;color:#94a3b8;font-size:8px;margin-top:4px">لا تضع API Key هنا أو داخل GitHub؛ يوضع المفتاح داخل خادم HOTERA كمتغير سري.</small></div>
       <button class="btn btn-blue" style="width:auto; margin-top:0; padding:8px 14px; background:#10b981;" onclick="syncDataWithCloudNow()">مزامنة البيانات الآن 🔄</button><button class="btn btn-gold" style="width:auto; margin-top:0; padding:8px 14px;" onclick="downloadHoteraBackup()">تنزيل HOTERA_BACKUP 🛡️</button>
-      <span id="cloudSyncStatusText" style="font-size:9px; color:#34d399; font-weight:bold;">الحالة: جاهز للربط المحلي/السحابي</span>
+      <span id="cloudSyncStatusText" style="font-size:9px; color:#34d399; font-weight:bold;">الحالة: جاهز للربط المحلي/السحابي</span><div id="hoteraSyncDiagnostics" style="font-size:8px;color:#94a3b8;margin-top:6px;line-height:1.7">آخر جلب: لم ينفذ — آخر رفع: لم ينفذ</div><div style="display:flex;gap:6px;align-items:center;margin-top:4px"><span id="hoteraSyncQueueStatus" style="font-size:8px;color:#94a3b8">لا توجد تعديلات معلقة</span><button type="button" class="btn btn-gray" style="width:auto;margin:0;padding:3px 6px;font-size:8px" onclick="hoteraFlushSyncQueue()">إعادة إرسال المعلّق</button><button type="button" class="btn btn-gray" style="width:auto;margin:0;padding:3px 6px;font-size:8px" onclick="downloadHoteraSyncReport()">تقرير المزامنة</button></div>
     </div>
   </div>
   <div class="card" style="padding:10px; margin-bottom:10px; text-align:inherit; background:rgba(18,26,43,0.95); border-color:#34d399;">
     <h4 style="font-size:11px; color:#34d399; margin-bottom:6px;">🔗 انضمام سريع لجهاز جديد بدون كتابة الإعدادات</h4>
-    <p style="font-size:9px; color:var(--text-muted); margin-bottom:6px;">أنشئ رابط دعوة مؤقتاً وأرسله للمستخدم. سيفتح الرابط خانة الربط تلقائياً، ثم يحتاج الجهاز إلى موافقة السوبر أدمن.</p>
+    <p style="font-size:9px; color:var(--text-muted); margin-bottom:6px;">أنشئ رابط دعوة مؤقتاً وأرسله للمستخدم. الرابط صالح 15 دقيقة، وسيفتح إعدادات الربط تلقائياً، ثم يحتاج الجهاز إلى موافقة السوبر أدمن.</p>
     <div style="display:flex; gap:6px; align-items:center;">
       <button class="btn btn-green" style="width:auto; margin-top:0; padding:8px 14px;" onclick="generateDeviceInviteLink()">إنشاء رابط دعوة مؤقت 🔗</button>
       <span id="inviteLinkStatus" style="font-size:9px; color:#94a3b8;">الرابط صالح للاستخدام مرة واحدة/لفترة قصيرة</span>
@@ -684,7 +684,7 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
   <div class="card" style="padding:10px; margin-bottom:10px; text-align:inherit; background:rgba(18,26,43,0.95); border-color:#38bdf8;">
     <h4 style="font-size:11px; color:#38bdf8; margin-bottom:6px;">📱 طلبات اعتماد الأجهزة الجديدة</h4>
     <p style="font-size:9px; color:var(--text-muted); margin-bottom:6px;">لن يستطيع أي جهاز جديد الدخول أو تعديل البيانات حتى تتم الموافقة عليه من هذه اللوحة.</p>
-    <div id="deviceApprovalPanel"></div>
+    <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px;"><button type="button" class="btn btn-blue" style="width:auto;margin:0;padding:5px 8px;font-size:9px" onclick="retryPendingDeviceRequest()">إعادة إرسال الطلب المعلق 🔄</button><button type="button" class="btn btn-gray" style="width:auto;margin:0;padding:5px 8px;font-size:9px" onclick="fetchDataFromCloud(true).then(renderDeviceApprovalPanel)">تحديث الطلبات</button><span id="pendingDeviceRequestStatus" style="font-size:8px;color:#94a3b8"></span></div><div id="deviceApprovalPanel"></div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;border-top:1px dashed rgba(255,255,255,.12);padding-top:6px"><strong style="font-size:9px;color:#c084fc">سجل طلبات الأجهزة</strong><button type="button" class="btn btn-gray" style="width:auto;margin:0;padding:4px 7px;font-size:8px" onclick="renderDeviceRequestLogPanel()">تحديث السجل</button></div><div id="deviceRequestLogPanel" style="max-height:160px;overflow:auto;margin-top:5px"></div>
   </div>
 
   <div class="card" style="padding:10px;margin-bottom:10px;text-align:inherit;background:rgba(18,26,43,.95);border-color:#a855f7"><div style="display:flex;justify-content:space-between;align-items:center"><h4 style="font-size:11px;color:#c084fc;margin-bottom:6px">🧾 سجل نشاط المستخدمين والأجهزة</h4><button class="btn btn-gray" style="width:auto;margin:0;padding:4px 7px;font-size:9px" onclick="renderActivityLog()">تحديث</button></div><div id="activityLogPanel" style="max-height:190px;overflow:auto;font-size:9px;color:#cbd5e1"></div></div>
@@ -812,7 +812,7 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
       <button type="button" class="hotera-settings-card" onclick="openHoteraReportsPanel()"><b>📊</b><span>التقارير والتصدير<small>تحليل الإيرادات والإشغال</small></span></button><button type="button" class="hotera-settings-card" onclick="openHoteraCompanyContracts()"><b>🏢</b><span>عقود الشركات والأسعار<small>أسعار خاصة وحسابات آجلة</small></span></button><button type="button" class="hotera-settings-card" onclick="openHoteraContractReport()"><b>📑</b><span>تقارير عقود الشركات<small>الحسابات الآجلة والحدود الائتمانية</small></span></button><button type="button" class="hotera-settings-card" onclick="openHoteraBackupCenter()"><b>🛡️</b><span>النسخ والتعارضات<small>لقطات مؤرخة واستعادة آمنة</small></span></button>
       <button type="button" class="hotera-settings-card" onclick="openTopSettingAction('guestProfile')"><b>🧑</b><span>ملف النزيل<small>الزيارات والفواتير السابقة</small></span></button><button type="button" class="hotera-settings-card" onclick="openHoteraGuestPortal()"><b>🧑‍💼</b><span>بوابة النزيل الداخلية<small>الحجز والرصيد وطلبات الخدمة</small></span></button><button type="button" class="hotera-settings-card" onclick="openHoteraGuestAccessTokens()"><b>🔑</b><span>رموز وصول النزلاء<small>رابط مؤقت محدود الصلاحية</small></span></button><button type="button" class="hotera-settings-card" onclick="openHoteraCustomerProfiles()"><b>🧑‍🤝‍🧑</b><span>ملفات العملاء الموحدة<small>الزيارات والتفضيلات والشركات</small></span></button><button type="button" class="hotera-settings-card" onclick="openHoteraSeasonalRates()"><b>☀️</b><span>المواسم والأسعار<small>أسعار موسمية اختيارية</small></span></button>
       <button type="button" class="hotera-settings-card" onclick="openHoteraOperationsModal()"><b>🧹</b><span>طلبات التشغيل<small>تنظيف وصيانة وخدمات داخلية</small></span></button>
-      <button type="button" class="hotera-settings-card" onclick="runHoteraIntegrityCheck()"><b>🛡️</b><span>فحص سلامة البيانات<small>تحقق دون تعديل أو حذف</small></span></button>
+      <button type="button" class="hotera-settings-card" onclick="runHoteraIntegrityCheckDetailed()"><b>🛡️</b><span>فحص سلامة البيانات<small>تحقق دون تعديل أو حذف</small></span></button>
       <button type="button" class="hotera-settings-card" onclick="openHoteraWaitlistModal()"><b>⏳</b><span>قائمة انتظار الحجوزات<small>طلبات العملاء عند عدم التوفر</small></span></button>
       <button type="button" class="hotera-settings-card" onclick="openHoteraSourceReportModal()"><b>📈</b><span>تحليل مصادر الحجوزات<small>المصدر والغرض والأداء</small></span></button>
       <button type="button" class="hotera-settings-card" onclick="openHoteraQuickOperationsModal()"><b>⚡</b><span>التشغيل السريع<small>إجراءات الاستقبال اليومية</small></span></button>
@@ -1408,7 +1408,8 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
 function hoteraEscapeText(value){return String(value??'').replace(/[&<>\"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[ch]));}
 function hoteraLocalDateKey(date=new Date()){const parts=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Riyadh',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(date);const get=t=>parts.find(x=>x.type===t)?.value||'';return `${get('year')}-${get('month')}-${get('day')}`;}
 function hoteraDateKeyFromDate(date){return hoteraLocalDateKey(date instanceof Date?date:new Date(date));}
-function hoteraSafeSetItem(key,value){try{localStorage.setItem(key,value);return true;}catch(error){console.error('تعذر الحفظ المحلي:',error);alert('تعذر حفظ البيانات محلياً. صدّر نسخة احتياطية ثم أفرغ مساحة التخزين.');return false;}}
+function hoteraStorageHealth(){let bytes=0,keys=0;try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i)||'',v=localStorage.getItem(k)||'';if(k.startsWith('hotera_')){keys++;bytes+=(k.length+v.length)*2;}}return {keys,bytes,megabytes:Number((bytes/1048576).toFixed(2))};}catch(_){return {keys:0,bytes:0,megabytes:0};}}
+function hoteraSafeSetItem(key,value){try{localStorage.setItem(key,value);return true;}catch(error){const h=hoteraStorageHealth();console.error('تعذر الحفظ المحلي:',error,{hoteraKeys:h.keys,approxMB:h.megabytes});alert(`تعذر حفظ البيانات محلياً. حجم بيانات HOTERA التقريبي ${h.megabytes} MB. صدّر نسخة احتياطية ثم أفرغ مساحة التخزين.`);return false;}}
 function hoteraReadStorageJSON(key,fallback){const raw=localStorage.getItem(key);if(raw===null||raw==='')return fallback;try{const parsed=JSON.parse(raw);return parsed===null?fallback:parsed;}catch(error){console.error(`تعذر قراءة ${key}; تم تشغيل القيمة الاحتياطية دون حذف النص الأصلي.`,error);return fallback;}}
 function hoteraSafeJson(value){try{return hoteraEscapeText(JSON.stringify(value??{}));}catch(e){return '';}}
 function hoteraSafeUrl(value){try{const u=new URL(String(value||''),location.origin);return /^https?:$/.test(u.protocol)?hoteraEscapeText(u.href):'';}catch(e){return '';}}
@@ -1500,12 +1501,26 @@ function showWelcomeScreen(){const screen=document.getElementById('luxuryEntrySc
 
 function hoteraRecordSyncEvent(type){try{const key='hotera_sync_history',list=JSON.parse(localStorage.getItem(key)||'[]');list.unshift({type,at:new Date().toISOString(),hotelId:currentHotelId,deviceId:deviceId||''});hoteraSafeSetItem(key,JSON.stringify(list.slice(0,30)))}catch(e){console.warn('تعذر حفظ سجل المزامنة',e)}}
 function hoteraReadSyncHistory(){try{return JSON.parse(localStorage.getItem('hotera_sync_history')||'[]')}catch(e){return[]}}
+function hoteraReadSyncQueue(){try{const x=JSON.parse(localStorage.getItem('hotera_sync_queue')||'[]');return Array.isArray(x)?x:[]}catch(_){return[]}}
+function hoteraQueueCurrentSync(reason='تعذر الرفع'){try{const list=hoteraReadSyncQueue(),payload=buildCloudPayload();list.unshift({id:`SQ-${Date.now()}`,reason,createdAt:new Date().toISOString(),deviceId:deviceId||'',payload});hoteraSafeSetItem('hotera_sync_queue',JSON.stringify(list.slice(0,10)));return true}catch(e){console.warn('تعذر حفظ طابور المزامنة',e);return false}}
+function hoteraClearSyncQueue(){hoteraSafeSetItem('hotera_sync_queue','[]');}
+function downloadHoteraSyncReport(){if(currentRole!=='superadmin')return alert('🔒 تقرير المزامنة متاح للسوبر أدمن فقط.');try{const report={format:'HOTERA-SYNC-REPORT',createdAt:new Date().toISOString(),deviceId:deviceId||'',hotelId:currentHotelId||null,storage:hoteraStorageHealth(),queue:hoteraReadSyncQueue().map(x=>({id:x.id,reason:x.reason,createdAt:x.createdAt,deviceId:x.deviceId})),history:hoteraReadSyncHistory().slice(0,50),conflicts:hoteraReadSyncConflicts().slice(0,50),deviceRequestLog:hoteraReadDeviceRequestLog().slice(0,100),note:'تقرير تشخيصي لا يحتوي على مفاتيح JSONBin.'};const blob=new Blob([JSON.stringify(report,null,2)],{type:'application/json;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`HOTERA_SYNC_REPORT_${new Date().toISOString().replace(/[:.]/g,'-')}.json`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}catch(e){alert('تعذر إنشاء تقرير المزامنة: '+e.message)}}
+function hoteraRenderSyncQueueStatus(){const el=document.getElementById('hoteraSyncQueueStatus');if(!el)return;const n=hoteraReadSyncQueue().length;el.textContent=n?`تعديلات معلقة: ${n} — ستُعاد المحاولة عند الاتصال`:'لا توجد تعديلات معلقة';el.style.color=n?'#fbbf24':'#94a3b8';}
+async function hoteraFlushSyncQueue(){if(!navigator.onLine||!hoteraReadSyncQueue().length||!getCloudConfig().url)return false;const ok=await uploadDataToCloud(false);if(ok){hoteraClearSyncQueue();hoteraRecordSyncEvent('تفريغ طابور المزامنة');hoteraRenderSyncQueueStatus();return true}hoteraRenderSyncQueueStatus();return false;}
+
 function setCloudStatus(message, color = '#34d399') {
   const el = document.getElementById('cloudSyncStatusText');
   if (el) {
     el.innerText = `الحالة: ${message}`;
     el.style.color = color;
   }
+}
+function hoteraSetSyncDiagnostic(kind,message,color='#94a3b8'){
+  const el=document.getElementById('hoteraSyncDiagnostics');if(!el)return;
+  const key=kind==='get'?'hotera_sync_diag_get':'hotera_sync_diag_put';
+  hoteraSafeSetItem(key,JSON.stringify({message,at:new Date().toISOString()}));
+  let get={},put={};try{get=JSON.parse(localStorage.getItem('hotera_sync_diag_get')||'{}')}catch(_){}try{put=JSON.parse(localStorage.getItem('hotera_sync_diag_put')||'{}')}catch(_){};
+  el.innerHTML=`آخر جلب: <span style="color:${kind==='get'?color:'#94a3b8'}">${hoteraEscapeText(get.message||'لم ينفذ')}</span> — آخر رفع: <span style="color:${kind==='put'?color:'#94a3b8'}">${hoteraEscapeText(put.message||'لم ينفذ')}</span>`;
 }
 
 function getHoteraServerUrl(){return (localStorage.getItem('hotera_server_url')||'').trim()}
@@ -1519,6 +1534,11 @@ function getCloudConfig() {
     url: (cloudApiUrl || AUTO_CLOUD_URL || '').trim(),
     key: (cloudApiKey || AUTO_API_KEY || '').trim()
   };
+}
+function hoteraCloudAuthHeaders(key){
+  const value=String(key||'').trim();
+  // JSONBin يقبل X-Master-Key أو X-Access-Key؛ نستخدم المفتاح الرئيسي فقط هنا لتجنب تعارض النوعين.
+  return value ? {'X-Master-Key':value} : {};
 }
 
 function getDeviceRegistryForUpload() {
@@ -1553,6 +1573,10 @@ function setDeviceStatusText(message, color = '#fbbf24') {
 function getCurrentDeviceRecord() {
   return (Array.isArray(cloudDevices) ? cloudDevices : []).find(d => d.id === deviceId);
 }
+function hoteraReadDeviceRequestLog(){try{const x=JSON.parse(localStorage.getItem('hotera_device_request_log')||'[]');return Array.isArray(x)?x:[]}catch(_){return[]}}
+function hoteraRecordDeviceRequestEvent(deviceIdValue,event,details={}){const list=hoteraReadDeviceRequestLog();list.unshift({id:`DLOG-${Date.now()}-${Math.random().toString(36).slice(2,6)}`,deviceId:deviceIdValue||'',event,details,at:new Date().toISOString(),by:currentUsername||currentRole||'system'});hoteraSafeSetItem('hotera_device_request_log',JSON.stringify(list.slice(0,500)));setTimeout(renderDeviceRequestLogPanel,0);}
+function hoteraMergeDeviceRequestLog(remote){const local=hoteraReadDeviceRequestLog(),all=[...local,...(Array.isArray(remote)?remote:[])],seen=new Set(),out=[];all.forEach(x=>{const id=String(x?.id||'');if(!id||seen.has(id))return;seen.add(id);out.push(x)});out.sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));hoteraSafeSetItem('hotera_device_request_log',JSON.stringify(out.slice(0,500)));return out;}
+
 
 function isDeviceApproved() {
   if (!getCloudConfig().url) return true;
@@ -1561,6 +1585,8 @@ function isDeviceApproved() {
   if (record.status === 'suspended') return false;
   return record.status === 'approved';
 }
+
+function renderDeviceRequestLogPanel(){const panel=document.getElementById('deviceRequestLogPanel');if(!panel)return;const list=hoteraReadDeviceRequestLog().slice(0,30);panel.innerHTML=list.length?list.map(x=>`<div style="border-bottom:1px dashed rgba(255,255,255,.1);padding:4px 0;font-size:8px;color:#cbd5e1"><strong style="color:#c084fc">${hoteraEscapeText(x.event||'حدث')}</strong> · ${hoteraEscapeText(x.deviceId||'—')}<br><span style="color:#94a3b8">${hoteraEscapeText(x.at||'')} · ${hoteraEscapeText(x.by||'system')}</span></div>`).join(''):'<small style="color:#94a3b8">لا توجد أحداث مسجلة.</small>'}
 
 function renderDeviceApprovalPanel() {
   const panel = document.getElementById('deviceApprovalPanel');
@@ -1672,18 +1698,24 @@ async function saveDeviceCloudAndRequest() {
   if (record && (record.status === 'pending' || record.status === 'awaiting_code') && record.approvalCodeHash) {
     const enteredHash = await hoteraHashApprovalCode(deviceJoinCode);
     const expires = record.approvalExpiresAt ? new Date(record.approvalExpiresAt).getTime() > Date.now() : false;
-    if (enteredHash === record.approvalCodeHash && expires) {
-      record.status='approved'; record.approvedAt=new Date().toISOString(); record.approvedBy='superadmin-code'; record.updatedAt=new Date().toISOString(); delete record.approvalCodeHash; delete record.approvalExpiresAt;
+    if (enteredHash === record.approvalCodeHash && expires && Number(record.approvalAttempts||0)<5) {
+      hoteraRecordDeviceRequestEvent(deviceId,'device_approved',{method:'six_digit_code'});record.status='approved'; record.approvedAt=new Date().toISOString(); record.approvedBy='superadmin-code'; record.updatedAt=new Date().toISOString(); delete record.approvalCodeHash; delete record.approvalExpiresAt;
       await uploadDataToCloud(true); await fetchDataFromCloud(false); handleDeviceAccess(); setDeviceStatusText('تم اعتماد الجهاز وربطه ومزامنته ✅','#34d399'); return alert('✅ تم اعتماد وربط الجهاز بالكود. تمت المزامنة تلقائياً ويمكنك تسجيل الدخول.');
     }
-    if (deviceJoinCode && record.approvalCodeHash) return alert('⛔ الكود غير صحيح أو انتهت صلاحيته. اطلب كودًا جديدًا.');
+    if (deviceJoinCode && record.approvalCodeHash) {
+      record.approvalAttempts=Number(record.approvalAttempts||0)+1;record.updatedAt=new Date().toISOString();
+      if(record.approvalAttempts>=5){delete record.approvalCodeHash;delete record.approvalExpiresAt;record.status='pending';record.approvalAttempts=0;await uploadDataToCloud(false);return alert('⛔ تم إبطال الرمز بعد 5 محاولات خاطئة. اطلب إصدار رمز جديد من السوبر أدمن.');}
+      await uploadDataToCloud(false);return alert(`⛔ الكود غير صحيح أو انتهت صلاحيته. تبقت ${5-record.approvalAttempts} محاولات.`);
+    }
   }
   if (!Array.isArray(cloudDevices)) cloudDevices = [];
   if (!cloudDevices.find(d => d.id === deviceId)) {
     cloudDevices.push({ id: deviceId, name: deviceName, platform: navigator.platform || 'unknown', requestedAt: new Date().toISOString(), lastSeen: new Date().toISOString(), updatedAt: new Date().toISOString(), status: 'pending' });
+    hoteraRecordDeviceRequestEvent(deviceId,'request_created',{name:deviceName,platform:navigator.platform||'unknown'});
   }
   const ok = await uploadDataToCloud(true);
-  if (ok) {
+      if (ok) {
+    hoteraRecordDeviceRequestEvent(deviceId,'request_uploaded',{status:'pending'});
     hoteraSafeSetItem('hotera_pending_device_request', JSON.stringify({deviceId,requestedAt:new Date().toISOString(),status:'sent'}));
     setDeviceStatusText('تم إرسال الطلب للسوبر أدمن، بانتظار الموافقة ⏳');
     alert('✅ تم إرسال طلب اعتماد الجهاز للسوبر أدمن. بعد الموافقة سيصلك رمز من 6 أرقام.');
@@ -1692,6 +1724,13 @@ async function saveDeviceCloudAndRequest() {
     setDeviceStatusText('تم حفظ الطلب محلياً؛ تعذر الرفع بسبب إعدادات المصادقة أو الاتصال ⚠️','#fbbf24');
     alert('⚠️ تعذر رفع طلب اعتماد الجهاز (401). افتح رابط الدعوة الذي أنشأه السوبر أدمن، أو تأكد من رابط السحابة والمفتاح. تم الاحتفاظ بالطلب محلياً دون فقدانه.');
   }
+}
+
+async function retryPendingDeviceRequest(){
+  const status=document.getElementById('pendingDeviceRequestStatus');
+  const raw=localStorage.getItem('hotera_pending_device_request');
+  if(!raw){if(status)status.textContent='لا يوجد طلب محلي معلق.';return alert('لا يوجد طلب جهاز معلق محفوظ محلياً.');}
+  try{const pending=JSON.parse(raw);if(pending.deviceId&&pending.deviceId!==deviceId)return alert('الطلب المحفوظ يعود لجهاز آخر.');if(status)status.textContent='جارٍ إعادة الإرسال...';await saveDeviceCloudAndRequest();if(status)status.textContent='تمت محاولة إعادة الإرسال.';}catch(e){if(status)status.textContent='تعذر إعادة الإرسال.';alert('تعذر إعادة إرسال الطلب دون حذف النسخة المحلية.');}
 }
 
 async function renameDevicePrompt(id) {
@@ -1728,7 +1767,7 @@ async function issueDeviceApprovalCode(id){
   const item=cloudDevices.find(d=>d.id===id);if(!item)return;
   const code=String(Math.floor(100000+Math.random()*900000));
   const previous={...item};
-  item.approvalCodeHash=await hoteraHashApprovalCode(code);item.approvalIssuedAt=new Date().toISOString();item.approvalExpiresAt=new Date(Date.now()+15*60*1000).toISOString();item.updatedAt=new Date().toISOString();item.status='awaiting_code';
+  hoteraRecordDeviceRequestEvent(id,'approval_code_issued',{expiresMinutes:15});item.approvalCodeHash=await hoteraHashApprovalCode(code);item.approvalIssuedAt=new Date().toISOString();item.approvalExpiresAt=new Date(Date.now()+15*60*1000).toISOString();item.approvalAttempts=0;item.updatedAt=new Date().toISOString();item.status='awaiting_code';
   if(await uploadDataToCloud(true)){renderDeviceApprovalPanel();prompt(`رمز اعتماد الجهاز ${item.name||item.id} — صالح لمدة 15 دقيقة. أرسله للجهاز الجديد ليُدخل في خانة الكود:`,code)}
   else {Object.assign(item,previous);renderDeviceApprovalPanel();alert('⚠️ تعذر حفظ رمز الاعتماد؛ لم تتغير حالة الجهاز.');}
 }
@@ -1742,6 +1781,7 @@ async function approveDevice(id) {
 }
 
 async function rejectDevice(id) {
+  hoteraRecordDeviceRequestEvent(id,'device_reject_requested');
   if(currentRole!=='superadmin')return alert('رفض الأجهزة متاح للسوبر أدمن فقط.');
   const item = cloudDevices.find(d => d.id === id);
   if (!item) return;
@@ -1828,6 +1868,7 @@ function buildCloudPayload() {
     seasonalRates: readHoteraSeasonalRates(),
     serviceRequests: Object.fromEntries((Array.isArray(hotelsList)?hotelsList:[]).map(h=>[h.id, JSON.parse(localStorage.getItem(`hotera_service_requests_${h.id}`)||'[]')])),
     devices: getDeviceRegistryForUpload(),
+    deviceRequestLog: hoteraReadDeviceRequestLog(),
     joinCode: cloudJoinCode,
     developerName,
     developerPhone,
@@ -1912,6 +1953,7 @@ function applyCloudPayload(cloudData) {
   if (Array.isArray(cloudData.guestAccessTokens)) writeHoteraGuestAccessTokens(hoteraMergeById(readHoteraGuestAccessTokens(),cloudData.guestAccessTokens));
   if (cloudData.serviceRequests && typeof cloudData.serviceRequests==='object') Object.entries(cloudData.serviceRequests).forEach(([hotelId,list])=>{if(!Array.isArray(list))return;const key=`hotera_service_requests_${hotelId}`,local=(()=>{try{return JSON.parse(localStorage.getItem(key)||'[]')}catch(e){return[]}})();hoteraSafeSetItem(key,JSON.stringify(hoteraMergeById(local,list).sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||''))).slice(0,300)));});
   if (Array.isArray(cloudData.devices)) cloudDevices = hoteraMergeById(cloudDevices, cloudData.devices);
+  if (Array.isArray(cloudData.deviceRequestLog)) hoteraMergeDeviceRequestLog(cloudData.deviceRequestLog);
   if (cloudData.joinCode) { cloudJoinCode = cloudData.joinCode; hoteraSafeSetItem('hotera_cloud_join_code', cloudJoinCode); }
 
   if (cloudData.developerName) developerName = cloudData.developerName;
@@ -1952,14 +1994,18 @@ async function fetchDataFromCloud(showError = false) {
 
   try {
     hoteraCreateLocalSnapshot('قبل رفع سحابي');
-    const headers = { 'Content-Type': 'application/json' };
-    if (config.key) headers['X-Master-Key'] = config.key;
+    const headers = { 'Content-Type': 'application/json', ...hoteraCloudAuthHeaders(config.key) };
     const fetchStartedAtVersion = hoteraLocalMutationVersion;
     const validation=hoteraValidateCloudConfig(config);
     if(!validation.ok)throw new Error(validation.message);
+    hoteraSetSyncDiagnostic('get','جارٍ التنفيذ...','#fbbf24');
     const response = await hoteraFetchWithRetry(config.url, { method: 'GET', headers, cache: 'no-store' });
-    if (!response.ok) throw new Error(`GET HTTP ${response.status}`);
+    if (!response.ok) {
+      if(response.status===401||response.status===403)throw new Error(`GET HTTP ${response.status} — استخدم X-Master-Key الصحيح المرتبط بهذا الـ Bin`);
+      throw new Error(`GET HTTP ${response.status}`);
+    }
     hoteraCloudEtag=response.headers.get('ETag')||hoteraCloudEtag;
+    hoteraSetSyncDiagnostic('get',`نجاح HTTP ${response.status}`,'#34d399');
     const result = await response.json();
     // إذا تم حفظ حجز أو فاتورة أثناء انتظار الجلب، نرفض اللقطة القديمة ولا نطبقها.
     if (fetchStartedAtVersion !== hoteraLocalMutationVersion) {
@@ -1973,6 +2019,7 @@ async function fetchDataFromCloud(showError = false) {
     return true;
   } catch (error) {
     console.error('فشل جلب البيانات السحابية:', error);
+    hoteraSetSyncDiagnostic('get',error.message||'فشل الجلب','#f87171');
     setCloudStatus('تعذر الجلب؛ البيانات المحلية مستخدمة', '#fca5a5');
     if (showError) alert(`❌ تعذر جلب البيانات السحابية: ${error.message}`);
     return false;
@@ -2002,12 +2049,13 @@ async function uploadDataToCloud(showError = false) {
   try {
     const validation=hoteraValidateCloudConfig(config);
     if(!validation.ok)throw new Error(validation.message);
-    const headers = { 'Content-Type': 'application/json' };
+    const headers = { 'Content-Type': 'application/json', 'X-Bin-Versioning':'true', ...hoteraCloudAuthHeaders(config.key) };
+    // الاحتفاظ بنسخ JSONBin مفعّل؛ وإذا لم يُرجع الخادم ETag يستمر الدمج المحلي دون حذف.
     if(hoteraCloudEtag)headers['If-Match']=hoteraCloudEtag;
-    if (config.key) headers['X-Master-Key'] = config.key;
     // تحديث سجل الجهاز الحالي ثم دمج آخر سجل سحابي قبل الكتابة؛ هذا يمنع جهازاً جديداً من استبدال طلبات الأجهزة الأخرى.
     cloudDevices=hoteraMergeById(Array.isArray(cloudDevices)?cloudDevices:[],getDeviceRegistryForUpload());
     await hoteraMergeLatestDevicesBeforeUpload(config,headers);
+    hoteraSetSyncDiagnostic('put','جارٍ التنفيذ...','#fbbf24');
     const response = await hoteraFetchWithRetry(config.url, {
       method: 'PUT',
       headers,
@@ -2022,11 +2070,14 @@ async function uploadDataToCloud(showError = false) {
       throw new Error(`PUT HTTP ${response.status}`);
     }
     hoteraCloudEtag=response.headers.get('ETag')||hoteraCloudEtag;
+    hoteraSetSyncDiagnostic('put',`نجاح HTTP ${response.status}`,'#34d399');
     setCloudStatus(`تم الرفع لجميع الأجهزة: ${new Date().toLocaleTimeString()}`); hoteraRecordSyncEvent('رفع إلى السحابة');
     return true;
   } catch (error) {
     console.error('فشل رفع البيانات السحابية:', error);
-    setCloudStatus('فشل الرفع إلى السحابة', '#fca5a5');
+    hoteraSetSyncDiagnostic('put',error.message||'فشل الرفع','#f87171');
+    hoteraQueueCurrentSync(error.message||'فشل الرفع');hoteraRenderSyncQueueStatus();
+    setCloudStatus('فشل الرفع إلى السحابة — تم حفظ التعديل لإعادة المحاولة', '#fca5a5');
     if (showError) alert(`❌ تعذر رفع البيانات السحابية: ${error.message}`);
     return false;
   } finally {
@@ -2357,9 +2408,10 @@ function createHoteraManualSnapshot(){if(!hoteraCreateLocalSnapshot('لقطة ي
 function downloadHoteraSnapshotFile(){const s=hoteraReadLocalSnapshots()[0];if(!s)return alert('لا توجد لقطة محفوظة.');const blob=new Blob([JSON.stringify(s,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`HOTERA_snapshot_${s.createdAt.slice(0,19).replace(/[:T]/g,'-')}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function restoreHoteraSnapshot(id){if(!hoteraRequirePermission('settings'))return;const s=hoteraReadLocalSnapshots().find(x=>x.id===id);if(!s)return;const current=buildCloudPayload(),currentFingerprint=hoteraSnapshotFingerprint(current);if(s.fingerprint&&s.fingerprint!==hoteraSnapshotFingerprint(s.data)){hoteraRecordSyncConflict({kind:'snapshot',recordId:s.id,summary:`بصمة اللقطة ${s.label} غير متطابقة`,resolution:'تم إيقاف الاستعادة للحماية'});renderHoteraBackupCenter();return alert('⚠️ تم إيقاف الاستعادة لأن بصمة اللقطة غير متطابقة.')};if(!confirm('سيتم إنشاء لقطة للحالة الحالية ثم فحص التعارضات ودمج اللقطة المختارة دون حذف السجلات المحلية. هل تريد المتابعة؟'))return;hoteraCreateLocalSnapshot('قبل استعادة آمنة');hoteraDetectPayloadConflicts(current,s.data);applyCloudPayload(s.data);saveData();render();renderHoteraBackupCenter();alert('✅ تم الدمج الآمن بعد إنشاء نسخة قبل الاستعادة. لم يتم حذف السجلات المحلية.')}
 function hoteraDetectPayloadConflicts(local,remote){const keys=['companies','companyContracts','rooms','invoices','invoicePayments','invoiceServices','invoiceAdjustments','transactions','expenses','inventory','purchases','purchaseOrders','goodsReceipts','supplierReturns','suppliers','maintenanceTickets','shifts','ratings'];const scan=(kind,l,r,bucket='')=>{if(Array.isArray(l)&&Array.isArray(r)){const lm=new Map(l.filter(x=>x&&x.id!==undefined).map(x=>[String(x.id),x]));r.forEach(x=>{const id=x?.id??x?.bookingRef;if(id===undefined)return;const old=lm.get(String(id));if(old&&JSON.stringify(old)!==JSON.stringify(x))hoteraRecordSyncConflict({kind,recordId:`${bucket}${id}`,summary:`تعارض سجل ${kind} رقم ${id}`,resolution:'تم الاحتفاظ بالدمج الحالي دون حذف'})});return;}if(l&&r&&typeof l==='object'&&typeof r==='object'){Object.keys(r).forEach(k=>{if(l[k]!==undefined)scan(kind,l[k],r[k],`${bucket}${k}/`)})}};keys.forEach(key=>scan(key,local?.[key],remote?.[key]))}
-function openHoteraBackupCenter(){toggleTopSettingsPanel(false);document.getElementById('hoteraBackupCenterModal')?.classList.add('open');renderHoteraBackupCenter()}
+function renderHoteraBackupHealth(){const el=document.getElementById('hoteraBackupHealthPreview');if(!el)return;try{const h=hoteraStorageHealth(),sn=hoteraReadLocalSnapshots(),q=hoteraReadSyncQueue();const latest=sn[0];el.innerHTML=`سلامة التخزين: <b style="color:#34d399">${h.megabytes} MB</b> · المفاتيح: ${h.keys} · اللقطات: ${sn.length} · المعلّق للمزامنة: ${q.length}<br>آخر لقطة: ${latest?`${hoteraEscapeText(latest.label)} — ${hoteraEscapeText(latest.fingerprint||'بدون بصمة')}`:'لا توجد لقطة بعد'}`;}catch(e){el.textContent='تعذر فحص السلامة دون تغيير البيانات.'}}
+function openHoteraBackupCenter(){toggleTopSettingsPanel(false);document.getElementById('hoteraBackupCenterModal')?.classList.add('open');renderHoteraBackupCenter();renderHoteraBackupHealth()}
 function closeHoteraBackupCenter(){document.getElementById('hoteraBackupCenterModal')?.classList.remove('open')}
-function renderHoteraBackupCenter(){const sl=document.getElementById('hoteraSnapshotsList'),cl=document.getElementById('hoteraConflictsList');if(!sl||!cl)return;const ss=hoteraReadLocalSnapshots();sl.innerHTML=ss.length?ss.map(x=>`<div class="hotera-backup-row"><span><strong>${x.label}</strong><br><small>${new Date(x.createdAt).toLocaleString('ar-SA')} · الفندق ${x.hotelId||'—'} · سجلات: ${x.counts?`غرف ${x.counts.rooms} · شركات ${x.counts.companies} · فواتير ${x.counts.invoices}`:'نسخة قديمة'} · بصمة ${x.fingerprint||'—'}</small></span><button class="btn btn-gray" style="width:auto;margin:0;padding:5px 8px;font-size:9px" onclick="restoreHoteraSnapshot('${x.id}')">فحص ودمج آمن</button></div>`).join(''):'<small style="color:#94a3b8">لا توجد لقطات بعد.</small>';const cs=hoteraReadSyncConflicts();cl.innerHTML=cs.length?cs.slice(0,30).map(x=>`<div class="hotera-conflict-row">${x.summary||'تعارض بيانات'}<br><small>${new Date(x.at).toLocaleString('ar-SA')} · ${x.resolution||'بانتظار المراجعة'}</small></div>`).join(''):'<small style="color:#94a3b8">لا توجد تعارضات مسجلة.</small>'}
+function renderHoteraBackupCenter(){const sl=document.getElementById('hoteraSnapshotsList'),cl=document.getElementById('hoteraConflictsList');if(!sl||!cl)return;renderHoteraBackupHealth();const ss=hoteraReadLocalSnapshots();sl.innerHTML=ss.length?ss.map(x=>`<div class="hotera-backup-row"><span><strong>${x.label}</strong><br><small>${new Date(x.createdAt).toLocaleString('ar-SA')} · الفندق ${x.hotelId||'—'} · سجلات: ${x.counts?`غرف ${x.counts.rooms} · شركات ${x.counts.companies} · فواتير ${x.counts.invoices}`:'نسخة قديمة'} · بصمة ${x.fingerprint||'—'}</small></span><button class="btn btn-gray" style="width:auto;margin:0;padding:5px 8px;font-size:9px" onclick="restoreHoteraSnapshot('${x.id}')">فحص ودمج آمن</button></div>`).join(''):'<small style="color:#94a3b8">لا توجد لقطات بعد.</small>';const cs=hoteraReadSyncConflicts();cl.innerHTML=cs.length?cs.slice(0,30).map(x=>`<div class="hotera-conflict-row">${x.summary||'تعارض بيانات'}<br><small>${new Date(x.at).toLocaleString('ar-SA')} · ${x.resolution||'بانتظار المراجعة'}</small></div>`).join(''):'<small style="color:#94a3b8">لا توجد تعارضات مسجلة.</small>'}
 
 function openHoteraReportsPanel(){toggleTopSettingsPanel(false);document.getElementById('hoteraAdvancedReportsModal')?.classList.add('open');renderHoteraAdvancedReports()}
 function closeHoteraAdvancedReports(){document.getElementById('hoteraAdvancedReportsModal')?.classList.remove('open')}
@@ -2376,6 +2428,7 @@ function resolveHoteraOperationsRequest(id){const list=readHoteraOperationsReque
 function renderHoteraOperationsRequests(){const el=document.getElementById('hoteraOpsList');if(!el)return;const list=readHoteraOperationsRequests();el.innerHTML=list.length?list.slice(0,30).map(x=>`<div class="hotera-ops-row"><span><b>${x.type}</b> ${x.room?`· غرفة ${x.room}`:''}<br><small>${x.note} · ${x.createdBy} · ${new Date(x.createdAt).toLocaleString('ar-SA')}</small></span><button type="button" onclick="resolveHoteraOperationsRequest('${x.id}')">${x.status==='مكتمل'?'مكتمل':'إنهاء'}</button></div>`).join(''):'<div class="hotera-audit-empty">لا توجد طلبات تشغيل حاليًا.</div>';}
 
 
+function runHoteraIntegrityCheckDetailed(){const issues=[],rooms=Array.isArray(allRooms?.[currentHotelId])?allRooms[currentHotelId]:[],invoices=Array.isArray(allInvoices?.[currentHotelId])?allInvoices[currentHotelId]:[],refs=new Set(rooms.filter(r=>r?.bookingRef).map(r=>String(r.bookingRef))),duplicateRefs=rooms.filter(r=>r?.bookingRef).map(r=>String(r.bookingRef)).filter((x,i,a)=>a.indexOf(x)!==i),orphanInvoices=invoices.filter(i=>i?.bookingRef&&!refs.has(String(i.bookingRef))),invalidDates=rooms.filter(r=>r?.checkIn&&r?.checkOut&&(String(r.checkOut)<=String(r.checkIn)));if(duplicateRefs.length)issues.push(`حجوزات غرف مكررة: ${duplicateRefs.length}`);if(orphanInvoices.length)issues.push(`فواتير بلا غرفة مرتبطة: ${orphanInvoices.length}`);if(invalidDates.length)issues.push(`تواريخ غرف غير صحيحة: ${invalidDates.length}`);recordHoteraAudit('فحص سلامة البيانات التفصيلي',{rooms:rooms.length,invoices:invoices.length,issues:issues.length});alert(issues.length?`⚠️ ملاحظات الفحص (قراءة فقط):\\n${issues.join('\\n')}\\n\\nلم يتم تعديل أو حذف أي بيانات.`:`✅ فحص السلامة التفصيلي ناجح.\\nالغرف: ${rooms.length}\\nالفواتير: ${invoices.length}\\n\\nلم يتم تعديل أو حذف أي بيانات.`)}
 function runHoteraIntegrityCheck(){const issues=[];const hotels=Array.isArray(hotelsList)?hotelsList:[];if(!hotels.length)issues.push('لا توجد قائمة فنادق محملة');if(!allRooms||typeof allRooms!=='object')issues.push('مصدر الغرف غير صالح');if(!allInvoices||typeof allInvoices!=='object')issues.push('مصدر الفواتير غير صالح');if(!allAuditLog||typeof allAuditLog!=='object')issues.push('سجل التدقيق غير صالح');const rooms=Array.isArray(allRooms?.[currentHotelId])?allRooms[currentHotelId]:[];const invoices=Array.isArray(allInvoices?.[currentHotelId])?allInvoices[currentHotelId]:[];const duplicateRefs=rooms.filter(r=>r?.bookingRef).map(r=>r.bookingRef).filter((x,i,a)=>a.indexOf(x)!==i);recordHoteraAudit('فحص سلامة البيانات',{rooms:rooms.length,invoices:invoices.length,issues:issues.length});alert(issues.length?`⚠️ نتيجة الفحص:\n${issues.join('\n')}`:`✅ فحص سلامة البيانات ناجح.\nالغرف: ${rooms.length}\nالفواتير: ${invoices.length}\nالحجوزات المكررة المكتشفة في الغرف: ${duplicateRefs.length}\nلم يتم تعديل أو حذف أي بيانات.`);}
 
 
@@ -4445,8 +4498,33 @@ function downloadHoteraBackup(){
     alert('✅ تم تنزيل HOTERA_BACKUP بنجاح. لم يتم حذف أو تعديل أي بيانات.');
   }catch(e){console.error('HOTERA backup error',e);alert('❌ تعذر إنشاء النسخة الاحتياطية: '+e.message);}
 }
+function hoteraValidateBackupPackage(backup,fileSize=0){
+  if(!backup||typeof backup!=='object')throw new Error('ملف النسخة ليس JSON صالحاً');
+  if(backup.format!=='HOTERA-BACKUP')throw new Error('الملف ليس نسخة HOTERA معتمدة');
+  if(!backup.schemaVersion||!/^hotera-v\\d+$/i.test(String(backup.schemaVersion)))throw new Error('إصدار النسخة غير معروف');
+  if(!backup.createdAt||Number.isNaN(new Date(backup.createdAt).getTime()))throw new Error('تاريخ النسخة غير صالح');
+  if(!backup.localStorage||typeof backup.localStorage!=='object'||Array.isArray(backup.localStorage))throw new Error('بيانات التخزين المحلي غير موجودة');
+  if(backup.payload&&typeof backup.payload!=='object')throw new Error('حمولة المزامنة غير صالحة');
+  const keys=Object.keys(backup.localStorage);if(!keys.length)throw new Error('النسخة لا تحتوي على بيانات HOTERA');
+  if(keys.some(k=>!String(k).startsWith('hotera_')))throw new Error('النسخة تحتوي على مفتاح غير مسموح');
+  if(fileSize>25*1024*1024)throw new Error('حجم النسخة يتجاوز 25 ميجابايت');
+  return {keys:keys.length,version:String(backup.schemaVersion)};
+}
 function restoreHoteraBackup(input){
-  const file=input.files&&input.files[0]; if(!file)return; const reader=new FileReader(); reader.onload=()=>{try{const backup=JSON.parse(reader.result); if(!backup.localStorage)throw new Error('صيغة النسخة غير صحيحة'); if(!confirm('سيتم دمج بيانات النسخة الاحتياطية مع البيانات الحالية دون حذف المفاتيح الأخرى. هل تريد المتابعة؟'))return; Object.entries(backup.localStorage).forEach(([k,v])=>{if(k.startsWith('hotera_'))hoteraSafeSetItem(k,v);}); recordHoteraAudit('استعادة نسخة احتياطية',{createdAt:backup.createdAt}); alert('✅ تمت الاستعادة. أعد تحميل الصفحة لتطبيق البيانات.'); location.reload();}catch(e){alert('❌ تعذر استعادة النسخة: '+e.message);}}; reader.readAsText(file); input.value='';
+  const file=input.files&&input.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=()=>{try{
+    const backup=JSON.parse(reader.result),info=hoteraValidateBackupPackage(backup,file.size);
+    if(!confirm(`سيتم إنشاء لقطة تلقائية للحالة الحالية ثم دمج ${info.keys} مفتاحاً من نسخة ${info.version} دون حذف المفاتيح الأخرى. هل تريد المتابعة؟`))return;
+    const before=hoteraCreateLocalSnapshot('قبل استعادة ملف HOTERA');
+    if(!before)throw new Error('تعذر إنشاء لقطة أمان قبل الاستعادة؛ لم يتم تغيير البيانات');
+    const stagedEntries=Object.entries(backup.localStorage).filter(([k,v])=>k.startsWith('hotera_')&&typeof v==='string');
+    stagedEntries.forEach(([k,v])=>{try{JSON.parse(v)}catch(_){throw new Error(`قيمة تالفة في المفتاح ${k}`)}});
+    const written=[];for(const [k,v] of stagedEntries){if(!hoteraSafeSetItem(k,v))throw new Error(`تعذر حفظ المفتاح ${k}`);written.push(k);}
+    recordHoteraAudit('استعادة نسخة احتياطية',{createdAt:backup.createdAt,version:info.version,keys:info.keys,preRestoreSnapshot:before.id});
+    alert('✅ تمت الاستعادة الآمنة. تم إنشاء لقطة قبل العملية. أعد تحميل الصفحة لتطبيق البيانات.'); location.reload();
+  }catch(e){alert('❌ تعذر استعادة النسخة: '+e.message);}}
+  reader.readAsText(file); input.value='';
 }
 function openInvoiceQr(){
   if(!lastActiveInvoice)return; const h=hotelsList.find(x=>x.id===currentHotelId)||{}; const financial=hoteraGetInvoiceFinancialSummary(lastActiveInvoice); const text=`HOTERA|${h.name||'الفندق'}|Invoice:${lastActiveInvoice.id}|Booking:${lastActiveInvoice.bookingRef||''}|Total:${financial.total.toFixed(2)}|Paid:${financial.paid.toFixed(2)}|Remaining:${financial.remaining.toFixed(2)}|Guest:${lastActiveInvoice.guest||''}`; window.open(`https://quickchart.io/qr?size=260&text=${encodeURIComponent(text)}`,'_blank');
@@ -4519,7 +4597,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   hoteraReconcileRoomStatusesFromBookings();
   if(!document.getElementById('hoteraWelcomeIntroScreen')?.classList.contains('open')) applyHoteraWelcomeMedia();
   handleDeviceAccess();
-  if (getCloudConfig().url) setInterval(() => { fetchDataFromCloud(false).then(() => { handleDeviceAccess(); initLoginHotelDropdown(); }); }, 30000);
+  if (getCloudConfig().url) setInterval(() => { fetchDataFromCloud(false).then(() => { handleDeviceAccess(); initLoginHotelDropdown(); hoteraFlushSyncQueue(); }); }, 30000);
+window.addEventListener('online',()=>{setCloudStatus('عاد الاتصال؛ جارٍ إعادة إرسال التعديلات المعلقة...','#fbbf24');hoteraFlushSyncQueue()});
+window.addEventListener('offline',()=>{setCloudStatus('لا يوجد اتصال؛ سيتم حفظ التعديلات محليًا','#fbbf24');hoteraRenderSyncQueueStatus()});
+setTimeout(hoteraRenderSyncQueueStatus,500);
   initLoginHotelDropdown();
   applyLanguage();
   updateGlobalDisplays();
@@ -4600,7 +4681,7 @@ const secureSyncInput=document.getElementById('secureSyncServerUrlInput');if(sec
 <div id="hoteraAdvancedReportsModal" class="hotera-advanced-report-modal" role="dialog" aria-modal="true" aria-label="التقارير الإدارية المتقدمة"><div class="hotera-advanced-report-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3 style="margin:0;color:#fbbf24;font-size:16px">📊 التقارير الإدارية المتقدمة</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraAdvancedReports()">إغلاق</button></div><p class="hotera-report-note">تقارير قراءة فقط مبنية على بيانات الفندق الحالي. لا يتم تعديل الحجوزات أو الفواتير أثناء العرض.</p><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><select id="hoteraReportRange" class="form-select" style="max-width:170px" onchange="renderHoteraAdvancedReports()"><option value="all">كل السجلات</option><option value="30">آخر 30 يومًا</option><option value="7">آخر 7 أيام</option></select><button type="button" class="btn btn-blue" style="margin:0" onclick="renderHoteraAdvancedReports()">تحديث التقرير</button><button type="button" class="btn btn-gray" style="margin:0" onclick="switchMainFeature('financial',document.getElementById('chipFinancial'));closeHoteraAdvancedReports()">فتح المالية</button></div><div id="hoteraAdvancedReportKpis" class="hotera-report-kpis"></div><div id="hoteraAdvancedReportContent"></div></div></div>
 <div id="hoteraCompanyContractsModal" class="hotera-contract-modal" role="dialog" aria-modal="true" aria-label="عقود الشركات والأسعار"><div class="hotera-contract-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3 style="margin:0;color:#fbbf24;font-size:16px">🏢 عقود الشركات والأسعار الخاصة</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraCompanyContracts()">إغلاق</button></div><p style="color:#94a3b8;font-size:9px;line-height:1.7">تُحفظ العقود في مخزن مستقل وتُستخدم اختياريًا عند إنشاء حجز جديد. لا يتم تعديل الفواتير أو الحجوزات القديمة.</p><div class="hotera-contract-grid"><select id="hoteraContractCompany" class="form-select"></select><input id="hoteraContractNumber" class="form-input" placeholder="رقم العقد"><input id="hoteraContractStart" class="form-input" type="date"><input id="hoteraContractEnd" class="form-input" type="date"><input id="hoteraContractRate" class="form-input" type="number" min="0" placeholder="سعر الليلة الخاص"><input id="hoteraContractDiscount" class="form-input" type="number" min="0" max="100" placeholder="خصم % اختياري"><input id="hoteraContractCredit" class="form-input" type="number" min="0" placeholder="حد ائتماني"><select id="hoteraContractTerms" class="form-select"><option value="نقدي">نقدي</option><option value="آجل 30 يومًا">آجل 30 يومًا</option><option value="آجل 60 يومًا">آجل 60 يومًا</option></select></div><button type="button" class="btn btn-gold" onclick="saveHoteraCompanyContract()">حفظ العقد</button><div id="hoteraCompanyContractsList" class="hotera-contract-list"></div></div></div>
 <div id="hoteraContractReportModal" class="hotera-contract-report-modal" role="dialog" aria-modal="true" aria-label="تقارير عقود الشركات"><div class="hotera-contract-report-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3 style="margin:0;color:#fbbf24;font-size:16px">📑 تقارير عقود الشركات</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraContractReport()">إغلاق</button></div><p style="color:#94a3b8;font-size:9px;line-height:1.7">قراءة فقط. يتم احتساب البيانات من العقود والفواتير والمدفوعات الحالية دون تعديل أي سجل.</p><div id="hoteraContractReportKpis" class="hotera-contract-report-kpis"></div><div id="hoteraContractReportAlerts"></div><div id="hoteraContractReportContent"></div></div></div>
-<div id="hoteraBackupCenterModal" class="hotera-backup-modal" role="dialog" aria-modal="true" aria-label="النسخ والتعارضات"><div class="hotera-backup-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3 style="margin:0;color:#c4b5fd;font-size:16px">🛡️ النسخ الاحتياطي والتعارضات</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraBackupCenter()">إغلاق</button></div><p style="color:#94a3b8;font-size:9px;line-height:1.7">يتم إنشاء اللقطات محليًا قبل الجلب أو الرفع. لا تتم الاستعادة تلقائيًا؛ يجب اختيار اللقطة يدويًا، وتُنشأ نسخة جديدة قبل أي استعادة.</p><div class="hotera-backup-toolbar"><button class="btn btn-purple" onclick="createHoteraManualSnapshot()">إنشاء لقطة الآن</button><button class="btn btn-blue" onclick="downloadHoteraSnapshotFile()">تنزيل آخر لقطة</button><button class="btn btn-gray" onclick="renderHoteraBackupCenter()">تحديث</button></div><div class="hotera-backup-section"><h4 style="margin:0 0 7px;color:#fbbf24;font-size:11px">اللقطات المحلية</h4><div id="hoteraSnapshotsList"></div></div><div class="hotera-backup-section"><h4 style="margin:0 0 7px;color:#fca5a5;font-size:11px">سجل التعارضات</h4><div id="hoteraConflictsList"></div></div></div></div>
+<div id="hoteraBackupCenterModal" class="hotera-backup-modal" role="dialog" aria-modal="true" aria-label="النسخ والتعارضات"><div class="hotera-backup-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3 style="margin:0;color:#c4b5fd;font-size:16px">🛡️ النسخ الاحتياطي والتعارضات</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraBackupCenter()">إغلاق</button></div><p style="color:#94a3b8;font-size:9px;line-height:1.7">يتم إنشاء اللقطات محليًا قبل الجلب أو الرفع. لا تتم الاستعادة تلقائيًا؛ يجب اختيار اللقطة يدويًا، وتُنشأ نسخة جديدة قبل أي استعادة.</p><div class="hotera-backup-toolbar"><button class="btn btn-purple" onclick="createHoteraManualSnapshot()">إنشاء لقطة الآن</button><button class="btn btn-blue" onclick="downloadHoteraSnapshotFile()">تنزيل آخر لقطة</button><button class="btn btn-gray" onclick="renderHoteraBackupCenter()">تحديث</button><button class="btn btn-gray" onclick="renderHoteraBackupHealth()">فحص السلامة</button><label class="btn btn-gray" style="cursor:pointer">استعادة ملف JSON<input type="file" accept="application/json,.json" style="display:none" onchange="restoreHoteraBackup(this)"></label></div><div id="hoteraBackupHealthPreview" style="font-size:9px;color:#94a3b8;padding:6px 0"></div><div class="hotera-backup-section"><h4 style="margin:0 0 7px;color:#fbbf24;font-size:11px">اللقطات المحلية</h4><div id="hoteraSnapshotsList"></div></div><div class="hotera-backup-section"><h4 style="margin:0 0 7px;color:#fca5a5;font-size:11px">سجل التعارضات</h4><div id="hoteraConflictsList"></div></div></div></div>
 <div id="hoteraGuestAccessTokensModal" class="hotera-token-modal" role="dialog" aria-modal="true" aria-label="رموز وصول النزلاء"><div class="hotera-token-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3 style="margin:0;color:#67e8f9;font-size:16px">🔑 إصدار رمز وصول مؤقت للنزيل</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraGuestAccessTokens()">إغلاق</button></div><p style="color:#94a3b8;font-size:9px;line-height:1.7">الرمز يعرض ملخص الإقامة وطلبات الخدمة فقط. لا يعرض رقم الهوية أو كامل رقم الجوال أو تفاصيل الدفع الحساسة.</p><input id="hoteraGuestTokenBookingRef" class="form-input" placeholder="رقم الحجز"><select id="hoteraGuestTokenExpiry" class="form-select"><option value="24">صالح 24 ساعة</option><option value="72">صالح 3 أيام</option><option value="168">صالح 7 أيام</option></select><button class="btn btn-blue" onclick="issueHoteraGuestAccessToken()">إصدار الرمز</button><div id="hoteraGuestTokenResult"></div><div class="hotera-token-warning">تنبيه: هذا حل وصول مؤقت داخل نسخة HTML الحالية. المصادقة التجارية الكاملة تحتاج خادمًا مركزيًا وتشفيرًا وجلسات آمنة.</div></div></div>
 <div id="hoteraCustomerProfilesModal" class="hotera-customer-modal" role="dialog" aria-modal="true" aria-label="ملفات العملاء الموحدة"><div class="hotera-customer-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3 style="margin:0;color:#fbbf24;font-size:16px">🧑‍🤝‍🧑 ملفات العملاء الموحدة</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraCustomerProfiles()">إغلاق</button></div><p style="color:#94a3b8;font-size:9px;line-height:1.7">ملف اختياري يساعد على متابعة الزيارات والتفضيلات. لا يغيّر بيانات الحجوزات أو الفواتير السابقة.</p><input id="hoteraCustomerProfileSearch" class="form-input" placeholder="ابحث بالاسم أو رقم الجوال" oninput="renderHoteraCustomerProfiles()"><div class="hotera-customer-grid"><input id="hoteraCustomerName" class="form-input" placeholder="اسم العميل"><input id="hoteraCustomerPhone" class="form-input" placeholder="رقم الجوال"><input id="hoteraCustomerCompany" class="form-input" placeholder="الشركة (اختياري)"><select id="hoteraCustomerTier" class="form-select"><option value="عادي">عميل عادي</option><option value="مميز">عميل مميز</option><option value="VIP">VIP</option></select><input id="hoteraCustomerPreferences" class="form-input" placeholder="التفضيلات (سرير، طابق، إفطار...)"><input id="hoteraCustomerNotes" class="form-input" placeholder="ملاحظات داخلية"></div><button class="btn btn-gold" onclick="saveHoteraCustomerProfile()">حفظ ملف العميل</button><div id="hoteraCustomerProfilesList"></div></div></div>
 <div id="hoteraSeasonalRatesModal" class="hotera-season-modal" role="dialog" aria-modal="true" aria-label="المواسم والأسعار"><div class="hotera-season-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><h3 style="margin:0;color:#67e8f9;font-size:16px">☀️ المواسم والأسعار الموسمية</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraSeasonalRates()">إغلاق</button></div><p style="color:#94a3b8;font-size:9px;line-height:1.7">تُحفظ الأسعار كاقتراحات مستقلة. لا تُغيّر الحجوزات أو الفواتير القديمة ولا تُطبق تلقائيًا إلا عند اختيارها.</p><div class="hotera-season-grid"><input id="hoteraSeasonName" class="form-input" placeholder="اسم الموسم"><input id="hoteraSeasonRate" class="form-input" type="number" min="0" placeholder="سعر الليلة"><input id="hoteraSeasonStart" class="form-input" type="date"><input id="hoteraSeasonEnd" class="form-input" type="date"><input id="hoteraSeasonDiscount" class="form-input" type="number" min="0" max="100" placeholder="خصم % اختياري"><select id="hoteraSeasonStatus" class="form-select"><option value="active">نشط</option><option value="paused">موقوف</option></select></div><button class="btn btn-gold" onclick="saveHoteraSeasonalRate()">حفظ الموسم</button><div id="hoteraSeasonalRatesList"></div></div></div>
