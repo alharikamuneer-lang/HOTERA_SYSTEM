@@ -672,13 +672,18 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
     </div>
   </div>
   <div class="card" style="padding:10px; margin-bottom:10px; text-align:inherit; background:rgba(18,26,43,0.95); border-color:#34d399;">
-    <h4 style="font-size:11px; color:#34d399; margin-bottom:6px;">🔗 انضمام سريع لجهاز جديد بدون كتابة الإعدادات</h4>
-    <p style="font-size:9px; color:var(--text-muted); margin-bottom:6px;">أنشئ رابط دعوة مؤقتاً وأرسله للمستخدم. الرابط صالح 15 دقيقة، وسيفتح إعدادات الربط تلقائياً، ثم يحتاج الجهاز إلى موافقة السوبر أدمن.</p>
-    <div style="display:flex; gap:6px; align-items:center;">
-      <button class="btn btn-green" style="width:auto; margin-top:0; padding:8px 14px;" onclick="generateDeviceInviteLink()">إنشاء رابط دعوة مؤقت 🔗</button>
-      <span id="inviteLinkStatus" style="font-size:9px; color:#94a3b8;">الرابط صالح للاستخدام مرة واحدة/لفترة قصيرة</span>
+    <h4 style="font-size:11px; color:#34d399; margin-bottom:6px;">🔗 إضافة جهاز جديد بسرعة</h4>
+    <p style="font-size:9px; color:var(--text-muted); margin-bottom:6px;">المسار المفضل: أنشئ رمز اقتران مؤقت من السوبر أدمن، ثم أدخل الرمز فقط في الجهاز الجديد. لا حاجة لنسخ رابط طويل. يبقى الاعتماد بيد السوبر أدمن ولا تتأثر بيانات النظام.</p>
+    <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+      <button class="btn btn-green" style="width:auto; margin-top:0; padding:8px 14px;" onclick="createFastPairingCode()">إنشاء رمز اقتران سريع 🔐</button>
+      <button class="btn btn-blue" style="width:auto; margin-top:0; padding:8px 14px;" onclick="startFastPairingOnThisDevice()">ربط هذا الجهاز برمز</button>
+      <span id="fastPairStatus" style="font-size:9px; color:#94a3b8;">الرمز مؤقت ولا يُستخدم إلا مرة واحدة</span>
     </div>
-    <input id="generatedInviteLink" class="form-input" readonly style="margin-top:6px; display:none; font-size:9px; direction:ltr;">
+    <div id="fastPairCodeDisplay" style="display:none;margin-top:7px;padding:10px;border:1px dashed rgba(52,211,153,.45);border-radius:10px;text-align:center;background:rgba(16,185,129,.07);font-size:20px;letter-spacing:7px;color:#86efac;font-weight:900;"></div>
+    <div style="display:flex; gap:6px; align-items:center; margin-top:6px;">
+      <button class="btn btn-gray" style="width:auto; margin-top:0; padding:6px 10px; font-size:9px;" onclick="generateDeviceInviteLink()">استخدام الرابط القديم كخيار احتياطي 🔗</button>
+      <input id="generatedInviteLink" class="form-input" readonly style="margin:0; display:none; font-size:9px; direction:ltr;">
+    </div>
   </div>
 
   <div class="card" style="padding:10px; margin-bottom:10px; text-align:inherit; background:rgba(18,26,43,0.95); border-color:#38bdf8;">
@@ -1614,7 +1619,7 @@ function isDeviceApproved() {
   if (!getCloudConfig().url) return true;
   const record = getCurrentDeviceRecord();
   if (!record) return false;
-  if (record.status === 'suspended') return false;
+  if (record.status === 'suspended' || record.status === 'removed' || record.status === 'rejected') return false;
   return record.status === 'approved';
 }
 
@@ -1628,11 +1633,12 @@ function renderDeviceApprovalPanel() {
     return;
   }
   panel.innerHTML = cloudDevices.map(d => {
-    const status = d.status === 'approved' ? 'معتمد ✅' : (d.status === 'suspended' ? 'موقوف مؤقتاً 🔴' : (d.status === 'rejected' ? 'مرفوض ⛔' : (d.status === 'awaiting_code' ? 'تمت الموافقة — بانتظار رمز الدخول 🔐' : 'طلب اعتماد جديد ⏳')));
+    const status = d.status === 'approved' ? 'معتمد ✅' : (d.status === 'suspended' ? 'موقوف مؤقتاً 🔴' : (d.status === 'removed' ? 'مؤرشف — الدخول ملغى ⚫' : (d.status === 'rejected' ? 'مرفوض ⛔' : (d.status === 'awaiting_code' ? 'تمت الموافقة — بانتظار رمز الدخول 🔐' : 'طلب اعتماد جديد ⏳'))));
     const color = d.status === 'approved' ? '#34d399' : (d.status === 'rejected' ? '#f87171' : '#fbbf24');
     const isCurrent = d.id === deviceId;
     const isApproved = d.status === 'approved';
     const isSuspended = d.status === 'suspended';
+    const isRemoved = d.status === 'removed';
     
     let actions = '';
     if (isCurrent) {
@@ -1645,8 +1651,10 @@ function renderDeviceApprovalPanel() {
         actions = `<button onclick="toggleDeviceSuspension('${d.id}')" style="background:#f59e0b;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;">إيقاف 🔴</button>`;
       } else if (isSuspended) {
         actions = `<button onclick="toggleDeviceSuspension('${d.id}')" style="background:#10b981;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;">تنشيط 🟢</button>`;
+      } else if (isRemoved) {
+        actions = `<button onclick="restoreDeviceRecord('${d.id}')" style="background:#10b981;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;">إعادة تفعيل 🟢</button>`;
       }
-      actions += ` <button onclick="deleteDeviceRecord('${d.id}')" style="background:#ef4444;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;margin-right:2px;">حذف</button>`;
+      if(!isRemoved) actions += ` <button onclick="deleteDeviceRecord('${d.id}')" style="background:#ef4444;color:white;border:0;border-radius:4px;padding:3px 6px;font-size:8px;margin-right:2px;">أرشفة وإلغاء الدخول</button>`;
     }
 
     const nameDisplay = isCurrent ? `<span>${hoteraEscapeText(d.name || d.id)}</span>` : `<span style="cursor:pointer; border-bottom:1px dotted #38bdf8;" onclick="renameDevicePrompt('${hoteraEscapeText(d.id)}')" title="اضغط لتعديل الاسم">${hoteraEscapeText(d.name || d.id)}</span>`;
@@ -1684,6 +1692,52 @@ function readInviteFromUrl() {
   } catch (e) { setDeviceStatusText('رابط الدعوة غير صالح؛ اطلب رابطاً جديداً.', '#f87171'); }
 }
 
+async function hoteraFastPairRequest(path,body){
+  const server=(localStorage.getItem('hotera_secure_sync_server')||HOTERA_CENTRAL_DEFAULT_URL||'').replace(/\/$/,'');
+  if(!server)throw new Error('لم يتم إعداد خادم HOTERA المركزي');
+  const response=await fetch(`${server}/api/trpc/hoteraSync.${path}`,{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({json:body})});
+  const text=await response.text();let data={};try{data=JSON.parse(text)}catch(_){}
+  if(!response.ok)throw new Error(data?.error?.json?.message||data?.error?.message||`HTTP ${response.status}`);
+  return data?.result?.data?.json||data?.result?.data||data;
+}
+async function createFastPairingCode(){
+  if(currentRole!=='superadmin')return alert('إنشاء رمز الاقتران متاح للسوبر أدمن فقط.');
+  try{
+    const deviceLabel=prompt('اسم الجهاز الجديد (مثلاً: استقبال الفندق):','جهاز جديد');if(deviceLabel===null)return;
+    const result=await hoteraFastPairRequest('pairStart',{scopeKey:'hotera-default',sourceDeviceId:deviceId,sourceLabel:String(deviceLabel||'جهاز جديد').trim().slice(0,80),expiresMinutes:15});
+    const code=String(result?.code||result?.pairingCode||'').replace(/\D/g,'').slice(0,6);if(code.length!==6)throw new Error('الخادم لم يُرجع رمز اقتران صالحًا');
+    const display=document.getElementById('fastPairCodeDisplay');if(display){display.textContent=code;display.style.display='block';}
+    const status=document.getElementById('fastPairStatus');if(status)status.textContent='الرمز صالح 15 دقيقة ويُستخدم مرة واحدة';
+    try{await navigator.clipboard.writeText(code)}catch(_){}
+    hoteraRecordDeviceRequestEvent(deviceId,'fast_pair_code_created',{expiresMinutes:15});
+    alert(`✅ رمز الاقتران السريع هو: ${code}\\nأرسله للجهاز الجديد فقط. صالح لمدة 15 دقيقة.`);
+  }catch(e){alert(`❌ تعذر إنشاء رمز الاقتران السريع: ${e.message}\\nيمكنك استخدام رابط الدعوة الاحتياطي.`);}
+}
+async function startFastPairingOnThisDevice(){
+  const input=document.getElementById('deviceJoinCodeInput');
+  const code=prompt('أدخل رمز الاقتران المؤقت من السوبر أدمن:',input?.value||'');
+  if(code===null)return;
+  const clean=String(code).replace(/\D/g,'').slice(0,6);if(clean.length!==6)return alert('⚠️ يجب إدخال رمز من 6 أرقام.');
+  if(input)input.value=clean;
+  return saveDeviceCloudAndRequest();
+}
+async function joinFastPairingCode(code){
+  try{
+    setDeviceStatusText('جارٍ ربط الجهاز بالرمز المؤقت...', '#fbbf24');
+    const result=await hoteraFastPairRequest('pairJoin',{scopeKey:'hotera-default',pairingCode:String(code),sourceDeviceId:deviceId,sourceLabel:deviceName});
+    const server=String(result?.serverUrl||result?.url||HOTERA_CENTRAL_DEFAULT_URL).replace(/\/$/,'');
+    hoteraSafeSetItem('hotera_secure_sync_server',server);
+    if(result?.deviceToken)hoteraSafeSetItem('hotera_fast_pair_token',String(result.deviceToken));
+    if(result?.cloudUrl)hoteraSafeSetItem('hotera_cloud_url',String(result.cloudUrl));
+    if(result?.cloudKey)hoteraSafeSetItem('hotera_cloud_key',String(result.cloudKey));
+    hoteraRecordDeviceRequestEvent(deviceId,'fast_pair_joined',{server});
+    setDeviceStatusText('تم ربط الجهاز؛ جارٍ إكمال الاعتماد والمزامنة ✅','#34d399');
+    if(typeof checkHoteraSecureServer==='function')await checkHoteraSecureServer();
+    if(result?.approved===true||result?.status==='approved'){setDeviceStatusText('الجهاز معتمد والمزامنة التلقائية مفعلة ✅','#34d399');return alert('✅ تم ربط الجهاز واعتماده والمزامنة تلقائية.');}
+    return alert('✅ تم إرسال طلب الربط السريع. اعتمد الجهاز من لوحة السوبر أدمن ثم أعد الضغط على ربط هذا الجهاز برمز.');
+  }catch(e){setDeviceStatusText('تعذر الربط السريع؛ استخدم الرابط الاحتياطي ⚠️','#fbbf24');return alert(`❌ تعذر الربط بالرمز: ${e.message}`);}
+}
+
 async function generateDeviceInviteLink() {
   if (!cloudApiUrl || !cloudApiKey) return alert('⚠️ احفظ رابط JSONBin ومفتاح المصادقة أولاً.');
   try { new URL(cloudApiUrl); } catch (_) { return alert('⚠️ رابط JSONBin غير صحيح.'); }
@@ -1709,7 +1763,9 @@ async function saveDeviceCloudAndRequest() {
   deviceJoinCode = (document.getElementById('deviceJoinCodeInput')?.value || '').replace(/\D/g,'').slice(0,6).trim();
   const inviteVerified = localStorage.getItem('hotera_invite_verified') === '1' || !!new URLSearchParams(window.location.search).get('hoteraInvite');
   const existingRecord = getCurrentDeviceRecord();
-  if (!deviceJoinCode && !inviteVerified && !(existingRecord && existingRecord.approvalCodeHash)) return alert('⚠️ افتح رابط الدعوة المرسل من السوبر أدمن أولاً.');
+  // مسار الربط السريع: رمز واحد فقط، دون رابط دعوة أو نسخ إعدادات طويلة.
+  if(deviceJoinCode && !inviteVerified && !(existingRecord && existingRecord.approvalCodeHash)) return joinFastPairingCode(deviceJoinCode);
+  if (!deviceJoinCode && !inviteVerified && !(existingRecord && existingRecord.approvalCodeHash)) return alert('⚠️ أدخل رمز الاقتران السريع أو افتح رابط الدعوة الاحتياطي.');
   if (!url) return alert('⚠️ لم يتم العثور على إعدادات الربط. افتح رابط الدعوة الأصلي أو اطلب دعوة جديدة.');
   try { new URL(url); } catch (_) { return alert('⚠️ تعذر التحقق من إعدادات الدعوة. اطلب رابطاً جديداً.'); }
   cloudApiUrl = url;
@@ -1785,12 +1841,21 @@ async function toggleDeviceSuspension(id) {
 }
 
 async function deleteDeviceRecord(id) {
-  if(currentRole!=='superadmin')return alert('حذف الأجهزة متاح للسوبر أدمن فقط.');
-  if (!confirm('⚠️ هل أنت متأكد من حذف هذا الجهاز نهائياً؟ سيفقد الجهاز صلاحية الدخول فوراً.')) return;
-  const previous = Array.isArray(cloudDevices) ? [...cloudDevices] : [];
-  cloudDevices = previous.filter(d => d.id !== id);
-  if (await uploadDataToCloud(true)) { renderDeviceApprovalPanel(); alert('✅ تم حذف الجهاز من سجل الاعتماد.'); }
-  else { cloudDevices = previous; renderDeviceApprovalPanel(); alert('⚠️ تعذر الحفظ؛ تم إبقاء سجل الجهاز دون تغيير.'); }
+  if(currentRole!=='superadmin')return alert('أرشفة الأجهزة متاحة للسوبر أدمن فقط.');
+  if (id===deviceId) return alert('لا يمكن أرشفة الجهاز الحالي من داخله. استخدم جهاز سوبر أدمن آخر.');
+  if (!confirm('سيتم إلغاء دخول الجهاز وأرشفته مع الاحتفاظ بسجله لأغراض المراجعة. لن تُحذف الحجوزات أو الفواتير. هل تريد المتابعة؟')) return;
+  const item = cloudDevices.find(d=>d.id===id); if(!item)return;
+  const previous={...item};
+  item.status='removed';item.removedAt=new Date().toISOString();item.removedBy=currentUsername||'superadmin';item.updatedAt=new Date().toISOString();
+  if (await uploadDataToCloud(true)) { hoteraRecordDeviceRequestEvent(id,'device_archived'); renderDeviceApprovalPanel(); alert('✅ تمت أرشفة الجهاز وإلغاء دخوله مع الاحتفاظ بسجله.'); }
+  else { Object.assign(item,previous); renderDeviceApprovalPanel(); alert('⚠️ تعذر الحفظ؛ بقي الجهاز كما هو.'); }
+}
+async function restoreDeviceRecord(id){
+  if(currentRole!=='superadmin')return alert('إعادة تفعيل الأجهزة متاحة للسوبر أدمن فقط.');
+  const item=cloudDevices.find(d=>d.id===id);if(!item)return;
+  const previous={...item};item.status='approved';item.restoredAt=new Date().toISOString();item.restoredBy=currentUsername||'superadmin';item.updatedAt=new Date().toISOString();
+  if(await uploadDataToCloud(true)){hoteraRecordDeviceRequestEvent(id,'device_restored');renderDeviceApprovalPanel();alert('✅ تمت إعادة تفعيل الجهاز.');}
+  else{Object.assign(item,previous);renderDeviceApprovalPanel();alert('⚠️ تعذر الحفظ؛ لم تتغير حالة الجهاز.');}
 }
 
 async function hoteraHashApprovalCode(code){const data=new TextEncoder().encode(String(code));const digest=await crypto.subtle.digest('SHA-256',data);return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,'0')).join('')}
