@@ -2127,25 +2127,50 @@ async function syncDataWithCloudNow() {
 }
 
 async function saveCloudSettings() {
-  const url = document.getElementById('cloudApiUrlInput').value.trim();
-  const key = document.getElementById('cloudApiKeyInput').value.trim();
+  const url = document.getElementById('cloudApiUrlInput')?.value.trim() || '';
+  const key = document.getElementById('cloudApiKeyInput')?.value.trim() || '';
+  const previousUrl = cloudApiUrl;
+  const previousKey = cloudApiKey;
   if (!url) return alert('⚠️ أدخل رابط API السحابي.');
 
-  try { new URL(url); } catch (_) { return alert('⚠️ رابط API غير صحيح.'); }
+  const validation = hoteraValidateCloudConfig({url, key});
+  if (!validation.ok) return alert(`⚠️ ${validation.message}`);
+
+  // لا نحفظ الإعداد الجديد قبل نجاح الاختبار؛ حمايةً من استبدال إعداد عامل
+  // برابط أو مفتاح خاطئ، مع إبقاء البيانات المحلية كما هي في جميع الحالات.
   cloudApiUrl = url;
   cloudApiKey = key;
-  saveData();
-  setCloudStatus('جارٍ اختبار الربط...', '#fbbf24');
+  setCloudStatus('جارٍ اختبار الربط دون تعديل البيانات...', '#fbbf24');
 
-  const connected = await fetchDataFromCloud(false);
+  let connected = await fetchDataFromCloud(false);
   if (connected) {
-    alert('✅ تم حفظ إعدادات السحابة وجلب البيانات المركزية بنجاح.');
+    hoteraSafeSetItem('hotera_cloud_url', cloudApiUrl);
+    hoteraSafeSetItem('hotera_cloud_key', cloudApiKey);
+    alert('✅ تم اختبار إعدادات السحابة وجلب البيانات المركزية بنجاح.');
     return;
   }
 
   const created = await uploadDataToCloud(false);
-  if (created) alert('✅ تم حفظ الإعدادات وإنشاء/تحديث السجل المركزي بنجاح.');
-  else alert('❌ تعذر اختبار الربط. تحقق من الرابط والمفتاح وصلاحية PUT في الخدمة السحابية.');
+  if (created) {
+    hoteraSafeSetItem('hotera_cloud_url', cloudApiUrl);
+    hoteraSafeSetItem('hotera_cloud_key', cloudApiKey);
+    alert('✅ تم اختبار الإعدادات وإنشاء/تحديث السجل المركزي بنجاح.');
+    return;
+  }
+
+  // فشل الاختبار بالكامل: تراجع عن الإعداد الجديد فقط، ولا تلمس أي سجل بيانات.
+  cloudApiUrl = previousUrl;
+  cloudApiKey = previousKey;
+  if (previousUrl) hoteraSafeSetItem('hotera_cloud_url', previousUrl);
+  else localStorage.removeItem('hotera_cloud_url');
+  if (previousKey) hoteraSafeSetItem('hotera_cloud_key', previousKey);
+  else localStorage.removeItem('hotera_cloud_key');
+  const urlInput = document.getElementById('cloudApiUrlInput');
+  const keyInput = document.getElementById('cloudApiKeyInput');
+  if (urlInput) urlInput.value = previousUrl || '';
+  if (keyInput) keyInput.value = previousKey || '';
+  setCloudStatus('فشل الاختبار؛ تم الإبقاء على الإعداد السابق والبيانات المحلية سليمة', '#f87171');
+  alert('❌ تعذر اختبار الربط. لم يتم حفظ الإعداد الجديد ولم تتغير أي بيانات. تحقق من الرابط والمفتاح وصلاحية PUT في الخدمة السحابية.');
 }
 
 let currentHotelId = 1;
