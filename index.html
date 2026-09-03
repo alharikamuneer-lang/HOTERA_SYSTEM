@@ -1410,7 +1410,36 @@ function hoteraLocalDateKey(date=new Date()){const parts=new Intl.DateTimeFormat
 function hoteraDateKeyFromDate(date){return hoteraLocalDateKey(date instanceof Date?date:new Date(date));}
 function hoteraStorageCleanupSafe(){if(currentRole!=='superadmin')return alert('🔒 تنظيف التخزين متاح للسوبر أدمن فقط.');const before=hoteraStorageHealth(),snap=hoteraReadLocalSnapshots(),queue=hoteraReadSyncQueue();if(!confirm(`حجم التخزين الحالي ${before.megabytes} MB. سيتم الاحتفاظ بآخر لقطة وبالطابور المعلق، وحذف اللقطات الأقدم وسجلات التشخيص القديمة فقط. لن تُحذف الحجوزات أو الفواتير أو المخزون. المتابعة؟`))return;const keep=snap.slice(0,1);hoteraSafeSetItem('hotera_local_snapshots',JSON.stringify(keep));hoteraSafeSetItem('hotera_sync_history',JSON.stringify(hoteraReadSyncHistory().slice(0,10)));hoteraSafeSetItem('hotera_sync_conflicts',JSON.stringify(hoteraReadSyncConflicts().slice(0,20)));hoteraSafeSetItem('hotera_device_request_log',JSON.stringify(hoteraReadDeviceRequestLog().slice(0,50)));hoteraSafeSetItem('hotera_sync_queue',JSON.stringify(queue));const after=hoteraStorageHealth();recordHoteraAudit('تنظيف التخزين المؤقت',{before:before.megabytes,after:after.megabytes,removedSnapshots:Math.max(0,snap.length-keep.length)});alert(`✅ تم التنظيف الآمن. الحجم الآن ${after.megabytes} MB. تم الاحتفاظ بالطابور والبيانات الأساسية.`);}
 function hoteraStorageHealth(){let bytes=0,keys=0;try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i)||'',v=localStorage.getItem(k)||'';if(k.startsWith('hotera_')){keys++;bytes+=(k.length+v.length)*2;}}return {keys,bytes,megabytes:Number((bytes/1048576).toFixed(2))};}catch(_){return {keys:0,bytes:0,megabytes:0};}}
-function hoteraSafeSetItem(key,value){try{localStorage.setItem(key,value);return true;}catch(error){const h=hoteraStorageHealth();console.error('تعذر الحفظ المحلي:',error,{hoteraKeys:h.keys,approxMB:h.megabytes});alert(`تعذر حفظ البيانات محلياً. حجم بيانات HOTERA التقريبي ${h.megabytes} MB. صدّر نسخة احتياطية ثم أفرغ مساحة التخزين.`);return false;}}
+function hoteraReclaimSecondaryStorage(force=false){
+  // لا يلمس مفاتيح البيانات الأساسية؛ يزيل/يقلص النسخ الثانوية المتكررة وسجلات التشخيص فقط.
+  try{
+    const h=hoteraStorageHealth();
+    if(!force && h.megabytes<7.5)return false;
+    const read=(key,fallback)=>{try{const x=JSON.parse(localStorage.getItem(key)||'');return x??fallback}catch(_){return fallback}};
+    const snapshots=read('hotera_local_snapshots',[]),pre=read('hotera_pre_save_backups',[]);
+    localStorage.removeItem('hotera_local_snapshots');
+    localStorage.removeItem('hotera_pre_save_backups');
+    // الاحتفاظ بآخر نسخة ثانوية فقط إن أمكن، دون المخاطرة بفشل الحفظ الأساسي.
+    if(Array.isArray(snapshots)&&snapshots[0]){try{localStorage.setItem('hotera_local_snapshots',JSON.stringify([snapshots[0]]))}catch(_) {}}
+    if(Array.isArray(pre)&&pre[0]){try{localStorage.setItem('hotera_pre_save_backups',JSON.stringify([pre[0]]))}catch(_) {}}
+    const trim=(key,max)=>{const x=read(key,[]);if(Array.isArray(x)&&x.length>max){try{localStorage.setItem(key,JSON.stringify(x.slice(0,max)))}catch(_){}}};
+    trim('hotera_sync_history',10);trim('hotera_sync_conflicts',20);trim('hotera_device_request_log',50);
+    return true;
+  }catch(e){console.warn('تعذر تقليص النسخ الثانوية:',e);return false;}
+}
+function hoteraSafeSetItem(key,value){
+  try{localStorage.setItem(key,value);return true;}
+  catch(error){
+    // محاولة واحدة آمنة: تقليص النسخ الثانوية ثم إعادة الحفظ. لا نحذف بيانات التشغيل.
+    hoteraReclaimSecondaryStorage(true);
+    try{localStorage.setItem(key,value);return true;}catch(_){
+      const h=hoteraStorageHealth();console.error('تعذر الحفظ المحلي:',error,{hoteraKeys:h.keys,approxMB:h.megabytes,key});
+      alert(`تعذر حفظ البيانات محلياً. تم الحفاظ على بيانات النظام، لكن مساحة التخزين ممتلئة (${h.megabytes} MB). نزّل نسخة HOTERA_BACKUP ثم امسح بيانات الموقع من إعدادات المتصفح فقط بعد التأكد من النسخة.`);
+      return false;
+    }
+  }
+}
+window.addEventListener('load',()=>setTimeout(()=>{try{hoteraReclaimSecondaryStorage(true)}catch(_){ }},350));
 function hoteraReadStorageJSON(key,fallback){const raw=localStorage.getItem(key);if(raw===null||raw==='')return fallback;try{const parsed=JSON.parse(raw);return parsed===null?fallback:parsed;}catch(error){console.error(`تعذر قراءة ${key}; تم تشغيل القيمة الاحتياطية دون حذف النص الأصلي.`,error);return fallback;}}
 function hoteraSafeJson(value){try{return hoteraEscapeText(JSON.stringify(value??{}));}catch(e){return '';}}
 function hoteraSafeUrl(value){try{const u=new URL(String(value||''),location.origin);return /^https?:$/.test(u.protocol)?hoteraEscapeText(u.href):'';}catch(e){return '';}}
@@ -1426,6 +1455,8 @@ function hoteraValidatePhone(value){const v=String(value||'').replace(/[\s-]/g,'
 
 function hoteraCreatePreSaveBackup(){
   try{
+    // لا نحتفظ بأكثر من نسخة ما قبل الحفظ؛ النسخ المتعددة كانت تكرر كامل بيانات النظام وتملأ localStorage.
+    try{localStorage.removeItem('hotera_pre_save_backups')}catch(_){}
     const fixedKeys=['hotera_all_hotels','hotera_companies','hotera_all_rooms','hotera_all_invoices','hotera_invoice_payments','hotera_invoice_services','hotera_invoice_adjustments','hotera_cancelled_bookings','hotera_refunded_invoices','hotera_all_transactions','hotera_attendance','hotera_customer_memory','hotera_customer_profiles','hotera_all_expenses','hotera_purchases','hotera_purchase_orders','hotera_goods_receipts','hotera_supplier_returns','hotera_financial_adjustments','hotera_period_closures','hotera_suppliers','hotera_shops','hotera_daily_sales','hotera_daily_expenses','hotera_other_revenues','hotera_shop_accounts','hotera_shop_audit','hotera_all_inventory','hotera_maint_tickets','hotera_all_shifts','hotera_all_ratings','hotera_audit_log','hotera_seasonal_rates','hotera_guest_access_tokens','hotera_cloud_join_code','hotera_dev_name','hotera_dev_phone','hotera_about_title','hotera_about_desc','hotera_cloud_url','hotera_cloud_key'];
     const dynamicPrefixes=['hotera_preventive_maintenance_','hotera_service_requests_','hotera_waitlist_','hotera_maintenance_images_','hotera_purchase_attachments_'];
     const keys=new Set(fixedKeys);for(let i=0;i<localStorage.length;i++){const key=localStorage.key(i);if(key&&dynamicPrefixes.some(prefix=>key.startsWith(prefix)))keys.add(key);}
@@ -2429,7 +2460,7 @@ function hoteraReadSyncConflicts(){try{return JSON.parse(localStorage.getItem('h
 function hoteraRecordSyncConflict(item){try{const list=hoteraReadSyncConflicts();list.unshift({...item,id:`CF-${Date.now()}-${Math.random().toString(36).slice(2,6)}`,at:new Date().toISOString(),hotelId:currentHotelId});hoteraSafeSetItem('hotera_sync_conflicts',JSON.stringify(list.slice(0,80)))}catch(e){console.warn('تعذر حفظ التعارض',e)}}
 function hoteraSnapshotFingerprint(data){try{const raw=JSON.stringify(data||{}),hash=[2166136261];for(let i=0;i<raw.length;i++){hash[0]^=raw.charCodeAt(i);hash[0]=Math.imul(hash[0],16777619)}return (hash[0]>>>0).toString(16).padStart(8,'0')}catch(e){return 'غير متاح'}}
 function hoteraSnapshotCounts(data){const d=data||{},countBuckets=value=>Array.isArray(value)?value.length:value&&typeof value==='object'?Object.values(value).reduce((n,list)=>n+(Array.isArray(list)?list.length:0),0):0,refs=new Set();Object.values(d.invoices||{}).forEach(list=>(Array.isArray(list)?list:[]).forEach(i=>{if(i?.bookingRef)refs.add(String(i.bookingRef))}));Object.values(d.rooms||{}).forEach(list=>(Array.isArray(list)?list:[]).forEach(r=>{if(r?.bookingRef)refs.add(String(r.bookingRef))}));return {rooms:countBuckets(d.rooms),companies:Array.isArray(d.companies)?d.companies.length:0,invoices:countBuckets(d.invoices),bookings:refs.size}}
-function hoteraCreateLocalSnapshot(label='لقطة يدوية'){try{const data=buildCloudPayload(),snap={id:`SN-${Date.now()}`,label,createdAt:new Date().toISOString(),hotelId:currentHotelId,schemaVersion:'safe-v2',fingerprint:hoteraSnapshotFingerprint(data),counts:hoteraSnapshotCounts(data),data};const list=hoteraReadLocalSnapshots();list.unshift(snap);if(!hoteraSafeSetItem('hotera_local_snapshots',JSON.stringify(list.slice(0,12))))return null;hoteraRecordSyncEvent(`إنشاء ${label}`);return snap}catch(e){console.warn('تعذر إنشاء اللقطة',e);return null}}
+function hoteraCreateLocalSnapshot(label='لقطة يدوية'){try{const data=buildCloudPayload(),snap={id:`SN-${Date.now()}`,label,createdAt:new Date().toISOString(),hotelId:currentHotelId,schemaVersion:'safe-v2',fingerprint:hoteraSnapshotFingerprint(data),counts:hoteraSnapshotCounts(data),data};const list=hoteraReadLocalSnapshots();list.unshift(snap);if(!hoteraSafeSetItem('hotera_local_snapshots',JSON.stringify(list.slice(0,2))))return null;hoteraRecordSyncEvent(`إنشاء ${label}`);return snap}catch(e){console.warn('تعذر إنشاء اللقطة',e);return null}}
 function createHoteraManualSnapshot(){if(!hoteraCreateLocalSnapshot('لقطة يدوية'))return alert('تعذر إنشاء اللقطة.');renderHoteraBackupCenter();alert('✅ تم إنشاء لقطة محلية آمنة مع بصمة سلامة.')}
 function downloadHoteraSnapshotFile(){const s=hoteraReadLocalSnapshots()[0];if(!s)return alert('لا توجد لقطة محفوظة.');const blob=new Blob([JSON.stringify(s,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`HOTERA_snapshot_${s.createdAt.slice(0,19).replace(/[:T]/g,'-')}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function restoreHoteraSnapshot(id){if(!hoteraRequirePermission('settings'))return;const s=hoteraReadLocalSnapshots().find(x=>x.id===id);if(!s)return;const current=buildCloudPayload(),currentFingerprint=hoteraSnapshotFingerprint(current);if(s.fingerprint&&s.fingerprint!==hoteraSnapshotFingerprint(s.data)){hoteraRecordSyncConflict({kind:'snapshot',recordId:s.id,summary:`بصمة اللقطة ${s.label} غير متطابقة`,resolution:'تم إيقاف الاستعادة للحماية'});renderHoteraBackupCenter();return alert('⚠️ تم إيقاف الاستعادة لأن بصمة اللقطة غير متطابقة.')};if(!confirm('سيتم إنشاء لقطة للحالة الحالية ثم فحص التعارضات ودمج اللقطة المختارة دون حذف السجلات المحلية. هل تريد المتابعة؟'))return;hoteraCreateLocalSnapshot('قبل استعادة آمنة');hoteraDetectPayloadConflicts(current,s.data);applyCloudPayload(s.data);saveData();render();renderHoteraBackupCenter();alert('✅ تم الدمج الآمن بعد إنشاء نسخة قبل الاستعادة. لم يتم حذف السجلات المحلية.')}
@@ -2888,6 +2919,8 @@ function generateRoomsForHotel(hotelId, floors, perFloor) {
 }
 
 function saveData() {
+  // معالجة ضغط التخزين قبل إنشاء نسخة الحماية، مع عدم المساس بالمفاتيح الأساسية.
+  try{hoteraReclaimSecondaryStorage(false)}catch(_){}
   hoteraCreatePreSaveBackup();
   hoteraLocalMutationVersion++;
   hoteraSafeSetItem('hotera_all_hotels', JSON.stringify(hotelsList));
