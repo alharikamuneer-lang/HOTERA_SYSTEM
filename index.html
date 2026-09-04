@@ -4740,11 +4740,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   const hasWelcomeIntro=!!hoteraWelcomeReadSavedMedia();
   if(luxuryEntry&&!hasWelcomeIntro){window.clearTimeout(window.hoteraLuxuryEntryTimer);window.hoteraLuxuryEntryTimer=window.setTimeout(()=>{if(!document.getElementById('hoteraWelcomeIntroScreen')?.classList.contains('open'))enterLuxuryWelcome();},HOTERA_MODEL_SEQUENCE_DURATION);}
   readInviteFromUrl();
-  await syncAndFetchDataOnLoad();
+  // افتح الواجهة فورًا؛ المزامنة لا يجب أن تحجب شاشة الترحيب أو الدخول.
+  // يتم تشغيلها في الخلفية، وعند نجاحها تُحدّث البيانات والقوائم بهدوء.
   hoteraReconcileRoomStatusesFromBookings();
   if(!document.getElementById('hoteraWelcomeIntroScreen')?.classList.contains('open')) applyHoteraWelcomeMedia();
   handleDeviceAccess();
-  if (getCloudConfig().url) setInterval(() => { fetchDataFromCloud(false).then(() => { handleDeviceAccess(); initLoginHotelDropdown(); hoteraFlushSyncQueue(); }); }, 30000);
+  if (getCloudConfig().url) {
+    setTimeout(()=>syncAndFetchDataOnLoad().then(()=>{ handleDeviceAccess(); initLoginHotelDropdown(); hoteraFlushSyncQueue(); }).catch(e=>console.warn('المزامنة الخلفية مؤجلة:',e)),0);
+    setInterval(() => { fetchDataFromCloud(false).then(() => { handleDeviceAccess(); initLoginHotelDropdown(); hoteraFlushSyncQueue(); }).catch(e=>console.warn('تعذر تحديث المزامنة الخلفية:',e)); }, 30000);
+  }
 window.addEventListener('online',()=>{setCloudStatus('عاد الاتصال؛ جارٍ إعادة إرسال التعديلات المعلقة...','#fbbf24');hoteraFlushSyncQueue()});
 window.addEventListener('offline',()=>{setCloudStatus('لا يوجد اتصال؛ سيتم حفظ التعديلات محليًا','#fbbf24');hoteraRenderSyncQueueStatus()});
 setTimeout(hoteraRenderSyncQueueStatus,500);
