@@ -671,6 +671,11 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
       <span id="cloudSyncStatusText" style="font-size:9px; color:#34d399; font-weight:bold;">الحالة: جاهز للربط المحلي/السحابي</span><div id="hoteraSyncDiagnostics" style="font-size:8px;color:#94a3b8;margin-top:6px;line-height:1.7">آخر جلب: لم ينفذ — آخر رفع: لم ينفذ</div><div style="display:flex;gap:6px;align-items:center;margin-top:4px"><span id="hoteraSyncQueueStatus" style="font-size:8px;color:#94a3b8">لا توجد تعديلات معلقة</span><button type="button" class="btn btn-gray" style="width:auto;margin:0;padding:3px 6px;font-size:8px" onclick="hoteraFlushSyncQueue()">إعادة إرسال المعلّق</button><button type="button" class="btn btn-gray" style="width:auto;margin:0;padding:3px 6px;font-size:8px" onclick="downloadHoteraSyncReport()">تقرير المزامنة</button></div>
     </div>
   </div>
+  <div class="card" style="padding:10px; margin-bottom:10px; text-align:inherit; background:rgba(18,26,43,0.95); border-color:#60a5fa;">
+    <h4 style="font-size:11px;color:#93c5fd;margin-bottom:5px;">🔥 تخزين ومزامنة Firebase Firestore</h4>
+    <p style="font-size:9px;color:var(--text-muted);margin-bottom:6px;line-height:1.7;">يُخزّن بيانات HOTERA في مستندات مقسّمة داخل Firestore لتجنب حد حجم المستند الواحد. لن يتم حذف التخزين المحلي، ويمكن اختبار الاتصال قبل أي رفع.</p>
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;"><button type="button" class="btn btn-blue" style="width:auto;margin:0;padding:7px 11px;" onclick="hoteraFirestoreTestConnection()">اختبار Firestore</button><button type="button" class="btn btn-green" style="width:auto;margin:0;padding:7px 11px;" onclick="hoteraFirestoreUploadSafe()">رفع نسخة إلى Firestore</button><button type="button" class="btn btn-gold" style="width:auto;margin:0;padding:7px 11px;" onclick="hoteraFirestoreStartAutoSync()">تفعيل المزامنة التلقائية</button><span id="hoteraFirestoreStatus" style="font-size:9px;color:#94a3b8;">غير متصل</span></div>
+  </div>
   <div class="card" style="padding:10px; margin-bottom:10px; text-align:inherit; background:rgba(18,26,43,0.95); border-color:#34d399;">
     <h4 style="font-size:11px; color:#34d399; margin-bottom:6px;">🔗 إضافة جهاز جديد بسرعة</h4>
     <p style="font-size:9px; color:var(--text-muted); margin-bottom:6px;">المسار المفضل: أنشئ رمز اقتران مؤقت من السوبر أدمن، ثم أدخل الرمز فقط في الجهاز الجديد. لا حاجة لنسخ رابط طويل. يبقى الاعتماد بيد السوبر أدمن ولا تتأثر بيانات النظام.</p>
@@ -1693,15 +1698,20 @@ function readInviteFromUrl() {
 }
 
 async function hoteraFastPairRequest(path,body){
-  const server=(localStorage.getItem('hotera_secure_sync_server')||HOTERA_CENTRAL_DEFAULT_URL||'').replace(/\/$/,'');
-  if(!server)throw new Error('لم يتم إعداد خادم HOTERA المركزي');
-  const response=await fetch(`${server}/api/trpc/hoteraSync.${path}`,{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({json:body})});
+  const server=(localStorage.getItem('hotera_secure_sync_server')||localStorage.getItem('hotera_server_url')||HOTERA_CENTRAL_DEFAULT_URL||'').trim().replace(/\/$/,'');
+  if(!server)throw new Error('لم يتم إعداد رابط خادم HOTERA المركزي. احفظه من إعدادات الخادم أولاً.');
+  const token=localStorage.getItem('hotera_fast_pair_token')||'';
+  const headers={'Content-Type':'application/json','Accept':'application/json'};if(token)headers.Authorization=`Bearer ${token}`;
+  const response=await fetch(`${server}/api/trpc/hoteraSync.${path}`,{method:'POST',credentials:'include',headers,body:JSON.stringify({json:body})});
   const text=await response.text();let data={};try{data=JSON.parse(text)}catch(_){}
-  if(!response.ok)throw new Error(data?.error?.json?.message||data?.error?.message||`HTTP ${response.status}`);
+  if(!response.ok){const status=response.status;const detail=data?.error?.json?.message||data?.error?.message||'';if(status===401||status===403)throw new Error('الخادم يتطلب تسجيل دخول أو صلاحية اعتماد الربط (HTTP '+status+')');if(status===404)throw new Error('مسار الربط السريع غير مفعّل على الخادم (HTTP 404)');throw new Error(detail||`HTTP ${status}`);}
   return data?.result?.data?.json||data?.result?.data||data;
 }
 async function createFastPairingCode(){
   if(currentRole!=='superadmin')return alert('إنشاء رمز الاقتران متاح للسوبر أدمن فقط.');
+  const configured=localStorage.getItem('hotera_secure_sync_server')||localStorage.getItem('hotera_server_url')||'';
+  if(!configured) { const input=document.getElementById('hoteraServerUrlInput'); if(input&&HOTERA_CENTRAL_DEFAULT_URL)input.value=HOTERA_CENTRAL_DEFAULT_URL; hoteraSafeSetItem('hotera_secure_sync_server',HOTERA_CENTRAL_DEFAULT_URL); }
+
   try{
     const deviceLabel=prompt('اسم الجهاز الجديد (مثلاً: استقبال الفندق):','جهاز جديد');if(deviceLabel===null)return;
     const result=await hoteraFastPairRequest('pairStart',{scopeKey:'hotera-default',sourceDeviceId:deviceId,sourceLabel:String(deviceLabel||'جهاز جديد').trim().slice(0,80),expiresMinutes:15});
@@ -4833,5 +4843,22 @@ const secureSyncInput=document.getElementById('secureSyncServerUrlInput');if(sec
 
 <div id="hoteraBookingManagementModal" class="hotera-booking-modal" role="dialog" aria-modal="true" aria-label="إدارة الحجوزات"><div class="hotera-booking-box"><div class="hotera-booking-head"><h3>📅 إدارة الحجوزات</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraBookingManagement()">إغلاق</button></div><div id="hoteraBookingTabs" class="hotera-booking-tabs"></div><div id="hoteraBookingManagementList" class="hotera-booking-list"></div></div></div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script>
+(function(){
+  const firebaseConfig={apiKey:'AIzaSyAFmGBlvm84bHErWYAq21RV77xzhKepQ2o',authDomain:'hotera-e925f.firebaseapp.com',projectId:'hotera-e925f',storageBucket:'hotera-e925f.firebasestorage.app',messagingSenderId:'195416949981',appId:'1:195416949981:web:447d658426ec84bd320734',measurementId:'G-0KWLL22ZVN'};
+  let db=null,unsubscribe=null,started=false,authReady=null;
+  function status(t,c){const e=document.getElementById('hoteraFirestoreStatus');if(e){e.textContent=t;e.style.color=c||'#94a3b8';}}
+  function getDb(){if(!db){if(!window.firebase)throw Error('لم تُحمّل مكتبة Firebase؛ تحقق من الاتصال بالإنترنت');if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);db=firebase.firestore();}return db;}
+  async function ensureFirebaseAuth(){getDb();if(!firebase.auth)throw Error('مكتبة تسجيل الدخول في Firebase غير متاحة');if(firebase.auth().currentUser)return firebase.auth().currentUser;if(!authReady)authReady=firebase.auth().signInAnonymously().catch(e=>{authReady=null;throw Error('فعّل Anonymous sign-in من Firebase Authentication ثم أعد المحاولة');});return authReady;}
+  function scope(){return String(window.currentHotelId||currentHotelId||'default').replace(/[^a-zA-Z0-9_-]/g,'_').slice(0,80)||'default';}
+  window.hoteraFirestoreTestConnection=async function(){try{status('جارٍ اختبار Firestore...','#fbbf24');await ensureFirebaseAuth();await getDb().collection('hotera_sync').doc(scope()).collection('meta').doc('health').set({lastTestAt:new Date().toISOString(),sourceDeviceId:window.deviceId||'unknown',app:'HOTERA'},{merge:true});status('Firestore متصل ويستجيب ✅','#34d399');alert('✅ تم الاتصال بـ Firebase Firestore بنجاح.');}catch(e){status('فشل الاتصال: '+e.message,'#f87171');alert('❌ تعذر الاتصال بـ Firestore: '+e.message);}};
+  window.hoteraFirestoreUploadSafe=async function(){try{status('جارٍ رفع نسخة مقسمة...','#fbbf24');await ensureFirebaseAuth();const payload=buildCloudPayload(),col=getDb().collection('hotera_sync').doc(scope()).collection('items');const batch=getDb().batch();Object.entries(payload).forEach(([key,value])=>batch.set(col.doc(String(key)),{value,updatedAt:new Date().toISOString(),sourceDeviceId:window.deviceId||'unknown'},{merge:true}));batch.set(getDb().collection('hotera_sync').doc(scope()),{updatedAt:new Date().toISOString(),sourceDeviceId:window.deviceId||'unknown',schemaVersion:'firestore-v1'},{merge:true});await batch.commit();status('تم رفع نسخة Firestore ✅','#34d399');alert('✅ تم رفع نسخة آمنة إلى Firestore دون حذف التخزين المحلي.');}catch(e){status('فشل الرفع: '+e.message,'#f87171');alert('❌ فشل رفع Firestore. لم تتغير البيانات المحلية.');}};
+  window.hoteraFirestoreStartAutoSync=async function(){try{await ensureFirebaseAuth();if(unsubscribe)unsubscribe();const col=getDb().collection('hotera_sync').doc(scope()).collection('items');unsubscribe=col.onSnapshot(snap=>{if(!snap.empty){window.hoteraFirestoreLatest={};snap.forEach(d=>{window.hoteraFirestoreLatest[d.id]=d.data().value});status('متصل — آخر تحديث Firestore متاح ✅','#34d399');}},e=>status('توقفت المزامنة: '+e.message,'#f87171'));started=true;localStorage.setItem('hotera_firestore_autosync','1');status('المتابعة التلقائية مفعلة ✅','#34d399');alert('✅ تم تفعيل متابعة Firestore تلقائيًا. استخدم «رفع نسخة» بعد التعديلات لحفظها سحابيًا.');}catch(e){status('تعذر التفعيل: '+e.message,'#f87171');alert('❌ تعذر تفعيل المزامنة: '+e.message);}};
+  window.addEventListener('load',()=>{try{if(localStorage.getItem('hotera_firestore_autosync')==='1')hoteraFirestoreStartAutoSync();}catch(_){}});
+})();
+</script>
 </body>
 </html>
