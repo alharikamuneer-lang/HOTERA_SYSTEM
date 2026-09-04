@@ -3130,6 +3130,13 @@ setText('companyOwnerNameBadge',`${company.name} · ${company.ownerName}`);setTe
 function setText(id,value){const el=document.getElementById(id);if(el)el.innerText=value;}
 function switchToCompanyOwnerDashboard(){document.querySelectorAll('.view-section').forEach(v=>{v.classList.remove('active');v.style.display='none';});const view=document.getElementById('companyOwnerView');if(view){view.style.display='block';view.classList.add('active');}document.querySelectorAll('.quick-access-chip').forEach(el=>el.classList.remove('active'));renderCompanyOwnerDashboard();}
 function enterCompanyHotel(hotelId){if(currentRole!=='company_owner'||!companyVisibleHotelIds.includes(Number(hotelId)))return alert('هذا الفندق غير مصرح به لهذا الحساب.');currentHotelId=Number(hotelId);currentRole='company_owner_manager';currentUsername='مالك الشركة — متابعة الفندق';updateHeaderInfo();applyPermissions();switchMainFeature('command_center',document.getElementById('chipCommandCenter'));render();}
+async function hoteraCloudFetchForLogin(timeoutMs=2500){
+  if(!cloudApiUrl)return false;
+  try{
+    const result=await Promise.race([fetchDataFromCloud(false),new Promise(resolve=>setTimeout(()=>resolve(false),timeoutMs))]);
+    return result===true;
+  }catch(e){console.warn('تعذر تحديث السحابة أثناء الدخول؛ سيستمر الدخول المحلي.',e);return false;}
+}
 async function executeLogin() {
   if (!hoteraLoginAllowed()) return;
   const hotelId = parseInt(document.getElementById('loginHotelSelect').value);
@@ -3145,12 +3152,18 @@ async function executeLogin() {
     currentShopId=shopId; currentHotelId=null; loginEntityType='shop'; hoteraResetLoginGuard(); hoteraStartSession(); document.getElementById('loginOverlay').style.display='none'; updateHeaderInfo(); applyPermissions(); switchMainFeature('shops',document.getElementById('chipShops')); return;
   }
 
-  // محاولة تحديث البيانات، مع السماح بالدخول محلياً إذا تعذر الاتصال بالسحابة
+  // تحديث سريع غير حاجب: لا ينتظر الدخول السحابة أكثر من 2.5 ثانية.
+  // إذا تعذر الاتصال، يتم التحقق محليًا والمتابعة دون حذف أو استبدال البيانات.
+  let cloudReached=false;
   if (cloudApiUrl) {
-    await fetchDataFromCloud(false);
-    if (!isDeviceApproved() && role !== 'superadmin') {
+    cloudReached=await hoteraCloudFetchForLogin(2500);
+    if (cloudReached && !isDeviceApproved() && role !== 'superadmin') {
       alert('⏳ هذا الجهاز بانتظار موافقة السوبر أدمن. استخدم خانة ربط الجهاز لإرسال الطلب.');
       return;
+    }
+    if(!cloudReached){
+      const cloudStatus=document.getElementById('deviceAccessStatusText');
+      if(cloudStatus)cloudStatus.textContent='الدخول المحلي متاح — تعذرت المزامنة مؤقتًا، وستُعاد لاحقًا.';
     }
   }
 
