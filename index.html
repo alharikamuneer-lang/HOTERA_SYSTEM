@@ -1427,11 +1427,15 @@ function hoteraReclaimSecondaryStorage(force=false){
     if(!force && h.megabytes<7.5)return false;
     const read=(key,fallback)=>{try{const x=JSON.parse(localStorage.getItem(key)||'');return x??fallback}catch(_){return fallback}};
     const snapshots=read('hotera_local_snapshots',[]),pre=read('hotera_pre_save_backups',[]);
+    const firebaseReady=localStorage.getItem('hotera_firestore_autosync')==='1';
     localStorage.removeItem('hotera_local_snapshots');
     localStorage.removeItem('hotera_pre_save_backups');
-    // الاحتفاظ بآخر نسخة ثانوية فقط إن أمكن، دون المخاطرة بفشل الحفظ الأساسي.
-    if(Array.isArray(snapshots)&&snapshots[0]){try{localStorage.setItem('hotera_local_snapshots',JSON.stringify([snapshots[0]]))}catch(_) {}}
-    if(Array.isArray(pre)&&pre[0]){try{localStorage.setItem('hotera_pre_save_backups',JSON.stringify([pre[0]]))}catch(_) {}}
+    // بعد نجاح Firebase تصبح النسخ الكاملة المكررة غير ضرورية؛ الاحتفاظ بها يسبب امتلاء localStorage.
+    // لا تُلمس مفاتيح البيانات الأساسية، ولا يُنفّذ هذا المسار إلا بعد تفعيل المزامنة السحابية.
+    if(!firebaseReady){
+      if(Array.isArray(snapshots)&&snapshots[0]){try{localStorage.setItem('hotera_local_snapshots',JSON.stringify([snapshots[0]]))}catch(_) {}}
+      if(Array.isArray(pre)&&pre[0]){try{localStorage.setItem('hotera_pre_save_backups',JSON.stringify([pre[0]]))}catch(_) {}}
+    }
     const trim=(key,max)=>{const x=read(key,[]);if(Array.isArray(x)&&x.length>max){try{localStorage.setItem(key,JSON.stringify(x.slice(0,max)))}catch(_){}}};
     trim('hotera_sync_history',10);trim('hotera_sync_conflicts',20);trim('hotera_device_request_log',50);
     return true;
@@ -1444,7 +1448,7 @@ function hoteraSafeSetItem(key,value){
     hoteraReclaimSecondaryStorage(true);
     try{localStorage.setItem(key,value);return true;}catch(_){
       const h=hoteraStorageHealth();console.error('تعذر الحفظ المحلي:',error,{hoteraKeys:h.keys,approxMB:h.megabytes,key});
-      alert(`تعذر حفظ البيانات محلياً. تم الحفاظ على بيانات النظام، لكن مساحة التخزين ممتلئة (${h.megabytes} MB). نزّل نسخة HOTERA_BACKUP ثم امسح بيانات الموقع من إعدادات المتصفح فقط بعد التأكد من النسخة.`);
+      alert(`تعذر حفظ البيانات محلياً بعد التنظيف الآمن. تم الحفاظ على بيانات النظام (${h.megabytes} MB). تأكد من نجاح رفع Firebase، ثم نزّل نسخة HOTERA_BACKUP قبل أي مسح يدوي لبيانات الموقع.`);
       return false;
     }
   }
