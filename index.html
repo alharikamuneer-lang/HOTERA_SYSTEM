@@ -1447,8 +1447,12 @@ function hoteraSafeSetItem(key,value){
     // محاولة واحدة آمنة: تقليص النسخ الثانوية ثم إعادة الحفظ. لا نحذف بيانات التشغيل.
     hoteraReclaimSecondaryStorage(true);
     try{localStorage.setItem(key,value);return true;}catch(_){
-      const h=hoteraStorageHealth();console.error('تعذر الحفظ المحلي:',error,{hoteraKeys:h.keys,approxMB:h.megabytes,key});
-      alert(`تعذر حفظ البيانات محلياً بعد التنظيف الآمن. تم الحفاظ على بيانات النظام (${h.megabytes} MB). تأكد من نجاح رفع Firebase، ثم نزّل نسخة HOTERA_BACKUP قبل أي مسح يدوي لبيانات الموقع.`);
+      const optionalKeys=new Set(['hotera_pre_save_backups','hotera_local_snapshots','hotera_sync_history','hotera_sync_conflicts','hotera_device_request_log','hotera_sync_report','hotera_diagnostic_log']);
+      const h=hoteraStorageHealth();
+      console.warn('تعذر حفظ عنصر محلي اختياري بسبب السعة؛ تم الاحتفاظ ببيانات التشغيل:',{hoteraKeys:h.keys,approxMB:h.megabytes,key});
+      if(optionalKeys.has(String(key)))return false;
+      console.error('تعذر الحفظ المحلي لبيانات تشغيلية:',error,{hoteraKeys:h.keys,approxMB:h.megabytes,key});
+      alert(`تعذر حفظ بيانات التشغيل محلياً. تم الحفاظ على بيانات النظام (${h.megabytes} MB). تأكد من نجاح رفع Firebase ثم نزّل نسخة HOTERA_BACKUP قبل أي مسح يدوي لبيانات الموقع.`);
       return false;
     }
   }
