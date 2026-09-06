@@ -4881,11 +4881,14 @@ const secureSyncInput=document.getElementById('secureSyncServerUrlInput');if(sec
   window.getDb=getDb;
   window.hoteraFirestoreTimeout=hoteraFirestoreTimeout;
   window.hoteraFirestoreError=hoteraFirestoreError;
+  window.hoteraFsStatus=status;
 })();
 </script>
 <script>
 /* HOTERA Firebase-first migration: JSONBin is disabled as an active transport. */
 (function(){
+  const status=window.hoteraFsStatus;
+  let fsUnsubscribe=null;
   const FS_SCOPE='default';
   const fsDoc=()=>firebase.firestore().collection('hotera_sync').doc(FS_SCOPE);
   const fsItems=()=>fsDoc().collection('items');
@@ -4896,11 +4899,14 @@ const secureSyncInput=document.getElementById('secureSyncServerUrlInput');if(sec
   function fromFsValue(v){if(!v)return null;if('nullValue'in v)return null;if('stringValue'in v)return v.stringValue;if('booleanValue'in v)return v.booleanValue;if('integerValue'in v)return Number(v.integerValue);if('doubleValue'in v)return v.doubleValue;if('timestampValue'in v)return v.timestampValue;if('arrayValue'in v)return (v.arrayValue.values||[]).map(fromFsValue);if('mapValue'in v){const o={};Object.entries(v.mapValue.fields||{}).forEach(([k,x])=>o[k]=fromFsValue(x));return o;}return null}
   async function fsRestFetch(path,options={}){const u=await fsAuth(),token=await u.getIdToken(),r=await hoteraFirestoreTimeout(fetch(`${REST_ROOT}${path}`,{...options,headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json',...(options.headers||{})}}),12000,'اتصال Firestore REST');const text=await r.text();let data={};try{data=text?JSON.parse(text):{}}catch(_){}if(!r.ok){const e=new Error(data?.error?.message||`HTTP ${r.status}`);e.code=String(data?.error?.status||r.status);throw e;}return data;}
   async function fsRestCommit(writes){return fsRestFetch(':commit',{method:'POST',body:JSON.stringify({writes})});}
-  async function fsRestUploadPayload(payload){const now=new Date().toISOString(),writes=Object.entries(payload).map(([key,value])=>({update:{name:`projects/hotera-e925f/databases/(default)/documents/hotera_sync/default/items/${encodeURIComponent(key)}`,fields:{value:fsValue(value),updatedAt:fsValue(now),sourceDeviceId:fsValue(String(deviceId||'unknown'))}}}));writes.push({update:{name:'projects/hotera-e925f/databases/(default)/documents/hotera_sync/default',fields:{updatedAt:fsValue(now),sourceDeviceId:fsValue(String(deviceId||'unknown')),schemaVersion:fsValue('firestore-rest-v1')}}});return fsRestCommit(writes);}
+  async function fsRestCommitBatched(writes){const size=350;for(let i=0;i<writes.length;i+=size){await fsRestCommit(writes.slice(i,i+size));}return true;}
+  async function fsRestUploadPayload(payload){const now=new Date().toISOString(),writes=Object.entries(payload).map(([key,value])=>({update:{name:`projects/hotera-e925f/databases/(default)/documents/hotera_sync/default/items/${encodeURIComponent(key)}`,fields:{value:fsValue(value),updatedAt:fsValue(now),sourceDeviceId:fsValue(String(deviceId||'unknown'))}}}));writes.push({update:{name:'projects/hotera-e925f/databases/(default)/documents/hotera_sync/default',fields:{updatedAt:fsValue(now),sourceDeviceId:fsValue(String(deviceId||'unknown')),schemaVersion:fsValue('firestore-rest-v1')}}});return fsRestCommitBatched(writes);}
   async function fsRestFetchPayload(){const data=await fsRestFetch('/hotera_sync/default/items?pageSize=100');const payload={};(data.documents||[]).forEach(d=>{const id=String(d.name||'').split('/').pop();payload[decodeURIComponent(id)]=fromFsValue(d.fields?.value)});return payload;}
   window.hoteraFsValue=fsValue;
   window.hoteraFsRestCommit=fsRestCommit;
+  window.hoteraFsRestCommitBatched=fsRestCommitBatched;
   window.hoteraFsRestFetchPayload=fsRestFetchPayload;
+  window.hoteraFsRestUploadPayload=fsRestUploadPayload;
   async function fsAuth(){return ensureFirebaseAuth();}
   async function fsDeviceDoc(id=deviceId){const s=await fsCall(fsDevices().doc(String(id)).get(),'قراءة اعتماد الجهاز');return s.exists?s.data():null;}
   async function fsRefreshDevices(){await fsAuth();const snap=await fsCall(fsDevices().get(),'قراءة قائمة الأجهزة');cloudDevices=[];snap.forEach(d=>cloudDevices.push({id:d.id,...d.data()}));renderDeviceApprovalPanel();return cloudDevices;}
@@ -4911,7 +4917,7 @@ const secureSyncInput=document.getElementById('secureSyncServerUrlInput');if(sec
   async function fsAdminDeviceAction(id,statusValue){if(currentRole!=='superadmin')return alert('هذا الإجراء متاح للسوبر أدمن فقط.');try{const data={id,status:statusValue,approvedBy:currentUsername||'superadmin'};if(statusValue==='approved')data.approvedAt=new Date().toISOString();await fsSaveDevice(data);await fsRefreshDevices();alert(statusValue==='approved'?'✅ تم اعتماد الجهاز عبر Firebase.':'✅ تم تحديث حالة الجهاز عبر Firebase.');}catch(e){alert('❌ تعذر تحديث الجهاز: '+hoteraFirestoreError(e));}}
   window.hoteraFirebasePrimary=true;
   window.hoteraFirestoreUploadSafe=async function(){try{status('جارٍ رفع نسخة آمنة إلى Firestore...','#fbbf24');await fsRestUploadPayload(buildCloudPayload());status('تم رفع نسخة Firestore ✅','#34d399');hoteraRecordSyncEvent('رفع إلى Firestore');alert('✅ تم رفع النسخة إلى Firestore دون حذف البيانات المحلية.');return true;}catch(e){const msg=hoteraFirestoreError(e);status('فشل الرفع: '+msg,'#f87171');alert('❌ فشل رفع Firestore: '+msg);return false;}};
-  window.hoteraFirestoreStartAutoSync=async function(){try{await fsAuth();if(unsubscribe)unsubscribe();const poll=async()=>{try{const payload=await fsRestFetchPayload();if(Object.keys(payload).length){applyCloudPayload(payload);updateGlobalDisplays();}status('متصل — مزامنة Firebase مفعلة ✅','#34d399');}catch(e){status('تعذر تحديث Firebase: '+hoteraFirestoreError(e),'#f87171');}};await poll();const id=setInterval(poll,30000);unsubscribe=()=>clearInterval(id);localStorage.setItem('hotera_firestore_autosync','1');status('متصل — مزامنة Firebase مفعلة ✅','#34d399');alert('✅ تم تفعيل المزامنة التلقائية عبر Firebase كل 30 ثانية.');}catch(e){status('تعذر تفعيل Firebase: '+hoteraFirestoreError(e),'#f87171');alert('❌ تعذر تفعيل مزامنة Firebase: '+hoteraFirestoreError(e));}};
+  window.hoteraFirestoreStartAutoSync=async function(){try{await fsAuth();if(fsUnsubscribe)fsUnsubscribe();const poll=async()=>{try{const payload=await fsRestFetchPayload();if(Object.keys(payload).length){applyCloudPayload(payload);updateGlobalDisplays();}status('متصل — مزامنة Firebase مفعلة ✅','#34d399');}catch(e){status('تعذر تحديث Firebase: '+hoteraFirestoreError(e),'#f87171');}};await poll();const id=setInterval(poll,30000);fsUnsubscribe=()=>clearInterval(id);localStorage.setItem('hotera_firestore_autosync','1');status('متصل — مزامنة Firebase مفعلة ✅','#34d399');alert('✅ تم تفعيل المزامنة التلقائية عبر Firebase كل 30 ثانية.');}catch(e){status('تعذر تفعيل Firebase: '+hoteraFirestoreError(e),'#f871f7');alert('❌ تعذر تفعيل مزامنة Firebase: '+hoteraFirestoreError(e));}};
   window.fetchDataFromCloud=async function(showError=false){try{const payload=await fsRestFetchPayload();if(Object.keys(payload).length)applyCloudPayload(payload);status('تم جلب Firestore ✅','#34d399');return true;}catch(e){if(showError)alert('❌ تعذر جلب Firestore: '+hoteraFirestoreError(e));return false;}};
   window.uploadDataToCloud=window.hoteraFirestoreUploadSafe;
   window.syncDataWithCloudNow=async function(){const a=await window.fetchDataFromCloud(true);const b=await window.hoteraFirestoreUploadSafe(true);return a&&b;};
