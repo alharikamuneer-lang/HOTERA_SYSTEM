@@ -20,7 +20,7 @@
 }
 * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body {
-  background-image: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1920&auto=format&fit=crop');
+  background-image: none;
   background-size: cover; background-position: center; background-attachment: fixed; background-repeat: no-repeat;
   background-color: var(--bg-fallback); background-blend-mode: overlay;
   color: var(--text-main); width: 100%; min-height: 100vh; overflow-x: hidden;
@@ -311,8 +311,8 @@ body.hotera-compact-mode .hotera-glass-panel,body.hotera-compact-mode .section-c
 /* HOTERA Welcome Scenes — Luxury Lobby + Command Center */
 #luxuryEntryScreen,#welcomeScreen{isolation:isolate;background:#030914!important}
 #luxuryEntryScreen:before,#welcomeScreen:before{content:'';position:absolute;inset:0;z-index:-3;background-position:center;background-size:cover;background-repeat:no-repeat;opacity:.92;animation:hoteraSceneDrift 18s ease-in-out infinite alternate;transform:scale(1.04)}
-#luxuryEntryScreen:before{background-image:linear-gradient(90deg,rgba(2,9,20,.72),rgba(2,9,20,.22)),url('HOTERA_welcome_model_01_luxury_lobby.png')}
-#welcomeScreen:before{background-image:linear-gradient(90deg,rgba(2,9,20,.25),rgba(2,9,20,.72)),url('HOTERA_welcome_model_03_command_center.png')}
+#luxuryEntryScreen:before{background-image:none}
+#welcomeScreen:before{background-image:none}
 #luxuryEntryScreen:after,#welcomeScreen:after{content:'';position:absolute;inset:0;z-index:-2;background:radial-gradient(circle at 50% 38%,rgba(245,158,11,.12),transparent 30%),linear-gradient(180deg,rgba(2,9,20,.1),rgba(2,9,20,.68));pointer-events:none}
 #luxuryEntryScreen .luxury-entry-card,#welcomeScreen .welcome-card{background:linear-gradient(145deg,rgba(6,20,36,.72),rgba(3,10,21,.82));backdrop-filter:blur(18px);box-shadow:0 35px 120px rgba(0,0,0,.76),inset 0 1px rgba(255,255,255,.17)}
 #luxuryEntryScreen .luxury-entry-card{border-color:rgba(245,190,70,.52)}
@@ -473,6 +473,15 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
 @media(max-width:700px){#feat_shops #shopsKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}#feat_shops #shopsProtectedContent>div:first-child>div{align-items:flex-start!important}}
 \n/* HOTEL COMMAND CENTER INSIGHTS — presentation and derived metrics only */
 .hotera-insights-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:0 0 10px}.hotera-insights-strip>div{padding:12px 10px;border-radius:15px;background:linear-gradient(145deg,rgba(17,35,57,.9),rgba(5,15,28,.95));border:1px solid rgba(246,196,83,.2);box-shadow:0 10px 24px rgba(0,0,0,.22)}.hotera-insights-strip small{display:block;color:#b9c7d8;font-size:9px}.hotera-insights-strip strong{display:block;color:#ffe7a3;font-size:15px;margin-top:5px}.hotera-insights-strip em{display:block;color:#7dd3fc;font-size:8px;font-style:normal;margin-top:4px}@media(max-width:800px){.hotera-insights-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* HOTERA performance mode: خلفية ثابتة وتأثيرات خفيفة للأجهزة المحمولة */
+html,body{background-image:none!important;background-attachment:initial!important;background-color:#081321!important}
+#loginOverlay,.login-card,.brand-header,.card,.bottom-nav{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+#loginOverlay::before,#loginOverlay::after,.login-card::after,.logo-icon-box,.logo-icon-box::after,.brand-title,#luxuryEntryScreen::before,#luxuryEntryScreen::after,.luxury-entry-particles,.luxury-entry-card,.luxury-entry-mark,.luxury-entry-brand,.luxury-entry-system,.luxury-entry-title,.luxury-entry-subtitle,.luxury-entry-features span,.luxury-entry-developer,.luxury-entry-actions,.luxury-entry-progress span,#welcomeScreen::before,#welcomeScreen::after,.welcome-card,.welcome-campaign-image,.welcome-logo,.welcome-logo::before,.welcome-logo::after,.welcome-brand,.welcome-system,.welcome-divider,.welcome-message,.welcome-developer{animation:none!important;transition:none!important}
+.hotera-room-showcase .hotera-room-image-card{background-image:none!important;background:#12243a!important}
+#luxuryEntryScreen:before,#welcomeScreen:before{background-image:none!important;background:#07111f!important;opacity:1!important;transform:none!important}
+#luxuryEntryScreen:after,#welcomeScreen:after{background:linear-gradient(180deg,rgba(7,17,31,.2),rgba(7,17,31,.85))!important}
+.hotera-welcome-hero:before{background-image:none!important;background:#07111f!important;animation:none!important;transform:none!important}
+.card,.btn,.nav-item{transition:none!important}
 </style>
 </head>
 <body>
@@ -618,7 +627,7 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
 </div>
 <div class="hotera-notification-bar" aria-live="polite"><div class="hotera-notification-title"><span>🔔 مركز الإشعارات</span><span class="hotera-notification-count" id="hoteraNotificationCount">0</span></div><button class="hotera-notification-button" type="button" onclick="toggleHoteraNotifications()">عرض التنبيهات</button></div>
 <div class="hotera-notification-drawer" id="hoteraNotificationDrawer"><div class="hotera-notification-item info"><i class="hotera-notification-dot"></i><span>يتم تحديث مؤشرات النظام من البيانات المحلية الحالية دون حذف أو استبدال أي سجل.</span></div><div class="hotera-notification-item success"><i class="hotera-notification-dot"></i><span>حالة النظام مستقرة. يمكنك متابعة الغرف والحجوزات والتقارير من لوحة واحدة.</span></div><div class="hotera-notification-item danger" id="hoteraDynamicNotification"><i class="hotera-notification-dot"></i><span>سيتم عرض التنبيهات التشغيلية هنا عند وجود غرفة للصيانة أو التنظيف.</span></div></div>
-<div class="hotera-room-showcase" aria-label="صور مرجعية للغرف"><div class="hotera-room-image-card" style="background-image:url('https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=900&auto=format&fit=crop')"><span>غرف فندقية فاخرة<small>تصميم HOTERA</small></span></div><div class="hotera-room-image-card" style="background-image:url('https://images.unsplash.com/photo-1566665797739-1674de7a421a?q=80&w=900&auto=format&fit=crop')"><span>حالة الغرف<small>متابعة مباشرة</small></span></div><div class="hotera-room-image-card" style="background-image:url('https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=900&auto=format&fit=crop')"><span>تجربة فندقية<small>إدارة أذكى</small></span></div></div>
+<div class="hotera-room-showcase" aria-label="صور مرجعية للغرف"><div class="hotera-room-image-card" style="background-image:none"><span>غرف فندقية فاخرة<small>تصميم HOTERA</small></span></div><div class="hotera-room-image-card" style="background-image:none"><span>حالة الغرف<small>متابعة مباشرة</small></span></div><div class="hotera-room-image-card" style="background-image:none"><span>تجربة فندقية<small>إدارة أذكى</small></span></div></div>
 
 <div class="quick-access-bar" id="quickAccessBar">
   <div class="quick-access-chip" onclick="switchMainFeature('command_center', this)" id="chipCommandCenter">✨ مركز القيادة</div>
