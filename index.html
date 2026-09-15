@@ -1534,11 +1534,11 @@ function removeHoteraWelcomeMedia(){const hero=document.getElementById('luxuryEn
 function closeHoteraWelcomeIntro(){const intro=document.getElementById('hoteraWelcomeIntroScreen');const host=document.getElementById('hoteraWelcomeIntroMediaHost');if(hoteraWelcomeIntroTimer){clearTimeout(hoteraWelcomeIntroTimer);hoteraWelcomeIntroTimer=null;}const media=host?.querySelector('video');if(media){media.pause();media.removeAttribute('src');media.load();}if(host)host.innerHTML='';if(intro)intro.classList.remove('open');}
 function continueHoteraWelcomeIntro(){closeHoteraWelcomeIntro();const main=document.getElementById('luxuryEntryScreen');if(main)main.classList.remove('hidden');startHoteraWelcomeCarousel();window.clearTimeout(window.hoteraLuxuryEntryTimer);window.hoteraLuxuryEntryTimer=window.setTimeout(()=>{enterLuxuryWelcome();},HOTERA_MODEL_SEQUENCE_DURATION);}
 function skipHoteraWelcomeIntro(){continueHoteraWelcomeIntro();}
-function initHoteraWelcomeSequence(){const intro=document.getElementById('hoteraWelcomeIntroScreen');const host=document.getElementById('hoteraWelcomeIntroMediaHost');const main=document.getElementById('luxuryEntryScreen');if(!intro||!host||!main)return false;const saved=hoteraWelcomeReadSavedMedia();closeHoteraWelcomeIntro();if(!saved){main.classList.remove('hidden');startHoteraWelcomeCarousel();return false;}main.classList.add('hidden');const media=saved.type==='video'?document.createElement('video'):document.createElement('img');media.className='hotera-welcome-intro-media';media.src=saved.data;media.setAttribute('aria-label','مقدمة مخصصة لشاشة ترحيب HOTERA');if(saved.type==='video'){media.autoplay=true;media.muted=true;media.loop=false;media.playsInline=true;media.preload='auto';media.setAttribute('webkit-playsinline','true');media.addEventListener('canplay',()=>media.play().catch(()=>{}),{once:true});media.addEventListener('ended',continueHoteraWelcomeIntro,{once:true});media.addEventListener('error',()=>{const status=document.getElementById('hoteraWelcomeIntroStatus');if(status)status.textContent='تعذر تشغيل المقدمة — استخدم زر المتابعة للانتقال إلى الترحيب الأساسي.';},{once:true});}else{hoteraWelcomeIntroTimer=setTimeout(continueHoteraWelcomeIntro,6000);}host.appendChild(media);const status=document.getElementById('hoteraWelcomeIntroStatus');if(status)status.textContent=saved.type==='video'?'جارٍ تشغيل الفيديو الافتتاحي...':'جارٍ عرض الصورة الافتتاحية...';intro.classList.add('open');return true;}
+function initHoteraWelcomeSequence(){const intro=document.getElementById('hoteraWelcomeIntroScreen');const host=document.getElementById('hoteraWelcomeIntroMediaHost');const main=document.getElementById('luxuryEntryScreen');if(!intro||!host||!main)return false;const saved=hoteraWelcomeReadSavedMedia();closeHoteraWelcomeIntro();if(!saved){main.classList.remove('hidden');startHoteraWelcomeCarousel();return false;}main.classList.add('hidden');const media=saved.type==='video'?document.createElement('video'):document.createElement('img');media.className='hotera-welcome-intro-media';media.src=saved.data;media.setAttribute('aria-label','مقدمة مخصصة لشاشة ترحيب HOTERA');if(saved.type==='video'){media.autoplay=true;media.muted=true;media.loop=false;media.playsInline=true;media.preload='auto';media.setAttribute('webkit-playsinline','true');media.addEventListener('canplay',()=>media.play().catch(()=>{}),{once:true});media.addEventListener('ended',continueHoteraWelcomeIntro,{once:true});media.addEventListener('error',()=>{const status=document.getElementById('hoteraWelcomeIntroStatus');if(status)status.textContent='تعذر تشغيل المقدمة — استخدم زر المتابعة للانتقال إلى الترحيب الأساسي.';},{once:true});}else{hoteraWelcomeIntroTimer=setTimeout(continueHoteraWelcomeIntro,1200);}host.appendChild(media);const status=document.getElementById('hoteraWelcomeIntroStatus');if(status)status.textContent=saved.type==='video'?'جارٍ تشغيل الفيديو الافتتاحي...':'جارٍ عرض الصورة الافتتاحية...';intro.classList.add('open');return true;}
 function applyHoteraWelcomeMedia(){return initHoteraWelcomeSequence();}
 function renderHoteraWelcomeMediaPreview(){const preview=document.getElementById('hoteraWelcomeMediaPreview');const meta=document.getElementById('hoteraWelcomeMediaMeta');if(!preview)return;let saved=null;try{saved=JSON.parse(localStorage.getItem(HOTERA_WELCOME_MEDIA_KEY)||'null');}catch(e){saved=null;}if(saved&&saved.data){preview.innerHTML=saved.type==='video'?`<video src="${saved.data}" controls muted playsinline></video>`:`<img src="${saved.data}" alt="التصميم النشط لشاشة الترحيب">`;if(meta)meta.textContent=`التصميم النشط: ${saved.name||'وسائط محفوظة'} · ${(Number(saved.size||0)/1024/1024).toFixed(2)}MB`;return;}preview.textContent='التصميم الافتراضي نشط — اختر صورة أو فيديو لمعاينته.';if(meta)meta.textContent='لا توجد وسائط مخصصة محفوظة.';}
 const HOTERA_MODEL_SLIDES=[{title:'مركز قيادة واحد',subtitle:'إدارة أذكى · مؤشرات حية'}];
-const HOTERA_MODEL_SLIDE_DURATION=7000;
+const HOTERA_MODEL_SLIDE_DURATION=1200;
 const HOTERA_MODEL_SEQUENCE_DURATION=HOTERA_MODEL_SLIDE_DURATION;
 let hoteraModelSlideIndex=0,hoteraModelSlideTimer=null;
 function showHoteraWelcomeSlide(index){const slides=[...document.querySelectorAll('.hotera-welcome-slide')],buttons=[...document.querySelectorAll('[data-slide-button]')];if(!slides.length)return;hoteraModelSlideIndex=((Number(index)||0)%slides.length+slides.length)%slides.length;slides.forEach((slide,i)=>slide.classList.toggle('active',i===hoteraModelSlideIndex));buttons.forEach((button,i)=>{button.classList.toggle('active',i===hoteraModelSlideIndex);button.setAttribute('aria-pressed',i===hoteraModelSlideIndex?'true':'false')});const counter=document.getElementById('hoteraModelCounter');if(counter)counter.textContent='نموذج مركز القيادة';const title=document.getElementById('hoteraModelTitle'),subtitle=document.getElementById('hoteraModelSubtitle'),meta=HOTERA_MODEL_SLIDES[hoteraModelSlideIndex]||HOTERA_MODEL_SLIDES[0];if(title)title.textContent=meta.title;if(subtitle)subtitle.textContent=meta.subtitle;const progress=document.querySelector('.hotera-welcome-progress span');if(progress){progress.style.animation='none';void progress.offsetWidth;progress.style.animation='hoteraCarouselProgress 7s linear infinite'}window.clearTimeout(hoteraModelSlideTimer);if(!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)hoteraModelSlideTimer=window.setTimeout(()=>showHoteraWelcomeSlide(hoteraModelSlideIndex+1),HOTERA_MODEL_SLIDE_DURATION);}
@@ -2693,7 +2693,7 @@ function hoteraTodayKey(){return hoteraLocalDateKey()}
 function hoteraDateNights(start,end){const a=new Date(`${String(start||'')}T00:00:00`),b=new Date(`${String(end||'')}T00:00:00`);const days=Math.ceil((b-a)/86400000);return Number.isFinite(days)&&days>0?days:1}
 function hoteraFrontDeskStatus(room){if(!room)return 'unknown';if(room.checkOutStatus==='due-checkout')return 'checkout-due';if(room.checkInStatus)return room.checkInStatus;if(room.status==='occupied')return String(room.checkIn||'')>hoteraTodayKey()?'scheduled':'checked-in';if(room.lastCheckoutAt)return 'checked-out';return room.status||'vacant'}
 function hoteraStayLog(room,action,details={}){room.stayActionLog=Array.isArray(room.stayActionLog)?room.stayActionLog:[];room.stayActionLog.unshift({action,details,at:new Date().toISOString(),by:currentUsername||'المستخدم الحالي'});room.stayActionLog=room.stayActionLog.slice(0,50)}
-function hoteraMarkRoomCheckoutDue(room,today=hoteraTodayKey()){if(!room||room.status!=='occupied'||!room.bookingRef||!room.checkOut||String(room.checkOut)>today)return false;room.status='cleaning';room.checkOutStatus='due-checkout';room.checkInStatus='checkout-due';room.checkoutDueAt=room.checkoutDueAt||new Date().toISOString();hoteraStayLog(room,'تحويل تلقائي إلى خروج',{checkOut:room.checkOut});return true;}
+function hoteraMarkRoomCheckoutDue(room,today=hoteraTodayKey()){if(!room||room.status!=='occupied'||!room.bookingRef||!room.checkOut||String(room.checkOut)>today)return false;if(room.checkOutStatus==='due-checkout')return false;room.status='occupied';room.checkOutStatus='due-checkout';room.checkInStatus='checkout-due';room.checkoutDueAt=room.checkoutDueAt||new Date().toISOString();hoteraStayLog(room,'تحويل تلقائي إلى خروج',{checkOut:room.checkOut});return true;}
 function hoteraAutoMarkDueCheckouts(hotelId=currentHotelId){const rooms=Array.isArray(allRooms?.[hotelId])?allRooms[hotelId]:[],today=hoteraTodayKey();let changed=false;rooms.forEach(room=>{if(hoteraMarkRoomCheckoutDue(room,today))changed=true;});if(changed)saveData();return changed;}
 function hoteraFinalizeRoomAsVacant(room){if(!room)return false;const now=new Date().toISOString(),bookingRef=room.bookingRef||'',guest=room.guest||room.lastGuest||'غير معروف',invoice=(allInvoices[currentHotelId]||[]).find(inv=>String(inv.bookingRef||'')===String(bookingRef));if(invoice&&bookingRef){invoice.stayStatus='checked-out';invoice.checkedOutAt=now;invoice.checkedOutBy=currentUsername||'المستخدم الحالي';invoice.updatedAt=now;hoteraSyncInvoiceFinancialState(invoice);}Object.assign(room,{lastCheckoutAt:room.lastCheckoutAt||now,lastGuest:guest,lastBookingRef:bookingRef,lastCheckOut:room.checkOut||'',status:'vacant',guest:'',phone:'',carType:'',carPlate:'',bookingRef:'',checkIn:'',checkOut:'',checkInStatus:'',checkOutStatus:'',checkoutDueAt:'',checkedInAt:'',checkedInBy:'',paymentStatus:'',paidAmount:0,remainingAmount:0});hoteraStayLog(room,'إتمام تنظيف وإتاحة الغرفة',{bookingRef,guest});return true;}
 function openHoteraFrontDeskModal(){toggleTopSettingsPanel(false);document.getElementById('hoteraFrontDeskModal')?.classList.add('open');renderHoteraFrontDesk();}
@@ -3631,7 +3631,7 @@ function filterRoomsByBookingRef(query) {
   if(searchTerm) {
     filtered = rooms.filter(r => String(r.id || '').toLowerCase().includes(searchTerm) || (r.bookingRef || '').toLowerCase().includes(searchTerm) || (r.guest || '').toLowerCase().includes(searchTerm));
   }
-  if(statusFilter !== 'all') filtered = statusFilter === 'checkoutToday' ? filtered.filter(r => String(r.checkOut||'') === hoteraLocalDateKey()) : filtered.filter(r => r.status === statusFilter);
+  if(statusFilter !== 'all') filtered = statusFilter === 'checkoutToday' ? filtered.filter(r => String(r.checkOut||'') === hoteraLocalDateKey()) : statusFilter === 'cleaning' ? filtered.filter(r => r.status === 'cleaning' || (r.status === 'occupied' && r.checkOutStatus === 'due-checkout')) : filtered.filter(r => r.status === statusFilter);
   let v = 0, o = 0, maint = 0, totalShown = 0;
   rooms.forEach(r => {
     if (r.status === 'vacant') v++;
@@ -3644,14 +3644,15 @@ function filterRoomsByBookingRef(query) {
   
   filtered.forEach(r => {
     totalShown++;
+    const displayStatus = r.status === 'occupied' && r.checkOutStatus === 'due-checkout' ? 'cleaning' : r.status;
     const statusMeta = {
       vacant: { label: currentLang === 'ar' ? 'متاحة' : 'Available', icon: '🛏️', color: '#22c55e' },
       occupied: { label: currentLang === 'ar' ? 'محجوزة' : 'Reserved', icon: '◷', color: '#facc15' },
-      cleaning: { label: currentLang === 'ar' ? 'خروج' : 'Checkout', icon: '⇥', color: '#22d3ee' },
+      cleaning: { label: r.checkOutStatus === 'checked-out' ? (currentLang === 'ar' ? 'تنظيف' : 'Cleaning') : (currentLang === 'ar' ? 'خروج' : 'Checkout'), icon: '⇥', color: '#22d3ee' },
       maintenance: { label: currentLang === 'ar' ? 'صيانة' : 'Maintenance', icon: '🛠️', color: '#94a3b8' }
-    }[r.status] || { label: currentLang === 'ar' ? 'متاحة' : 'Available', icon: '🛏️', color: '#22c55e' };
+    }[displayStatus] || { label: currentLang === 'ar' ? 'متاحة' : 'Available', icon: '🛏️', color: '#22c55e' };
     const card = document.createElement('div');
-    card.className = `card ${r.status || 'vacant'}`;
+    card.className = `card ${displayStatus || 'vacant'}`;
     card.setAttribute('role', 'button');
     card.setAttribute('aria-label', `${currentLang === 'ar' ? 'الغرفة' : 'Room'} ${r.id} - ${statusMeta.label}`);
     card.onclick = () => openRoomModal(r);
@@ -4509,10 +4510,11 @@ function openRoomModal(room) {
       </div>
     `;
     actionBtn.innerText = 'تسجيل مغادرة وتصفية';
-  } else if (room.status === 'cleaning' && room.checkOutStatus === 'due-checkout' && room.bookingRef) {
-    title.innerText = `خروج غرفة ${room.id}`;
-    content.innerHTML = `<div class="hotera-booking-summary"><div><small>رقم الحجز</small><strong>${hoteraEscapeText(room.bookingRef)}</strong></div><div><small>موعد المغادرة</small><strong>${hoteraEscapeText(room.checkOut||'—')}</strong></div></div><div class="hotera-stay-status"><span>●</span> موعد المغادرة حلّ؛ الغرفة بحالة خروج وليست محجوزة.</div><p style="font-size:11px;margin-bottom:8px;">النزيل: <strong>${hoteraEscapeText(room.guest||'—')}</strong></p><button class="btn btn-blue" style="margin:0;font-size:10px;" onclick="hoteraExtendStay(${room.id});closeModal()">تمديد الإقامة وإبقاء الغرفة محجوزة</button>`;
-    actionBtn.innerText = 'إتمام التنظيف وجعل الغرفة متاحة';
+  } else if ((room.status === 'occupied' && room.checkOutStatus === 'due-checkout' || room.status === 'cleaning') && room.bookingRef) {
+    const isDue = room.status === 'occupied' && room.checkOutStatus === 'due-checkout';
+    title.innerText = `${isDue ? 'خروج' : 'تنظيف'} غرفة ${room.id}`;
+    content.innerHTML = `<div class="hotera-booking-summary"><div><small>رقم الحجز</small><strong>${hoteraEscapeText(room.bookingRef)}</strong></div><div><small>موعد المغادرة</small><strong>${hoteraEscapeText(room.checkOut||'—')}</strong></div></div><div class="hotera-stay-status"><span>●</span> ${isDue ? 'موعد المغادرة حلّ؛ اضغط تسجيل المغادرة لتحويل الغرفة إلى تنظيف.' : 'تم تسجيل المغادرة؛ الغرفة بانتظار إتمام التنظيف.'}</div><p style="font-size:11px;margin-bottom:8px;">النزيل: <strong>${hoteraEscapeText(room.guest||'—')}</strong></p>${isDue ? `<button class="btn btn-blue" style="margin:0;font-size:10px;" onclick="hoteraExtendStay(${room.id});closeModal()">تمديد الإقامة وإبقاء الغرفة محجوزة</button>` : ''}`;
+    actionBtn.innerText = isDue ? 'تسجيل المغادرة وتحويلها إلى تنظيف' : 'إتمام التنظيف وجعل الغرفة متاحة';
   } else if (room.status === 'maintenance') {
     title.innerText = `غرفة ${room.id} تحت الصيانة`;
     content.innerHTML = `
@@ -4751,7 +4753,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   // افتح الواجهة فورًا؛ المزامنة لا يجب أن تحجب شاشة الترحيب أو الدخول.
   // يتم تشغيلها في الخلفية، وعند نجاحها تُحدّث البيانات والقوائم بهدوء.
   hoteraReconcileRoomStatusesFromBookings();
-  if(!document.getElementById('hoteraWelcomeIntroScreen')?.classList.contains('open')) applyHoteraWelcomeMedia();
   handleDeviceAccess();
   if (getCloudConfig().url) {
     setTimeout(()=>syncAndFetchDataOnLoad().then(()=>{ handleDeviceAccess(); initLoginHotelDropdown(); hoteraFlushSyncQueue(); }).catch(e=>console.warn('المزامنة الخلفية مؤجلة:',e)),0);
