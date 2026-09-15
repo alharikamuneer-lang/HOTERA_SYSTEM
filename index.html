@@ -1919,7 +1919,8 @@ async function handleDeviceAccess() {
   } else {
     setDeviceStatusText('الجهاز بانتظار اعتماد السوبر أدمن ⏳', '#fbbf24');
   }
-  if (typeof renderDeviceApprovalPanel === 'function') renderDeviceApprovalPanel();
+  // لوحة الاعتماد كبيرة ومخفية أثناء شاشة الدخول؛ لا نرسمها إلا عند فتح لوحة السوبر أدمن.
+  if (typeof renderDeviceApprovalPanel === 'function' && (currentRole === 'superadmin' || document.getElementById('superAdminView')?.classList.contains('active'))) renderDeviceApprovalPanel();
 }
 
 
@@ -4745,25 +4746,36 @@ function switchTab(tabId, btn) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+  // المسار الحرج: تجهيز حقول الدخول فقط قبل أول تفاعل للمستخدم.
+  // أي قراءة/مصالحة/رسم كبير تُؤجل حتى لا يتجمد select أو input على الهاتف.
   applyHoteraWelcomeMedia();
   const luxuryEntry=document.getElementById('luxuryEntryScreen');
   const hasWelcomeIntro=!!hoteraWelcomeReadSavedMedia();
   if(luxuryEntry&&!hasWelcomeIntro){window.clearTimeout(window.hoteraLuxuryEntryTimer);window.hoteraLuxuryEntryTimer=window.setTimeout(()=>{if(!document.getElementById('hoteraWelcomeIntroScreen')?.classList.contains('open'))enterLuxuryWelcome();},HOTERA_MODEL_SEQUENCE_DURATION);}
   readInviteFromUrl();
-  // افتح الواجهة فورًا؛ المزامنة لا يجب أن تحجب شاشة الترحيب أو الدخول.
-  // يتم تشغيلها في الخلفية، وعند نجاحها تُحدّث البيانات والقوائم بهدوء.
-  hoteraReconcileRoomStatusesFromBookings();
-  handleDeviceAccess();
-  if (getCloudConfig().url) {
-    setTimeout(()=>syncAndFetchDataOnLoad().then(()=>{ handleDeviceAccess(); initLoginHotelDropdown(); hoteraFlushSyncQueue(); }).catch(e=>console.warn('المزامنة الخلفية مؤجلة:',e)),0);
-    setInterval(() => { fetchDataFromCloud(false).then(() => { handleDeviceAccess(); initLoginHotelDropdown(); hoteraFlushSyncQueue(); }).catch(e=>console.warn('تعذر تحديث المزامنة الخلفية:',e)); }, 30000);
-  }
-window.addEventListener('online',()=>{setCloudStatus('عاد الاتصال؛ جارٍ إعادة إرسال التعديلات المعلقة...','#fbbf24');hoteraFlushSyncQueue()});
-window.addEventListener('offline',()=>{setCloudStatus('لا يوجد اتصال؛ سيتم حفظ التعديلات محليًا','#fbbf24');hoteraRenderSyncQueueStatus()});
-setTimeout(hoteraRenderSyncQueueStatus,500);
   initLoginHotelDropdown();
-  applyLanguage();
-  updateGlobalDisplays();
+  handleDeviceAccess();
+  const deferHoteraWork = (work, delay=80) => {
+    const run = () => { try { work(); } catch (e) { console.warn('HOTERA deferred startup work skipped:', e); } };
+    if (typeof window.requestIdleCallback === 'function') window.requestIdleCallback(run, {timeout: 1200});
+    else window.setTimeout(run, delay);
+  };
+  deferHoteraWork(() => { applyLanguage(); updateGlobalDisplays(); hoteraReconcileRoomStatusesFromBookings(); }, 120);
+  if (getCloudConfig().url) {
+    window.hoteraCloudSyncInFlight = false;
+    const runBackgroundCloudSync = () => {
+      if (window.hoteraCloudSyncInFlight) return;
+      window.hoteraCloudSyncInFlight = true;
+      syncAndFetchDataOnLoad().then(() => {
+        deferHoteraWork(() => { handleDeviceAccess(); initLoginHotelDropdown(); hoteraFlushSyncQueue(); }, 0);
+      }).catch(e=>console.warn('المزامنة الخلفية مؤجلة:',e)).finally(()=>{ window.hoteraCloudSyncInFlight = false; });
+    };
+    setTimeout(runBackgroundCloudSync, 1200);
+    setInterval(runBackgroundCloudSync, 30000);
+  }
+  window.addEventListener('online',()=>{setCloudStatus('عاد الاتصال؛ جارٍ إعادة إرسال التعديلات المعلقة...','#fbbf24');deferHoteraWork(()=>hoteraFlushSyncQueue(),0)});
+  window.addEventListener('offline',()=>{setCloudStatus('لا يوجد اتصال؛ سيتم حفظ التعديلات محليًا','#fbbf24');hoteraRenderSyncQueueStatus()});
+  setTimeout(hoteraRenderSyncQueueStatus,1000);
   
   const urlParams = new URLSearchParams(window.location.search);
   if(urlParams.get('action') === 'rate') {
