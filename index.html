@@ -4761,7 +4761,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     else window.setTimeout(run, delay);
   };
   deferHoteraWork(() => { applyLanguage(); updateGlobalDisplays(); hoteraReconcileRoomStatusesFromBookings(); }, 120);
-  if (getCloudConfig().url) {
+  // Firebase هو ناقل المزامنة الأساسي؛ لا نشغل مسار المزامنة القديم بالتوازي معه.
+  if (getCloudConfig().url && !window.hoteraFirebasePrimary) {
     window.hoteraCloudSyncInFlight = false;
     const runBackgroundCloudSync = () => {
       if (window.hoteraCloudSyncInFlight) return;
@@ -4881,9 +4882,9 @@ const secureSyncInput=document.getElementById('secureSyncServerUrlInput');if(sec
 
 <div id="hoteraBookingManagementModal" class="hotera-booking-modal" role="dialog" aria-modal="true" aria-label="إدارة الحجوزات"><div class="hotera-booking-box"><div class="hotera-booking-head"><h3>📅 إدارة الحجوزات</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraBookingManagement()">إغلاق</button></div><div id="hoteraBookingTabs" class="hotera-booking-tabs"></div><div id="hoteraBookingManagementList" class="hotera-booking-list"></div></div></div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script>
 (function(){
   const firebaseConfig={apiKey:'AIzaSyAFmGBlvm84bHErWYAq21RV77xzhKepQ2o',authDomain:'hotera-e925f.firebaseapp.com',projectId:'hotera-e925f',storageBucket:'hotera-e925f.firebasestorage.app',messagingSenderId:'195416949981',appId:'1:195416949981:web:447d658426ec84bd320734',measurementId:'G-0KWLL22ZVN'};
