@@ -457,20 +457,7 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
 .form-select,.form-input{background:rgba(4,12,23,.88);border-color:rgba(246,196,83,.22);box-shadow:inset 0 1px rgba(255,255,255,.06)}.table-box th{background:linear-gradient(135deg,#1b2b42,#0b1727);color:var(--lux-gold-soft)}
 @media(max-width:700px){.hotera-glass-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}.hotera-glass-grid{grid-template-columns:1fr!important}.hotera-glass-shell{border-radius:18px}.quick-access-chip{padding:8px 11px}}
 
-/* HOTERA SHOPS FIVE-STAR VISUAL LAYER — presentation only */
-#feat_shops{font-family:inherit}#feat_shops .card{background:linear-gradient(145deg,rgba(17,35,57,.88),rgba(5,15,28,.94))!important;border:1px solid rgba(246,196,83,.28)!important;border-radius:18px!important;box-shadow:0 16px 38px rgba(0,0,0,.3),inset 0 1px rgba(255,255,255,.07)!important}
-#feat_shops #shopsProtectedContent>div:first-child{background:linear-gradient(135deg,rgba(246,196,83,.16),rgba(14,165,233,.10))!important;border-color:rgba(246,196,83,.48)!important;padding:16px!important}
-#feat_shops #shopsProtectedContent>div:first-child h3{color:#ffe7a3!important;font-size:16px!important;letter-spacing:.2px}
-#feat_shops #shopsProtectedContent>div:first-child p{color:#cbd5e1!important;font-size:10px!important}
-#feat_shops #shopsKpis{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important;margin:10px 0!important}
-#feat_shops #shopsKpis .kpi-box{background:linear-gradient(145deg,rgba(24,43,66,.94),rgba(8,20,34,.96));border:1px solid rgba(246,196,83,.22);border-radius:16px;padding:13px 8px;box-shadow:0 10px 22px rgba(0,0,0,.24)}
-#feat_shops #shopsKpis .kpi-box small{color:#b9c7d8;font-size:9px}#feat_shops #shopsKpis .kpi-box strong{color:#fff8df;font-size:14px;text-shadow:0 0 14px rgba(246,196,83,.16)}
-#feat_shops h4{letter-spacing:.15px}#feat_shops .table-box{border-radius:12px;overflow:hidden}#feat_shops .table-box th{background:linear-gradient(135deg,#1b2b42,#0b1727);color:#ffe7a3;padding:9px}#feat_shops .table-box td{padding:8px;border-color:rgba(255,255,255,.09)}
-#feat_shops #shopsPerformanceChart>div{padding:10px 12px;border:1px solid rgba(112,216,239,.14);border-radius:12px;background:linear-gradient(90deg,rgba(14,165,233,.08),rgba(246,196,83,.06))}
-#feat_shops #shopAccessGate{background:linear-gradient(145deg,rgba(17,35,57,.95),rgba(5,15,28,.95))!important;border-color:rgba(246,196,83,.48)!important;border-radius:20px!important;box-shadow:0 18px 42px rgba(0,0,0,.34)!important;padding:22px!important}
-#feat_shops #shopAccessGate h3{font-size:16px!important;color:#ffe7a3!important}#feat_shops #shopAccessGate p{font-size:10px!important;color:#cbd5e1!important}
-#feat_shops .btn-gold{background:linear-gradient(135deg,#ffe08a,#d58a13 58%,#8b4e08)!important}#feat_shops .form-input{background:rgba(4,12,23,.9);border-color:rgba(246,196,83,.22)}
-@media(max-width:700px){#feat_shops #shopsKpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}#feat_shops #shopsProtectedContent>div:first-child>div{align-items:flex-start!important}}
+
 \n/* HOTEL COMMAND CENTER INSIGHTS — presentation and derived metrics only */
 .hotera-insights-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:0 0 10px}.hotera-insights-strip>div{padding:12px 10px;border-radius:15px;background:linear-gradient(145deg,rgba(17,35,57,.9),rgba(5,15,28,.95));border:1px solid rgba(246,196,83,.2);box-shadow:0 10px 24px rgba(0,0,0,.22)}.hotera-insights-strip small{display:block;color:#b9c7d8;font-size:9px}.hotera-insights-strip strong{display:block;color:#ffe7a3;font-size:15px;margin-top:5px}.hotera-insights-strip em{display:block;color:#7dd3fc;font-size:8px;font-style:normal;margin-top:4px}@media(max-width:800px){.hotera-insights-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* HOTERA performance mode: خلفية ثابتة وتأثيرات خفيفة للأجهزة المحمولة */
@@ -543,13 +530,10 @@ html,body{background-image:none!important;background-attachment:initial!importan
     </div>
     <p id="lblLoginSubtitle" style="font-size:11px; color:var(--text-muted); margin-bottom:12px;">نظام إدارة الفنادق الذكي والمستقل</p>
     
-    <label id="lblSelectEntity" style="font-size:10px; display:block; text-align:inherit; color:var(--accent-solid); margin-bottom:4px;">نوع المنشأة:</label>
-    <select id="loginEntityType" class="form-select" onchange="switchLoginEntityType()"><option value="hotel">🏨 إدارة الفنادق</option><option value="shop">🏪 إدارة المحلات التجارية</option></select>
+    <input id="loginEntityType" type="hidden" value="hotel" aria-hidden="true">
     <label id="lblSelectHotel" style="font-size:10px; display:block; text-align:inherit; color:var(--text-muted); margin-bottom:4px;">اختر الفندق (المنشأة):</label>
     <select id="loginHotelSelect" class="form-select" onchange="updateLoginRoleOptions()"></select>
-    <div id="loginShopGroup" style="display:none"><label id="lblSelectShop" style="font-size:10px;display:block;text-align:inherit;color:var(--text-muted);margin:5px 0 4px">اختر المحل (المنشأة):</label><select id="loginShopSelect" class="form-select" onchange="updateLoginRoleOptions()"></select></div>
     <div id="companySelectGroup" style="display:none;"><label style="font-size:10px;display:block;text-align:inherit;color:var(--accent-solid);margin:5px 0 4px">اختر الشركة</label><select id="loginCompanySelect" class="form-select"></select></div>
-    <div id="shopUsernameGroup" style="display:none"><label id="lblShopUsername" style="font-size:10px;display:block;text-align:inherit;color:var(--accent-solid);margin:5px 0 4px">اسم مستخدم المحل:</label><input id="loginShopUsername" class="form-input" type="text" autocomplete="username" placeholder="أدخل اسم مستخدم المحل" style="margin-bottom:0"></div>
 
     <label id="lblSelectRole" style="font-size:10px; display:block; text-align:inherit; color:var(--text-muted); margin-bottom:4px;">اختر الصلاحية / نوع الحساب:</label>
     <select id="loginRoleSelect" class="form-select" onchange="togglePinCodeField()">
@@ -646,7 +630,7 @@ html,body{background-image:none!important;background-attachment:initial!importan
   <div class="quick-access-chip hr-allowed" onclick="switchMainFeature('maintenance', this)" id="chipMaintenance">🛠️ بلاغات الأعطال</div>
   <div class="quick-access-chip hr-allowed" onclick="switchMainFeature('integrations', this)" id="chipIntegrations">🔌 منصات الربط الخارجي <span style="font-size:8px; background:#f59e0b; color:#080c14; padding:1px 4px; border-radius:4px; font-weight:bold; margin-right:4px;">قيد التحديث</span></div>
   <div class="quick-access-chip" onclick="switchTab('aboutView', null)" id="chipAbout">📖 حول النظام</div>
-  <div class="quick-access-chip superadmin-only" onclick="switchTab('superAdminView', null)" id="chipSuper" style="display:none; color:#fbbf24;">👑 المالك العام</div><div class="quick-access-chip shop-permission" onclick="switchMainFeature('shops', this)" id="chipShops" style="display:none; color:#34d399;">🏪 إدارة المحلات التجارية</div>
+  <div class="quick-access-chip superadmin-only" onclick="switchTab('superAdminView', null)" id="chipSuper" style="display:none; color:#fbbf24;">👑 المالك العام</div>
 </div>
 
 <div id="superAdminView" class="view-section">
@@ -895,25 +879,6 @@ html,body{background-image:none!important;background-attachment:initial!importan
     <button class="btn btn-gold" style="width:auto; padding:4px 10px; margin:0; font-size:9px;" onclick="switchMainFeature('rooms', document.querySelector('.quick-access-chip'))" id="btnBackToRooms">🔙 العودة للغرف</button>
   </div>
 
-  <div id="feat_shops" class="feature-panel" style="display:none;">
-  <div id="shopAccessGate" class="card" style="padding:16px;background:linear-gradient(135deg,rgba(245,158,11,.15),rgba(14,165,233,.12));border-color:rgba(245,158,11,.55);text-align:center">
-    <h3 style="margin:0 0 6px;color:#fbbf24;font-size:14px">🔐 بوابة إدارة المحلات</h3>
-    <p style="font-size:10px;color:#cbd5e1;line-height:1.6;margin-bottom:10px">هذه الوحدة محمية. اطلب رمز الدخول المؤقت من السوبر أدمن ثم أدخله هنا.</p>
-    <input id="shopAccessCodeInput" class="form-input" type="password" inputmode="numeric" autocomplete="one-time-code" placeholder="أدخل رمز المحلات" style="max-width:260px;margin:0 auto 7px;text-align:center">
-    <div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap"><button type="button" class="btn btn-gold" style="width:auto;margin:0;padding:6px 12px" onclick="unlockShopModule()">فتح الوحدة</button><button type="button" id="issueShopAccessBtn" class="btn btn-blue" style="width:auto;margin:0;padding:6px 12px" onclick="issueShopAccessCode()">إصدار رمز للسوبر أدمن</button></div>
-    <small id="shopAccessStatus" style="display:block;color:#94a3b8;margin-top:8px"></small>
-  </div>
-  <div id="shopsProtectedContent" style="display:none">
-  <div class="card" style="padding:12px;background:linear-gradient(135deg,rgba(16,185,129,.16),rgba(14,165,233,.12));border-color:rgba(52,211,153,.5);text-align:inherit">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><div><h3 style="margin:0;color:#6ee7b7;font-size:14px">🏪 الإدارة المالية للمحلات التابعة</h3><p style="margin:4px 0 0;color:#cbd5e1;font-size:9px">مبيعات يومية، مصروفات، إيرادات أخرى، وربحية كل محل — معزولة عن بيانات الفنادق.</p></div><div style="display:flex;gap:5px;flex-wrap:wrap"><button type="button" class="btn btn-gold" style="width:auto;margin:0;padding:5px 8px" onclick="createShopRecord()">+ إضافة محل</button><button type="button" class="btn btn-blue" style="width:auto;margin:0;padding:5px 8px" onclick="exportShopsCSV()">تصدير CSV</button></div></div>
-  </div>
-  <div class="card" style="padding:10px;background:rgba(18,26,43,.95);text-align:inherit"><div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap"><label style="font-size:9px;color:#bae6fd">من</label><input id="shopReportFrom" type="date" class="form-input" style="margin:0;width:auto"><label style="font-size:9px;color:#bae6fd">إلى</label><input id="shopReportTo" type="date" class="form-input" style="margin:0;width:auto"><button type="button" class="btn btn-green" style="width:auto;margin:0;padding:5px 8px" onclick="renderShopsDashboard()">تحديث التقرير</button></div></div>
-  <div id="shopsKpis" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0"></div>
-  <div class="card" style="padding:10px;background:rgba(18,26,43,.95);text-align:inherit"><div style="display:flex;justify-content:space-between;align-items:center"><h4 style="color:#fbbf24;font-size:11px;margin:0">👥 مستخدمو المحلات وكلمات المرور</h4><small style="color:#94a3b8">كلمات المرور لا تُعرض وتُحفظ كقيمة مشفرة</small></div><div id="shopAccountsPanel" style="margin-top:7px"></div></div>
-  <div class="card" style="padding:10px;background:rgba(18,26,43,.95);text-align:inherit"><h4 style="color:#7dd3fc;font-size:11px;margin:0 0 7px">📈 مقارنة الأداء بين المحلات</h4><div id="shopsPerformanceChart" style="display:grid;gap:6px"></div></div>
-  <div class="card" style="padding:10px;background:rgba(18,26,43,.95);text-align:inherit"><div style="display:flex;justify-content:space-between;align-items:center"><h4 style="color:#fbbf24;font-size:11px;margin:0">🧾 الحركات اليومية</h4><div style="display:flex;gap:5px"><button type="button" class="btn btn-green" style="width:auto;margin:0;padding:5px 8px" onclick="recordShopSale()">+ مبيعات</button><button type="button" class="btn btn-gray" style="width:auto;margin:0;padding:5px 8px" onclick="recordShopExpense()">+ مصروف</button><button type="button" class="btn btn-blue" style="width:auto;margin:0;padding:5px 8px" onclick="recordShopOtherRevenue()">+ إيراد آخر</button></div></div><div style="overflow:auto;margin-top:7px"><table class="table-box"><thead><tr><th>التاريخ</th><th>المحل</th><th>النوع</th><th>التفاصيل</th><th>المبلغ</th><th>طريقة الدفع</th></tr></thead><tbody id="shopsMovementsBody"></tbody></table></div></div>
-  </div>
-</div>
 <div id="feat_financial" class="feature-panel" style="display:none;">
     <div class="kpi-luxury-card">
       <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid rgba(245,158,11,0.2); padding-bottom: 6px; margin-bottom: 4px;">
@@ -1991,7 +1956,6 @@ function buildCloudPayload() {
     financialAdjustments: allFinancialAdjustments,
     periodClosures: allPeriodClosures,
     auditLog: allAuditLog,
-    shopAuditLog,
     maintenanceTickets: allMaintenanceTickets,
     shifts: allShifts,
     ratings: allRatings,
@@ -2006,11 +1970,6 @@ function buildCloudPayload() {
     developerPhone,
     aboutTitle: aboutPageTitleText,
     aboutDesc: aboutPageDescText,
-    shops: allShops,
-    shopSales: dailySales,
-    shopExpenses: dailyExpenses,
-    shopOtherRevenues: otherRevenues,
-    shopAccounts
   };
 }
 
@@ -2062,11 +2021,6 @@ function applyCloudPayload(cloudData) {
   if (cloudData.attendance && typeof cloudData.attendance === 'object') attendanceRecords = hoteraMergeDataMap(attendanceRecords, cloudData.attendance);
   if (cloudData.customerMemory && typeof cloudData.customerMemory === 'object') customerMemory = {...customerMemory, ...cloudData.customerMemory};
   if (cloudData.expenses && typeof cloudData.expenses === 'object') allExpenses = hoteraMergeDataMap(allExpenses, cloudData.expenses);
-  if (Array.isArray(cloudData.shops)) allShops = hoteraMergeById(allShops, cloudData.shops);
-  if (cloudData.shopSales && typeof cloudData.shopSales === 'object') dailySales = hoteraMergeDataMap(dailySales, cloudData.shopSales);
-  if (cloudData.shopExpenses && typeof cloudData.shopExpenses === 'object') dailyExpenses = hoteraMergeDataMap(dailyExpenses, cloudData.shopExpenses);
-  if (cloudData.shopOtherRevenues && typeof cloudData.shopOtherRevenues === 'object') otherRevenues = hoteraMergeDataMap(otherRevenues, cloudData.shopOtherRevenues);
-  if (cloudData.shopAccounts && typeof cloudData.shopAccounts === 'object') shopAccounts = hoteraMergeDataMap(shopAccounts, cloudData.shopAccounts);
   if (cloudData.inventory && typeof cloudData.inventory === 'object') allInventory = hoteraMergeDataMap(allInventory, cloudData.inventory);
   if (cloudData.maintenanceTickets && typeof cloudData.maintenanceTickets === 'object') allMaintenanceTickets = hoteraMergeDataMap(allMaintenanceTickets, cloudData.maintenanceTickets);
   if (cloudData.shifts && typeof cloudData.shifts === 'object') allShifts = hoteraMergeDataMap(allShifts, cloudData.shifts);
@@ -3043,12 +2997,6 @@ function saveData() {
   hoteraSafeSetItem('hotera_financial_adjustments', JSON.stringify(allFinancialAdjustments));
   hoteraSafeSetItem('hotera_period_closures', JSON.stringify(allPeriodClosures));
   hoteraSafeSetItem('hotera_suppliers', JSON.stringify(allSuppliers));
-  hoteraSafeSetItem('hotera_shops', JSON.stringify(allShops));
-  hoteraSafeSetItem('hotera_shop_accounts', JSON.stringify(shopAccounts));
-  hoteraSafeSetItem('hotera_daily_sales', JSON.stringify(dailySales));
-  hoteraSafeSetItem('hotera_daily_expenses', JSON.stringify(dailyExpenses));
-  hoteraSafeSetItem('hotera_other_revenues', JSON.stringify(otherRevenues));
-  hoteraSafeSetItem('hotera_shop_audit', JSON.stringify(shopAuditLog));
   hoteraSafeSetItem('hotera_all_inventory', JSON.stringify(allInventory));
   hoteraSafeSetItem('hotera_maint_tickets', JSON.stringify(allMaintenanceTickets));
   hoteraSafeSetItem('hotera_all_shifts', JSON.stringify(allShifts));
@@ -3103,13 +3051,20 @@ function updateGlobalDisplays() {
   document.getElementById('aboutCardDescDisplay').innerText = aboutPageDescText;
 }
 
-async function hoteraEnsureDemoShop(){if(Array.isArray(allShops)&&allShops.length)return;const demoId=1;allShops=[{id:demoId,name:'المحل التجريبي HOTERA',category:'تجزئة عامة',location:'المقر الرئيسي',status:'active',isDemo:true,createdAt:new Date().toISOString()}];if(!shopAccounts||typeof shopAccounts!=='object')shopAccounts={};if(!Array.isArray(shopAccounts[demoId])||!shopAccounts[demoId].length)shopAccounts[demoId]=[{id:'DEMO-SHOP-ADMIN',username:'demo_shop',role:'shop_manager',passwordHash:'8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92',createdAt:new Date().toISOString(),createdBy:'النظام'}];hoteraSafeSetItem('hotera_shops',JSON.stringify(allShops));hoteraSafeSetItem('hotera_shop_accounts',JSON.stringify(shopAccounts));}
-function switchLoginEntityType(){if(document.getElementById('loginEntityType')?.value==='shop'&&(!Array.isArray(allShops)||!allShops.length)){hoteraEnsureDemoShop().then(()=>updateLoginRoleOptions())}loginEntityType=document.getElementById('loginEntityType')?.value||'hotel';const hotelLabel=document.getElementById('lblSelectHotel'),hotelSelect=document.getElementById('loginHotelSelect'),shopGroup=document.getElementById('loginShopGroup'),entity=document.getElementById('loginEntityType');const shopMode=loginEntityType==='shop';if(hotelLabel)hotelLabel.style.display=shopMode?'none':'';if(hotelSelect)hotelSelect.style.display=shopMode?'none':'';if(shopGroup)shopGroup.style.display=shopMode?'block':'none';if(entity)entity.setAttribute('aria-label',shopMode?'إدارة المحلات التجارية':'إدارة الفنادق');const role=document.getElementById('loginRoleSelect');if(role){role.innerHTML=shopMode?'<option value="shop_manager">🧾 مدير المحل</option><option value="shop_employee">💼 موظف المحل</option><option value="shop_supervisor">📋 مشرف المحل</option><option value="superadmin">👑 المالك العام (السوبر أدمن)</option><option value="company_owner">🏢 مالك الشركة متعددة المحلات</option>':'<option value="manager">⚡ مدير الفندق</option><option value="staff">💼 موظف (استقبال / حجز)</option><option value="hr_supervisor">📋 مشرف الموظفين (التحضير)</option><option value="housekeeper">🧹 مشرف الهاوس كيبنج</option><option value="superadmin">👑 المالك العام (السوبر أدمن)</option><option value="company_owner">🏢 مالك الشركة متعددة الفنادق</option>';role.value=shopMode?'shop_manager':'manager'}updateLoginRoleOptions()}
-function updateLoginRoleOptions(){const shopMode=(document.getElementById('loginEntityType')?.value||loginEntityType)==='shop';loginEntityType=shopMode?'shop':'hotel';const staffSelect=document.getElementById('loginStaffSelect');if(shopMode){const ss=document.getElementById('loginShopSelect');if(ss){ss.innerHTML=(allShops||[]).map(x=>`<option value="${Number(x.id)}">${hoteraEscapeText(x.name)}${x.location?' — '+hoteraEscapeText(x.location):''}</option>`).join('');}const sid=Number(ss?.value||0), accounts=Array.isArray(shopAccounts[sid])?shopAccounts[sid]:[];if(staffSelect){staffSelect.innerHTML=accounts.map(a=>`<option value="${hoteraEscapeText(a.username)}">${hoteraEscapeText(a.username)}</option>`).join('');}togglePinCodeField();return}const hotelId=parseInt(document.getElementById('loginHotelSelect').value);const targetHotel=hotelsList.find(h=>h.id===hotelId);if(!targetHotel||!staffSelect)return;staffSelect.innerHTML='';(targetHotel.staffList||[]).forEach(x=>{const opt=document.createElement('option');opt.value=x.name;opt.innerText=`${x.name} (${x.idNum||'بدون رقم'})`;staffSelect.appendChild(opt)});togglePinCodeField()}
+function switchLoginEntityType(){loginEntityType='hotel';updateLoginRoleOptions()}
+function updateLoginRoleOptions(){
+  loginEntityType='hotel';
+  const hotelId=parseInt(document.getElementById('loginHotelSelect')?.value||0);
+  const targetHotel=hotelsList.find(h=>h.id===hotelId);
+  const staffSelect=document.getElementById('loginStaffSelect');
+  if(!targetHotel||!staffSelect){togglePinCodeField();return;}
+  staffSelect.innerHTML='';
+  (targetHotel.staffList||[]).forEach(x=>{const opt=document.createElement('option');opt.value=x.name;opt.innerText=`${x.name} (${x.idNum||'بدون رقم'})`;staffSelect.appendChild(opt)});
+  togglePinCodeField();
+}
 
 function togglePinCodeField() {
   const role = document.getElementById('loginRoleSelect').value;
-  const shopMode = (document.getElementById('loginEntityType')?.value || loginEntityType) === 'shop';
   const pinGroup = document.getElementById('pinCodeGroup');
   const pinLabel = document.getElementById('pinLabel');
   const staffGroup = document.getElementById('staffSelectGroup');
@@ -3119,12 +3074,9 @@ function togglePinCodeField() {
   if (companyGroup) companyGroup.style.display = role === 'company_owner' ? 'block' : 'none';
   const hotelLabel = document.getElementById('lblSelectHotel');
   const hotelSelect = document.getElementById('loginHotelSelect');
-  if (hotelLabel) hotelLabel.style.display = shopMode || role === 'company_owner' ? 'none' : '';
+  if (hotelLabel) hotelLabel.style.display = role === 'company_owner' ? 'none' : '';
   if (hotelSelect) hotelSelect.style.display = role === 'company_owner' ? 'none' : '';
-  const shopUsernameGroup = document.getElementById('shopUsernameGroup');
-  if (shopUsernameGroup) shopUsernameGroup.style.display = shopMode && ['shop_manager','shop_employee','shop_supervisor'].includes(role) ? 'block' : 'none';
-  if (shopMode && ['shop_manager','shop_employee','shop_supervisor'].includes(role)) { staffGroup.style.display = 'none'; document.getElementById('lblShopUsername').innerText='اسم مستخدم المحل:'; pinLabel.innerText = role==='shop_manager'?'كلمة مرور مدير المحل':(role==='shop_employee'?'كلمة مرور موظف المحل':'كلمة مرور مشرف المحل'); }
-  else if (role === 'superadmin') { staffGroup.style.display = 'none'; pinLabel.innerText = t.pinSuper; }
+  if (role === 'superadmin') { staffGroup.style.display = 'none'; pinLabel.innerText = t.pinSuper; }
   else if (role === 'manager') { staffGroup.style.display = 'none'; pinLabel.innerText = t.pinMgr; }
   else if (role === 'company_owner') { staffGroup.style.display = 'none'; pinLabel.innerText = 'رمز مالك الشركة'; }
   else if (role === 'staff') { staffGroup.style.display = 'block'; pinLabel.innerText = t.pinStaff; }
@@ -3167,16 +3119,6 @@ async function executeLogin() {
   const hotelId = parseInt(document.getElementById('loginHotelSelect').value);
   const role = document.getElementById('loginRoleSelect').value;
   const pinInput = document.getElementById('loginPinInput').value;
-  const entityType = document.getElementById('loginEntityType')?.value || 'hotel';
-  if (entityType === 'shop') {
-    const shopId = Number(document.getElementById('loginShopSelect')?.value || 0), shop = (allShops||[]).find(x=>Number(x.id)===shopId);
-    if (!shop) { hoteraRegisterLoginFailure(); return alert('❌ لم تتم إضافة أي محل أو لم يتم اختيار محل.'); }
-    if (role === 'superadmin') { if(pinInput!==masterSuperKey){hoteraRegisterLoginFailure();return alert('❌ رمز السوبر أدمن غير صحيح!')} currentRole='superadmin'; currentUsername='المالك العام — إدارة المحلات'; }
-    else if (role === 'company_owner') { const companyId=Number(document.getElementById('loginCompanySelect')?.value||0), company=companiesList.find(c=>Number(c.id)===companyId); if(!company||company.status==='suspended'||pinInput!==company.ownerPin)return alert('❌ بيانات مالك الشركة متعددة المحلات غير صحيحة.'); currentRole='shop_company_owner'; currentUsername=company.ownerName||'مالك الشركة متعددة المحلات'; currentCompanyId=company.id; }
-    else { const username=(document.getElementById('loginShopUsername')?.value||document.getElementById('loginStaffSelect')?.value||'').trim(), account=(Array.isArray(shopAccounts[shopId])?shopAccounts[shopId]:[]).find(a=>String(a.username||'').trim().toLowerCase()===username.toLowerCase()); if(!username){hoteraRegisterLoginFailure();return alert('❌ أدخل اسم مستخدم المحل.')} if(!account){hoteraRegisterLoginFailure();return alert('❌ لا يوجد مستخدم بهذا الاسم لهذا المحل. أنشئ الحساب من السوبر أدمن.')} if(account.role&&account.role!==role){hoteraRegisterLoginFailure();return alert('❌ هذا المستخدم لا يملك الصلاحية المختارة.')} const hash=await hoteraShopHash(pinInput); if(account.passwordHash!==hash){hoteraRegisterLoginFailure();return alert('❌ كلمة مرور مستخدم المحل غير صحيحة.')} currentRole=role; currentUsername=account.username; }
-    currentShopId=shopId; currentHotelId=null; loginEntityType='shop'; hoteraResetLoginGuard(); hoteraStartSession(); document.getElementById('loginOverlay').style.display='none'; updateHeaderInfo(); applyPermissions(); switchMainFeature('shops',document.getElementById('chipShops')); return;
-  }
-
   // تحديث سريع غير حاجب: لا ينتظر الدخول السحابة أكثر من 2.5 ثانية.
   // إذا تعذر الاتصال، يتم التحقق محليًا والمتابعة دون حذف أو استبدال البيانات.
   let cloudReached=false;
@@ -3303,7 +3245,7 @@ function applyPermissions() {
   document.querySelectorAll('.manager-only').forEach(el => el.style.display = (currentRole === 'superadmin' || hotelManagerRole) ? 'block' : 'none');
   document.querySelectorAll('.hr-allowed').forEach(el => el.style.display = (currentRole === 'superadmin' || hotelManagerRole || currentRole === 'hr_supervisor') ? 'block' : 'none');
   document.querySelectorAll('.staff-only').forEach(el => el.style.display = (currentRole !== 'housekeeper' && currentRole !== 'company_owner') ? 'block' : 'none');
-  document.querySelectorAll('.quick-access-chip').forEach(el => { if (currentRole === 'company_owner') { el.style.display = ['chipCommandCenter','chipAbout'].includes(el.id) ? 'block' : 'none'; } else if (el.id === 'chipShops') { el.style.display = (loginEntityType === 'shop' && hoteraHasPermission('shops')) ? 'block' : 'none'; } else if (el.id !== 'chipSuper') { el.style.display = ''; } });
+  document.querySelectorAll('.quick-access-chip').forEach(el => { if (currentRole === 'company_owner') { el.style.display = ['chipCommandCenter','chipAbout'].includes(el.id) ? 'block' : 'none'; } else if (el.id !== 'chipSuper') { el.style.display = ''; } });
 }
 
 function toggleAllPinsVisibility() {
@@ -3711,7 +3653,6 @@ function hoteraDeferNavigationRender(work){
   else window.setTimeout(run,0);
 }
 function switchMainFeature(featureKey, chipElement) {
-  if (featureKey === 'shops' && (loginEntityType !== 'shop' || !hoteraHasPermission('shops'))) { alert('🔒 وحدة المحلات منفصلة عن نظام الفنادق. اختر إدارة المحلات التجارية من شاشة الدخول.'); return; }
   if (chipElement) {
     document.querySelectorAll('.quick-access-chip').forEach(el => el.classList.remove('active'));
     chipElement.classList.add('active');
@@ -3767,7 +3708,6 @@ function closeExpenseModal() { document.getElementById('expenseModal').style.dis
 
 /* Permission guards: deny only unauthorized mutations; never alter stored records. */
 const hoteraPermissionMatrix={
-  shops:['superadmin','manager','company_owner_manager','front_desk','hr_supervisor','shop_manager','shop_employee','shop_supervisor','shop_company_owner'],
   booking:['superadmin','manager','company_owner_manager','front_desk'],
   financial:['superadmin','manager','company_owner_manager','front_desk'],
   expense:['superadmin','manager','company_owner_manager'],
