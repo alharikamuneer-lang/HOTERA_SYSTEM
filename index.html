@@ -1500,12 +1500,19 @@ function hoteraRegisterLoginFailure(){const g=hoteraReadLoginGuard();const attem
 function hoteraResetLoginGuard(){hoteraLoginAttempts=0;hoteraLoginLockedUntil=0;hoteraWriteLoginGuard({attempts:0,until:0});}
 const HOTERA_LOGIN_GUARD_KEY='hotera_login_guard_v1';
 const HOTERA_SESSION_TIMEOUT=30*60*1000;
-let hoteraSessionTimer=null;
+let hoteraSessionTimer=null,hoteraLastActivityPersistAt=0;
 function hoteraReadLoginGuard(){try{return JSON.parse(localStorage.getItem(HOTERA_LOGIN_GUARD_KEY)||'{}')}catch(e){return{}}}
 function hoteraWriteLoginGuard(data){try{hoteraSafeSetItem(HOTERA_LOGIN_GUARD_KEY,JSON.stringify(data))}catch(e){}}
-function hoteraTouchSession(){if(!currentRole)return;hoteraSafeSetItem('hotera_last_activity',String(Date.now()));clearTimeout(hoteraSessionTimer);hoteraSessionTimer=setTimeout(()=>{if(currentRole){alert('انتهت جلسة الدخول بسبب عدم النشاط. سجّل الدخول مرة أخرى.');logout();}},HOTERA_SESSION_TIMEOUT);}
-function hoteraStartSession(){hoteraTouchSession();if(!window.hoteraSessionEvents){window.hoteraSessionEvents=true;['click','keydown','pointerdown','touchstart'].forEach(ev=>document.addEventListener(ev,()=>{if(currentRole)hoteraTouchSession()},{passive:true}));}}
-function hoteraEndSession(){clearTimeout(hoteraSessionTimer);hoteraSafeSetItem('hotera_last_activity','');}
+function hoteraTouchSession(){
+  if(!currentRole)return;
+  const now=Date.now();
+  // لا نكتب إلى localStorage مع كل نقرة/لمسة؛ التخزين المتزامن كان يسبب تقطيعًا واضحًا على الهاتف.
+  if(now-hoteraLastActivityPersistAt>15000){hoteraSafeSetItem('hotera_last_activity',String(now));hoteraLastActivityPersistAt=now;}
+  clearTimeout(hoteraSessionTimer);
+  hoteraSessionTimer=setTimeout(()=>{if(currentRole){alert('انتهت جلسة الدخول بسبب عدم النشاط. سجّل الدخول مرة أخرى.');logout();}},HOTERA_SESSION_TIMEOUT);
+}
+function hoteraStartSession(){hoteraLastActivityPersistAt=0;hoteraTouchSession();if(!window.hoteraSessionEvents){window.hoteraSessionEvents=true;['click','keydown','pointerdown','touchstart'].forEach(ev=>document.addEventListener(ev,()=>{if(currentRole)hoteraTouchSession()},{passive:true}));}}
+function hoteraEndSession(){clearTimeout(hoteraSessionTimer);hoteraLastActivityPersistAt=0;hoteraSafeSetItem('hotera_last_activity','');}
 
 </script>\n<script>
 // ==========================================
@@ -3689,6 +3696,11 @@ function recordShopOtherRevenue(){if(currentRole!=='superadmin')return alert('ه
 function hoteraShopRows(from,to){const rows=[];(allShops||[]).forEach(shop=>{hoteraShopEnsure(shop.id);(dailySales[shop.id]||[]).forEach(x=>{if((!from||x.date>=from)&&(!to||x.date<=to))rows.push({shop,type:'مبيعات',date:x.date,detail:x.note||'مبيعات يومية',amount:Number(x.total||0),payment:`نقدي ${Number(x.cash||0).toFixed(2)} | بطاقة ${Number(x.card||0).toFixed(2)} | تحويل ${Number(x.transfer||0).toFixed(2)}`})});(dailyExpenses[shop.id]||[]).forEach(x=>{if((!from||x.date>=from)&&(!to||x.date<=to))rows.push({shop,type:'مصروف',date:x.date,detail:`${x.category}: ${x.description}`,amount:-Number(x.amount||0),payment:'-'})});(otherRevenues[shop.id]||[]).forEach(x=>{if((!from||x.date>=from)&&(!to||x.date<=to))rows.push({shop,type:'إيراد آخر',date:x.date,detail:x.source,amount:Number(x.amount||0),payment:'-'})})});return rows.sort((a,b)=>String(b.date).localeCompare(String(a.date)))}
 function renderShopsDashboard(){if(!hoteraHasPermission('shops')||!hoteraShopAccessGranted())return;const from=document.getElementById('shopReportFrom')?.value||'';const to=document.getElementById('shopReportTo')?.value||'';const rows=hoteraShopRows(from,to);const totals=rows.reduce((a,x)=>{if(x.type==='مبيعات')a.sales+=x.amount;else if(x.type==='مصروف')a.expenses+=Math.abs(x.amount);else a.other+=x.amount;return a},{sales:0,expenses:0,other:0});const net=totals.sales+totals.other-totals.expenses;const k=document.getElementById('shopsKpis');if(k)k.innerHTML=[['إجمالي المبيعات',totals.sales,'#34d399'],['إجمالي المصروفات',totals.expenses,'#f87171'],['الإيرادات الأخرى',totals.other,'#38bdf8'],['صافي الربح',net,net>=0?'#fbbf24':'#f87171']].map(x=>`<div class="kpi-box"><small>${x[0]}</small><strong style="color:${x[2]}">${x[1].toFixed(2)} ر.س</strong></div>`).join('');const body=document.getElementById('shopsMovementsBody');if(body)body.innerHTML=rows.length?rows.map(x=>`<tr><td>${hoteraEscapeText(x.date)}</td><td>${hoteraEscapeText(x.shop.name)}</td><td>${hoteraEscapeText(x.type)}</td><td>${hoteraEscapeText(x.detail)}</td><td style="color:${x.amount>=0?'#34d399':'#f87171'}">${x.amount.toFixed(2)} ر.س</td><td>${hoteraEscapeText(x.payment)}</td></tr>`).join(''):'<tr><td colspan="6">لا توجد حركات في الفترة المحددة.</td></tr>';const chart=document.getElementById('shopsPerformanceChart');if(chart){const by={};rows.forEach(x=>{const k=x.shop.id;if(!by[k])by[k]={shop:x.shop,sales:0,expenses:0,net:0};if(x.type==='مبيعات')by[k].sales+=x.amount;else if(x.type==='مصروف')by[k].expenses+=Math.abs(x.amount);else by[k].net+=x.amount});Object.values(by).forEach(x=>x.net+=x.sales-x.expenses);const max=Math.max(1,...Object.values(by).map(x=>x.sales));chart.innerHTML=Object.values(by).length?Object.values(by).map(x=>`<div><div style="display:flex;justify-content:space-between;font-size:9px"><strong>${hoteraEscapeText(x.shop.name)}</strong><span>مبيعات ${x.sales.toFixed(2)} · صافي ${x.net.toFixed(2)}</span></div><div style="height:8px;background:#1e293b;border-radius:8px;overflow:hidden"><div style="height:100%;width:${Math.min(100,x.sales/max*100)}%;background:linear-gradient(90deg,#10b981,#38bdf8);border-radius:8px"></div></div></div>`).join(''):'<span style="color:#94a3b8;font-size:9px">أضف محلاً وحركات لعرض المقارنة.</span>'}}
 function exportShopsCSV(){if(currentRole!=='superadmin')return alert('هذا الإجراء متاح للسوبر أدمن فقط.');const rows=hoteraShopRows(document.getElementById('shopReportFrom')?.value||'',document.getElementById('shopReportTo')?.value||'');const lines=[['التاريخ','المحل','shop_id','النوع','التفاصيل','المبلغ','طرق الدفع'],...rows.map(x=>[x.date,x.shop.name,x.shop.id,x.type,x.detail,x.amount.toFixed(2),x.payment])].map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(','));const blob=new Blob(['\ufeff'+lines.join('\n')],{type:'text/csv;charset=utf-8'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download=`HOTERA-shops-${hoteraLocalDateKey()}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);hoteraShopAudit('تصدير تقرير المحلات',{rows:rows.length})}
+function hoteraDeferNavigationRender(work){
+  const run=()=>{try{work()}catch(e){console.warn('تعذر تحديث القسم مؤقتًا:',e)}};
+  if(typeof window.requestAnimationFrame==='function') window.requestAnimationFrame(()=>window.setTimeout(run,0));
+  else window.setTimeout(run,0);
+}
 function switchMainFeature(featureKey, chipElement) {
   if (featureKey === 'shops' && (loginEntityType !== 'shop' || !hoteraHasPermission('shops'))) { alert('🔒 وحدة المحلات منفصلة عن نظام الفنادق. اختر إدارة المحلات التجارية من شاشة الدخول.'); return; }
   if (chipElement) {
@@ -3702,7 +3714,7 @@ function switchMainFeature(featureKey, chipElement) {
     document.getElementById('superAdminView').classList.remove('active');
     document.getElementById('aboutView').classList.remove('active');
     const companyView = document.getElementById('companyOwnerView'); if (companyView) { companyView.classList.remove('active'); companyView.style.display = 'none'; }
-    renderCommandCenter(); return;
+    hoteraDeferNavigationRender(renderCommandCenter); return;
   }
   if (featureKey === 'rooms') {
     document.getElementById('roomsView').classList.add('active');
@@ -3711,7 +3723,7 @@ function switchMainFeature(featureKey, chipElement) {
     document.getElementById('superAdminView').classList.remove('active');
     document.getElementById('aboutView').classList.remove('active');
     const companyView = document.getElementById('companyOwnerView'); if (companyView) { companyView.classList.remove('active'); companyView.style.display = 'none'; }
-    render(); return;
+    hoteraDeferNavigationRender(render); return;
   }
   document.getElementById('roomsView').classList.remove('active');
   document.getElementById('superAdminView').classList.remove('active');
@@ -3738,7 +3750,7 @@ function switchMainFeature(featureKey, chipElement) {
     refunded_invoices: currentLang === 'ar' ? '↩️ سجل الفواتير المسترجعة' : '↩️ Refunded Invoices'
   };
   document.getElementById('sectionTitleHeader').innerText = titlesMap[featureKey] || 'إدارة القسم';
-  renderReportsAndFinancials();
+  hoteraDeferNavigationRender(renderReportsAndFinancials);
 }
 
 function openExpenseModal() { document.getElementById('expenseModal').style.display = 'flex'; }
