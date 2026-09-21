@@ -2514,33 +2514,74 @@ function generateRoomsForHotel(hotelId, floors, perFloor) {
   }
 }
 
+function hoteraCompactListStore(store, limit) {
+  if (!store || typeof store !== 'object') return;
+  Object.keys(store).forEach(key => {
+    if (Array.isArray(store[key]) && store[key].length > limit) store[key] = store[key].slice(0, limit);
+  });
+}
+
+function hoteraCompactCustomerMemory(limit = 400) {
+  if (!customerMemory || typeof customerMemory !== 'object') return;
+  const entries = Object.entries(customerMemory);
+  if (entries.length > limit) customerMemory = Object.fromEntries(entries.slice(-limit));
+}
+
+function hoteraCompactLocalData() {
+  // السجلات التشغيلية قابلة لإعادة الإنشاء ولا ينبغي أن تمنع حفظ الحجوزات والفواتير.
+  hoteraCompactListStore(allAuditLog, 120);
+  hoteraCompactListStore(allRatings, 120);
+  hoteraCompactListStore(allTransactions, 300);
+  hoteraCompactListStore(allMaintenanceTickets, 200);
+  hoteraCompactListStore(allShifts, 200);
+  hoteraCompactListStore(cancelledBookingsData, 150);
+  hoteraCompactListStore(refundedInvoicesData, 150);
+  hoteraCompactListStore(hoteraInvoicePayments, 300);
+  hoteraCompactListStore(hoteraInvoiceServices, 300);
+  hoteraCompactListStore(allInvoices, 500);
+  hoteraCompactCustomerMemory();
+}
+
+function hoteraStorageWrite(key, value) {
+  try { localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value)); return true; }
+  catch (error) {
+    if (error && (error.name === 'QuotaExceededError' || error.code === 22 || error.code === 1014)) return false;
+    throw error;
+  }
+}
+
 function saveData() {
   hoteraLocalMutationVersion++;
-  localStorage.setItem('hotera_all_hotels', JSON.stringify(hotelsList));
-  localStorage.setItem('hotera_companies', JSON.stringify(companiesList));
-  localStorage.setItem('hotera_all_rooms', JSON.stringify(allRooms));
-  localStorage.setItem('hotera_all_invoices', JSON.stringify(allInvoices));
-  localStorage.setItem('hotera_invoice_payments', JSON.stringify(hoteraInvoicePayments));
-  localStorage.setItem('hotera_invoice_services', JSON.stringify(hoteraInvoiceServices));
-  localStorage.setItem('hotera_invoice_adjustments', JSON.stringify(hoteraInvoiceAdjustments));
-  localStorage.setItem('hotera_cancelled_bookings', JSON.stringify(cancelledBookingsData));
-  localStorage.setItem('hotera_refunded_invoices', JSON.stringify(refundedInvoicesData));
-  localStorage.setItem('hotera_all_transactions', JSON.stringify(allTransactions));
-  localStorage.setItem('hotera_attendance', JSON.stringify(attendanceRecords));
-  localStorage.setItem('hotera_customer_memory', JSON.stringify(customerMemory));
-  localStorage.setItem('hotera_all_expenses', JSON.stringify(allExpenses));
-  localStorage.setItem('hotera_all_inventory', JSON.stringify(allInventory));
-  localStorage.setItem('hotera_maint_tickets', JSON.stringify(allMaintenanceTickets));
-  localStorage.setItem('hotera_all_shifts', JSON.stringify(allShifts));
-  localStorage.setItem('hotera_all_ratings', JSON.stringify(allRatings));
-  localStorage.setItem('hotera_audit_log', JSON.stringify(allAuditLog || {}));
-  localStorage.setItem('hotera_master_key', masterSuperKey);
-  localStorage.setItem('hotera_dev_name', developerName);
-  localStorage.setItem('hotera_dev_phone', developerPhone);
-  localStorage.setItem('hotera_about_title', aboutPageTitleText);
-  localStorage.setItem('hotera_about_desc', aboutPageDescText);
-  localStorage.setItem('hotera_cloud_url', cloudApiUrl);
-  localStorage.setItem('hotera_cloud_key', cloudApiKey);
+  const entries = [
+    ['hotera_all_hotels', hotelsList], ['hotera_companies', companiesList], ['hotera_all_rooms', allRooms],
+    ['hotera_all_invoices', allInvoices], ['hotera_invoice_payments', hoteraInvoicePayments],
+    ['hotera_invoice_services', hoteraInvoiceServices], ['hotera_invoice_adjustments', hoteraInvoiceAdjustments],
+    ['hotera_cancelled_bookings', cancelledBookingsData], ['hotera_refunded_invoices', refundedInvoicesData],
+    ['hotera_all_transactions', allTransactions], ['hotera_attendance', attendanceRecords],
+    ['hotera_customer_memory', customerMemory], ['hotera_all_expenses', allExpenses], ['hotera_all_inventory', allInventory],
+    ['hotera_maint_tickets', allMaintenanceTickets], ['hotera_all_shifts', allShifts], ['hotera_all_ratings', allRatings],
+    ['hotera_audit_log', allAuditLog || {}], ['hotera_master_key', masterSuperKey], ['hotera_dev_name', developerName],
+    ['hotera_dev_phone', developerPhone], ['hotera_about_title', aboutPageTitleText], ['hotera_about_desc', aboutPageDescText],
+    ['hotera_cloud_url', cloudApiUrl], ['hotera_cloud_key', cloudApiKey]
+  ];
+  let saved = true;
+  try {
+    entries.forEach(([key, value]) => { if (!hoteraStorageWrite(key, value)) throw new Error('HOTERA_STORAGE_QUOTA'); });
+  } catch (error) {
+    if (error.message !== 'HOTERA_STORAGE_QUOTA') throw error;
+    hoteraCompactLocalData();
+    saved = true;
+    try {
+      entries.forEach(([key, value]) => { if (!hoteraStorageWrite(key, value)) throw new Error('HOTERA_STORAGE_QUOTA'); });
+    } catch (retryError) {
+      saved = false;
+      console.warn('HOTERA local storage is full; essential data was kept in memory.', retryError);
+    }
+  }
+  if (!saved && !window.hoteraStorageWarningShown) {
+    window.hoteraStorageWarningShown = true;
+    setTimeout(() => alert('⚠️ امتلأت مساحة التخزين المحلية في هذا المتصفح. تم تقليص السجلات القديمة تلقائياً، ويمكنك تنزيل نسخة احتياطية ثم مسح بيانات الموقع إذا استمر التنبيه.'), 0);
+  }
   // تحديث طبقة المؤشرات والإشعارات بعد الحفظ دون تعديل أي سجل أو مفتاح بيانات.
   try {
     if (typeof window.refreshHoteraVisualDashboard === 'function') window.refreshHoteraVisualDashboard();
