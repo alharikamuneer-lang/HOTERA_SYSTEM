@@ -709,12 +709,17 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
       <input type="text" id="newHotelCity" class="form-input" placeholder="المدينة">
       <select id="newHotelSubType" class="form-select" onchange="toggleSubFields()" style="margin-bottom:0;">
         <option value="trial">فترة تجريبية (أيام محدودة)</option>
+        <option value="monthly">اشتراك شهري (30 يوماً)</option>
         <option value="yearly">اتفاق سنوي (سنة كاملة)</option>
       </select>
     </div>
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-top:8px;" id="trialDaysContainerDiv">
       <input type="number" id="newHotelTrialDays" class="form-input" placeholder="عدد أيام التجربة" value="14" min="1" style="margin-bottom:0;">
       <div></div>
+    </div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-top:8px;">
+      <input type="number" id="newHotelFloorsCount" class="form-input" placeholder="عدد الطوابق" value="3" min="1" max="100" style="margin-bottom:0;">
+      <input type="number" id="newHotelRoomsPerFloor" class="form-input" placeholder="الغرف لكل طابق" value="10" min="1" max="500" style="margin-bottom:0;">
     </div>
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-top:8px;">
       <div class="pin-input-group"><input type="text" id="newHotelManagerPin" class="form-input" placeholder="رمز المدير (مثال: 1234)" value="1234" style="margin-bottom:0;"></div>
@@ -743,7 +748,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 <div id="commandCenterView" class="view-section command-center-view">
   <div class="hotera-glass-shell">
     <header class="hotera-glass-header"><div class="hotera-glass-brand"><div class="hotera-glass-mark">🏨</div><div><h1>HOTERA</h1><p>ULTIMATE HOTEL MANAGEMENT SYSTEM · GLASS EDITION</p></div></div><div class="hotera-glass-meta"><span>تطوير وهندسة البرمجيات</span><br><strong id="glassDeveloperName">م. منير الحارقة</strong> · <span id="glassDeveloperPhone">0566030594</span><div class="hotera-glass-actions"><button type="button" onclick="openLanguagePicker()" id="glassLanguageBtn">English</button><button type="button" onclick="logout()">⏻ متصل</button><button type="button" onclick="toggleHoteraTheme()">☼ الوضع الليلي</button></div></div></header>
-    <div class="hotera-glass-intro"><div><h2>لوحة القيادة الذكية</h2><p>رؤية فورية لأداء الفندق، الإشغال، الحجوزات، الإيرادات والتنبيهات.</p></div><div class="hotera-glass-health"><span id="commandCloudStatus">☁️ السحابة: محلي</span><span id="commandLastSync">⏱ آخر تحديث: الآن</span><span>🛡️ النسخ الاحتياطي آمن</span></div></div>
+    <div class="hotera-glass-intro"><div><h2>لوحة القيادة الذكية</h2><p>رؤية فورية لأداء الفندق، الإشغال، الحجوزات، الإيرادات والتنبيهات.</p></div><div class="hotera-glass-health"><span id="commandSubscriptionStatus">📅 الاشتراك: —</span><span id="commandRoomStructureStatus">🏢 الطوابق والغرف: —</span><span id="commandCloudStatus">☁️ السحابة: محلي</span><span id="commandLastSync">⏱ آخر تحديث: الآن</span><span>🛡️ النسخ الاحتياطي آمن</span></div></div>
     <div class="hotera-glass-kpis"><div class="hotera-glass-kpi"><small>إجمالي الغرف</small><strong id="cmdTotalRooms">0</strong><em>↗ حسب بيانات الفندق</em></div><div class="hotera-glass-kpi"><small>نسبة الإشغال</small><strong id="premiumOccupancy">0%</strong><em>↗ مقارنة مع أمس</em></div><div class="hotera-glass-kpi"><small>حجوزات اليوم</small><strong id="premiumTodayBookings">0</strong><em>↗ حجوزات جديدة</em></div><div class="hotera-glass-kpi"><small>إيرادات اليوم</small><strong id="premiumTodayRevenue">0 ر.س</strong><em>↗ أداء مالي</em></div><div class="hotera-glass-kpi"><small>تقييم النزلاء</small><strong id="premiumRatingsCount">0</strong><em>★ من السجلات الحالية</em></div></div>
     <div class="hotera-glass-grid">
       <section class="hotera-glass-panel"><h3>🔔 التنبيهات الذكية</h3><div id="commandAlertsList"></div></section><section class="hotera-glass-panel"><h3>▤ الحجوزات القادمة</h3><div id="glassUpcomingBookings" class="hotera-glass-list"><div class="hotera-glass-list-row"><span>لا توجد حجوزات قادمة</span><strong>—</strong></div></div></section>
@@ -1144,6 +1149,10 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
     <input type="url" id="setupHotelLocation" class="form-input" placeholder="رابط موقع الفندق في خرائط Google">
     <input type="url" id="setupHotelReview" class="form-input" placeholder="رابط التقييم الخارجي">
     <input type="text" id="setupHotelCity" class="form-input" placeholder="المدينة">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+      <div><label style="font-size:9px;color:var(--text-muted)">عدد الطوابق:</label><input type="number" id="setupHotelFloorsCount" class="form-input" min="1" max="100"></div>
+      <div><label style="font-size:9px;color:var(--text-muted)">الغرف لكل طابق:</label><input type="number" id="setupHotelRoomsPerFloor" class="form-input" min="1" max="500"></div>
+    </div>
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px;">
       <div><label style="font-size:9px; color:var(--text-muted)" id="lblSetMgrPin">رمز مدير الفندق:</label><input type="text" id="setupManagerPin" class="form-input"></div>
       <div><label style="font-size:9px; color:var(--text-muted)" id="lblSetHrPin">رمز مشرف الموظفين:</label><input type="text" id="setupHrPin" class="form-input"></div>
@@ -2476,7 +2485,7 @@ hotelsList.forEach(h => {
   if (h.isActive === undefined) h.isActive = true;
   if (h.trialDays === undefined) h.trialDays = 14;
   if (!h.subType) h.subType = "trial";
-  if (!h.expiryDate) h.expiryDate = new Date(Date.now() + 14*86400000).toISOString();
+  if (!h.expiryDate) h.expiryDate = hoteraSubscriptionExpiry(h.subType, h.trialDays).toISOString();
   if (!h.hrPin) h.hrPin = "3333";
   if (!h.housePin) h.housePin = "0000";
   if (!h.staffList) h.staffList = [{idNum: "EMP-101", name: "موظف استقبال", pin: "1111"}];
@@ -2499,6 +2508,7 @@ hotelsList.forEach(h => {
   if (!allMaintenanceTickets[h.id]) allMaintenanceTickets[h.id] = [];
   if (!allShifts[h.id]) allShifts[h.id] = [];
   if (!allRatings[h.id]) allRatings[h.id] = [{guest: "عادل الحربي", room: "101", stars: 5, comment: "إقامة رائعة ونظافة ممتازة"}];
+  hoteraSyncHotelRoomStructure(h.id, h.floorsCount, h.roomsPerFloor);
 });
 saveData();
 
@@ -2586,6 +2596,7 @@ function saveData() {
   try {
     if (typeof window.refreshHoteraVisualDashboard === 'function') window.refreshHoteraVisualDashboard();
     window.dispatchEvent(new CustomEvent('hotera:data-updated'));
+    if (document.getElementById('commandCenterView')?.classList.contains('active') && typeof renderCommandCenter === 'function') renderCommandCenter();
   } catch (visualUpdateError) { console.warn('HOTERA visual dashboard update skipped:', visualUpdateError); }
 }
 
@@ -2660,11 +2671,56 @@ function togglePinCodeField() {
   else { staffGroup.style.display = 'none'; pinLabel.innerText = t.pinHouse; }
 }
 
+function hoteraSubscriptionLabel(hotel) {
+  if (!hotel) return 'غير محدد';
+  if (hotel.subType === 'yearly') return 'سنوي';
+  if (hotel.subType === 'monthly') return 'شهري';
+  return `تجريبي (${Math.max(1, Number(hotel.trialDays || 14))} يوم)`;
+}
+
+function hoteraSubscriptionExpiry(type, trialDays, baseDate = new Date()) {
+  const expiry = new Date(baseDate);
+  if (type === 'yearly') expiry.setFullYear(expiry.getFullYear() + 1);
+  else if (type === 'monthly') expiry.setMonth(expiry.getMonth() + 1);
+  else expiry.setDate(expiry.getDate() + Math.max(1, Number(trialDays || 14)));
+  return expiry;
+}
+
+function hoteraSyncHotelRoomStructure(hotelId, floors, roomsPerFloor) {
+  const hotel = hotelsList.find(h => Number(h.id) === Number(hotelId));
+  if (!hotel) return false;
+  floors = Math.max(1, Math.min(100, Number(floors) || 1));
+  roomsPerFloor = Math.max(1, Math.min(500, Number(roomsPerFloor) || 1));
+  const rooms = Array.isArray(allRooms[hotelId]) ? allRooms[hotelId] : (allRooms[hotelId] = []);
+  const existing = new Set(rooms.map(r => String(r.id)));
+  for (let floor = 1; floor <= floors; floor++) {
+    for (let slot = 1; slot <= roomsPerFloor; slot++) {
+      const id = floor * 100 + slot;
+      if (!existing.has(String(id))) rooms.push({ id, floor, type: slot % 5 === 0 ? 'جناح' : (slot % 2 === 0 ? 'مزدوجة' : 'مفردة'), status: 'vacant', guest: '', phone: '', carType: '', carPlate: '', bookingType: 'فردي', bookingRef: '', maintUser: '', maintIssue: '', checkIn: '', checkOut: '', nights: 0, nightPrice: 0, totalAmount: 0 });
+    }
+  }
+  const kept = rooms.filter(room => {
+    const floor = Number(room.floor) || Math.floor(Number(room.id) / 100);
+    const slot = Math.abs(Number(room.id)) % 100 || 100;
+    room.floor = floor;
+    const inside = floor <= floors && slot <= roomsPerFloor;
+    return inside || room.status !== 'vacant' || room.bookingRef;
+  });
+  allRooms[hotelId] = kept;
+  const maxFloor = Math.max(floors, ...kept.map(r => Number(r.floor) || Math.floor(Number(r.id) / 100), 0));
+  const maxSlot = Math.max(roomsPerFloor, ...kept.map(r => Math.abs(Number(r.id)) % 100 || 0));
+  hotel.floorsCount = maxFloor;
+  hotel.roomsPerFloor = maxSlot;
+  return true;
+}
+
 function checkHotelSubscription(hotelId) {
   const targetHotel = hotelsList.find(h => h.id == hotelId);
   if (!targetHotel) return false;
 
   // التوافق مع البيانات القديمة والجديدة
+  if (!targetHotel.subType) targetHotel.subType = 'trial';
+  if (!targetHotel.expiryDate) targetHotel.expiryDate = hoteraSubscriptionExpiry(targetHotel.subType, targetHotel.trialDays).toISOString();
   const isSuspended = targetHotel.status === 'suspended';
   const isInactive = targetHotel.isActive === false;
   const hasExpiry = !!targetHotel.expiryDate;
@@ -2841,11 +2897,9 @@ function saveAboutViewSettings() {
 function toggleSubFields() {
   const subType = document.getElementById("newHotelSubType").value;
   const trialDiv = document.getElementById("trialDaysContainerDiv");
-  if (subType === "trial") {
-    trialDiv.style.display = "grid";
-  } else {
-    trialDiv.style.display = "none";
-  }
+  trialDiv.style.display = subType === "trial" ? "grid" : "none";
+  const trialInput = document.getElementById('newHotelTrialDays');
+  if (trialInput) trialInput.disabled = subType !== 'trial';
 }
 
 function addNewHotelFacility() {
@@ -2854,16 +2908,13 @@ function addNewHotelFacility() {
   const city = document.getElementById('newHotelCity').value.trim();
   const subType = document.getElementById('newHotelSubType').value;
   const trialDays = parseInt(document.getElementById('newHotelTrialDays').value) || 14;
+  const floorsCount = Math.max(1, Math.min(100, parseInt(document.getElementById('newHotelFloorsCount')?.value) || 3));
+  const roomsPerFloor = Math.max(1, Math.min(500, parseInt(document.getElementById('newHotelRoomsPerFloor')?.value) || 10));
   const pin = document.getElementById('newHotelManagerPin').value.trim() || "1234";
   const housePin = document.getElementById('newHotelHousePin').value.trim() || "0000";
   if(!name || !cr) return alert("الرجاء إدخال اسم الفندق ورقم السجل!");
 
-  let expiryDate = new Date();
-  if (subType === "trial") {
-    expiryDate.setDate(expiryDate.getDate() + trialDays);
-  } else if (subType === "yearly") {
-    expiryDate.setFullYear(expiryDate.getFullYear() + 1);
-  }
+  const expiryDate = hoteraSubscriptionExpiry(subType, trialDays);
 
   const newId = hotelsList.length > 0 ? Math.max(...hotelsList.map(h => h.id)) + 1 : 1;
   hotelsList.push({ 
@@ -2879,18 +2930,42 @@ function addNewHotelFacility() {
     hrPin: "3333", 
     housePin: housePin, 
     staffList: [{idNum: "EMP-101", name: "موظف الاستقبال الأول", pin: "1111"}], 
-    floorsCount: 3, 
-    roomsPerFloor: 10, 
+    floorsCount,
+    roomsPerFloor,
     status: "active" 
   });
   
-  generateRoomsForHotel(newId, 3, 10);
+  generateRoomsForHotel(newId, floorsCount, roomsPerFloor);
   allInvoices[newId] = []; hoteraInvoicePayments[newId] = []; hoteraInvoiceServices[newId] = []; cancelledBookingsData[newId] = []; refundedInvoicesData[newId] = []; allTransactions[newId] = []; attendanceRecords[newId] = {}; allExpenses[newId] = []; allInventory[newId] = [{name: "مناشف تنظيف", qty: 30, minLimit: 5}]; allMaintenanceTickets[newId] = []; allShifts[newId] = []; allRatings[newId] = [];
   saveData(); 
   uploadDataToCloud();
   renderSuperAdminControlPanel(); 
   initLoginHotelDropdown();
-  alert(`✅ تم إنشاء الفندق وتحديد فترة الاشتراك ونوع الصلاحيات بنجاح!`);
+  alert(`✅ تم إنشاء الفندق باشتراك ${hoteraSubscriptionLabel(hotelsList.find(h => h.id === newId))} وإنشاء ${floorsCount * roomsPerFloor} غرفة بنجاح.`);
+}
+
+function editHotelSubscription(hotelId) {
+  if (currentRole !== 'superadmin') return alert('تعديل الاشتراكات متاح للسوبر أدمن فقط.');
+  const hotel = hotelsList.find(h => Number(h.id) === Number(hotelId));
+  if (!hotel) return;
+  const type = prompt('اكتب نوع الاشتراك: trial للتجريبي، monthly للشهري، yearly للسنوي', hotel.subType || 'trial');
+  if (type === null) return;
+  const normalized = String(type).trim().toLowerCase();
+  if (!['trial', 'monthly', 'yearly'].includes(normalized)) return alert('نوع الاشتراك غير صحيح. استخدم trial أو monthly أو yearly.');
+  let trialDays = Number(hotel.trialDays || 14);
+  if (normalized === 'trial') {
+    trialDays = Math.max(1, Number(prompt('عدد أيام الفترة التجريبية:', String(trialDays)) || trialDays));
+  }
+  hotel.subType = normalized;
+  hotel.trialDays = trialDays;
+  hotel.expiryDate = hoteraSubscriptionExpiry(normalized, trialDays).toISOString();
+  hotel.status = 'active';
+  hotel.isActive = true;
+  saveData();
+  uploadDataToCloud(true);
+  renderSuperAdminControlPanel();
+  initLoginHotelDropdown();
+  alert(`✅ تم تحديث اشتراك ${hotel.name} إلى ${hoteraSubscriptionLabel(hotel)} حتى ${new Date(hotel.expiryDate).toLocaleDateString()}.`);
 }
 
 function renderSuperAdminControlPanel() {
@@ -2933,12 +3008,12 @@ function renderSuperAdminControlPanel() {
     hotelsList.forEach(h => {
       const statusText = h.status === 'suspended' ? '<span style="color:#ef4444">موقوف ⛔</span>' : '<span style="color:#10b981">نشط ✅</span>';
       const btnText = h.status === 'suspended' ? 'تنشيط 🟢' : 'إيقاف 🔴';
-      let subDesc = h.subType === 'yearly' ? 'سنوي كامل' : `تجريبي (${new Date(h.expiryDate).toLocaleDateString()})`;
+      const subDesc = `${hoteraSubscriptionLabel(h)} — حتى ${h.expiryDate ? new Date(h.expiryDate).toLocaleDateString() : 'غير محدد'}`;
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td><strong>${h.name}</strong><br><small>${h.city} | ${subDesc}</small></td>
+        <td><strong>${h.name}</strong><br><small>${h.city} | ${subDesc}</small><br><small>الهيكل: ${h.floorsCount || 0} طوابق × ${h.roomsPerFloor || 0} غرف</small></td>
         <td>${statusText}</td>
-        <td><button onclick="toggleHotelStatus(${h.id})" style="background:${h.status === 'suspended' ? '#10b981' : '#ef4444'}; color:white; border:none; padding:3px 6px; border-radius:4px; font-size:8px; width:100%;">${btnText}</button></td>
+        <td><button onclick="editHotelSubscription(${h.id})" style="background:#2563eb; color:white; border:none; padding:3px 6px; border-radius:4px; font-size:8px; width:100%; margin-bottom:3px;">تعديل الاشتراك</button><button onclick="toggleHotelStatus(${h.id})" style="background:${h.status === 'suspended' ? '#10b981' : '#ef4444'}; color:white; border:none; padding:3px 6px; border-radius:4px; font-size:8px; width:100%;">${btnText}</button></td>
       `;
       hotelsTbody.appendChild(tr);
     });
@@ -3015,6 +3090,8 @@ function openHotelSetupModal() {
     document.getElementById('setupHotelLocation').value = h.locationUrl || '';
     document.getElementById('setupHotelReview').value = h.reviewUrl || '';
     document.getElementById('setupHotelCity').value = h.city || '';
+    document.getElementById('setupHotelFloorsCount').value = h.floorsCount || 3;
+    document.getElementById('setupHotelRoomsPerFloor').value = h.roomsPerFloor || 10;
     document.getElementById('setupManagerPin').value = h.managerPin;
     document.getElementById('setupHrPin').value = h.hrPin || "3333";
   }
@@ -3023,6 +3100,7 @@ function openHotelSetupModal() {
 function closeHotelSetupModal() { document.getElementById('hotelSetupModal').style.display = 'none'; }
 function saveHotelSetupAndGenerateRooms() {
   const h = hotelsList.find(item => item.id === currentHotelId);
+  if (!h) return;
   h.name = document.getElementById('setupHotelName').value.trim() || h.name;
   h.cr = document.getElementById('setupHotelCR').value.trim() || h.cr;
   h.taxNumber = document.getElementById('setupHotelTax').value.trim() || h.taxNumber || '';
@@ -3032,8 +3110,11 @@ function saveHotelSetupAndGenerateRooms() {
   h.city = document.getElementById('setupHotelCity').value.trim() || h.city;
   h.managerPin = document.getElementById('setupManagerPin').value.trim() || h.managerPin;
   h.hrPin = document.getElementById('setupHrPin').value.trim() || h.hrPin;
-  saveData(); uploadDataToCloud(); closeHotelSetupModal(); updateHeaderInfo();
-  alert("✅ تم حفظ إعدادات الأكواد بنجاح!");
+  const floors = Math.max(1, Math.min(100, parseInt(document.getElementById('setupHotelFloorsCount').value) || h.floorsCount || 3));
+  const roomsPerFloor = Math.max(1, Math.min(500, parseInt(document.getElementById('setupHotelRoomsPerFloor').value) || h.roomsPerFloor || 10));
+  hoteraSyncHotelRoomStructure(h.id, floors, roomsPerFloor);
+  saveData(); uploadDataToCloud(); closeHotelSetupModal(); updateHeaderInfo(); render();
+  alert(`✅ تم حفظ إعدادات الفندق وتحديث الهيكل إلى ${h.floorsCount} طوابق و${h.roomsPerFloor} غرف لكل طابق.`);
 }
 
 function toggleHoteraTheme() {
@@ -3043,6 +3124,7 @@ function toggleHoteraTheme() {
 function restoreHoteraTheme() { if (localStorage.getItem('hotera_theme') === 'light') document.body.classList.add('theme-light'); }
 function renderCommandCenter() {
   const rooms = allRooms[currentHotelId] || [];
+  const hotel = hotelsList.find(h => Number(h.id) === Number(currentHotelId));
   const available = rooms.filter(r => r.status === 'vacant').length;
   const occupied = rooms.filter(r => r.status === 'occupied').length;
   const total = rooms.length;
@@ -3050,6 +3132,8 @@ function renderCommandCenter() {
   const revenue = invoices.reduce((sum, inv) => sum + hoteraGetInvoiceFinancialSummary(inv).total, 0);
   const set = (id, value) => { const el=document.getElementById(id); if(el) el.innerText=value; };
   set('cmdTotalRooms', total); set('cmdAvailableRooms', available); set('cmdOccupiedRooms', occupied); set('cmdRevenue', `${revenue.toFixed(2)} ر.س`);
+  set('commandSubscriptionStatus', `📅 الاشتراك: ${hoteraSubscriptionLabel(hotel)} — حتى ${hotel?.expiryDate ? new Date(hotel.expiryDate).toLocaleDateString() : 'غير محدد'}`);
+  set('commandRoomStructureStatus', `🏢 الطوابق والغرف: ${hotel?.floorsCount || 0} × ${hotel?.roomsPerFloor || 0} = ${total}`);
   const status = document.getElementById('commandCloudStatus'); if(status) status.innerText = `☁️ السحابة: ${(typeof cloudApiUrl !== 'undefined' && cloudApiUrl) ? 'متصل' : 'محلي'}`;
   const sync = document.getElementById('commandLastSync'); if(sync) sync.innerText = `⏱ آخر تحديث: ${new Date().toLocaleTimeString()}`;
   const map = document.getElementById('commandRoomMap'); if(map) { map.innerHTML = rooms.slice(0, 80).map(r => `<div class="command-room ${r.status || 'vacant'}" onclick="openRoomModalByCommand(${r.id})"><strong>${r.id}</strong><br><span>${r.status==='occupied'?'محجوز':r.status==='maintenance'?'صيانة':r.status==='cleaning'?'خروج':'متاح'}</span></div>`).join('') || '<div style="font-size:10px;color:#94a3b8">لا توجد غرف</div>'; }
@@ -3666,13 +3750,20 @@ function addNewRoom() {
   const id = parseInt(document.getElementById('newRoomId').value);
   const type = document.getElementById('newRoomType').value;
   if(!id) return;
-  allRooms[currentHotelId].push({ id, floor: Math.floor(id/100), type, status: 'vacant', guest: '', phone: '', carType: '', carPlate: '', bookingType: 'فردي', bookingRef: '', maintUser: '', maintIssue: '', nights: 1, nightPrice: 200, totalAmount: 200 });
-  saveData(); uploadDataToCloud(); renderEditRoomsTable();
+  const list = allRooms[currentHotelId] || (allRooms[currentHotelId] = []);
+  if (list.some(room => Number(room.id) === id)) return alert('رقم الغرفة موجود مسبقاً في هذا الفندق.');
+  const floor = Math.max(1, Math.floor(id / 100));
+  list.push({ id, floor, type, status: 'vacant', guest: '', phone: '', carType: '', carPlate: '', bookingType: 'فردي', bookingRef: '', maintUser: '', maintIssue: '', nights: 1, nightPrice: 200, totalAmount: 200 });
+  const hotel = hotelsList.find(item => item.id === currentHotelId);
+  if (hotel) { hotel.floorsCount = Math.max(Number(hotel.floorsCount || 0), floor); hotel.roomsPerFloor = Math.max(Number(hotel.roomsPerFloor || 0), id % 100 || 100); }
+  saveData(); uploadDataToCloud(); renderEditRoomsTable(); render();
 }
 function deleteRoom(idx) {
   if(!hoteraRequirePermission('roomAdmin')) return;
+  const room = (allRooms[currentHotelId] || [])[idx];
+  if (room && (room.status !== 'vacant' || room.bookingRef)) return alert('لا يمكن حذف غرفة مشغولة أو مرتبطة بحجز.');
   allRooms[currentHotelId].splice(idx, 1);
-  saveData(); uploadDataToCloud(); renderEditRoomsTable();
+  saveData(); uploadDataToCloud(); renderEditRoomsTable(); render();
 }
 
 function bookingTypeForCount(count) {
