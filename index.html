@@ -447,36 +447,39 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 @media(max-width:560px){.hotera-booking-head{padding:11px 13px!important}.hotera-booking-head h3{font-size:14px!important}.hotera-booking-tabs{padding:10px 10px 0!important;overflow-x:auto;flex-wrap:nowrap}.hotera-booking-tabs button{flex-shrink:0}.hotera-booking-dashboard{padding:10px}.hotera-booking-kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.hotera-booking-kpi{padding:9px}.hotera-booking-kpi strong{font-size:17px}.hotera-booking-workspace{gap:10px}.hotera-booking-room-grid,.hotera-booking-invoice-grid{grid-template-columns:1fr}.hotera-booking-banner{align-items:flex-start;flex-direction:column}.hotera-booking-current-grid{grid-template-columns:1fr}}
 </style>
 
-<style id="hotera-national-welcome-css">
-#hoteraNationalWelcome{position:fixed;inset:0;z-index:7000;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#020b08;color:#fff;opacity:1;visibility:visible;transition:opacity .9s ease,visibility .9s ease}
-#hoteraNationalWelcome.hidden{opacity:0;visibility:hidden;pointer-events:none}
-#hoteraNationalWelcome .national-bg{position:absolute;inset:-3%;background-image:linear-gradient(180deg,rgba(1,12,8,.22),rgba(1,7,5,.72)),url('HOTERA_NationalDay96_Concept_B.png');background-size:cover;background-position:center;filter:saturate(.94) contrast(1.05);animation:nationalBgZoom 14s ease-in-out infinite alternate}
-#hoteraNationalWelcome .national-vignette{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,transparent 12%,rgba(0,0,0,.12) 48%,rgba(0,0,0,.7) 100%),linear-gradient(90deg,rgba(0,0,0,.28),transparent 34%,transparent 66%,rgba(0,0,0,.28));pointer-events:none}
-#hoteraNationalWelcome .national-glow{position:absolute;width:min(70vw,620px);height:min(70vw,620px);border:1px solid rgba(247,205,103,.35);border-radius:50%;box-shadow:0 0 70px rgba(239,184,65,.16),inset 0 0 60px rgba(239,184,65,.08);animation:nationalOrbit 18s linear infinite;pointer-events:none}
-#hoteraNationalWelcome .national-glow:after{content:'';position:absolute;inset:13%;border:1px solid rgba(31,150,91,.42);border-radius:50%;animation:nationalOrbitReverse 12s linear infinite}
-#hoteraNationalWelcome .national-particles{position:absolute;inset:0;overflow:hidden;pointer-events:none}
-#hoteraNationalWelcome .national-particles i{position:absolute;bottom:-10px;width:3px;height:3px;border-radius:50%;background:#f9d77a;box-shadow:0 0 14px #e7af39;animation:nationalRise 8s linear infinite}
-#hoteraNationalWelcome .national-particles i:nth-child(1){left:12%;animation-delay:0s}.national-particles i:nth-child(2){left:29%;animation-delay:2.2s}.national-particles i:nth-child(3){left:51%;animation-delay:4.2s}.national-particles i:nth-child(4){left:74%;animation-delay:1.1s}.national-particles i:nth-child(5){left:89%;animation-delay:3.1s}
-#hoteraNationalWelcome .national-card{position:relative;z-index:3;width:min(88%,520px);padding:30px 24px 22px;text-align:center;border:1px solid rgba(248,211,105,.58);border-radius:28px;background:linear-gradient(145deg,rgba(4,28,19,.74),rgba(3,12,10,.82));box-shadow:0 28px 90px rgba(0,0,0,.72),inset 0 1px rgba(255,255,255,.16),0 0 42px rgba(225,174,61,.12);backdrop-filter:blur(9px) saturate(125%);animation:nationalCardIn 1.1s cubic-bezier(.2,.8,.2,1) both}
-#hoteraNationalWelcome .national-card:before{content:'';position:absolute;inset:9px;border:1px solid rgba(248,211,105,.18);border-radius:20px;pointer-events:none}
-#hoteraNationalWelcome .national-mark{position:relative;width:72px;height:72px;margin:0 auto 12px;display:grid;place-items:center;border:1px solid rgba(248,211,105,.7);border-radius:22px;color:#f9d77a;font-size:35px;background:radial-gradient(circle,#1d583c,#03130d 72%);box-shadow:0 0 30px rgba(248,211,105,.28),inset 0 0 20px rgba(248,211,105,.12);animation:nationalMarkPulse 3s ease-in-out infinite}
-#hoteraNationalWelcome .national-brand{position:relative;color:#f8d778;font-size:clamp(34px,8vw,56px);font-weight:950;letter-spacing:7px;line-height:1;text-shadow:0 0 18px rgba(248,211,105,.52);animation:nationalTextIn .9s .15s both}
-#hoteraNationalWelcome .national-kicker{position:relative;margin-top:8px;color:#d8f1df;font-size:12px;letter-spacing:2px;font-weight:800;animation:nationalTextIn .9s .3s both}
-#hoteraNationalWelcome .national-title{position:relative;margin:22px auto 7px;color:#fff3cb;font-size:clamp(23px,5.5vw,34px);font-weight:950;line-height:1.45;text-shadow:0 2px 18px #000;animation:nationalTextIn .9s .45s both}
-#hoteraNationalWelcome .national-date{position:relative;color:#f8d778;font-size:17px;font-weight:800;letter-spacing:2px;animation:nationalTextIn .9s .55s both}
-#hoteraNationalWelcome .national-message{position:relative;margin:12px auto 0;color:#dcefe1;font-size:clamp(13px,3vw,17px);line-height:1.9;animation:nationalTextIn .9s .65s both}
-#hoteraNationalWelcome .national-rule{width:82px;height:2px;margin:14px auto;background:linear-gradient(90deg,transparent,#f8d778,transparent);box-shadow:0 0 12px rgba(248,215,120,.6)}
-#hoteraNationalWelcome .national-actions{position:relative;display:flex;justify-content:center;gap:9px;margin-top:22px;animation:nationalTextIn .9s .85s both}
-#hoteraNationalWelcome .national-primary,#hoteraNationalWelcome .national-skip{border-radius:14px;cursor:pointer;font-weight:900;transition:transform .2s ease,box-shadow .2s ease,filter .2s ease}
-#hoteraNationalWelcome .national-primary{min-width:180px;padding:12px 22px;border:0;color:#062414;background:linear-gradient(135deg,#d69b2e,#f9df8a,#aa731a);box-shadow:0 10px 28px rgba(217,160,48,.34)}
-#hoteraNationalWelcome .national-skip{padding:11px 15px;border:1px solid rgba(220,240,225,.4);color:#ecf8ef;background:rgba(255,255,255,.07)}
-#hoteraNationalWelcome .national-primary:hover,#hoteraNationalWelcome .national-skip:hover{transform:translateY(-2px);filter:brightness(1.08);box-shadow:0 13px 30px rgba(0,0,0,.35)}
-#hoteraNationalWelcome .national-progress{position:relative;width:min(220px,70%);height:3px;margin:19px auto 0;border-radius:9px;overflow:hidden;background:rgba(255,255,255,.18)}
-#hoteraNationalWelcome .national-progress span{display:block;width:0;height:100%;background:linear-gradient(90deg,#1e8b52,#f8d778);box-shadow:0 0 12px #f8d778;animation:nationalProgress 12s linear forwards}
-#hoteraNationalWelcome .national-note{position:relative;margin-top:9px;color:rgba(231,246,235,.72);font-size:9px}
-@keyframes nationalBgZoom{from{transform:scale(1.02)}to{transform:scale(1.1)}}@keyframes nationalOrbit{to{transform:rotate(360deg) scale(1.04)}}@keyframes nationalOrbitReverse{to{transform:rotate(-360deg) scale(.96)}}@keyframes nationalRise{0%{transform:translateY(0) scale(.6);opacity:0}15%{opacity:.75}100%{transform:translateY(-110vh) translateX(35px) scale(1.2);opacity:0}}@keyframes nationalCardIn{from{opacity:0;transform:translateY(28px) scale(.94)}to{opacity:1;transform:none}}@keyframes nationalTextIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}@keyframes nationalMarkPulse{50%{transform:scale(1.06);box-shadow:0 0 46px rgba(248,211,105,.55),inset 0 0 24px rgba(248,211,105,.18)}}@keyframes nationalProgress{to{width:100%}}
-@media(max-width:600px){#hoteraNationalWelcome .national-card{width:92%;padding:24px 15px 18px;border-radius:23px}#hoteraNationalWelcome .national-mark{width:60px;height:60px;font-size:28px;margin-bottom:9px}#hoteraNationalWelcome .national-title{margin-top:17px}#hoteraNationalWelcome .national-actions{margin-top:17px}#hoteraNationalWelcome .national-primary{min-width:150px;padding:11px 15px}}
-@media(prefers-reduced-motion:reduce){#hoteraNationalWelcome *,#hoteraNationalWelcome .national-bg,#hoteraNationalWelcome .national-glow{animation:none!important;transition:none!important}#hoteraNationalWelcome .national-progress span{width:100%}}
+
+
+
+<style id="hotera-national-day-full-theme">
+:root{
+  --bg-fallback:#06100d;--glass-bg:rgba(7,22,29,.86);--glass-border:rgba(222,177,72,.34);
+  --accent-grad:linear-gradient(135deg,#9b6817 0%,#f8df91 44%,#c5902f 70%,#71430d 100%);--accent-solid:#e8bd59;
+  --text-main:#f7f3e8;--text-muted:#b9b9ae;--vacant:#21b874;--occupied:#c99736;--cleaning:#23a7a0;--maintenance:#82909a;
+}
+html,body{background-color:#04100c;background-image:linear-gradient(180deg,rgba(2,12,9,.79),rgba(2,10,14,.9)),url('hotera_national_day_96.png');background-size:cover;background-position:center top;background-attachment:fixed;color:var(--text-main)}
+body{padding:12px;padding-bottom:92px}
+body:before{content:'';position:fixed;inset:0;z-index:-1;background:radial-gradient(circle at 50% 5%,rgba(13,102,68,.18),transparent 35%),linear-gradient(90deg,rgba(1,17,12,.45),transparent 30%,transparent 70%,rgba(1,17,12,.45));pointer-events:none}
+.brand-header,.card,.kpi-luxury-card,.hotera-premium-card,.command-panel,.command-hero,.company-owner-hero,.company-hotel-card,.modal-body,.advice-ticker-bar,.hotera-notification-bar,.hotera-notification-drawer,.room-status-legend,.hotera-booking-summary,.hotera-stay-status{background:linear-gradient(145deg,rgba(8,29,35,.9),rgba(3,15,20,.94));border-color:rgba(220,176,76,.3);box-shadow:0 16px 38px rgba(0,0,0,.35),inset 0 1px rgba(255,255,255,.08)}
+.brand-header{border-radius:20px;padding:16px;margin-bottom:10px;overflow:hidden}.brand-header:after{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,226,145,.11) 50%,transparent 65%);transform:translateX(-100%);animation:hoteraThemeSweep 8s ease-in-out infinite;pointer-events:none}
+.brand-title{color:#f5d57d;background:linear-gradient(135deg,#f6d783,#fff5c9,#c89332);-webkit-background-clip:text;background-clip:text;filter:drop-shadow(0 0 9px rgba(237,190,77,.28))}
+.hotel-name-display,.role-badge-header,.nav-item.active,.command-hero h2,.hotera-premium-card h3,.kpi-luxury-card strong{color:#efc968}.role-badge-header{background:rgba(15,107,67,.26);border:1px solid rgba(232,189,89,.3)}
+.quick-access-bar{scrollbar-color:#d5a842 rgba(255,255,255,.06)}.quick-access-chip{background:rgba(7,26,31,.9);border-color:rgba(220,176,76,.28);box-shadow:0 8px 20px rgba(0,0,0,.25)}.quick-access-chip:hover,.quick-access-chip.active,.floor-tab-btn.active{background:var(--accent-grad);color:#12130e;box-shadow:0 8px 22px rgba(225,177,67,.26)}
+.stats,.kpi-grid,.command-kpis{gap:8px}.stat-box,.kpi-box,.command-kpi{background:rgba(2,15,21,.72);border-color:rgba(220,176,76,.18)}.stat-box strong,.kpi-box strong,.command-kpi strong{color:#f7d783}
+.floor-tab-btn{background:rgba(7,25,30,.88);border-color:rgba(220,176,76,.23);color:#c7c9bc}.grid{gap:9px}
+.card{border-radius:18px;min-height:112px}.card.vacant{background:linear-gradient(145deg,#116b47,#073b2c);border-color:#2ab87a}.card.occupied{background:linear-gradient(145deg,#795d1d,#3d3217);border-color:#d6ad4d}.card.cleaning{background:linear-gradient(145deg,#087d7a,#064947);border-color:#40d0c0}.card.maintenance{background:linear-gradient(145deg,#405762,#263943);border-color:#94a9aa}
+.bottom-nav{background:rgba(2,15,20,.94);border-top-color:rgba(220,176,76,.36);box-shadow:0 -10px 30px rgba(0,0,0,.28)}
+.nav-item{color:#abb4af}.nav-item.active{font-weight:900;text-shadow:0 0 10px rgba(239,201,104,.4)}
+.btn-gold,.national-primary{background:var(--accent-grad);color:#17150e;box-shadow:0 10px 26px rgba(208,158,51,.25)}.btn-blue{background:linear-gradient(135deg,#145d71,#1f9d9b)}.btn-green{background:linear-gradient(135deg,#09613f,#21a96a)}.btn-gray{background:linear-gradient(135deg,#3b4d51,#1d2e35)}.btn-red{background:linear-gradient(135deg,#823c35,#b65b3f)}
+.form-select,.form-input,#roomStatusFilter{background:rgba(2,14,19,.86);border-color:rgba(220,176,76,.28);color:#f7f3e8;box-shadow:inset 0 1px rgba(255,255,255,.06)}.form-select:focus,.form-input:focus{outline:1px solid #e6bd5f;box-shadow:0 0 0 3px rgba(230,189,95,.12)}
+.table-box th{background:linear-gradient(135deg,#0a4036,#09252b);color:#f0ca70}.table-box th,.table-box td{border-color:rgba(220,176,76,.18)}
+.modal{background:rgba(0,7,9,.82);backdrop-filter:blur(9px)}.modal-body{border-color:rgba(220,176,76,.42);border-radius:22px}
+.company-owner-kicker,.hotera-visual-note,.hotera-card-action:hover h3{color:#4bd1af}.company-owner-hero h2{color:#efc968}.company-owner-badge{border-color:rgba(75,209,175,.45);background:rgba(20,126,102,.14)}
+.command-hero{background:radial-gradient(circle at 15% 20%,rgba(221,174,61,.18),transparent 36%),linear-gradient(135deg,rgba(8,38,39,.97),rgba(3,16,23,.98));border-color:rgba(220,176,76,.42)}.command-hero:after{border-color:rgba(220,176,76,.25)}
+.hotera-visual-card{background:linear-gradient(145deg,rgba(8,46,47,.94),rgba(4,22,29,.97));border-color:rgba(75,209,175,.28)}.hotera-visual-card:after{background:rgba(220,176,76,.12)}
+.invoice-card-official{border-color:#d19b35}.invoice-header-flex{border-bottom-color:#d19b35}.invoice-brand{color:#8c5b12}
+@keyframes hoteraThemeSweep{0%,35%{transform:translateX(-120%);opacity:0}55%{opacity:1}85%,100%{transform:translateX(120%);opacity:0}}
+@media(max-width:700px){html,body{background-attachment:scroll;background-position:center top}body{padding:8px;padding-bottom:86px}.brand-header{border-radius:16px;padding:13px}.brand-title{font-size:21px}.card{min-height:104px}.modal-body{max-height:88vh}}
+@media(prefers-reduced-motion:reduce){.brand-header:after{animation:none!important}}
 </style>
 
 </head>
@@ -4351,45 +4354,9 @@ const secureSyncInput=document.getElementById('secureSyncServerUrlInput');if(sec
 <div id="hoteraBookingManagementModal" class="hotera-booking-modal" role="dialog" aria-modal="true" aria-label="إدارة الحجوزات"><div class="hotera-booking-box"><div class="hotera-booking-head"><h3>📅 إدارة الحجوزات</h3><button type="button" class="hotera-settings-close" style="width:auto;margin:0;padding:5px 10px" onclick="closeHoteraBookingManagement()">إغلاق</button></div><div id="hoteraBookingTabs" class="hotera-booking-tabs"></div><div id="hoteraBookingManagementList" class="hotera-booking-list"></div></div></div>
 
 
-<div id="hoteraNationalWelcome" role="dialog" aria-modal="true" aria-label="الترحيب باليوم الوطني السعودي 96">
-  <div class="national-bg" aria-hidden="true"></div><div class="national-vignette" aria-hidden="true"></div><div class="national-glow" aria-hidden="true"></div>
-  <div class="national-particles" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
-  <section class="national-card">
-    <div class="national-mark">🏨</div><div class="national-brand">HOTERA</div>
-    <div class="national-kicker">ULTIMATE HOTEL MANAGEMENT SYSTEM</div><div class="national-rule"></div>
-    <h1 class="national-title">اليوم الوطني السعودي 96</h1><div class="national-date">23 سبتمبر</div>
-    <p class="national-message">من مجد الأمس إلى طموح الغد<br><strong>دام عزك يا وطن</strong></p>
-    <div class="national-actions"><button type="button" class="national-primary" onclick="enterHoteraNationalWelcome()">ابدأ الرحلة &nbsp;›</button><button type="button" class="national-skip" onclick="skipHoteraNationalWelcome()">تخطي</button></div>
-    <div class="national-progress"><span></span></div><div class="national-note">احتفاءً بتاريخٍ عظيم ومستقبلٍ واعد</div>
-  </section>
-</div>
 
-<script id="hotera-national-welcome-js">
-(function(){
-  const screenId='hoteraNationalWelcome';
-  let timer;
-  function openNational(){
-    const screen=document.getElementById(screenId),login=document.getElementById('loginOverlay'),old=document.getElementById('luxuryEntryScreen');
-    if(old) old.classList.add('hidden');
-    const intro=document.getElementById('hoteraWelcomeIntroScreen'); if(intro) intro.classList.remove('open');
-    if(login) login.style.display='none';
-    if(screen){screen.classList.remove('hidden');document.body.classList.add('hotera-national-active');}
-    clearTimeout(timer); timer=setTimeout(window.enterHoteraNationalWelcome,12000);
-  }
-  window.enterHoteraNationalWelcome=function(){
-    const screen=document.getElementById(screenId),login=document.getElementById('loginOverlay');
-    if(screen) screen.classList.add('hidden'); document.body.classList.remove('hotera-national-active');
-    clearTimeout(timer);
-    if(login) login.style.display='flex';
-  };
-  window.skipHoteraNationalWelcome=window.enterHoteraNationalWelcome;
-  window.showWelcomeScreen=openNational;
-  window.enterLuxuryWelcome=window.enterHoteraNationalWelcome;
-  window.skipLuxuryEntry=window.enterHoteraNationalWelcome;
-  window.closeWelcomeScreen=window.enterHoteraNationalWelcome;
-  document.addEventListener('DOMContentLoaded',function(){setTimeout(openNational,120);});
-})();
-</script>
+
+
 
 </body>
 </html>
