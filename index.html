@@ -1599,42 +1599,56 @@ async function generateDeviceInviteLink() {
 async function saveDeviceCloudAndRequest() {
   const url = (document.getElementById('deviceCloudUrlInput')?.value || cloudApiUrl || localStorage.getItem('hotera_cloud_url') || '').trim();
   const key = (document.getElementById('deviceCloudKeyInput')?.value || cloudApiKey || localStorage.getItem('hotera_cloud_key') || '').trim();
-  deviceJoinCode = (document.getElementById('deviceJoinCodeInput')?.value || deviceJoinCode || localStorage.getItem('hotera_join_code') || '').trim();
-  if (!deviceJoinCode) return alert('⚠️ أدخل رمز الدعوة المؤقت المرسل من السوبر أدمن.');
   if (!url) return alert('⚠️ لم يتم العثور على إعدادات الربط. افتح رابط الدعوة الأصلي أو اطلب دعوة جديدة.');
   try { new URL(url); } catch (_) { return alert('⚠️ تعذر التحقق من إعدادات الدعوة. اطلب رابطاً جديداً.'); }
+  const rawCode = (document.getElementById('deviceJoinCodeInput')?.value || deviceJoinCode || localStorage.getItem('hotera_join_code') || '').trim();
+  const normalizeDeviceCode = value => String(value || '').replace(/[٠-٩]/g, ch => String('٠١٢٣٤٥٦٧٨٩'.indexOf(ch))).replace(/\s+/g, '');
+  deviceJoinCode = normalizeDeviceCode(rawCode);
   cloudApiUrl = url;
   cloudApiKey = key;
   localStorage.setItem('hotera_cloud_url', cloudApiUrl);
   localStorage.setItem('hotera_cloud_key', cloudApiKey);
-  localStorage.setItem('hotera_join_code', deviceJoinCode);
   await fetchDataFromCloud(false);
-  const record = getCurrentDeviceRecord();
-  if (record && record.status === 'approved') {
+  let record = getCurrentDeviceRecord();
+  if (!Array.isArray(cloudDevices)) cloudDevices = [];
+  if (!record) {
+    record = { id: deviceId, name: deviceName, platform: navigator.platform || 'unknown', requestedAt: new Date().toISOString(), lastSeen: new Date().toISOString(), status: 'pending' };
+    cloudDevices.push(record);
+  } else {
+    record.name = deviceName;
+    record.lastSeen = new Date().toISOString();
+  }
+  if (!deviceJoinCode) {
+    localStorage.removeItem('hotera_join_code');
+    const requestSaved = await uploadDataToCloud(true);
+    if (requestSaved) {
+      setDeviceStatusText('تم إرسال طلب الجهاز — بانتظار إصدار الكود المؤقت ⏳', '#fbbf24');
+      return alert('✅ تم إرسال طلب الجهاز بنجاح. اطلب من السوبر أدمن الضغط على «إرسال كود»، ثم أدخل الكود هنا وأعد الضغط.');
+    }
+    return;
+  }
+  localStorage.setItem('hotera_join_code', deviceJoinCode);
+  if (record.status === 'approved') {
     setDeviceStatusText('هذا الجهاز معتمد ويمكنه الدخول ✅', '#34d399');
     return alert('✅ هذا الجهاز معتمد مسبقاً. يمكنك تسجيل الدخول.');
   }
-  if (record && record.status === 'rejected') {
+  if (record.status === 'rejected') {
     setDeviceStatusText('تم رفض هذا الجهاز من السوبر أدمن ⛔', '#f87171');
     return alert('⛔ تم رفض اعتماد هذا الجهاز.');
   }
-  if (record && record.status === 'pending' && record.approvalCodeHash) {
+  if (record.status === 'pending' && record.approvalCodeHash) {
     const enteredHash = await hoteraHashApprovalCode(deviceJoinCode);
     const expires = record.approvalExpiresAt ? new Date(record.approvalExpiresAt).getTime() > Date.now() : false;
     if (enteredHash === record.approvalCodeHash && expires) {
       record.status='approved'; record.approvedAt=new Date().toISOString(); record.approvedBy='superadmin-code'; delete record.approvalCodeHash; delete record.approvalExpiresAt;
       await uploadDataToCloud(true); setDeviceStatusText('تم اعتماد الجهاز بالكود ✅','#34d399'); return alert('✅ تم اعتماد هذا الجهاز بالكود المؤقت. يمكنك تسجيل الدخول.');
     }
-    if (deviceJoinCode && record.approvalCodeHash) return alert('⛔ الكود غير صحيح أو انتهت صلاحيته. اطلب كودًا جديدًا.');
-  }
-  if (!Array.isArray(cloudDevices)) cloudDevices = [];
-  if (!cloudDevices.find(d => d.id === deviceId)) {
-    cloudDevices.push({ id: deviceId, name: deviceName, platform: navigator.platform || 'unknown', requestedAt: new Date().toISOString(), lastSeen: new Date().toISOString(), status: 'pending' });
+    return alert('⛔ الكود غير صحيح أو انتهت صلاحيته. اطلب كوداً جديداً.');
   }
   const ok = await uploadDataToCloud(true);
   if (ok) {
-    setDeviceStatusText('تم إرسال الطلب، بانتظار موافقة السوبر أدمن ⏳');
-    alert('✅ تم إرسال طلب اعتماد الجهاز. بعد موافقة السوبر أدمن اضغط مزامنة أو أعد تحميل الصفحة.');
+    setDeviceStatusText('تم تحديث الطلب، بانتظار موافقة السوبر أدمن ⏳');
+    alert('✅ تم تحديث طلب اعتماد الجهاز.');
   }
 }
 
