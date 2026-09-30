@@ -1477,7 +1477,7 @@ function hydrateHoteraServerSettings(){const input=document.getElementById('hote
 
 function getCloudConfig() {
   return {
-    url: (cloudApiUrl || AUTO_CLOUD_URL || '').trim(),
+    url: (cloudApiUrl || AUTO_CLOUD_URL || '').trim().replace(/\/$/, ''),
     key: (cloudApiKey || AUTO_API_KEY || '').trim()
   };
 }
@@ -1566,10 +1566,13 @@ function readInviteFromUrl() {
     }
     if (data.url) cloudApiUrl = data.url;
     if (data.key) cloudApiKey = data.key;
-    if (data.code) deviceJoinCode = data.code;
+    // رمز الدعوة يثبت أن الرابط صادر من مركز HOTERA، ولا يُستخدم كرمز اعتماد للجهاز.
+    if (data.code) {
+      deviceJoinCode = String(data.code);
+      localStorage.setItem('hotera_invite_code', deviceJoinCode);
+    }
     localStorage.setItem('hotera_cloud_url', cloudApiUrl);
     localStorage.setItem('hotera_cloud_key', cloudApiKey);
-    localStorage.setItem('hotera_join_code', deviceJoinCode);
     const u = document.getElementById('deviceCloudUrlInput');
     const k = document.getElementById('deviceCloudKeyInput');
     const c = document.getElementById('deviceJoinCodeInput');
@@ -1601,14 +1604,22 @@ async function saveDeviceCloudAndRequest() {
   const key = (document.getElementById('deviceCloudKeyInput')?.value || cloudApiKey || localStorage.getItem('hotera_cloud_key') || '').trim();
   if (!url) return alert('⚠️ لم يتم العثور على إعدادات الربط. افتح رابط الدعوة الأصلي أو اطلب دعوة جديدة.');
   try { new URL(url); } catch (_) { return alert('⚠️ تعذر التحقق من إعدادات الدعوة. اطلب رابطاً جديداً.'); }
-  const rawCode = (document.getElementById('deviceJoinCodeInput')?.value || deviceJoinCode || localStorage.getItem('hotera_join_code') || '').trim();
+  const rawCode = (document.getElementById('deviceJoinCodeInput')?.value || '').trim();
   const normalizeDeviceCode = value => String(value || '').replace(/[٠-٩]/g, ch => String('٠١٢٣٤٥٦٧٨٩'.indexOf(ch))).replace(/\s+/g, '');
-  deviceJoinCode = normalizeDeviceCode(rawCode);
+  const enteredCode = normalizeDeviceCode(rawCode);
+  const inviteCode = normalizeDeviceCode(localStorage.getItem('hotera_invite_code') || '');
+  deviceJoinCode = inviteCode;
   cloudApiUrl = url;
   cloudApiKey = key;
   localStorage.setItem('hotera_cloud_url', cloudApiUrl);
   localStorage.setItem('hotera_cloud_key', cloudApiKey);
-  await fetchDataFromCloud(false);
+  const cloudLoaded = await fetchDataFromCloud(false);
+  if (!cloudLoaded) return alert('❌ تعذر قراءة سجل HOTERA السحابي. تحقق من الرابط والمفتاح ثم أعد المحاولة.');
+  // لا نسمح باستخدام رابط دعوة قديم أو من سجل سحابي مختلف.
+  const activeInviteCode = normalizeDeviceCode(cloudJoinCode || '');
+  if (inviteCode && activeInviteCode && inviteCode !== activeInviteCode) {
+    return alert('⛔ رابط الدعوة غير صالح أو انتهت صلاحيته. اطلب رابط دعوة جديداً من السوبر أدمن.');
+  }
   let record = getCurrentDeviceRecord();
   if (!Array.isArray(cloudDevices)) cloudDevices = [];
   if (!record) {
@@ -1618,7 +1629,7 @@ async function saveDeviceCloudAndRequest() {
     record.name = deviceName;
     record.lastSeen = new Date().toISOString();
   }
-  if (!deviceJoinCode) {
+  if (!enteredCode) {
     localStorage.removeItem('hotera_join_code');
     const requestSaved = await uploadDataToCloud(true);
     if (requestSaved) {
@@ -1627,7 +1638,7 @@ async function saveDeviceCloudAndRequest() {
     }
     return;
   }
-  localStorage.setItem('hotera_join_code', deviceJoinCode);
+  localStorage.setItem('hotera_join_code', enteredCode);
   if (record.status === 'approved') {
     setDeviceStatusText('هذا الجهاز معتمد ويمكنه الدخول ✅', '#34d399');
     return alert('✅ هذا الجهاز معتمد مسبقاً. يمكنك تسجيل الدخول.');
@@ -1637,7 +1648,7 @@ async function saveDeviceCloudAndRequest() {
     return alert('⛔ تم رفض اعتماد هذا الجهاز.');
   }
   if (record.status === 'pending' && record.approvalCodeHash) {
-    const enteredHash = await hoteraHashApprovalCode(deviceJoinCode);
+    const enteredHash = await hoteraHashApprovalCode(enteredCode);
     const expires = record.approvalExpiresAt ? new Date(record.approvalExpiresAt).getTime() > Date.now() : false;
     if (enteredHash === record.approvalCodeHash && expires) {
       record.status='approved'; record.approvedAt=new Date().toISOString(); record.approvedBy='superadmin-code'; delete record.approvalCodeHash; delete record.approvalExpiresAt;
@@ -1791,7 +1802,14 @@ function applyCloudPayload(cloudData) {
       hoteraInvoiceServices[hotelId] = hoteraMergeById(Array.isArray(hoteraInvoiceServices[hotelId]) ? hoteraInvoiceServices[hotelId] : [], remoteServices);
     });
   }
-  if (cloudData.invoiceAdjustments) hoteraInvoiceAdjustments = hoteraMergeById(hoteraInvoiceAdjustments, cloudData.invoiceAdjustments);
+  if (cloudData.invoiceAdjustments && typeof cloudData.invoiceAdjustments === 'object') {
+    Object.entries(cloudData.invoiceAdjustments).forEach(([hotelId, remoteAdjustments]) => {
+      if (!remoteAdjustments || typeof remoteAdjustments !== 'object') return;
+      const localAdjustments = hoteraInvoiceAdjustments[hotelId] && typeof hoteraInvoiceAdjustments[hotelId] === 'object'
+        ? hoteraInvoiceAdjustments[hotelId] : {};
+      hoteraInvoiceAdjustments[hotelId] = {...localAdjustments, ...remoteAdjustments};
+    });
+  }
   if (cloudData.preventiveMaintenance && typeof cloudData.preventiveMaintenance==='object') Object.entries(cloudData.preventiveMaintenance).forEach(([hotelId,list])=>{if(Array.isArray(list))localStorage.setItem(`hotera_preventive_maintenance_${hotelId}`,JSON.stringify(list));});
   if (cloudData.cancelledBookings) cancelledBookingsData = cloudData.cancelledBookings;
   if (cloudData.refundedInvoices) refundedInvoicesData = cloudData.refundedInvoices;
