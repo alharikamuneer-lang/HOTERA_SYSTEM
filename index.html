@@ -1728,6 +1728,47 @@ async function handleDeviceAccess() {
 function hoteraMergeById(localList,remoteList){const map=new Map();(Array.isArray(localList)?localList:[]).forEach(x=>{if(x&&x.id!==undefined)map.set(String(x.id),x)});(Array.isArray(remoteList)?remoteList:[]).forEach(x=>{if(!x||x.id===undefined)return;const key=String(x.id),old=map.get(key);map.set(key,old?{...old,...x}:x)});return [...map.values()]}
 function hoteraMergeCompanies(remoteCompanies){const merged=hoteraMergeById(companiesList,remoteCompanies);merged.forEach(c=>{if(!Array.isArray(c.hotelIds))c.hotelIds=[];c.hotelIds=[...new Set(c.hotelIds.map(Number).filter(id=>hotelsList.some(h=>Number(h.id)===id)))];if(!c.status)c.status='active'});return merged}
 
+function hoteraTrimCloudObjectLists(store, limit) {
+  if (!store || typeof store !== 'object') return;
+  Object.keys(store).forEach(key => {
+    if (Array.isArray(store[key]) && store[key].length > limit) store[key] = store[key].slice(-limit);
+  });
+}
+function hoteraPrepareCloudUploadPayload(maxBytes = 900000) {
+  const payload = JSON.parse(JSON.stringify(buildCloudPayload()));
+  let size = JSON.stringify(payload).length;
+  if (size <= maxBytes) return {payload, size, compacted:false};
+  // JSONBin المجاني يرفض السجلات الكبيرة؛ نحتفظ بالحجوزات والغرف ونقلص السجلات التشغيلية القديمة فقط.
+  hoteraTrimCloudObjectLists(payload.ratings, 120);
+  hoteraTrimCloudObjectLists(payload.transactions, 300);
+  hoteraTrimCloudObjectLists(payload.maintenanceTickets, 200);
+  hoteraTrimCloudObjectLists(payload.shifts, 200);
+  hoteraTrimCloudObjectLists(payload.cancelledBookings, 150);
+  hoteraTrimCloudObjectLists(payload.refundedInvoices, 150);
+  hoteraTrimCloudObjectLists(payload.invoicePayments, 300);
+  hoteraTrimCloudObjectLists(payload.invoiceServices, 300);
+  hoteraTrimCloudObjectLists(payload.expenses, 250);
+  hoteraTrimCloudObjectLists(payload.serviceRequests, 150);
+  if (Array.isArray(payload.customerProfiles) && payload.customerProfiles.length > 250) payload.customerProfiles = payload.customerProfiles.slice(-250);
+  if (Array.isArray(payload.guestAccessTokens) && payload.guestAccessTokens.length > 250) payload.guestAccessTokens = payload.guestAccessTokens.slice(-250);
+  if (payload.customerMemory && typeof payload.customerMemory === 'object') {
+    const entries = Object.entries(payload.customerMemory);
+    if (entries.length > 200) payload.customerMemory = Object.fromEntries(entries.slice(-200));
+  }
+  size = JSON.stringify(payload).length;
+  if (size <= maxBytes) return {payload, size, compacted:true};
+  // تقليص إضافي للسجلات غير الأساسية، دون حذف الغرف أو الحجوزات أو الفواتير المحلية.
+  hoteraTrimCloudObjectLists(payload.transactions, 80);
+  hoteraTrimCloudObjectLists(payload.maintenanceTickets, 80);
+  hoteraTrimCloudObjectLists(payload.shifts, 80);
+  hoteraTrimCloudObjectLists(payload.ratings, 60);
+  hoteraTrimCloudObjectLists(payload.invoicePayments, 120);
+  hoteraTrimCloudObjectLists(payload.invoiceServices, 120);
+  if (Array.isArray(payload.customerProfiles)) payload.customerProfiles = payload.customerProfiles.slice(-100);
+  if (Array.isArray(payload.guestAccessTokens)) payload.guestAccessTokens = payload.guestAccessTokens.slice(-100);
+  size = JSON.stringify(payload).length;
+  return {payload, size, compacted:true};
+}
 function buildCloudPayload() {
   return {
     version: 3,
@@ -1909,9 +1950,13 @@ async function uploadDataToCloud(showError = false) {
   if (!config.url || cloudSyncInProgress) return false;
   cloudSyncInProgress = true;
   try {
+    const prepared = hoteraPrepareCloudUploadPayload();
+    if (prepared.size > 900000) {
+      throw new Error(`حجم البيانات ${Math.ceil(prepared.size / 1024)}KB يتجاوز حد JSONBin المجاني 1MB تقريباً. تم الاحتفاظ بالبيانات محلياً؛ نزّل نسخة احتياطية أو استخدم خادم HOTERA.`);
+    }
     const response = await hoteraCloudFetchWithAuthFallback(hoteraCloudUrlForWrite(config.url), {
       method: 'PUT',
-      body: JSON.stringify(buildCloudPayload())
+      body: JSON.stringify(prepared.payload)
     }, config);
     if (!response.ok) {
       const detail = await hoteraCloudErrorMessage(response);
