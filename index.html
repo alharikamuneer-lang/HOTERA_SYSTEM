@@ -1745,6 +1745,20 @@ function hoteraMergeById(localList,remoteList){
   });
   return [...map.values()];
 }
+function hoteraMergeHotels(remoteHotels){
+  const merged=hoteraMergeById(hotelsList,remoteHotels);
+  const localById=new Map((Array.isArray(hotelsList)?hotelsList:[]).map(h=>[String(h.id),h]));
+  const remoteById=new Map((Array.isArray(remoteHotels)?remoteHotels:[]).map(h=>[String(h.id),h]));
+  merged.forEach(h=>{
+    const local=localById.get(String(h.id))||{}, remote=remoteById.get(String(h.id))||{};
+    // أعداد الهيكل لا تنخفض بسبب نسخة سحابية قديمة؛ الغرف المضافة محلياً تبقى ظاهرة.
+    h.floorsCount=Math.max(Number(local.floorsCount||0),Number(remote.floorsCount||0),Number(h.floorsCount||0),1);
+    h.roomsPerFloor=Math.max(Number(local.roomsPerFloor||0),Number(remote.roomsPerFloor||0),Number(h.roomsPerFloor||0),1);
+    if(h.status===undefined)h.status='active';
+    if(h.isActive===undefined)h.isActive=true;
+  });
+  return merged;
+}
 function hoteraMergeCompanies(remoteCompanies){const merged=hoteraMergeById(companiesList,remoteCompanies);merged.forEach(c=>{if(!Array.isArray(c.hotelIds))c.hotelIds=[];c.hotelIds=[...new Set(c.hotelIds.map(Number).filter(id=>hotelsList.some(h=>Number(h.id)===id)))];if(!c.status)c.status='active'});return merged}
 
 function hoteraTrimCloudObjectLists(store, limit) {
@@ -1830,7 +1844,7 @@ function applyCloudPayload(cloudData) {
   try { hoteraCreateLocalSnapshot('قبل جلب سحابي'); hoteraDetectPayloadConflicts(buildCloudPayload(), cloudData); } catch(e) { console.warn('تعذر تسجيل لقطة أو تعارض',e); }
 
   if (Array.isArray(cloudData.hotels)) {
-    hotelsList = hoteraMergeById(hotelsList, cloudData.hotels);
+    hotelsList = hoteraMergeHotels(cloudData.hotels);
     hotelsList.forEach(h => {
       if (h.status === undefined) h.status = 'active';
       if (h.isActive === undefined) h.isActive = true;
@@ -2930,14 +2944,15 @@ function hoteraSyncHotelRoomStructure(hotelId, floors, roomsPerFloor) {
       if (!existing.has(String(id))) rooms.push({ id, floor, type: slot % 5 === 0 ? 'جناح' : (slot % 2 === 0 ? 'مزدوجة' : 'مفردة'), status: 'vacant', guest: '', phone: '', carType: '', carPlate: '', bookingType: 'فردي', bookingRef: '', maintUser: '', maintIssue: '', checkIn: '', checkOut: '', nights: 0, nightPrice: 0, totalAmount: 0 });
     }
   }
-  const kept = rooms.filter(room => {
-    const floor = Number(room.floor) || Math.floor(Number(room.id) / 100);
-    const slot = Math.abs(Number(room.id)) % 100 || 100;
-    room.floor = floor;
-    const inside = floor <= floors && slot <= roomsPerFloor;
-    return inside || room.status !== 'vacant' || room.bookingRef;
+  // لا نحذف غرفة أضافها المستخدم حتى لو كانت شاغرة أو خارج نطاق الإعداد القديم.
+  // عدد الطوابق والغرف الافتراضي يضيف غرفاً ناقصة فقط، ولا يعتبره مصفاة حذف.
+  rooms.forEach(room => {
+    room.floor = Number(room.floor) || Math.max(1, Math.floor(Number(room.id) / 100));
+    const typeValue=String(room.type||'مفردة');
+    const capacityMap={'مفردة':1,'مزدوجة':2,'ثلاثية':3,'رباعية':4,'خماسية':5,'جناح':5};
+    room.capacity=Number(room.capacity)||capacityMap[typeValue]||1;
   });
-  allRooms[hotelId] = kept;
+  allRooms[hotelId] = rooms;
   const maxFloor = Math.max(floors, ...kept.map(r => Number(r.floor) || Math.floor(Number(r.id) / 100), 0));
   const maxSlot = Math.max(roomsPerFloor, ...kept.map(r => Math.abs(Number(r.id)) % 100 || 0));
   hotel.floorsCount = maxFloor;
@@ -3988,7 +4003,7 @@ function addRoomsBatch(){
   const duplicates=ids.filter(id=>existing.has(String(id)));
   if(duplicates.length) return alert(`لم تتم الإضافة. أرقام الغرف موجودة مسبقاً: ${duplicates.slice(0,8).join('، ')}${duplicates.length>8?' ...':''}`);
   ids.forEach(id=>list.push(createHoteraRoom(id, floor, type)));
-  hotel.floorsCount=Math.max(Number(hotel.floorsCount||0),floor);
+  hotel.floorsCount=Math.max(Number(hotel.floorsCount||0),floor); hotel.updatedAt=new Date().toISOString();
   hotel.roomsPerFloor=Math.max(Number(hotel.roomsPerFloor||0), count, ...list.filter(r => hoteraRoomFloor(r) === floor).map(r => Number(r.id) % 100));
   selectedFloor=floor;
   saveData(); uploadDataToCloud(); render(); renderEditRoomsTable();
@@ -4005,7 +4020,7 @@ function addNewRoom() {
   const floor = Math.max(1, Math.floor(id / 100));
   list.push(createHoteraRoom(id, floor, type));
   const hotel = hotelsList.find(item => item.id === currentHotelId);
-  if (hotel) { hotel.floorsCount = Math.max(Number(hotel.floorsCount || 0), floor); hotel.roomsPerFloor = Math.max(Number(hotel.roomsPerFloor || 0), ...list.filter(r => hoteraRoomFloor(r) === floor).map(r => Number(r.id) % 100)); }
+  if (hotel) { hotel.floorsCount = Math.max(Number(hotel.floorsCount || 0), floor); hotel.updatedAt=new Date().toISOString(); hotel.roomsPerFloor = Math.max(Number(hotel.roomsPerFloor || 0), ...list.filter(r => hoteraRoomFloor(r) === floor).map(r => Number(r.id) % 100)); }
   saveData(); uploadDataToCloud(); renderEditRoomsTable(); render();
 }
 function deleteRoom(idx) {
