@@ -1725,7 +1725,26 @@ async function handleDeviceAccess() {
 }
 
 
-function hoteraMergeById(localList,remoteList){const map=new Map();(Array.isArray(localList)?localList:[]).forEach(x=>{if(x&&x.id!==undefined)map.set(String(x.id),x)});(Array.isArray(remoteList)?remoteList:[]).forEach(x=>{if(!x||x.id===undefined)return;const key=String(x.id),old=map.get(key);map.set(key,old?{...old,...x}:x)});return [...map.values()]}
+function hoteraRecordUpdatedAt(item){
+  if(!item || typeof item!=='object') return 0;
+  const value=item.updatedAt||item.modifiedAt||item.createdAt||item.at||'';
+  const time=Date.parse(value);
+  return Number.isFinite(time)?time:0;
+}
+function hoteraMergeById(localList,remoteList){
+  const map=new Map();
+  (Array.isArray(localList)?localList:[]).forEach(x=>{if(x&&x.id!==undefined)map.set(String(x.id),x)});
+  (Array.isArray(remoteList)?remoteList:[]).forEach(x=>{
+    if(!x||x.id===undefined)return;
+    const key=String(x.id),old=map.get(key);
+    if(!old){map.set(key,x);return;}
+    const localTime=hoteraRecordUpdatedAt(old),remoteTime=hoteraRecordUpdatedAt(x);
+    // لا تسمح لنسخة سحابية أقدم، أو بلا طابع زمني، بإزالة تعديل محلي أحدث.
+    if(localTime && (!remoteTime || remoteTime<localTime)) return;
+    map.set(key,{...old,...x});
+  });
+  return [...map.values()];
+}
 function hoteraMergeCompanies(remoteCompanies){const merged=hoteraMergeById(companiesList,remoteCompanies);merged.forEach(c=>{if(!Array.isArray(c.hotelIds))c.hotelIds=[];c.hotelIds=[...new Set(c.hotelIds.map(Number).filter(id=>hotelsList.some(h=>Number(h.id)===id)))];if(!c.status)c.status='active'});return merged}
 
 function hoteraTrimCloudObjectLists(store, limit) {
@@ -2435,9 +2454,9 @@ function hoteraTodayKey(){return new Date().toISOString().slice(0,10)}
 function hoteraDateNights(start,end){const a=new Date(`${String(start||'')}T00:00:00`),b=new Date(`${String(end||'')}T00:00:00`);const days=Math.ceil((b-a)/86400000);return Number.isFinite(days)&&days>0?days:1}
 function hoteraFrontDeskStatus(room){if(!room)return 'unknown';if(room.checkOutStatus==='due-checkout')return 'checkout-due';if(room.checkInStatus)return room.checkInStatus;if(room.status==='occupied')return String(room.checkIn||'')>hoteraTodayKey()?'scheduled':'checked-in';if(room.lastCheckoutAt)return 'checked-out';return room.status||'vacant'}
 function hoteraStayLog(room,action,details={}){room.stayActionLog=Array.isArray(room.stayActionLog)?room.stayActionLog:[];room.stayActionLog.unshift({action,details,at:new Date().toISOString(),by:currentUsername||'المستخدم الحالي'});room.stayActionLog=room.stayActionLog.slice(0,50)}
-function hoteraMarkRoomCheckoutDue(room,today=hoteraTodayKey()){if(!room||room.status!=='occupied'||!room.bookingRef||!room.checkOut||String(room.checkOut)>today)return false;room.status='cleaning';room.checkOutStatus='due-checkout';room.checkInStatus='checkout-due';room.checkoutDueAt=room.checkoutDueAt||new Date().toISOString();hoteraStayLog(room,'تحويل تلقائي إلى خروج',{checkOut:room.checkOut});return true;}
+function hoteraMarkRoomCheckoutDue(room,today=hoteraTodayKey()){if(!room||room.status!=='occupied'||!room.bookingRef||!room.checkOut||String(room.checkOut)>today)return false;room.status='cleaning';room.checkOutStatus='due-checkout';room.checkInStatus='checkout-due';room.checkoutDueAt=room.checkoutDueAt||new Date().toISOString();room.updatedAt=new Date().toISOString();hoteraStayLog(room,'تحويل تلقائي إلى خروج',{checkOut:room.checkOut});return true;}
 function hoteraAutoMarkDueCheckouts(hotelId=currentHotelId){const rooms=Array.isArray(allRooms?.[hotelId])?allRooms[hotelId]:[],today=hoteraTodayKey();let changed=false;rooms.forEach(room=>{if(hoteraMarkRoomCheckoutDue(room,today))changed=true;});if(changed)saveData();return changed;}
-function hoteraFinalizeRoomAsVacant(room){if(!room)return false;const now=new Date().toISOString(),bookingRef=room.bookingRef||'',guest=room.guest||room.lastGuest||'غير معروف',invoice=(allInvoices[currentHotelId]||[]).find(inv=>String(inv.bookingRef||'')===String(bookingRef));if(invoice&&bookingRef){invoice.stayStatus='checked-out';invoice.checkedOutAt=now;invoice.checkedOutBy=currentUsername||'المستخدم الحالي';invoice.updatedAt=now;hoteraSyncInvoiceFinancialState(invoice);}Object.assign(room,{lastCheckoutAt:room.lastCheckoutAt||now,lastGuest:guest,lastBookingRef:bookingRef,lastCheckOut:room.checkOut||'',status:'vacant',guest:'',phone:'',carType:'',carPlate:'',bookingRef:'',checkIn:'',checkOut:'',checkInStatus:'',checkOutStatus:'',checkoutDueAt:'',checkedInAt:'',checkedInBy:'',paymentStatus:'',paidAmount:0,remainingAmount:0});hoteraStayLog(room,'إتمام تنظيف وإتاحة الغرفة',{bookingRef,guest});return true;}
+function hoteraFinalizeRoomAsVacant(room){if(!room)return false;const now=new Date().toISOString(),bookingRef=room.bookingRef||'',guest=room.guest||room.lastGuest||'غير معروف',invoice=(allInvoices[currentHotelId]||[]).find(inv=>String(inv.bookingRef||'')===String(bookingRef));if(invoice&&bookingRef){invoice.stayStatus='checked-out';invoice.checkedOutAt=now;invoice.checkedOutBy=currentUsername||'المستخدم الحالي';invoice.updatedAt=now;hoteraSyncInvoiceFinancialState(invoice);}Object.assign(room,{lastCheckoutAt:room.lastCheckoutAt||now,updatedAt:now,lastGuest:guest,lastBookingRef:bookingRef,lastCheckOut:room.checkOut||'',status:'vacant',guest:'',phone:'',carType:'',carPlate:'',bookingRef:'',checkIn:'',checkOut:'',checkInStatus:'',checkOutStatus:'',checkoutDueAt:'',checkedInAt:'',checkedInBy:'',paymentStatus:'',paidAmount:0,remainingAmount:0});hoteraStayLog(room,'إتمام تنظيف وإتاحة الغرفة',{bookingRef,guest});return true;}
 function openHoteraFrontDeskModal(){toggleTopSettingsPanel(false);document.getElementById('hoteraFrontDeskModal')?.classList.add('open');renderHoteraFrontDesk();}
 function closeHoteraFrontDeskModal(){document.getElementById('hoteraFrontDeskModal')?.classList.remove('open')}
 function hoteraExtendStay(roomId){
@@ -2722,7 +2741,7 @@ function hoteraRoomSort(a, b) {
   return hoteraRoomFloor(a) - hoteraRoomFloor(b) || Number(a.id || 0) - Number(b.id || 0);
 }
 function createHoteraRoom(id, floor, type) {
-  return { id:Number(id), floor:Number(floor), type:normalizeHoteraRoomType(type), capacity:hoteraRoomCapacity(type), status:'vacant', guest:'', phone:'', carType:'', carPlate:'', bookingType:'فردي', bookingRef:'', maintUser:'', maintIssue:'', nights:1, nightPrice:200, totalAmount:200 };
+  return { id:Number(id), floor:Number(floor), type:normalizeHoteraRoomType(type), capacity:hoteraRoomCapacity(type), updatedAt:new Date().toISOString(), status:'vacant', guest:'', phone:'', carType:'', carPlate:'', bookingType:'فردي', bookingRef:'', maintUser:'', maintIssue:'', nights:1, nightPrice:200, totalAmount:200 };
 }
 
 function generateRoomsForHotel(hotelId, floors, perFloor) {
@@ -3376,7 +3395,7 @@ function hoteraReconcileRoomStatusesFromBookings(hotelId = currentHotelId) {
       if (!room || room.status === 'maintenance') return;
       const wasDifferent = String(room.bookingRef || '') !== String(inv.bookingRef || '');
       if (wasDifferent || room.status !== 'occupied' || room.checkOutStatus === 'due-checkout') {
-        room.status = 'occupied'; room.bookingRef = inv.bookingRef || room.bookingRef || ''; room.guest = inv.guest || room.guest || ''; room.phone = inv.phone || room.phone || ''; room.checkIn = inv.checkIn || room.checkIn || ''; room.checkOut = inv.checkOut || room.checkOut || ''; room.checkInStatus = String(inv.checkIn || room.checkIn || '') > today ? 'scheduled' : 'checked-in'; room.checkOutStatus = ''; room.totalAmount = Number(inv.total || room.totalAmount || 0); changed = true;
+        room.status = 'occupied'; room.updatedAt = new Date().toISOString(); room.bookingRef = inv.bookingRef || room.bookingRef || ''; room.guest = inv.guest || room.guest || ''; room.phone = inv.phone || room.phone || ''; room.checkIn = inv.checkIn || room.checkIn || ''; room.checkOut = inv.checkOut || room.checkOut || ''; room.checkInStatus = String(inv.checkIn || room.checkIn || '') > today ? 'scheduled' : 'checked-in'; room.checkOutStatus = ''; room.totalAmount = Number(inv.total || room.totalAmount || 0); changed = true;
       }
       const financial = hoteraSyncInvoiceFinancialState(inv, hotelId); room.paidAmount = financial.paid; room.remainingAmount = financial.remaining; room.paymentStatus = financial.status;
     });
@@ -4179,17 +4198,18 @@ async function executeNewBooking() {
   if(phone) customerMemory[phone] = { name: guest, guestId, nationality, email, adults, children };
   hoteraUpsertCustomerProfile({name:guest,phone,company:bookingType==='شركة/مجموعات'?guest:'',guestId,nationality,email,bookingRef:editingRef||'pending',checkIn,checkOut,createdBy:currentUsername||'المستخدم الحالي'});
   const bookingRef = editingRef || generateBookingReference();
+  const bookingUpdatedAt = new Date().toISOString();
   previousRooms.filter(r=>!selectedIds.includes(r.id)).forEach(r=>{r.status='vacant';r.guest='';r.phone='';r.bookingRef='';r.checkIn='';r.checkOut='';r.totalAmount=0;});
   const roomsListDetails=[]; let totalGrandAmount=0;
   selectedIds.forEach(roomId=>{
     const target=rooms.find(r=>r.id===roomId); if(!target) return;
-    const priorCheckInStatus=target.checkInStatus; Object.assign(target,{status:'occupied',guest,phone,guestId,nationality,email,adults,children,paymentMethod,paymentStatus,paidAmount,remainingAmount,bookingNotes,carType,carPlate,bookingType,bookingRef,nights,nightPrice,baseNightPrice,pricingSource,contractDiscount,checkIn,checkOut,totalAmount:nights*nightPrice,staffName:currentUsername,bookingCreatedBy,bookingUpdatedBy,bookingPurpose,bookingSource,companyContractId,checkInStatus:priorCheckInStatus||(checkIn>new Date().toISOString().slice(0,10)?'scheduled':'checked-in'),checkedInAt:target.checkedInAt||((checkIn<=new Date().toISOString().slice(0,10))?new Date().toISOString():''),checkedInBy:target.checkedInBy||((checkIn<=new Date().toISOString().slice(0,10))?(currentUsername||'المستخدم الحالي'):'')});
+    const priorCheckInStatus=target.checkInStatus; Object.assign(target,{status:'occupied',guest,phone,guestId,nationality,email,adults,children,paymentMethod,paymentStatus,paidAmount,remainingAmount,bookingNotes,carType,carPlate,bookingType,bookingRef,nights,nightPrice,baseNightPrice,pricingSource,contractDiscount,checkIn,checkOut,totalAmount:nights*nightPrice,staffName:currentUsername,bookingCreatedBy,bookingUpdatedBy,bookingPurpose,bookingSource,companyContractId,updatedAt:bookingUpdatedAt,checkInStatus:priorCheckInStatus||(checkIn>new Date().toISOString().slice(0,10)?'scheduled':'checked-in'),checkedInAt:target.checkedInAt||((checkIn<=new Date().toISOString().slice(0,10))?new Date().toISOString():''),checkedInBy:target.checkedInBy||((checkIn<=new Date().toISOString().slice(0,10))?(currentUsername||'المستخدم الحالي'):'')});
     roomsListDetails.push({id:target.id,type:target.type,nights,price:nightPrice}); totalGrandAmount += nights*nightPrice;
   });
   if(!allInvoices || typeof allInvoices!=='object') allInvoices={};
   if(!Array.isArray(allInvoices[currentHotelId])) allInvoices[currentHotelId]=[];
   let unifiedInvoice = allInvoices[currentHotelId].find(i=>i.bookingRef===bookingRef);
-  const invoiceData={bookingRef,room:roomsListDetails[0]?.id||'مجموعة',roomsList:roomsListDetails,guest,phone,guestId,nationality,email,adults,children,paymentMethod,paymentStatus,paidAmount,remainingAmount,bookingNotes,carType,carPlate,bookingType,nights,nightPrice,baseNightPrice,pricingSource,contractDiscount,bookingPurpose,bookingSource,companyContractId,total:totalGrandAmount,date:checkIn,checkIn,checkOut,status:'confirmed',staffName:currentUsername,bookingCreatedBy,bookingUpdatedBy};
+  const invoiceData={bookingRef,room:roomsListDetails[0]?.id||'مجموعة',roomsList:roomsListDetails,guest,phone,guestId,nationality,email,adults,children,paymentMethod,paymentStatus,paidAmount,remainingAmount,bookingNotes,carType,carPlate,bookingType,nights,nightPrice,baseNightPrice,pricingSource,contractDiscount,bookingPurpose,bookingSource,companyContractId,updatedAt:bookingUpdatedAt,total:totalGrandAmount,date:checkIn,checkIn,checkOut,status:'confirmed',staffName:currentUsername,bookingCreatedBy,bookingUpdatedBy};
   if(unifiedInvoice) Object.assign(unifiedInvoice,invoiceData); else { unifiedInvoice={id:`INV-${Math.floor(Math.random()*9000+1000)}`,...invoiceData}; allInvoices[currentHotelId].unshift(unifiedInvoice); }
   if(typeof hoteraInvoicePayments!=='object'||!hoteraInvoicePayments) hoteraInvoicePayments={};
   if(!Array.isArray(hoteraInvoicePayments[currentHotelId])) hoteraInvoicePayments[currentHotelId]=[];
