@@ -787,8 +787,8 @@ body:before{content:'';position:fixed;inset:0;z-index:-1;background:radial-gradi
       </select>
     </div>
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-top:8px;" id="trialDaysContainerDiv">
-      <input type="number" id="newHotelTrialDays" class="form-input" placeholder="عدد أيام التجربة" value="14" min="1" style="margin-bottom:0;">
-      <div></div>
+      <div><label style="font-size:9px;color:var(--text-muted);display:block;margin-bottom:3px;">مدة الاشتراك بالأيام (رقم):</label><input type="number" id="newHotelTrialDays" class="form-input" placeholder="مثال: 14 أو 30 أو 365" value="14" min="1" max="3650" style="margin-bottom:0;"></div>
+      <small id="subscriptionDaysHint" style="color:#94a3b8;font-size:9px;line-height:1.6;align-self:center;">اكتب المدة بالأرقام. الشهري 30 يومًا والسنوي 365 يومًا.</small>
     </div>
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; margin-top:8px;">
       <input type="number" id="newHotelFloorsCount" class="form-input" placeholder="عدد الطوابق" value="3" min="1" max="100" style="margin-bottom:0;">
@@ -1840,11 +1840,29 @@ function buildCloudPayload() {
   };
 }
 
+function ensureHoteraHotelDataIntegrity(){
+  if(!Array.isArray(hotelsList)||!hotelsList.length)return false;
+  hotelsList.forEach(h=>{
+    if(!h||h.id===undefined)return;
+    h.status=h.status||'active'; h.isActive=h.isActive!==false;
+    h.floorsCount=Math.max(1,Number(h.floorsCount)||1); h.roomsPerFloor=Math.max(1,Number(h.roomsPerFloor)||1);
+    if(!Array.isArray(allRooms[h.id]))allRooms[h.id]=[];
+    if(!Array.isArray(allInvoices[h.id]))allInvoices[h.id]=[];
+    if(!Array.isArray(hoteraInvoicePayments[h.id]))hoteraInvoicePayments[h.id]=[];
+    if(!Array.isArray(hoteraInvoiceServices[h.id]))hoteraInvoiceServices[h.id]=[];
+    if(!Array.isArray(cancelledBookingsData[h.id]))cancelledBookingsData[h.id]=[];
+    if(!Array.isArray(refundedInvoicesData[h.id]))refundedInvoicesData[h.id]=[];
+    if(typeof hoteraSyncHotelRoomStructure==='function')hoteraSyncHotelRoomStructure(h.id,h.floorsCount,h.roomsPerFloor);
+  });
+  return true;
+}
+
 function applyCloudPayload(cloudData) {
   if (!cloudData || typeof cloudData !== 'object') return false;
   try { hoteraCreateLocalSnapshot('قبل جلب سحابي'); hoteraDetectPayloadConflicts(buildCloudPayload(), cloudData); } catch(e) { console.warn('تعذر تسجيل لقطة أو تعارض',e); }
 
-  if (Array.isArray(cloudData.hotels)) {
+  // لا تعتبر قائمة فنادق سحابية فارغة مصدرًا صالحًا لاستبدال الحالة المحلية.
+  if (Array.isArray(cloudData.hotels) && cloudData.hotels.length) {
     hotelsList = hoteraMergeHotels(cloudData.hotels);
     hotelsList.forEach(h => {
       if (h.status === undefined) h.status = 'active';
@@ -2762,6 +2780,7 @@ hotelsList.forEach(h => {
   if (!allRatings[h.id]) allRatings[h.id] = [{guest: "عادل الحربي", room: "101", stars: 5, comment: "إقامة رائعة ونظافة ممتازة"}];
   hoteraSyncHotelRoomStructure(h.id, h.floorsCount, h.roomsPerFloor);
 });
+ensureHoteraHotelDataIntegrity();
 saveData();
 
 function generateBookingReference() { return `BKG-${Math.floor(1000 + Math.random() * 9000)}`; }
@@ -2881,11 +2900,14 @@ function saveData() {
 function initLoginHotelDropdown() {
   const select = document.getElementById('loginHotelSelect');
   if(!select) return;
+  if(typeof ensureHoteraHotelDataIntegrity==='function') ensureHoteraHotelDataIntegrity();
+  hotelsList = Array.isArray(hotelsList) ? hotelsList.filter(Boolean) : [];
   select.innerHTML = '';
+  if(!hotelsList.length){ const empty=document.createElement('option'); empty.value=''; empty.textContent='لا توجد منشآت محفوظة على هذا الجهاز'; empty.disabled=true; empty.selected=true; select.appendChild(empty); }
   hotelsList.forEach(h => {
     const opt = document.createElement('option');
     opt.value = h.id;
-    opt.innerText = `${h.name} (${h.city}) ${h.status === 'suspended' ? '[موقوف]' : ''}`;
+    opt.innerText = `${h.name || 'منشأة بدون اسم'} (${h.city || 'بدون مدينة'}) · ${hoteraSubscriptionLabel(h)} ${h.status === 'suspended' ? '[موقوف]' : ''}`;
     select.appendChild(opt);
   });
   updateLoginRoleOptions();
@@ -2951,9 +2973,10 @@ function togglePinCodeField() {
 
 function hoteraSubscriptionLabel(hotel) {
   if (!hotel) return 'غير محدد';
-  if (hotel.subType === 'yearly') return 'سنوي';
-  if (hotel.subType === 'monthly') return 'شهري';
-  return `تجريبي (${Math.max(1, Number(hotel.trialDays || 14))} يوم)`;
+  const days = Math.max(1, Number(hotel.subscriptionDays || (hotel.subType === 'yearly' ? 365 : hotel.subType === 'monthly' ? 30 : hotel.trialDays || 14)));
+  if (hotel.subType === 'yearly') return `سنوي (${days} يوم)`;
+  if (hotel.subType === 'monthly') return `شهري (${days} يوم)`;
+  return `تجريبي (${days} يوم)`;
 }
 
 function hoteraSubscriptionExpiry(type, trialDays, baseDate = new Date()) {
@@ -3174,11 +3197,13 @@ function saveAboutViewSettings() {
 }
 
 function toggleSubFields() {
-  const subType = document.getElementById("newHotelSubType").value;
+  const subType = document.getElementById("newHotelSubType")?.value || 'trial';
   const trialDiv = document.getElementById("trialDaysContainerDiv");
-  trialDiv.style.display = subType === "trial" ? "grid" : "none";
   const trialInput = document.getElementById('newHotelTrialDays');
-  if (trialInput) trialInput.disabled = subType !== 'trial';
+  const hint = document.getElementById('subscriptionDaysHint');
+  if (trialDiv) trialDiv.style.display = 'grid';
+  if (trialInput) { trialInput.disabled = false; if (!trialInput.value || Number(trialInput.value) < 1) trialInput.value = subType === 'monthly' ? 30 : subType === 'yearly' ? 365 : 14; }
+  if (hint) hint.textContent = subType === 'monthly' ? 'المدة الافتراضية 30 يومًا ويمكن تعديلها.' : subType === 'yearly' ? 'المدة الافتراضية 365 يومًا ويمكن تعديلها.' : 'اكتب مدة التجربة بالأيام، مثل 14.';
 }
 
 function addNewHotelFacility() {
@@ -3186,14 +3211,15 @@ function addNewHotelFacility() {
   const cr = document.getElementById('newHotelCR').value.trim();
   const city = document.getElementById('newHotelCity').value.trim();
   const subType = document.getElementById('newHotelSubType').value;
-  const trialDays = parseInt(document.getElementById('newHotelTrialDays').value) || 14;
+  const subscriptionDays = Math.max(1, Math.min(3650, parseInt(document.getElementById('newHotelTrialDays')?.value, 10) || 14));
+  const trialDays = subscriptionDays;
   const floorsCount = Math.max(1, Math.min(100, parseInt(document.getElementById('newHotelFloorsCount')?.value) || 3));
   const roomsPerFloor = Math.max(1, Math.min(500, parseInt(document.getElementById('newHotelRoomsPerFloor')?.value) || 10));
   const pin = document.getElementById('newHotelManagerPin').value.trim() || "1234";
   const housePin = document.getElementById('newHotelHousePin').value.trim() || "0000";
   if(!name || !cr) return alert("الرجاء إدخال اسم الفندق ورقم السجل!");
 
-  const expiryDate = hoteraSubscriptionExpiry(subType, trialDays);
+  const expiryDate = hoteraSubscriptionExpiry('custom', subscriptionDays);
 
   const newId = hotelsList.length > 0 ? Math.max(...hotelsList.map(h => h.id)) + 1 : 1;
   hotelsList.push({ 
@@ -3202,7 +3228,8 @@ function addNewHotelFacility() {
     cr, 
     city: city || 'المملكة العربية السعودية', 
     subType, 
-    trialDays, 
+    trialDays,
+    subscriptionDays,
     expiryDate: expiryDate.toISOString(),
     isActive: true,
     managerPin: pin, 
@@ -3231,13 +3258,12 @@ function editHotelSubscription(hotelId) {
   if (type === null) return;
   const normalized = String(type).trim().toLowerCase();
   if (!['trial', 'monthly', 'yearly'].includes(normalized)) return alert('نوع الاشتراك غير صحيح. استخدم trial أو monthly أو yearly.');
-  let trialDays = Number(hotel.trialDays || 14);
-  if (normalized === 'trial') {
-    trialDays = Math.max(1, Number(prompt('عدد أيام الفترة التجريبية:', String(trialDays)) || trialDays));
-  }
+  const defaultDays = normalized === 'monthly' ? 30 : normalized === 'yearly' ? 365 : Number(hotel.subscriptionDays || hotel.trialDays || 14);
+  const subscriptionDays = Math.max(1, Math.min(3650, Number(prompt('اكتب مدة الاشتراك بالأيام (رقم فقط):', String(defaultDays)) || defaultDays)));
   hotel.subType = normalized;
-  hotel.trialDays = trialDays;
-  hotel.expiryDate = hoteraSubscriptionExpiry(normalized, trialDays).toISOString();
+  hotel.trialDays = subscriptionDays;
+  hotel.subscriptionDays = subscriptionDays;
+  hotel.expiryDate = hoteraSubscriptionExpiry('custom', subscriptionDays).toISOString();
   hotel.status = 'active';
   hotel.isActive = true;
   saveData();
