@@ -4801,6 +4801,8 @@ function switchTab(tabId, btn) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+  const welcomeLoginOverlay=document.getElementById('loginOverlay');
+  if(welcomeLoginOverlay) welcomeLoginOverlay.style.display='flex';
   applyHoteraWelcomeMedia();
   const luxuryEntry=document.getElementById('luxuryEntryScreen');
   const hasWelcomeIntro=!!hoteraWelcomeReadSavedMedia();
