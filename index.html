@@ -1259,6 +1259,17 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
   </div>
 </div>
 
+<div class="modal" id="hotelSubscriptionModal">
+  <div class="modal-body" style="max-width:430px">
+    <h3 style="color:var(--accent-solid);margin-bottom:8px">🔐 إدارة اشتراك الفندق</h3>
+    <p id="subscriptionHotelNameDisplay" style="font-size:10px;color:#94a3b8;margin:0 0 9px"></p>
+    <label style="font-size:9px;color:var(--text-muted)">حالة الاشتراك:</label>
+    <select id="hotelSubscriptionStatus" class="form-select"><option value="active">تنشيط الاشتراك</option><option value="suspended">إيقاف الاشتراك</option></select>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px"><div><label style="font-size:9px;color:var(--text-muted)">تاريخ بداية الاشتراك:</label><input type="date" id="hotelSubscriptionStart" class="form-input"></div><div><label style="font-size:9px;color:var(--text-muted)">تاريخ انتهاء الاشتراك:</label><input type="date" id="hotelSubscriptionEnd" class="form-input"></div></div>
+    <small style="display:block;color:#94a3b8;font-size:9px;line-height:1.6;margin:6px 0 10px">يمكن تعديل الفترة دون حذف الغرف أو الحجوزات أو الفواتير السابقة.</small>
+    <button class="btn btn-gold" onclick="saveHotelSubscriptionSettings()">حفظ حالة وفترة الاشتراك 💾</button><button class="btn btn-gray" onclick="closeHotelSubscriptionModal()">إغلاق</button>
+  </div>
+</div>
 <div class="modal" id="officialInvoiceModal">
   <div class="modal-body" style="max-width: 520px; padding: 12px;">
     <div class="invoice-card-official">
@@ -1302,7 +1313,7 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
       <div style="display:flex; justify-content:space-between; align-items:center; background:#fffbeb; padding:10px; border-radius:8px; border:1px solid #f59e0b; margin-top:8px;">
         <span style="font-size:11px; color:#92400e; font-weight:bold;" id="invLabelGrandTotal">الإجمالي النهائي:</span>
         <strong id="invGrandTotal" style="color:#b45309; font-size:15px; font-weight:900;">0.00 ر.س</strong>
-      </div><div id="hoteraInvoiceExpandedSummary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:7px;font-size:10px;color:#1e293b"><div style="background:#eff6ff;padding:7px;border-radius:6px"><small>الخدمات الإضافية</small><br><strong id="invServicesTotal">0.00 ر.س</strong></div><div style="background:#ecfdf5;padding:7px;border-radius:6px"><small>المدفوع</small><br><strong id="invPaidTotal">0.00 ر.س</strong></div><div style="background:#fff7ed;padding:7px;border-radius:6px"><small>المتبقي</small><br><strong id="invRemainingTotal">0.00 ر.س</strong></div></div><div id="hoteraInvoiceServicesList" style="font-size:9px;color:#64748b;margin-top:6px"></div><div id="hoteraInvoicePaymentPanel" style="margin-top:9px;padding:9px;border:1px solid #bbf7d0;background:#f0fdf4;border-radius:8px;color:#1e293b"><div style="display:flex;justify-content:space-between;align-items:center;gap:6px"><strong style="font-size:11px;color:#047857">💳 السداد من هذه الفاتورة</strong><span id="invPaymentStatus" style="font-size:9px;text-align:left"></span></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:7px"><input id="invoicePaymentAmount" class="form-input" type="number" min="0" step="0.01" placeholder="مبلغ الدفعة" style="margin:0;background:white"><select id="invoicePaymentMethodInput" class="form-select" style="margin:0;background:white"><option>نقدي</option><option>بطاقة</option><option>تحويل بنكي</option><option>رابط دفع</option></select></div><button class="btn btn-green" type="button" style="margin:7px 0 4px;width:100%" onclick="addInvoicePaymentFromActive()">تسجيل الدفعة واحتساب المتبقي تلقائيًا</button><div style="font-size:9px;font-weight:bold;color:#475569;margin-top:5px">سجل الدفعات على الفاتورة</div><div id="invPaymentHistory" style="font-size:9px;max-height:115px;overflow:auto;margin-top:3px"></div></div><div class="invoice-footer-note">فاتورة صادرة من نظام HOTERA لإدارة المنشآت الفندقية.<br>نشكركم لاختياركم الفندق ونتمنى لكم إقامة سعيدة.</div>
+      </div><div id="hoteraInvoiceExpandedSummary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:7px;font-size:10px;color:#1e293b"><div style="background:#eff6ff;padding:7px;border-radius:6px"><small>الخدمات الإضافية</small><br><strong id="invServicesTotal">0.00 ر.س</strong></div><div style="background:#ecfdf5;padding:7px;border-radius:6px"><small>المدفوع</small><br><strong id="invPaidTotal">0.00 ر.س</strong></div><div style="background:#fff7ed;padding:7px;border-radius:6px"><small>المتبقي</small><br><strong id="invRemainingTotal">0.00 ر.س</strong></div></div><div id="hoteraInvoiceServicesList" style="font-size:9px;color:#64748b;margin-top:6px"></div><div id="hoteraInvoicePaymentPanel" style="margin-top:9px;padding:9px;border:1px solid #bbf7d0;background:#f0fdf4;border-radius:8px;color:#1e293b"><div style="display:flex;justify-content:space-between;align-items:center;gap:6px"><strong style="font-size:11px;color:#047857">💳 السداد من هذه الفاتورة</strong><span id="invPaymentStatus" style="font-size:9px;text-align:left"></span></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:7px"><input id="invoicePaymentAmount" class="form-input" type="number" min="0" step="0.01" placeholder="مبلغ الدفعة" style="margin:0;background:white"><select id="invoicePaymentMethodInput" class="form-select" style="margin:0;background:white"><option>نقدي</option><option>بطاقة</option><option>تحويل بنكي</option><option>رابط دفع</option></select></div><button class="btn btn-green" type="button" style="margin:7px 0 4px;width:100%" onclick="addInvoicePaymentFromActive()">تسجيل الدفعة واحتساب المتبقي تلقائيًا</button><div style="font-size:9px;font-weight:bold;color:#475569;margin-top:5px">سجل الدفعات على الفاتورة</div><div id="invPaymentHistory" style="font-size:9px;max-height:115px;overflow:auto;margin-top:3px"></div></div><div id="hoteraInvoiceAuditLog" style="margin-top:9px;padding:8px;border:1px solid #dbeafe;background:#eff6ff;border-radius:8px;color:#1e293b;font-size:9px"><strong style="color:#1d4ed8">📝 سجل تعديلات الحجز والفاتورة</strong><div style="margin-top:5px">لا توجد تعديلات مسجلة.</div></div><div class="invoice-footer-note">فاتورة صادرة من نظام HOTERA لإدارة المنشآت الفندقية.<br>نشكركم لاختياركم الفندق ونتمنى لكم إقامة سعيدة.</div>
     </div>
     <div style="display:flex; gap:6px; margin-top:10px;">
       <button class="btn btn-gold" style="flex:1; margin-top:0;" onclick="window.print()" id="btnPrintInv">طباعة 🖨️</button>
@@ -1382,7 +1393,7 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
       <div><label style="font-size:9px; color:var(--text-muted);" id="lblBkgOutDate">تاريخ الخروج:</label><input type="date" id="bookingCheckOut" class="form-input" onchange="calculateBookingDays()"></div>
     </div>
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px;">
-      <div><label style="font-size:9px; color:var(--text-muted);" id="lblBkgNights">عدد الليالي:</label><input type="number" id="bookingNightsInput" class="form-input" value="1" oninput="calculateTotalFromManual()"></div>
+      <div><label style="font-size:9px; color:var(--text-muted);" id="lblBkgNights">عدد الليالي:</label><input type="number" id="bookingNightsInput" class="form-input" value="1" readonly aria-readonly="true" title="يتم احتساب الليالي تلقائيًا من تاريخي الدخول والخروج" oninput="calculateTotalFromManual()"></div>
       <div><label style="font-size:9px; color:var(--text-muted);" id="lblBkgNightPrice">سعر الليلة (لكل غرفة):</label><input type="number" id="bookingNightPriceInput" class="form-input" value="200" oninput="calculateTotalFromManual()"></div>
     </div>
     <div style="display:flex;gap:6px;align-items:end;margin-top:6px;margin-bottom:6px"><div style="flex:1"><label style="font-size:9px;color:var(--text-muted)">السعر الموسمي (اختياري):</label><select id="bookingSeasonalRateSelect" class="form-select" style="margin-bottom:0" onchange="applySelectedBookingSeasonalRate()"><option value="">استخدام السعر الأساسي</option></select></div><small id="bookingSeasonalRateHint" style="font-size:8px;color:#7dd3fc;max-width:170px">لا يتم تطبيق أي سعر تلقائياً.</small></div>
@@ -2771,9 +2782,9 @@ function hoteraExtendStay(roomId){
   bookingRooms.forEach(item=>{const previous=item.checkOut;item.originalCheckOut=item.originalCheckOut||previous;item.checkOut=next;item.nights=newNights;item.totalAmount=newNights*Math.max(0,Number(item.nightPrice||0));item.status='occupied';item.checkOutStatus='';item.checkInStatus=String(item.checkIn||'')>hoteraTodayKey()?'scheduled':'checked-in';item.extendedAt=now;item.extendedBy=currentUsername||'المستخدم الحالي';item.billingReviewRequired=false;hoteraStayLog(item,'تمديد إقامة',{from:previous,to:next,nights:newNights});});
   const inv=(allInvoices[currentHotelId]||[]).find(i=>String(i.bookingRef||'')===String(room.bookingRef));
   if(inv){const originalRows=Array.isArray(inv.roomsList)&&inv.roomsList.length?inv.roomsList:bookingRooms.map(item=>({id:item.id,type:item.type,price:item.nightPrice}));inv.roomsList=originalRows.map(row=>{const current=bookingRooms.find(item=>Number(item.id)===Number(row.id));const price=Math.max(0,Number(current?.nightPrice??row.price??inv.nightPrice??0));return {...row,nights:newNights,price};});inv.room=inv.roomsList[0]?.id||inv.room;inv.checkOut=next;inv.nights=newNights;inv.nightPrice=Number(inv.roomsList[0]?.price||inv.nightPrice||0);inv.total=inv.roomsList.reduce((sum,row)=>sum+newNights*Math.max(0,Number(row.price||0)),0);inv.status='confirmed';inv.stayStatus='active';inv.checkOutStatus='';inv.billingReviewRequired=false;inv.extendedAt=now;inv.extendedBy=currentUsername||'المستخدم الحالي';inv.updatedAt=now;hoteraSyncInvoiceFinancialState(inv);}
-  recordHoteraAudit('تمديد إقامة',{roomId:room.id,bookingRef:room.bookingRef,from:old,to:next,nights:newNights,invoiceTotal:inv?inv.total:null});saveData();uploadDataToCloud();renderHoteraFrontDesk();render();alert(`✅ تم تمديد الإقامة حتى ${next}. بقيت الغرفة بحالة «محجوزة»، وتم تحديث عدد الليالي وإجمالي الفاتورة والرصيد المتبقي تلقائيًا.`);
+  recordHoteraAudit('تمديد إقامة',{roomId:room.id,bookingRef:room.bookingRef,from:old,to:next,nights:newNights,invoiceTotal:inv?inv.total:null});if(inv)hoteraAppendBookingAudit(room.bookingRef,[`تاريخ الخروج: ${old||'—'} ← ${next}`,`عدد الليالي: ${newNights}`]);saveData();uploadDataToCloud();renderHoteraFrontDesk();render();alert(`✅ تم تمديد الإقامة حتى ${next}. بقيت الغرفة بحالة «محجوزة»، وتم تحديث عدد الليالي وإجمالي الفاتورة والرصيد المتبقي تلقائيًا.`);
 }
-function hoteraChangeRoom(roomId){if(!hoteraRequirePermission('booking'))return;const rooms=Array.isArray(allRooms?.[currentHotelId])?allRooms[currentHotelId]:[];const room=rooms.find(r=>String(r.id)===String(roomId));if(!room||!room.bookingRef)return;const choices=rooms.filter(r=>r.status==='vacant'&&!r.bookingRef).map(r=>r.id);if(!choices.length)return alert('لا توجد غرفة شاغرة متاحة للنقل.');const targetId=prompt(`أدخل رقم الغرفة الجديدة. المتاح: ${choices.join(', ')}`,String(choices[0]));const target=rooms.find(r=>String(r.id)===String(targetId));if(!target||target.status!=='vacant'||target.bookingRef)return alert('الغرفة الجديدة غير متاحة. لم يتم تغيير شيء.');const snapshot={...room};const oldId=room.id;const oldPrice=Math.max(0,Number(snapshot.nightPrice||0)||0);const entered=prompt(`سعر الليلة الجديد للغرفة ${target.id} (السابق ${oldPrice.toFixed(2)} ر.س):`,String(oldPrice));if(entered===null)return;const newPrice=Math.max(0,Number(entered)||0);const nights=Math.max(1,Number(snapshot.nights||1)||1);const priceDifference=(newPrice-oldPrice)*nights;const snapshotTotal=Number(snapshot.totalAmount||snapshot.total||oldPrice*nights)||0;const newTotal=newPrice*nights;const invoice=(allInvoices[currentHotelId]||[]).find(i=>String(i.bookingRef)===String(snapshot.bookingRef));const oldInvoiceTotal=invoice?Number(invoice.total||snapshotTotal):snapshotTotal;const newInvoiceTotal=Math.max(0,oldInvoiceTotal+priceDifference);target.bookingRef=snapshot.bookingRef;target.guest=snapshot.guest;target.phone=snapshot.phone;target.guestId=snapshot.guestId;target.nationality=snapshot.nationality;target.email=snapshot.email;target.adults=snapshot.adults;target.children=snapshot.children;target.paymentMethod=snapshot.paymentMethod;target.paymentStatus=snapshot.paymentStatus;target.paidAmount=snapshot.paidAmount;target.remainingAmount=snapshot.remainingAmount;target.bookingNotes=snapshot.bookingNotes;target.carType=snapshot.carType;target.carPlate=snapshot.carPlate;target.bookingType=snapshot.bookingType;target.nights=nights;target.nightPrice=newPrice;target.totalAmount=newTotal;target.staffName=snapshot.staffName;target.bookingCreatedBy=snapshot.bookingCreatedBy;target.bookingUpdatedBy=currentUsername||'المستخدم الحالي';target.bookingPurpose=snapshot.bookingPurpose;target.bookingSource=snapshot.bookingSource;target.checkIn=snapshot.checkIn;target.checkOut=snapshot.checkOut;target.checkInStatus=snapshot.checkInStatus;target.checkedInAt=snapshot.checkedInAt;target.checkedInBy=snapshot.checkedInBy;target.roomChangeHistory=Array.isArray(snapshot.roomChangeHistory)?snapshot.roomChangeHistory:[];target.roomChangeHistory.unshift({from:oldId,to:target.id,at:new Date().toISOString(),by:currentUsername||'المستخدم الحالي',oldNightPrice:oldPrice,newNightPrice:newPrice,nights,priceDifference});if(invoice){invoice.total=newInvoiceTotal;invoice.nightPrice=newPrice;invoice.room=target.id;invoice.roomChangeAdjustments=Array.isArray(invoice.roomChangeAdjustments)?invoice.roomChangeAdjustments:[];invoice.roomChangeAdjustments.unshift({from:oldId,to:target.id,at:new Date().toISOString(),oldNightPrice:oldPrice,newNightPrice:newPrice,nights,priceDifference,by:currentUsername||'المستخدم الحالي'});invoice.updatedAt=new Date().toISOString()}room.status='cleaning';room.lastRoomChangeTo=target.id;room.lastRoomChangeAt=new Date().toISOString();room.guest='';room.phone='';room.bookingRef='';room.checkIn='';room.checkOut='';room.checkInStatus='';room.checkedInAt='';recordHoteraAudit('تغيير غرفة مع تسوية سعر',{bookingRef:target.bookingRef,from:oldId,to:target.id,oldNightPrice:oldPrice,newNightPrice:newPrice,nights,priceDifference,newInvoiceTotal});saveData();uploadDataToCloud();renderHoteraFrontDesk();render();alert(`✅ تم نقل الحجز إلى الغرفة ${target.id}. فرق السعر: ${priceDifference>=0?'+':''}${priceDifference.toFixed(2)} ر.س.`)}
+function hoteraChangeRoom(roomId){if(!hoteraRequirePermission('booking'))return;const rooms=Array.isArray(allRooms?.[currentHotelId])?allRooms[currentHotelId]:[];const room=rooms.find(r=>String(r.id)===String(roomId));if(!room||!room.bookingRef)return;const choices=rooms.filter(r=>r.status==='vacant'&&!r.bookingRef).map(r=>r.id);if(!choices.length)return alert('لا توجد غرفة شاغرة متاحة للنقل.');const targetId=prompt(`أدخل رقم الغرفة الجديدة. المتاح: ${choices.join(', ')}`,String(choices[0]));const target=rooms.find(r=>String(r.id)===String(targetId));if(!target||target.status!=='vacant'||target.bookingRef)return alert('الغرفة الجديدة غير متاحة. لم يتم تغيير شيء.');const snapshot={...room};const oldId=room.id;const oldPrice=Math.max(0,Number(snapshot.nightPrice||0)||0);const entered=prompt(`سعر الليلة الجديد للغرفة ${target.id} (السابق ${oldPrice.toFixed(2)} ر.س):`,String(oldPrice));if(entered===null)return;const newPrice=Math.max(0,Number(entered)||0);const nights=Math.max(1,Number(snapshot.nights||1)||1);const priceDifference=(newPrice-oldPrice)*nights;const snapshotTotal=Number(snapshot.totalAmount||snapshot.total||oldPrice*nights)||0;const newTotal=newPrice*nights;const invoice=(allInvoices[currentHotelId]||[]).find(i=>String(i.bookingRef)===String(snapshot.bookingRef));const oldInvoiceTotal=invoice?Number(invoice.total||snapshotTotal):snapshotTotal;const newInvoiceTotal=Math.max(0,oldInvoiceTotal+priceDifference);target.bookingRef=snapshot.bookingRef;target.guest=snapshot.guest;target.phone=snapshot.phone;target.guestId=snapshot.guestId;target.nationality=snapshot.nationality;target.email=snapshot.email;target.adults=snapshot.adults;target.children=snapshot.children;target.paymentMethod=snapshot.paymentMethod;target.paymentStatus=snapshot.paymentStatus;target.paidAmount=snapshot.paidAmount;target.remainingAmount=snapshot.remainingAmount;target.bookingNotes=snapshot.bookingNotes;target.carType=snapshot.carType;target.carPlate=snapshot.carPlate;target.bookingType=snapshot.bookingType;target.nights=nights;target.nightPrice=newPrice;target.totalAmount=newTotal;target.staffName=snapshot.staffName;target.bookingCreatedBy=snapshot.bookingCreatedBy;target.bookingUpdatedBy=currentUsername||'المستخدم الحالي';target.bookingPurpose=snapshot.bookingPurpose;target.bookingSource=snapshot.bookingSource;target.checkIn=snapshot.checkIn;target.checkOut=snapshot.checkOut;target.checkInStatus=snapshot.checkInStatus;target.checkedInAt=snapshot.checkedInAt;target.checkedInBy=snapshot.checkedInBy;target.roomChangeHistory=Array.isArray(snapshot.roomChangeHistory)?snapshot.roomChangeHistory:[];target.roomChangeHistory.unshift({from:oldId,to:target.id,at:new Date().toISOString(),by:currentUsername||'المستخدم الحالي',oldNightPrice:oldPrice,newNightPrice:newPrice,nights,priceDifference});if(invoice){invoice.total=newInvoiceTotal;invoice.nightPrice=newPrice;invoice.room=target.id;invoice.roomsList=Array.isArray(invoice.roomsList)&&invoice.roomsList.length?invoice.roomsList.map(row=>String(row.id)===String(oldId)?{...row,id:target.id,type:target.type,price:newPrice,nights}:row):[{id:target.id,type:target.type,price:newPrice,nights}];invoice.roomChangeAdjustments=Array.isArray(invoice.roomChangeAdjustments)?invoice.roomChangeAdjustments:[];invoice.roomChangeAdjustments.unshift({from:oldId,to:target.id,at:new Date().toISOString(),oldNightPrice:oldPrice,newNightPrice:newPrice,nights,priceDifference,by:currentUsername||'المستخدم الحالي'});invoice.updatedAt=new Date().toISOString();hoteraAppendBookingAudit(snapshot.bookingRef,[`تغيير الغرفة: ${oldId} ← ${target.id}`,`سعر الليلة: ${oldPrice.toFixed(2)} ← ${newPrice.toFixed(2)} ر.س`]);}room.status='cleaning';room.lastRoomChangeTo=target.id;room.lastRoomChangeAt=new Date().toISOString();room.guest='';room.phone='';room.bookingRef='';room.checkIn='';room.checkOut='';room.checkInStatus='';room.checkedInAt='';recordHoteraAudit('تغيير غرفة مع تسوية سعر',{bookingRef:target.bookingRef,from:oldId,to:target.id,oldNightPrice:oldPrice,newNightPrice:newPrice,nights,priceDifference,newInvoiceTotal});saveData();uploadDataToCloud();renderHoteraFrontDesk();render();alert(`✅ تم نقل الحجز إلى الغرفة ${target.id}. فرق السعر: ${priceDifference>=0?'+':''}${priceDifference.toFixed(2)} ر.س.`)}
 async function hoteraBatchFrontDeskAction(action){
   if(!['checkin','checkout'].includes(action))return;
   if(!hoteraRequirePermission('booking'))return;
@@ -2859,7 +2870,7 @@ function renderHoteraBookingManagement(){
   const roomCard=r=>`<button type="button" class="hotera-booking-room-card" onclick="closeHoteraBookingManagement();openNewBookingModal()"><span><b>غرفة ${esc(r.id)}</b><small>${esc(r.type||r.roomType||'إقامة فندقية')} · ${money(r.price||r.nightPrice||0)} / ليلة</small></span><span class="hotera-booking-room-status">● متاحة</span></button>`;
   const unavailableCard=r=>`<div class="hotera-booking-room-card unavailable"><span><b>غرفة ${esc(r.id)}</b><small>${esc(r.type||r.roomType||'إقامة فندقية')}</small></span><span class="hotera-booking-room-status">${r.status==='maintenance'?'صيانة':r.status==='occupied'||r.bookingRef?'محجوزة':'غير متاحة'}</span></div>`;
   const selectedRooms=activeRooms.length?activeRooms.map(r=>`<div class="hotera-booking-selected-row"><span>غرفة ${esc(r.id)} · ${esc(r.type||'إقامة فندقية')}</span><span>${esc(r.nights||1)} ليلة</span></div>`).join(''):'<div class="hotera-booking-selected-row"><span>لا توجد غرفة مرتبطة</span><span>—</span></div>';
-  const currentPanel=activeBooking?`<div class="hotera-booking-current-grid"><div class="hotera-booking-detail"><small>رقم الحجز</small><strong>${esc(activeBooking.bookingRef||activeBooking.id||'—')}</strong></div><div class="hotera-booking-detail"><small>اسم النزيل</small><strong>${esc(activeBooking.guest||activeBooking.name||'نزيل')}</strong></div><div class="hotera-booking-detail"><small>تاريخ الوصول</small><strong>${esc(activeBooking.checkIn||activeBooking.date||'—')}</strong></div><div class="hotera-booking-detail"><small>تاريخ المغادرة</small><strong>${esc(activeBooking.checkOut||'—')}</strong></div><div class="hotera-booking-detail wide"><small>الغرف المختارة</small><div class="hotera-booking-room-selected">${selectedRooms}</div></div><div class="hotera-booking-detail"><small>عدد الليالي</small><strong>${esc(activeBooking.nights||activeRooms.reduce((n,r)=>n+Number(r.nights||0),0)||1)} ليلة</strong></div><div class="hotera-booking-detail"><small>مصدر الحجز</small><strong>${esc(activeBooking.bookingSource||'غير محدد')}</strong></div></div><div class="hotera-booking-invoice-wrap"><h5>الفواتير المرتبطة بهذا الحجز</h5><div class="hotera-booking-invoice-grid">${linkedInvoices.length?linkedInvoices.map(inv=>{const idx=invoices.indexOf(inv),f=typeof hoteraGetInvoiceFinancialSummary==='function'?hoteraGetInvoiceFinancialSummary(inv):{total:Number(inv.total||0),paid:Number(inv.paidAmount||0),remaining:Math.max(0,Number(inv.total||0)-Number(inv.paidAmount||0))};return `<button type="button" class="hotera-booking-invoice-card" onclick="closeHoteraBookingManagement();viewSpecificInvoice(${idx})"><b>${esc(inv.id||'فاتورة')} · ${esc(inv.bookingRef||'—')}</b><small>الإجمالي: ${money(f.total)}<br>المدفوع: ${money(f.paid)} · المتبقي: ${money(f.remaining)}</small><strong>عرض الفاتورة والسداد ↗</strong></button>`}).join(''):'<div class="hotera-booking-empty">لا توجد فاتورة مرتبطة بعد.</div>'}</div></div>`:`<div class="hotera-booking-empty"><b>📋</b>لا توجد حجوزات نشطة حاليًا.<br><small>ابدأ حجزًا جديدًا من قائمة الغرف المتاحة.</small></div>`;
+  const currentPanel=activeBooking?`<div class="hotera-booking-current-grid"><div class="hotera-booking-detail"><small>رقم الحجز</small><strong>${esc(activeBooking.bookingRef||activeBooking.id||'—')}</strong></div><div class="hotera-booking-detail"><small>اسم النزيل</small><strong>${esc(activeBooking.guest||activeBooking.name||'نزيل')}</strong></div><div class="hotera-booking-detail"><small>تاريخ الوصول</small><strong>${esc(activeBooking.checkIn||activeBooking.date||'—')}</strong></div><div class="hotera-booking-detail"><small>تاريخ المغادرة</small><strong>${esc(activeBooking.checkOut||'—')}</strong></div><div class="hotera-booking-detail wide"><small>الغرف المختارة</small><div class="hotera-booking-room-selected">${selectedRooms}</div></div><div class="hotera-booking-detail"><small>عدد الليالي</small><strong>${esc(activeBooking.nights||activeRooms.reduce((n,r)=>n+Number(r.nights||0),0)||1)} ليلة</strong></div><div class="hotera-booking-detail"><small>مصدر الحجز</small><strong>${esc(activeBooking.bookingSource||'غير محدد')}</strong></div><div class="hotera-booking-detail wide"><small>سجل التعديلات</small><div class="hotera-booking-audit-inline">${hoteraBookingAuditEntries(activeBooking.bookingRef).length?hoteraBookingAuditEntries(activeBooking.bookingRef).slice(0,8).map(x=>`تم تعديل بواسطة <b>${esc(x.by||'المستخدم')}</b> في ${esc(new Date(x.at||'').toLocaleString('ar-SA'))}<br><small>${(x.changes||[]).map(c=>esc(c)).join(' · ')}</small>`).join('<hr style="border:0;border-top:1px dashed rgba(255,255,255,.15);margin:4px 0">'):'لا توجد تعديلات مسجلة.'}</div></div></div><div class="hotera-booking-invoice-wrap"><h5>الفواتير المرتبطة بهذا الحجز</h5><div class="hotera-booking-invoice-grid">${linkedInvoices.length?linkedInvoices.map(inv=>{const idx=invoices.indexOf(inv),f=typeof hoteraGetInvoiceFinancialSummary==='function'?hoteraGetInvoiceFinancialSummary(inv):{total:Number(inv.total||0),paid:Number(inv.paidAmount||0),remaining:Math.max(0,Number(inv.total||0)-Number(inv.paidAmount||0))};return `<button type="button" class="hotera-booking-invoice-card" onclick="closeHoteraBookingManagement();viewSpecificInvoice(${idx})"><b>${esc(inv.id||'فاتورة')} · ${esc(inv.bookingRef||'—')}</b><small>الإجمالي: ${money(f.total)}<br>المدفوع: ${money(f.paid)} · المتبقي: ${money(f.remaining)}</small><strong>عرض الفاتورة والسداد ↗</strong></button>`}).join(''):'<div class="hotera-booking-empty">لا توجد فاتورة مرتبطة بعد.</div>'}</div></div>`:`<div class="hotera-booking-empty"><b>📋</b>لا توجد حجوزات نشطة حاليًا.<br><small>ابدأ حجزًا جديدًا من قائمة الغرف المتاحة.</small></div>`;
   const records=tab==='new'?'':`<section class="hotera-booking-records"><div class="hotera-booking-records-head">${tab==='confirmed'?'الحجوزات المؤكدة':tab==='upcoming'?'الحجوزات القادمة':'سجل الحجوزات الملغاة'} (${selected.length})</div><div class="hotera-booking-list">${selected.length?selected.slice(0,100).map(i=>`<div class="hotera-booking-item"><span><b>${esc(i.guest||i.name||'نزيل')}</b> · ${esc(i.bookingRef||i.id||'حجز')}<br><small>${esc(i.checkIn||i.date||'—')} → ${esc(i.checkOut||'—')} · ${esc(i.bookingSource||'غير محدد')} · ${esc(i.bookingPurpose||'غير محدد')}</small></span><button type="button" class="btn btn-gray" onclick="closeHoteraBookingManagement();if(typeof openCustomerProfile==='function'&&'${esc(i.phone||'')}')openCustomerProfile('${esc(i.phone||'')}')">عرض</button></div>`).join(''):'<div class="hotera-booking-empty">لا توجد سجلات في هذا القسم.</div>'}</div></section>`;
   list.innerHTML=`<div class="hotera-booking-dashboard"><div class="hotera-booking-banner"><div><strong>مركز إدارة الحجوزات</strong><small>إنشاء حجز، متابعة الغرف، مراجعة الفواتير والسداد من شاشة واحدة</small></div><span class="hotera-booking-banner-badge">● النظام متصل · البيانات محفوظة</span></div><div class="hotera-booking-kpis"><div class="hotera-booking-kpi success"><div><small>الغرف المتاحة للتسكين</small><strong>${available.length}</strong></div><span class="hotera-booking-kpi-icon">🛏️</span></div><div class="hotera-booking-kpi warning"><div><small>نسبة الإشغال الحالية</small><strong>${occupancy}%</strong></div><span class="hotera-booking-kpi-icon">📊</span></div><div class="hotera-booking-kpi"><div><small>حجوزات اليوم</small><strong>${todaysBookings}</strong></div><span class="hotera-booking-kpi-icon">📅</span></div><div class="hotera-booking-kpi gold"><div><small>فواتير اليوم</small><strong>${todaysInvoices}</strong></div><span class="hotera-booking-kpi-icon">📄</span></div><div class="hotera-booking-kpi"><div><small>إجمالي الغرف</small><strong>${rooms.length}</strong></div><span class="hotera-booking-kpi-icon">🏨</span></div></div><div class="hotera-booking-workspace"><section class="hotera-booking-panel"><div class="hotera-booking-panel-head green"><h4>إنشاء حجز جديد</h4><small>اختيار الغرف المتاحة فقط</small></div><div class="hotera-booking-panel-body"><div class="hotera-booking-room-section-title"><span>الغرف المتاحة للتسكين الآن</span><span>${available.length} غرفة</span></div><div class="hotera-booking-room-grid">${available.length?available.slice(0,12).map(roomCard).join(''):'<div class="hotera-booking-empty">لا توجد غرف متاحة للتسكين حاليًا.</div>'}</div><div class="hotera-booking-availability-note"><b>✓</b><span>يتم عرض الغرف الشاغرة وغير المرتبطة بأي حجز فقط. الغرف الساكنة أو المحجوزة لا تظهر كخيار حجز جديد.</span></div><button type="button" class="hotera-booking-action" onclick="closeHoteraBookingManagement();openNewBookingModal()">إصدار حجز جديد 🧾</button></div></section><section class="hotera-booking-panel"><div class="hotera-booking-panel-head red"><h4>المشكلة الحالية · تفاصيل الحجز</h4><small>${activeBooking?'حجز نشط مرتبط بالغرفة':'لا توجد مشكلة حالية'}</small></div><div class="hotera-booking-panel-body">${currentPanel}<div class="hotera-booking-room-section-title" style="margin-top:13px"><span>الغرف غير المتاحة</span><span>${unavailable.length} غرفة</span></div><div class="hotera-booking-room-grid">${unavailable.length?unavailable.map(unavailableCard).join(''):'<div class="hotera-booking-empty">جميع الغرف متاحة حاليًا.</div>'}</div></div></section></div>${available.length===0?'<div class="hotera-booking-alert"><strong>⚠️ لا توجد غرف متاحة للتسكين الآن</strong>يمكنك مراجعة الغرف المحجوزة أو المغادرة أو الصيانة من شاشة الغرف.</div>':''}${records}</div>`;
 }
@@ -3017,6 +3028,8 @@ hotelsList.forEach(h => {
   if (h.trialDays === undefined) h.trialDays = 14;
   if (!h.subType) h.subType = "trial";
   if (!h.expiryDate) h.expiryDate = new Date(Date.now() + 14*86400000).toISOString();
+  if (!h.subscriptionStartDate) h.subscriptionStartDate = String(h.createdAt||new Date().toISOString()).slice(0,10);
+  if (!h.subscriptionEndDate) h.subscriptionEndDate = String(h.expiryDate).slice(0,10);
   if (!h.hrPin) h.hrPin = "3333";
   if (!h.housePin) h.housePin = "0000";
   if (!h.staffList) h.staffList = [{idNum: "EMP-101", name: "موظف استقبال", pin: "1111"}];
@@ -3185,8 +3198,9 @@ function checkHotelSubscription(hotelId) {
   // التوافق مع البيانات القديمة والجديدة
   const isSuspended = targetHotel.status === 'suspended';
   const isInactive = targetHotel.isActive === false;
-  const hasExpiry = !!targetHotel.expiryDate;
-  const isExpired = hasExpiry && new Date() > new Date(targetHotel.expiryDate);
+  const subscriptionEnd = targetHotel.subscriptionEndDate || String(targetHotel.expiryDate||'').slice(0,10);
+  const hasExpiry = !!subscriptionEnd;
+  const isExpired = hasExpiry && hoteraLocalDateKey() > subscriptionEnd;
 
   if (isSuspended || isInactive || isExpired) {
     alert("⚠️ عذراً، انتهت فترة الاشتراك أو تم إيقاف هذا الفندق. يرجى التواصل مع الإدارة للتجديد.");
@@ -3412,6 +3426,8 @@ function addNewHotelFacility() {
     trialDays,
     subscriptionDays,
     expiryDate: expiryDate.toISOString(),
+    subscriptionStartDate,
+    subscriptionEndDate,
     isActive: true,
     managerPin: pin, 
     hrPin: "3333", 
@@ -3471,12 +3487,14 @@ function renderSuperAdminControlPanel() {
     hotelsList.forEach(h => {
       const statusText = h.status === 'suspended' ? '<span style="color:#ef4444">موقوف ⛔</span>' : '<span style="color:#10b981">نشط ✅</span>';
       const btnText = h.status === 'suspended' ? 'تنشيط 🟢' : 'إيقاف 🔴';
-      let subDesc = h.subType === 'yearly' ? 'سنوي كامل' : `تجريبي (${new Date(h.expiryDate).toLocaleDateString()})`;
+      const startDate = h.subscriptionStartDate || String(h.createdAt||'').slice(0,10) || '—';
+      const endDate = h.subscriptionEndDate || String(h.expiryDate||'').slice(0,10) || '—';
+      const subDesc = `${h.subType === 'yearly' ? 'سنوي' : 'اشتراك'} · ${startDate} → ${endDate}`;
       const tr = document.createElement('tr');
       tr.innerHTML = `
-        <td><strong>${h.name}</strong><br><small>${h.city} | ${subDesc}</small></td>
-        <td>${statusText}</td>
-        <td><button onclick="toggleHotelStatus(${h.id})" style="background:${h.status === 'suspended' ? '#10b981' : '#ef4444'}; color:white; border:none; padding:3px 6px; border-radius:4px; font-size:8px; width:100%;">${btnText}</button></td>
+        <td><strong>${hoteraEscapeText(h.name)}</strong><br><small>${hoteraEscapeText(h.city||'')} | ${hoteraEscapeText(subDesc)}</small></td>
+        <td>${statusText}<br><small>الانتهاء: ${hoteraEscapeText(endDate)}</small></td>
+        <td><button onclick="toggleHotelStatus(${h.id})" style="background:${h.status === 'suspended' ? '#10b981' : '#ef4444'}; color:white; border:none; padding:3px 6px; border-radius:4px; font-size:8px; width:100%;">${btnText}</button><button onclick="openHotelSubscriptionModal(${h.id})" style="background:#2563eb;color:white;border:0;padding:3px 6px;border-radius:4px;font-size:8px;width:100%;margin-top:3px">تعديل فترة الاشتراك 📅</button></td>
       `;
       hotelsTbody.appendChild(tr);
     });
@@ -3510,11 +3528,35 @@ function resetStaffPinPrompt(hotelId, sIdx) {
   const newPin = prompt(`أدخل الرمز الجديد للموظف (${st.name}):`, st.pin);
   if(newPin) { st.pin = newPin.trim(); saveData(); uploadDataToCloud(); renderSuperAdminControlPanel(); alert("✅ تم تحديث رمز الموظف وحفظه بنجاح!"); }
 }
+function openHotelSubscriptionModal(hotelId){
+  if(currentRole!=='superadmin')return alert('إدارة اشتراك الفنادق متاحة للسوبر أدمن فقط.');
+  const h=hotelsList.find(item=>Number(item.id)===Number(hotelId)); if(!h)return;
+  window.hoteraSubscriptionEditingHotelId=Number(h.id);
+  document.getElementById('subscriptionHotelNameDisplay').innerText=`${h.name} — ${h.city||''}`;
+  document.getElementById('hotelSubscriptionStatus').value=h.status==='suspended'?'suspended':'active';
+  document.getElementById('hotelSubscriptionStart').value=h.subscriptionStartDate||String(h.createdAt||new Date().toISOString()).slice(0,10);
+  document.getElementById('hotelSubscriptionEnd').value=h.subscriptionEndDate||String(h.expiryDate||new Date().toISOString()).slice(0,10);
+  document.getElementById('hotelSubscriptionModal').style.display='flex';
+}
+function closeHotelSubscriptionModal(){document.getElementById('hotelSubscriptionModal').style.display='none';window.hoteraSubscriptionEditingHotelId=null;}
+function saveHotelSubscriptionSettings(){
+  if(currentRole!=='superadmin')return alert('تعديل اشتراك الفنادق متاح للسوبر أدمن فقط.');
+  const h=hotelsList.find(item=>Number(item.id)===Number(window.hoteraSubscriptionEditingHotelId)); if(!h)return;
+  const status=document.getElementById('hotelSubscriptionStatus').value,start=document.getElementById('hotelSubscriptionStart').value,end=document.getElementById('hotelSubscriptionEnd').value;
+  if(!hoteraValidDateKey(start)||!hoteraValidDateKey(end))return alert('اختر تاريخ بداية ونهاية صحيحين.');
+  if(end<start)return alert('تاريخ انتهاء الاشتراك يجب أن يكون بعد أو مساويًا لتاريخ البداية.');
+  const old={status:h.status,start:h.subscriptionStartDate,end:h.subscriptionEndDate};
+  h.status=status; h.isActive=status==='active'; h.subscriptionStartDate=start; h.subscriptionEndDate=end; h.expiryDate=`${end}T23:59:59.000Z`; h.subscriptionUpdatedBy=currentUsername||'السوبر أدمن'; h.subscriptionUpdatedAt=new Date().toISOString();
+  recordHoteraAudit('تعديل اشتراك فندق',{hotelId:h.id,hotel:h.name,from:old,to:{status,start,end}});
+  saveData(); uploadDataToCloud(true); renderSuperAdminControlPanel(); initLoginHotelDropdown(); closeHotelSubscriptionModal();
+  alert(`✅ تم ${status==='active'?'تنشيط':'إيقاف'} اشتراك ${h.name} وتحديث الفترة ${start} → ${end}.`);
+}
 function toggleHotelStatus(hotelId) {
   if(currentRole!=='superadmin')return alert('إيقاف أو تنشيط الفندق متاح للسوبر أدمن فقط.');
   const h = hotelsList.find(item => item.id === hotelId);
-  if(h) { h.status = (h.status === 'suspended') ? 'active' : 'suspended'; saveData(); uploadDataToCloud(); renderSuperAdminControlPanel(); initLoginHotelDropdown(); }
+  if(h) { h.status = (h.status === 'suspended') ? 'active' : 'suspended'; h.isActive=h.status==='active'; h.subscriptionUpdatedBy=currentUsername||'السوبر أدمن'; h.subscriptionUpdatedAt=new Date().toISOString(); recordHoteraAudit(h.status==='active'?'تنشيط اشتراك فندق':'إيقاف اشتراك فندق',{hotelId:h.id,hotel:h.name}); saveData(); uploadDataToCloud(true); renderSuperAdminControlPanel(); initLoginHotelDropdown(); }
 }
+
 function switchHotelSession(id) {
   if(currentRole!=='superadmin')return alert('التبديل الإداري بين الفنادق متاح للسوبر أدمن فقط.');
   currentHotelId = id; currentRole = 'manager'; currentUsername = currentLang === 'ar' ? 'مدير الفندق' : 'Hotel Manager';
@@ -4198,6 +4240,7 @@ function populateOfficialInvoiceModal(inv) {
   if(document.getElementById('hoteraInvoiceServicesList'))document.getElementById('hoteraInvoiceServicesList').innerText=financial.serviceRows.length?`الخدمات: ${financial.serviceRows.map(x=>`${x.name} (${Number(x.amount||0).toFixed(2)} ر.س)`).join(' · ')}`:'لا توجد خدمات إضافية مسجلة';
   document.getElementById('invPaymentMethod').innerText=hoteraInvoicePaymentMethodsSummary(inv,financial);
   renderHoteraInvoicePaymentPanel(inv,financial);
+  hoteraRenderBookingAudit(inv.bookingRef);
   document.getElementById('officialInvoiceModal').style.display = 'flex';
 }
 function closeOfficialInvoiceModal() { document.getElementById('officialInvoiceModal').style.display = 'none'; }
@@ -4424,7 +4467,8 @@ function reviewNewBooking() {
   const rooms=[...document.querySelectorAll('input[name="selectedBookingRoom"]:checked')].map(x=>x.value);
   const checkIn=document.getElementById('bookingCheckIn').value;
   const checkOut=document.getElementById('bookingCheckOut').value;
-  const nights=parseInt(document.getElementById('bookingNightsInput').value)||1;
+  const nights=hoteraDateNightsFromInputs();
+  document.getElementById('bookingNightsInput').value=nights;
   const price=parseFloat(document.getElementById('bookingNightPriceInput').value)||0;
   const payment=document.getElementById('bookingPaymentMethod').value;
   const validation=hoteraValidateBookingInputs(checkIn,checkOut,nights,price);
@@ -4451,6 +4495,34 @@ function closeCustomerProfileModal(){document.getElementById('customerProfileMod
 function hoteraDatesOverlap(aStart,aEnd,bStart,bEnd){const a1=String(aStart||''),a2=String(aEnd||''),b1=String(bStart||''),b2=String(bEnd||'');return !!(a1&&a2&&b1&&b2&&a1<b2&&b1<a2)}
 function hoteraFindBookingConflicts(roomIds,checkIn,checkOut,editingRef){const rooms=Array.isArray(allRooms?.[currentHotelId])?allRooms[currentHotelId]:[];return rooms.filter(r=>roomIds.includes(Number(r.id))&&r.bookingRef&&String(r.bookingRef)!==String(editingRef||'')&&hoteraDatesOverlap(checkIn,checkOut,r.checkIn,r.checkOut)).map(r=>({roomId:r.id,bookingRef:r.bookingRef,guest:r.guest||'نزيل',checkIn:r.checkIn,checkOut:r.checkOut}))}
 
+function hoteraBookingAuditEntries(bookingRef, hotelId=currentHotelId){
+  const inv=(allInvoices?.[hotelId]||[]).find(x=>String(x.bookingRef||'')===String(bookingRef||''));
+  const rows=Array.isArray(inv?.bookingAuditLog)?inv.bookingAuditLog:[];
+  return rows.slice().sort((a,b)=>String(b.at||'').localeCompare(String(a.at||'')));
+}
+function hoteraAppendBookingAudit(bookingRef, changes, hotelId=currentHotelId){
+  if(!bookingRef)return null;
+  const invoices=allInvoices[hotelId]||(allInvoices[hotelId]=[]);
+  const inv=invoices.find(x=>String(x.bookingRef||'')===String(bookingRef||''));
+  if(!inv)return null;
+  const at=new Date().toISOString(), by=currentUsername||'المستخدم الحالي';
+  if(!Array.isArray(inv.bookingAuditLog))inv.bookingAuditLog=[];
+  const entry={id:`BKA-${Date.now()}-${Math.random().toString(36).slice(2,7)}`,by,at,changes:Array.isArray(changes)?changes.filter(Boolean):[String(changes||'تم تعديل الحجز')]};
+  inv.bookingAuditLog.unshift(entry); inv.bookingAuditLog=inv.bookingAuditLog.slice(0,100);
+  inv.lastEditedBy=by; inv.lastEditedAt=at; inv.updatedAt=at;
+  return entry;
+}
+function hoteraRenderBookingAudit(bookingRef, targetId='hoteraInvoiceAuditLog'){
+  const el=document.getElementById(targetId); if(!el)return;
+  const rows=hoteraBookingAuditEntries(bookingRef);
+  el.innerHTML='<strong style="color:#1d4ed8">📝 سجل تعديلات الحجز والفاتورة</strong>'+(
+    rows.length?rows.map(x=>`<div style="padding:5px 0;border-bottom:1px dashed #bfdbfe"><b>تم تعديل الحجز بواسطة ${hoteraEscapeText(x.by||'المستخدم')}</b><br><span style="color:#475569">${hoteraEscapeText(new Date(x.at||'').toLocaleString('ar-SA'))}</span><br><span>${(x.changes||[]).map(c=>hoteraEscapeText(c)).join(' · ')}</span></div>`).join(''):'<div style="margin-top:5px;color:#64748b">لا توجد تعديلات مسجلة بعد.</div>');
+}
+function hoteraDateNightsFromInputs(){
+  const start=document.getElementById('bookingCheckIn')?.value,end=document.getElementById('bookingCheckOut')?.value;
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(String(start||''))||!/^\d{4}-\d{2}-\d{2}$/.test(String(end||'')))return 1;
+  return hoteraDateNights(start,end);
+}
 async function executeNewBooking() {
   if(!hoteraRequirePermission('booking')) return;
   const guest = document.getElementById('bookingGuestName').value.trim();
@@ -4461,10 +4533,6 @@ async function executeNewBooking() {
   const adults = parseInt(document.getElementById('bookingAdults').value) || 1;
   const children = parseInt(document.getElementById('bookingChildren').value) || 0;
   const paymentMethod = document.getElementById('bookingPaymentMethod').value;
-  const paymentInfo = calculateBookingPaymentSummary();
-  const paymentStatus = paymentInfo.status;
-  const paidAmount = paymentInfo.paid;
-  const remainingAmount = paymentInfo.remaining;
   const bookingPurpose = document.getElementById('bookingPurpose').value;
   const bookingSource = document.getElementById('bookingSource').value;
   const bookingStatus = document.getElementById('bookingStatusSelect')?.value || 'confirmed';
@@ -4475,7 +4543,8 @@ async function executeNewBooking() {
   const applyCompanyRate = !!document.getElementById('bookingApplyCompanyRate')?.checked && !editingRef;
   const carType = document.getElementById('bookingCarType').value.trim();
   const carPlate = document.getElementById('bookingCarPlate').value.trim();
-  const nights = parseInt(document.getElementById('bookingNightsInput').value) || 1;
+  const nights = hoteraDateNightsFromInputs();
+  document.getElementById('bookingNightsInput').value=nights;
   const baseNightPrice = parseFloat(document.getElementById('bookingNightPriceInput').value) || 200;
   const seasonalRateId = document.getElementById('bookingSeasonalRateSelect')?.value || '';
   const contractDiscount = selectedContract ? Math.max(0,Math.min(100,Number(selectedContract.discount||0))) : 0;
@@ -4483,6 +4552,11 @@ async function executeNewBooking() {
   const pricingSource = applyCompanyRate && selectedContract ? 'عقد شركة' : (seasonalRateId ? 'سعر موسمي' : 'السعر الأساسي');
   const checkIn = document.getElementById('bookingCheckIn').value;
   const checkOut = document.getElementById('bookingCheckOut').value;
+  document.getElementById('bookingNightsInput').value=nights;
+  const freshPaymentInfo = calculateBookingPaymentSummary();
+  const paymentStatus = freshPaymentInfo.status;
+  const paidAmount = freshPaymentInfo.paid;
+  const remainingAmount = freshPaymentInfo.remaining;
   populateBookingSeasonalRates();
   const checkboxes = [...document.querySelectorAll('input[name="selectedBookingRoom"]:checked')];
   const selectedIds = checkboxes.map(chk=>parseInt(chk.value));
@@ -4491,13 +4565,14 @@ async function executeNewBooking() {
   if(!hoteraValidatePhone(phone))return alert('رقم الجوال غير صحيح.');
   if(!guest) return alert('الرجاء إدخال اسم النزيل أو الجهة!');
   if(!selectedIds.length) return alert('الرجاء اختيار غرفة واحدة على الأقل للحجز!');
-  if(paidAmount<0 || paidAmount>paymentInfo.total) return alert('قيمة المدفوع غير صحيحة. يجب أن تكون بين صفر والإجمالي.');
+  if(paidAmount<0 || paidAmount>freshPaymentInfo.total) return alert('قيمة المدفوع غير صحيحة. يجب أن تكون بين صفر والإجمالي.');
   const bookingType = bookingTypeForCount(selectedIds.length);
   const rooms = allRooms[currentHotelId] || [];
   const originalBookingRoom = editingRef ? (rooms.find(r=>r.bookingRef===editingRef)||{}) : {};
   const bookingCreatedBy = editingRef ? (originalBookingRoom.bookingCreatedBy || originalBookingRoom.staffName || currentUsername || 'المستخدم الحالي') : (currentUsername || 'المستخدم الحالي');
   const bookingUpdatedBy = currentUsername || 'المستخدم الحالي';
   const previousRooms = editingRef ? rooms.filter(r=>r.bookingRef===editingRef) : [];
+  const previousBookingSnapshot = editingRef ? {guest: originalBookingRoom.guest||'', checkIn: originalBookingRoom.checkIn||'', checkOut: originalBookingRoom.checkOut||'', nights:Number(originalBookingRoom.nights||1), rooms: previousRooms.map(r=>String(r.id)).sort(), nightPrice:Number(originalBookingRoom.nightPrice||0)} : null;
   const invalid = selectedIds.some(id=>{const r=rooms.find(x=>x.id===id); const isCurrentBooking=!!editingRef && String(r?.bookingRef||'')===String(editingRef); return !r || (!isCurrentBooking && (r.status!=='vacant' || !!r.bookingRef));});
   if(invalid) return alert('إحدى الغرف المحددة ساكنة أو مرتبطة بحجز قائم، ولذلك لم تعد متاحة للتسكين. حدّث الصفحة وحاول مرة أخرى.');
   const conflicts=hoteraFindBookingConflicts(selectedIds,checkIn,checkOut,editingRef);
@@ -4517,6 +4592,18 @@ async function executeNewBooking() {
   let unifiedInvoice = allInvoices[currentHotelId].find(i=>i.bookingRef===bookingRef);
   const invoiceData={bookingRef,room:roomsListDetails[0]?.id||'مجموعة',roomsList:roomsListDetails,guest,phone,guestId,nationality,email,adults,children,paymentMethod,paymentStatus,paidAmount,remainingAmount,bookingNotes,carType,carPlate,bookingType,nights,nightPrice,baseNightPrice,pricingSource,contractDiscount,bookingPurpose,bookingSource,seasonalRateId,companyContractId,total:totalGrandAmount,date:checkIn,checkIn,checkOut,status:'confirmed',bookingStatus,staffName:currentUsername,bookingCreatedBy,bookingUpdatedBy};
   if(unifiedInvoice) Object.assign(unifiedInvoice,invoiceData); else { unifiedInvoice={id:`INV-${Math.floor(Math.random()*9000+1000)}`,...invoiceData}; allInvoices[currentHotelId].unshift(unifiedInvoice); }
+  if(editingRef){
+    const changes=[]; const newRooms=roomsListDetails.map(r=>String(r.id)).sort();
+    if(previousBookingSnapshot && previousBookingSnapshot.checkIn!==checkIn)changes.push(`تاريخ الدخول: ${previousBookingSnapshot.checkIn||'—'} ← ${checkIn}`);
+    if(previousBookingSnapshot && previousBookingSnapshot.checkOut!==checkOut)changes.push(`تاريخ الخروج: ${previousBookingSnapshot.checkOut||'—'} ← ${checkOut}`);
+    if(previousBookingSnapshot && previousBookingSnapshot.nights!==nights)changes.push(`عدد الليالي: ${previousBookingSnapshot.nights} ← ${nights}`);
+    if(previousBookingSnapshot && previousBookingSnapshot.rooms.join(',')!==newRooms.join(','))changes.push(`الغرف: ${previousBookingSnapshot.rooms.join('، ')||'—'} ← ${newRooms.join('، ')||'—'}`);
+    if(previousBookingSnapshot && previousBookingSnapshot.guest!==guest)changes.push(`النزيل: ${previousBookingSnapshot.guest||'—'} ← ${guest}`);
+    if(previousBookingSnapshot && previousBookingSnapshot.nightPrice!==Number(nightPrice))changes.push(`سعر الليلة: ${previousBookingSnapshot.nightPrice.toFixed(2)} ← ${Number(nightPrice).toFixed(2)} ر.س`);
+    hoteraAppendBookingAudit(bookingRef,changes.length?changes:['تم تعديل بيانات الحجز']);
+  } else {
+    hoteraAppendBookingAudit(bookingRef,['إنشاء الحجز وتثبيت بيانات الإقامة']);
+  }
   if(typeof hoteraInvoicePayments!=='object'||!hoteraInvoicePayments) hoteraInvoicePayments={};
   if(!Array.isArray(hoteraInvoicePayments[currentHotelId])) hoteraInvoicePayments[currentHotelId]=[];
   hoteraInvoicePayments[currentHotelId]=hoteraInvoicePayments[currentHotelId].filter(x=>x.bookingRef!==bookingRef||x.source!=='booking-payment');
