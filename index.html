@@ -474,6 +474,46 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
 \n/* HOTEL COMMAND CENTER INSIGHTS — presentation and derived metrics only */
 .hotera-insights-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:0 0 10px}.hotera-insights-strip>div{padding:12px 10px;border-radius:15px;background:linear-gradient(145deg,rgba(17,35,57,.9),rgba(5,15,28,.95));border:1px solid rgba(246,196,83,.2);box-shadow:0 10px 24px rgba(0,0,0,.22)}.hotera-insights-strip small{display:block;color:#b9c7d8;font-size:9px}.hotera-insights-strip strong{display:block;color:#ffe7a3;font-size:15px;margin-top:5px}.hotera-insights-strip em{display:block;color:#7dd3fc;font-size:8px;font-style:normal;margin-top:4px}@media(max-width:800px){.hotera-insights-strip{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
+<style>
+/* إصلاح شاشة الترحيب: إظهار بطاقة HOTERA الرئيسية عند تشغيل الجهاز */
+#luxuryEntryScreen .hotera-welcome-card{display:block!important;z-index:4!important;}
+#luxuryEntryScreen .hotera-model-topbar,#luxuryEntryScreen .hotera-model-cta,#luxuryEntryScreen>.hotera-welcome-progress{display:none!important;}
+</style>
+<style>
+/* HOTERA Welcome Match — شاشة ترحيب فاخرة مع نموذج الدخول الفعلي */
+#luxuryEntryScreen{background:radial-gradient(circle at 50% 48%,rgba(12,116,190,.35),transparent 34%),linear-gradient(115deg,#020817 0%,#071c3b 48%,#020714 100%)!important;}
+#luxuryEntryScreen .hotera-model-carousel{opacity:.42;filter:brightness(.62) saturate(1.18);}
+#luxuryEntryScreen .hotera-welcome-shade{background:radial-gradient(ellipse at center,rgba(5,23,55,.08),rgba(1,6,20,.66) 78%),linear-gradient(90deg,rgba(1,7,20,.15),rgba(2,19,48,.08),rgba(1,7,20,.42));}
+#luxuryEntryScreen .hotera-model-topbar,#luxuryEntryScreen .hotera-model-cta,#luxuryEntryScreen>.hotera-welcome-progress{display:none!important;}
+#luxuryEntryScreen .hotera-welcome-card{display:none!important;}
+#luxuryEntryScreen .hotera-model3-orbits{display:block!important;z-index:3!important;opacity:.95;}
+#luxuryEntryScreen .hotera-model3-orbit{display:block!important;min-width:160px;padding:15px 17px;border-color:rgba(125,211,252,.45);background:linear-gradient(145deg,rgba(7,30,65,.76),rgba(3,13,34,.62));}
+#luxuryEntryScreen .hotera-model3-orbit b{font-size:23px;color:#fbd36b;}
+#luxuryEntryScreen .hotera-model3-orbit span{font-size:11px;color:#dbeafe;}
+#luxuryEntryScreen .hotera-model3-orbit small{font-size:9px;color:#67e8f9;}
+#luxuryEntryScreen .hotera-model3-ring{opacity:.65;}
+#loginOverlay{z-index:6005!important;background:transparent!important;backdrop-filter:none!important;pointer-events:auto;}
+#loginOverlay:before,#loginOverlay:after{opacity:.18;}
+#loginOverlay .login-card{width:min(92vw,430px);max-height:90vh;overflow:auto;padding:25px 24px 18px;border:1px solid rgba(245,201,93,.78);border-radius:26px;background:linear-gradient(145deg,rgba(8,28,62,.94),rgba(3,12,31,.96));box-shadow:0 0 0 1px rgba(56,189,248,.22),0 28px 90px rgba(0,0,0,.82),0 0 38px rgba(30,144,255,.28),inset 0 1px rgba(255,255,255,.2);}
+#loginOverlay .login-card:before{border-color:rgba(103,232,249,.22);}
+#loginOverlay .hotel-logo-container .logo-icon-box{width:82px;height:82px;border-radius:50%;border:2px solid #f8d36a;background:radial-gradient(circle,#213d71,#07152f);box-shadow:0 0 30px rgba(30,144,255,.72),0 0 14px rgba(245,190,70,.5);font-size:40px;}
+#loginOverlay .hotel-logo-container h2{font-family:Georgia,serif;font-size:34px;letter-spacing:4px;text-shadow:0 0 18px rgba(245,190,70,.65);}
+#loginOverlay #lblLoginSubtitle{color:#8fdcff!important;}
+#loginOverlay label{color:#f6d477!important;}
+#loginOverlay .form-select,#loginOverlay .form-input{border-color:rgba(245,211,117,.68);background:rgba(11,31,68,.84);color:#f8fafc;min-height:42px;}
+#loginOverlay #deviceCloudConnectBox,#loginOverlay #btnLoginForgot{display:none!important;}
+#loginOverlay #btnLoginSubmit{margin-top:15px;min-height:48px;border-radius:13px;background:linear-gradient(135deg,#f6b943,#ffe08a,#e78a21);color:#14203a;box-shadow:0 0 24px rgba(245,179,55,.45);font-size:14px;font-weight:950;}
+#loginOverlay .pin-input-group{display:flex;gap:5px;}
+#loginOverlay .toggle-eye-btn{background:rgba(245,190,70,.18);border:1px solid rgba(245,190,70,.5);color:#fbd36b;}
+#luxuryEntryScreen .hotera-scene-hotel,#luxuryEntryScreen .hotera-scene-office{display:block!important;z-index:2!important;width:27vw;height:52vh;top:24%;bottom:auto;border:1px solid rgba(103,232,249,.38);border-radius:22px;background:linear-gradient(145deg,rgba(8,33,72,.78),rgba(2,10,29,.65));box-shadow:0 20px 60px rgba(0,0,0,.5),inset 0 1px rgba(255,255,255,.12);opacity:.82;}
+#luxuryEntryScreen .hotera-scene-hotel{left:2.5%;right:auto;}
+#luxuryEntryScreen .hotera-scene-office{right:2.5%;left:auto;}
+#luxuryEntryScreen .hotera-scene-hotel>* ,#luxuryEntryScreen .hotera-scene-office>*{display:none!important;}
+#luxuryEntryScreen .hotera-scene-hotel:before,#luxuryEntryScreen .hotera-scene-office:before{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;white-space:pre-line;color:#dbeafe;font-size:clamp(11px,1.4vw,18px);line-height:2.2;letter-spacing:1px;text-shadow:0 0 14px rgba(56,189,248,.45);}
+#luxuryEntryScreen .hotera-scene-hotel:before{content:'HOTERA\A ★ ★ ★ ★ ★\A\A مركز الاستقبال\A ضيافة أرقى';background:radial-gradient(circle at 50% 78%,rgba(245,158,11,.28),transparent 24%),linear-gradient(180deg,transparent,rgba(2,8,22,.5));}
+#luxuryEntryScreen .hotera-scene-office:before{content:'مؤشرات الأداء\A\A 87%   243   1,250\A\A الإيرادات 245,000 ر.س\A\A الإشغال   الخدمة   الجودة';font-size:clamp(9px,1.2vw,15px);color:#b9e8ff;background:linear-gradient(145deg,rgba(10,49,94,.4),rgba(2,8,25,.65));}
+@media(max-width:850px){#luxuryEntryScreen .hotera-model3-orbit{min-width:112px;padding:9px 8px}#luxuryEntryScreen .hotera-model3-orbit b{font-size:17px}#luxuryEntryScreen .hotera-model3-orbit span{font-size:8px}#luxuryEntryScreen .hotera-model3-orbit small{font-size:7px}#loginOverlay .login-card{width:min(92vw,400px);padding:20px 15px 14px}}
+</style>
 </head>
 <body>
 
@@ -1519,7 +1559,7 @@ let hoteraWelcomeIntroTimer=null;
 function hoteraWelcomeReadSavedMedia(){try{const saved=JSON.parse(localStorage.getItem(HOTERA_WELCOME_MEDIA_KEY)||'null');return saved&&saved.data?saved:null;}catch(e){return null;}}
 function removeHoteraWelcomeMedia(){const hero=document.getElementById('luxuryEntryScreen');if(hero){hero.classList.remove('hotera-custom-media');const old=hero.querySelector('.hotera-custom-welcome-media');if(old)old.remove();}}
 function closeHoteraWelcomeIntro(){const intro=document.getElementById('hoteraWelcomeIntroScreen');const host=document.getElementById('hoteraWelcomeIntroMediaHost');if(hoteraWelcomeIntroTimer){clearTimeout(hoteraWelcomeIntroTimer);hoteraWelcomeIntroTimer=null;}const media=host?.querySelector('video');if(media){media.pause();media.removeAttribute('src');media.load();}if(host)host.innerHTML='';if(intro)intro.classList.remove('open');}
-function continueHoteraWelcomeIntro(){closeHoteraWelcomeIntro();const main=document.getElementById('luxuryEntryScreen');if(main)main.classList.remove('hidden');startHoteraWelcomeCarousel();window.clearTimeout(window.hoteraLuxuryEntryTimer);window.hoteraLuxuryEntryTimer=window.setTimeout(()=>{enterLuxuryWelcome();},HOTERA_MODEL_SEQUENCE_DURATION);}
+function continueHoteraWelcomeIntro(){closeHoteraWelcomeIntro();const main=document.getElementById('luxuryEntryScreen');if(main)main.classList.remove('hidden');startHoteraWelcomeCarousel();window.clearTimeout(window.hoteraLuxuryEntryTimer);}
 function skipHoteraWelcomeIntro(){continueHoteraWelcomeIntro();}
 function initHoteraWelcomeSequence(){const intro=document.getElementById('hoteraWelcomeIntroScreen');const host=document.getElementById('hoteraWelcomeIntroMediaHost');const main=document.getElementById('luxuryEntryScreen');if(!intro||!host||!main)return false;const saved=hoteraWelcomeReadSavedMedia();closeHoteraWelcomeIntro();if(!saved){main.classList.remove('hidden');startHoteraWelcomeCarousel();return false;}main.classList.add('hidden');const media=saved.type==='video'?document.createElement('video'):document.createElement('img');media.className='hotera-welcome-intro-media';media.src=saved.data;media.setAttribute('aria-label','مقدمة مخصصة لشاشة ترحيب HOTERA');if(saved.type==='video'){media.autoplay=true;media.muted=true;media.loop=false;media.playsInline=true;media.preload='auto';media.setAttribute('webkit-playsinline','true');media.addEventListener('canplay',()=>media.play().catch(()=>{}),{once:true});media.addEventListener('ended',continueHoteraWelcomeIntro,{once:true});media.addEventListener('error',()=>{const status=document.getElementById('hoteraWelcomeIntroStatus');if(status)status.textContent='تعذر تشغيل المقدمة — استخدم زر المتابعة للانتقال إلى الترحيب الأساسي.';},{once:true});}else{hoteraWelcomeIntroTimer=setTimeout(continueHoteraWelcomeIntro,6000);}host.appendChild(media);const status=document.getElementById('hoteraWelcomeIntroStatus');if(status)status.textContent=saved.type==='video'?'جارٍ تشغيل الفيديو الافتتاحي...':'جارٍ عرض الصورة الافتتاحية...';intro.classList.add('open');return true;}
 function applyHoteraWelcomeMedia(){return initHoteraWelcomeSequence();}
@@ -1984,6 +2024,20 @@ function buildCloudPayload() {
   };
 }
 
+function hoteraSyncFloorCountsFromRooms(persist=false){
+  if(!Array.isArray(hotelsList))return false;
+  let changed=false;
+  hotelsList.forEach(h=>{
+    if(!h||h.id===undefined)return;
+    const rooms=Array.isArray(allRooms?.[h.id])?allRooms[h.id]:[];
+    const maxRoomFloor=rooms.reduce((max,r)=>Math.max(max,Number(r?.floor)||0),0);
+    const current=Math.max(1,Number(h.floorsCount)||1);
+    if(maxRoomFloor>current){h.floorsCount=maxRoomFloor;h.updatedAt=new Date().toISOString();changed=true;}
+  });
+  if(changed&&persist&&typeof saveData==='function')saveData();
+  return changed;
+}
+
 function ensureHoteraHotelDataIntegrity(){
   if(!Array.isArray(hotelsList)||!hotelsList.length)return false;
   hotelsList.forEach(h=>{
@@ -2076,6 +2130,7 @@ function applyCloudPayload(cloudData) {
   if (Array.isArray(cloudData.deviceRequestLog)) hoteraMergeDeviceRequestLog(cloudData.deviceRequestLog);
   if (cloudData.joinCode) { cloudJoinCode = cloudData.joinCode; hoteraSafeSetItem('hotera_cloud_join_code', cloudJoinCode); }
 
+  hoteraSyncFloorCountsFromRooms(false);
   if (cloudData.developerName) developerName = cloudData.developerName;
   if (cloudData.developerPhone) developerPhone = cloudData.developerPhone;
   if (cloudData.aboutTitle) aboutPageTitleText = cloudData.aboutTitle;
@@ -3601,6 +3656,7 @@ function renderFloorTabs() {
   const container = document.getElementById('floorsTabsContainer');
   if(!container) return;
   container.innerHTML = '';
+  hoteraSyncFloorCountsFromRooms(true);
   const h = hotelsList.find(item => item.id === currentHotelId);
   const totalF = h ? (h.floorsCount || 3) : 3;
   document.getElementById('totalFloorsVal').innerText = totalF;
@@ -4223,6 +4279,8 @@ function addRoomsBatch(){
   if(duplicates.length) return alert(`لم تتم الإضافة. أرقام الغرف موجودة مسبقاً: ${duplicates.slice(0,8).join('، ')}${duplicates.length>8?' ...':''}`);
   ids.forEach(id=>list.push({id,floor,type,status:'vacant',guest:'',phone:'',carType:'',carPlate:'',bookingType:'فردي',bookingRef:'',maintUser:'',maintIssue:'',nights:1,nightPrice:200,totalAmount:200}));
   hotel.floorsCount=Math.max(Number(hotel.floorsCount||0),floor);
+  hotel.updatedAt=new Date().toISOString();
+  hoteraSyncFloorCountsFromRooms(false);
   selectedFloor=floor;
   saveData(); uploadDataToCloud(); render(); renderEditRoomsTable();
   document.getElementById('bulkRoomCount').value='';
@@ -4235,7 +4293,11 @@ function addNewRoom() {
   if(!id) return;
   if(!Array.isArray(allRooms[currentHotelId]))allRooms[currentHotelId]=[];
   if(allRooms[currentHotelId].some(room=>String(room.id)===String(id)))return alert('رقم الغرفة موجود مسبقًا. لم تتم إضافة أي غرفة.');
-  allRooms[currentHotelId].push({ id, floor: Math.floor(id/100), type, status: 'vacant', guest: '', phone: '', carType: '', carPlate: '', bookingType: 'فردي', bookingRef: '', maintUser: '', maintIssue: '', nights: 1, nightPrice: 200, totalAmount: 200 });
+  const roomFloor=Math.floor(id/100);
+  allRooms[currentHotelId].push({ id, floor: roomFloor, type, status: 'vacant', guest: '', phone: '', carType: '', carPlate: '', bookingType: 'فردي', bookingRef: '', maintUser: '', maintIssue: '', nights: 1, nightPrice: 200, totalAmount: 200 });
+  const hotel=hotelsList.find(item=>item.id===currentHotelId);
+  if(hotel){hotel.floorsCount=Math.max(Number(hotel.floorsCount||0),roomFloor);hotel.updatedAt=new Date().toISOString();}
+  hoteraSyncFloorCountsFromRooms(false);
   saveData(); uploadDataToCloud(); renderEditRoomsTable();
 }
 function deleteRoom(idx) {
@@ -4742,7 +4804,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   applyHoteraWelcomeMedia();
   const luxuryEntry=document.getElementById('luxuryEntryScreen');
   const hasWelcomeIntro=!!hoteraWelcomeReadSavedMedia();
-  if(luxuryEntry&&!hasWelcomeIntro){window.clearTimeout(window.hoteraLuxuryEntryTimer);window.hoteraLuxuryEntryTimer=window.setTimeout(()=>{if(!document.getElementById('hoteraWelcomeIntroScreen')?.classList.contains('open'))enterLuxuryWelcome();},HOTERA_MODEL_SEQUENCE_DURATION);}
+  if(luxuryEntry&&!hasWelcomeIntro){window.clearTimeout(window.hoteraLuxuryEntryTimer);showWelcomeScreen();}
   readInviteFromUrl();
   await syncAndFetchDataOnLoad();
   hoteraReconcileRoomStatusesFromBookings();
