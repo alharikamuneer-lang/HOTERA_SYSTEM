@@ -1570,11 +1570,11 @@ const HOTERA_MODEL_SEQUENCE_DURATION=HOTERA_MODEL_SLIDE_DURATION;
 let hoteraModelSlideIndex=0,hoteraModelSlideTimer=null;
 function showHoteraWelcomeSlide(index){const slides=[...document.querySelectorAll('.hotera-welcome-slide')],buttons=[...document.querySelectorAll('[data-slide-button]')];if(!slides.length)return;hoteraModelSlideIndex=((Number(index)||0)%slides.length+slides.length)%slides.length;slides.forEach((slide,i)=>slide.classList.toggle('active',i===hoteraModelSlideIndex));buttons.forEach((button,i)=>{button.classList.toggle('active',i===hoteraModelSlideIndex);button.setAttribute('aria-pressed',i===hoteraModelSlideIndex?'true':'false')});const counter=document.getElementById('hoteraModelCounter');if(counter)counter.textContent='نموذج مركز القيادة';const title=document.getElementById('hoteraModelTitle'),subtitle=document.getElementById('hoteraModelSubtitle'),meta=HOTERA_MODEL_SLIDES[hoteraModelSlideIndex]||HOTERA_MODEL_SLIDES[0];if(title)title.textContent=meta.title;if(subtitle)subtitle.textContent=meta.subtitle;const progress=document.querySelector('.hotera-welcome-progress span');if(progress){progress.style.animation='none';void progress.offsetWidth;progress.style.animation='hoteraCarouselProgress 7s linear infinite'}window.clearTimeout(hoteraModelSlideTimer);if(!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)hoteraModelSlideTimer=window.setTimeout(()=>showHoteraWelcomeSlide(hoteraModelSlideIndex+1),HOTERA_MODEL_SLIDE_DURATION);}
 function startHoteraWelcomeCarousel(){showHoteraWelcomeSlide(hoteraModelSlideIndex);}
-function closeLuxuryEntry(){const screen=document.getElementById('luxuryEntryScreen');if(screen)screen.classList.add('hidden');window.clearTimeout(window.hoteraLuxuryEntryTimer);window.clearTimeout(hoteraModelSlideTimer);}
+function closeLuxuryEntry(){const screen=document.getElementById('luxuryEntryScreen');if(screen){screen.classList.add('hidden');screen.style.display='none';screen.setAttribute('aria-hidden','true');}window.clearTimeout(window.hoteraLuxuryEntryTimer);window.clearTimeout(hoteraModelSlideTimer);}
 function enterLuxuryWelcome(){closeLuxuryEntry();const login=document.getElementById('loginOverlay');if(login)login.style.display='flex';}
 function skipLuxuryEntry(){enterLuxuryWelcome();}
 function closeWelcomeScreen(){enterLuxuryWelcome();}
-function showWelcomeScreen(){const screen=document.getElementById('luxuryEntryScreen');if(screen){if(!document.getElementById('hoteraWelcomeIntroScreen')?.classList.contains('open')){const hasIntro=initHoteraWelcomeSequence();if(!hasIntro){screen.classList.remove('hidden');startHoteraWelcomeCarousel();}}}}
+function showWelcomeScreen(){const screen=document.getElementById('luxuryEntryScreen');if(screen&& !currentRole){screen.style.display='flex';screen.removeAttribute('aria-hidden');if(!document.getElementById('hoteraWelcomeIntroScreen')?.classList.contains('open')){const hasIntro=initHoteraWelcomeSequence();if(!hasIntro){screen.classList.remove('hidden');startHoteraWelcomeCarousel();}}}}
 
 function hoteraRecordSyncEvent(type){try{const key='hotera_sync_history',list=JSON.parse(localStorage.getItem(key)||'[]');list.unshift({type,at:new Date().toISOString(),hotelId:currentHotelId,deviceId:deviceId||''});hoteraSafeSetItem(key,JSON.stringify(list.slice(0,30)))}catch(e){console.warn('تعذر حفظ سجل المزامنة',e)}}
 function hoteraReadSyncHistory(){try{return JSON.parse(localStorage.getItem('hotera_sync_history')||'[]')}catch(e){return[]}}
@@ -3213,7 +3213,7 @@ async function executeLogin() {
     if (role === 'superadmin') { if(pinInput!==masterSuperKey){hoteraRegisterLoginFailure();return alert('❌ رمز السوبر أدمن غير صحيح!')} currentRole='superadmin'; currentUsername='المالك العام — إدارة المحلات'; }
     else if (role === 'company_owner') { const companyId=Number(document.getElementById('loginCompanySelect')?.value||0), company=companiesList.find(c=>Number(c.id)===companyId); if(!company||company.status==='suspended'||pinInput!==company.ownerPin)return alert('❌ بيانات مالك الشركة متعددة المحلات غير صحيحة.'); currentRole='shop_company_owner'; currentUsername=company.ownerName||'مالك الشركة متعددة المحلات'; currentCompanyId=company.id; }
     else { const username=(document.getElementById('loginShopUsername')?.value||document.getElementById('loginStaffSelect')?.value||'').trim(), account=(Array.isArray(shopAccounts[shopId])?shopAccounts[shopId]:[]).find(a=>String(a.username||'').trim().toLowerCase()===username.toLowerCase()); if(!username){hoteraRegisterLoginFailure();return alert('❌ أدخل اسم مستخدم المحل.')} if(!account){hoteraRegisterLoginFailure();return alert('❌ لا يوجد مستخدم بهذا الاسم لهذا المحل. أنشئ الحساب من السوبر أدمن.')} if(account.role&&account.role!==role){hoteraRegisterLoginFailure();return alert('❌ هذا المستخدم لا يملك الصلاحية المختارة.')} const hash=await hoteraShopHash(pinInput); if(account.passwordHash!==hash){hoteraRegisterLoginFailure();return alert('❌ كلمة مرور مستخدم المحل غير صحيحة.')} currentRole=role; currentUsername=account.username; }
-    currentShopId=shopId; currentHotelId=null; loginEntityType='shop'; hoteraResetLoginGuard(); hoteraStartSession(); document.getElementById('loginOverlay').style.display='none'; updateHeaderInfo(); applyPermissions(); switchMainFeature('shops',document.getElementById('chipShops')); return;
+    currentShopId=shopId; currentHotelId=null; loginEntityType='shop'; hoteraResetLoginGuard(); hoteraStartSession(); if(typeof closeLuxuryEntry==='function')closeLuxuryEntry(); document.getElementById('loginOverlay').style.display='none'; updateHeaderInfo(); applyPermissions(); switchMainFeature('shops',document.getElementById('chipShops')); return;
   }
 
   // محاولة تحديث البيانات، مع السماح بالدخول محلياً إذا تعذر الاتصال بالسحابة
@@ -3268,6 +3268,7 @@ async function executeLogin() {
   
   hoteraResetLoginGuard();
   hoteraStartSession();
+  if(typeof closeLuxuryEntry==='function')closeLuxuryEntry();
   document.getElementById('loginOverlay').style.display = 'none';
   syncHoteraSettingsVisibility();
   showHoteraLoading(currentRole === 'superadmin' ? 'جارٍ فتح لوحة المالك...' : 'جارٍ تجهيز مركز القيادة...');
