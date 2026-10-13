@@ -1643,7 +1643,9 @@ function getDeviceRegistryForUpload() {
       platform: navigator.platform || 'unknown',
       requestedAt: new Date().toISOString(),
       lastSeen: new Date().toISOString(),
-      status: registry.length === 0 ? 'approved' : 'pending',
+      // الجهاز الذي وصل من رابط دعوة أو طلب اعتماد لا يُعتمد تلقائيًا،
+      // حتى لو كانت الحمولة السحابية القديمة لا تحتوي على أي سجل أجهزة.
+      status: (localStorage.getItem('hotera_invite_verified') === '1' || localStorage.getItem('hotera_pending_device_request')) ? 'pending' : (registry.length === 0 ? 'approved' : 'pending'),
       updatedAt: new Date().toISOString()
     });
   }
@@ -1859,10 +1861,20 @@ async function saveDeviceCloudAndRequest() {
   }
   const ok = await uploadDataToCloud(true);
       if (ok) {
-    hoteraRecordDeviceRequestEvent(deviceId,'request_uploaded',{status:'pending'});
+    // تحقق إضافي: لا نعرض نجاحًا نهائيًا قبل أن نرى سجل الجهاز في آخر نسخة سحابية.
+    const verifiedFetch = await fetchDataFromCloud(false);
+    const uploadedRecord = getCurrentDeviceRecord();
+    if (!verifiedFetch || !uploadedRecord) {
+      hoteraRecordDeviceRequestEvent(deviceId,'request_upload_unverified',{status:'pending'});
+      hoteraSafeSetItem('hotera_pending_device_request', JSON.stringify({deviceId,requestedAt:new Date().toISOString(),status:'verification_pending'}));
+      setDeviceStatusText('تم الرفع لكن لم يظهر الطلب في آخر جلب؛ أعد تحديث الطلبات من السوبر أدمن ⚠️','#fbbf24');
+      alert('⚠️ تم رفع الطلب، لكن لم يظهر بعد في آخر نسخة تم جلبها. بقي الطلب محفوظًا محليًا؛ اضغط «إعادة إرسال الطلب المعلق» أو «تحديث الطلبات» من السوبر أدمن.');
+      return;
+    }
+    hoteraRecordDeviceRequestEvent(deviceId,'request_uploaded',{status:uploadedRecord.status||'pending',verified:true});
     hoteraSafeSetItem('hotera_pending_device_request', JSON.stringify({deviceId,requestedAt:new Date().toISOString(),status:'sent'}));
-    setDeviceStatusText('تم إرسال الطلب للسوبر أدمن، بانتظار الموافقة ⏳');
-    alert('✅ تم إرسال طلب اعتماد الجهاز للسوبر أدمن. بعد الموافقة سيصلك رمز من 6 أرقام.');
+    setDeviceStatusText('تم إرسال الطلب والتحقق من ظهوره للسوبر أدمن ⏳');
+    alert('✅ تم إرسال طلب اعتماد الجهاز والتحقق من ظهوره في السجل السحابي. بعد الموافقة سيصلك رمز من 6 أرقام.');
   } else {
     hoteraSafeSetItem('hotera_pending_device_request', JSON.stringify({deviceId,requestedAt:new Date().toISOString(),status:'waiting_for_connection'}));
     setDeviceStatusText('تم حفظ الطلب محلياً؛ تعذر الرفع بسبب إعدادات المصادقة أو الاتصال ⚠️','#fbbf24');
