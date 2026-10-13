@@ -1389,11 +1389,11 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
     <label style="font-size:10px; color:var(--accent-solid); font-weight:bold; display:block; margin-top:6px;" id="lblBkgRoomsGrid">اختر الغرف المتاحة للتسكين فقط (تحديد متعدد 🟩):</label>
     <div id="bookingAvailableRoomsGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap:4px; max-height:110px; overflow-y:auto; background:rgba(8,12,20,0.6); padding:8px; border-radius:8px; margin-bottom:8px; border:1px solid rgba(255,255,255,0.1);"></div>
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px;">
-      <div><label style="font-size:9px; color:var(--text-muted);" id="lblBkgInDate">تاريخ الدخول:</label><input type="date" id="bookingCheckIn" class="form-input" onchange="calculateBookingDays()"></div>
-      <div><label style="font-size:9px; color:var(--text-muted);" id="lblBkgOutDate">تاريخ الخروج:</label><input type="date" id="bookingCheckOut" class="form-input" onchange="calculateBookingDays()"></div>
+      <div><label style="font-size:9px; color:var(--text-muted);" id="lblBkgInDate">تاريخ الدخول (اختر من التقويم):</label><input type="date" id="bookingCheckIn" class="form-input" onchange="calculateBookingDays('checkin')"></div>
+      <div><label style="font-size:9px; color:var(--text-muted);" id="lblBkgOutDate">تاريخ الخروج (اختر من التقويم):</label><input type="date" id="bookingCheckOut" class="form-input" onchange="calculateBookingDays('checkout')"></div>
     </div>
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px;">
-      <div><label style="font-size:9px; color:var(--text-muted);" id="lblBkgNights">عدد الليالي:</label><input type="number" id="bookingNightsInput" class="form-input" value="1" readonly aria-readonly="true" title="يتم احتساب الليالي تلقائيًا من تاريخي الدخول والخروج" oninput="calculateTotalFromManual()"></div>
+      <div><label style="font-size:9px; color:var(--text-muted);" id="lblBkgNights">عدد الليالي (يعدل تاريخ الخروج تلقائيًا):</label><input type="number" id="bookingNightsInput" class="form-input" value="1" min="1" step="1" title="اكتب عدد الليالي ليتم تعديل تاريخ الخروج تلقائيًا" oninput="calculateBookingDays('nights')"></div>
       <div><label style="font-size:9px; color:var(--text-muted);" id="lblBkgNightPrice">سعر الليلة (لكل غرفة):</label><input type="number" id="bookingNightPriceInput" class="form-input" value="200" oninput="calculateTotalFromManual()"></div>
     </div>
     <div style="display:flex;gap:6px;align-items:end;margin-top:6px;margin-bottom:6px"><div style="flex:1"><label style="font-size:9px;color:var(--text-muted)">السعر الموسمي (اختياري):</label><select id="bookingSeasonalRateSelect" class="form-select" style="margin-bottom:0" onchange="applySelectedBookingSeasonalRate()"><option value="">استخدام السعر الأساسي</option></select></div><small id="bookingSeasonalRateHint" style="font-size:8px;color:#7dd3fc;max-width:170px">لا يتم تطبيق أي سعر تلقائياً.</small></div>
@@ -4378,6 +4378,28 @@ function updateBookingAutoTypeBadge(count) {
   badge.style.display=count?'block':'none';
   const select=document.getElementById('bookingTypeSelect'); if(select) select.value=type==='مفرد'?'فردي':(type==='جماعي'?'شركة/مجموعات':'متعدد الغرف');
 }
+function hoteraRoomAvailableForNewBooking(room, editingRef=''){
+  if(!room)return false;
+  if(editingRef && String(room.bookingRef||'')===String(editingRef))return true;
+  return room.status==='vacant' && !room.bookingRef;
+}
+function hoteraBookingDateKeyAdd(dateKey, days){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(String(dateKey||'')))return '';
+  const d=new Date(`${dateKey}T12:00:00`); if(Number.isNaN(d.getTime()))return '';
+  d.setDate(d.getDate()+Number(days||0)); return hoteraLocalDateKey(d);
+}
+function syncBookingDateConstraints(){
+  const start=document.getElementById('bookingCheckIn'),end=document.getElementById('bookingCheckOut');
+  if(!start||!end)return;
+  const minOut=hoteraBookingDateKeyAdd(start.value,1); if(minOut)end.min=minOut;
+  if(end.value && minOut && end.value<minOut)end.value=minOut;
+}
+function calculateDatesFromNights(){
+  const start=document.getElementById('bookingCheckIn'),end=document.getElementById('bookingCheckOut'),nights=document.getElementById('bookingNightsInput');
+  const n=Math.max(1,Math.floor(Number(nights?.value)||1)); if(nights)nights.value=n;
+  if(start?.value&&end){const next=hoteraBookingDateKeyAdd(start.value,n);if(next)end.value=next;}
+  syncBookingDateConstraints(); calculateTotalFromManual();
+}
 function populateBookingSeasonalRates(){const sel=document.getElementById('bookingSeasonalRateSelect');if(!sel)return;const today=document.getElementById('bookingCheckIn')?.value||hoteraLocalDateKey(),list=readHoteraSeasonalRates().filter(x=>x.status==='active'&&String(x.start)<=today&&today<=String(x.end));sel.innerHTML='<option value="">استخدام السعر الأساسي</option>'+list.map(x=>`<option value="${hoteraEscapeText(x.id)}">${hoteraEscapeText(x.name)} — ${Number(x.rate||0).toFixed(2)} ر.س${Number(x.discount||0)?` — خصم ${Number(x.discount)}%`:''}</option>`).join('');}
 function applySelectedBookingSeasonalRate(){const id=document.getElementById('bookingSeasonalRateSelect')?.value||'',item=readHoteraSeasonalRates().find(x=>String(x.id)===String(id)),input=document.getElementById('bookingNightPriceInput'),hint=document.getElementById('bookingSeasonalRateHint');if(!input)return;if(!item){input.value=input.dataset.baseRate||input.value||200;if(hint)hint.innerText='لا يتم تطبيق أي سعر تلقائياً.';}else{input.dataset.baseRate=input.dataset.baseRate||input.value;const discount=Math.max(0,Math.min(100,Number(item.discount||0)));input.value=(Number(item.rate||0)*(1-discount/100)).toFixed(2);if(hint)hint.innerText=`تم اختيار ${item.name} لهذا الحجز فقط.`;}calculateTotalFromManual();}
 
@@ -4390,7 +4412,7 @@ function openNewBookingModal(editRef) {
   const sourceRoom = editingRooms[0] || null;
   const grid = document.getElementById('bookingAvailableRoomsGrid');
   grid.innerHTML = '';
-  const availableRooms = (allRooms[currentHotelId] || []).filter(r => (r.status === 'vacant' && !r.bookingRef) || (editRef && r.bookingRef === editRef));
+  const availableRooms = (allRooms[currentHotelId] || []).filter(r => hoteraRoomAvailableForNewBooking(r, editRef));
   if(availableRooms.length === 0) {
     grid.innerHTML = '<span style="font-size:10px; color:#ef4444; grid-column:span 4; text-align:center;">لا توجد غرف شاغرة حالياً!</span>';
   } else {
@@ -4420,6 +4442,7 @@ function openNewBookingModal(editRef) {
   let tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
   document.getElementById('bookingCheckOut').value = sourceRoom?.checkOut || hoteraLocalDateKey(tomorrow);
   document.getElementById('bookingNightsInput').value = sourceRoom?.nights || 1;
+  syncBookingDateConstraints();
   document.getElementById('bookingNightPriceInput').value = sourceRoom?.nightPrice || 200; document.getElementById('bookingNightPriceInput').dataset.baseRate = String(sourceRoom?.nightPrice || 200); populateBookingSeasonalRates();
   document.getElementById('bookingTypeSelect').value = sourceRoom?.bookingType || 'فردي';
   document.getElementById('modBookingTitle').innerText = editRef ? `✏️ تعديل الحجز ${editRef}` : '➕ حجز جماعي أو فردي متعدد الغرف';
@@ -4444,12 +4467,16 @@ function lookupCustomerByPhone() {
     document.getElementById('bookingGuestName').value = customerMemory[phone].name;
   }
 }
-function calculateBookingDays() {
-  const d1 = new Date(document.getElementById('bookingCheckIn').value);
-  const d2 = new Date(document.getElementById('bookingCheckOut').value);
-  let diff = Math.ceil((d2 - d1)/(1000*60*60*24)) || 1;
-  document.getElementById('bookingNightsInput').value = diff > 0 ? diff : 1;
-  calculateTotalFromManual();
+function calculateBookingDays(source='dates') {
+  const start=document.getElementById('bookingCheckIn'),end=document.getElementById('bookingCheckOut'),nights=document.getElementById('bookingNightsInput');
+  if(!start||!end||!nights)return;
+  if(source==='nights'){calculateDatesFromNights();return;}
+  syncBookingDateConstraints();
+  const d1=new Date(`${start.value}T12:00:00`),d2=new Date(`${end.value}T12:00:00`);
+  const diff=Math.floor((d2-d1)/(1000*60*60*24));
+  nights.value=diff>0?diff:1;
+  if(source==='checkin' && diff>0){const next=hoteraBookingDateKeyAdd(start.value,diff);if(next)end.value=next;}
+  syncBookingDateConstraints(); calculateTotalFromManual();
 }
 function calculateTotalFromManual() {
   const n = parseFloat(document.getElementById('bookingNightsInput').value) || 1;
