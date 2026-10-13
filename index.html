@@ -514,7 +514,13 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
 #luxuryEntryScreen .hotera-scene-office:before{content:'مؤشرات الأداء\A\A 87%   243   1,250\A\A الإيرادات 245,000 ر.س\A\A الإشغال   الخدمة   الجودة';font-size:clamp(9px,1.2vw,15px);color:#b9e8ff;background:linear-gradient(145deg,rgba(10,49,94,.4),rgba(2,8,25,.65));}
 @media(max-width:850px){#luxuryEntryScreen .hotera-model3-orbit{min-width:112px;padding:9px 8px}#luxuryEntryScreen .hotera-model3-orbit b{font-size:17px}#luxuryEntryScreen .hotera-model3-orbit span{font-size:8px}#luxuryEntryScreen .hotera-model3-orbit small{font-size:7px}#loginOverlay .login-card{width:min(92vw,400px);padding:20px 15px 14px}}
 </style>
-</head>
+<style id="hotera-official-invoice-style">
+#officialInvoiceModal .modal-body{max-width:900px!important;width:min(96vw,900px);padding:12px;background:#0b1220}
+.hotera-official-sheet{background:#fff;color:#172033;border-top:10px solid #c9922e;border-radius:12px;padding:28px 32px;direction:rtl;font-family:Tahoma,Arial,sans-serif;box-shadow:0 18px 50px #0008}
+.hotera-invoice-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px}.hotera-invoice-logo{font:900 30px Arial;letter-spacing:4px;color:#172033}.hotera-invoice-brand-sub{color:#64748b;font-size:10px;margin-top:3px}.hotera-invoice-title{text-align:left;margin-top:18px}.hotera-invoice-title h2{margin:0;color:#172033;font-size:24px}.hotera-invoice-title small{color:#64748b;font-size:10px}.hotera-invoice-qr{width:112px;text-align:center;border:1px solid #d9e1eb;border-radius:10px;padding:7px;color:#64748b;font-size:8px;background:#fafbfc}.hotera-invoice-qr img{display:block;width:88px;height:88px;object-fit:contain;margin:0 auto 4px}.hotera-invoice-rule{height:3px;background:#c9922e;margin:14px 0}.hotera-invoice-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}.hotera-invoice-box{border:1px solid #d9e1eb;border-radius:9px;padding:10px;min-height:74px}.hotera-invoice-box.wide{grid-column:1/-1}.hotera-invoice-label{display:block;color:#64748b;font-size:9px;margin-bottom:4px}.hotera-invoice-value{font-size:12px;font-weight:800;color:#172033}.hotera-invoice-small{font-size:9px;color:#475569;line-height:1.7}.hotera-official-sheet table{width:100%;border-collapse:collapse;margin-top:13px;font-size:10px;color:#172033}.hotera-official-sheet th{background:#172033;color:#fff;padding:9px 6px}.hotera-official-sheet td{padding:9px 6px;border-bottom:1px solid #dfe5ed}.hotera-invoice-num{text-align:left;direction:ltr}.hotera-invoice-total-box{width:360px;margin:12px 0 0 auto;border:1px solid #d9e1eb;border-radius:9px;padding:7px 11px}.hotera-invoice-total-box>div{display:flex;justify-content:space-between;padding:5px;font-size:10px}.hotera-invoice-total-box .grand{border-top:2px solid #c9922e;padding-top:9px;margin-top:3px;font-size:16px;font-weight:900;color:#946617}.hotera-invoice-payment-summary{margin-top:9px;background:#f8fafc;border:1px solid #d9e1eb;border-radius:9px;padding:9px;font-size:10px;color:#172033}.hotera-invoice-footer{margin-top:24px;border-top:1px solid #d9e1eb;padding-top:10px;display:flex;justify-content:space-between;color:#64748b;font-size:9px}.hotera-invoice-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}.hotera-invoice-actions .btn{flex:1;min-width:120px}.hotera-invoice-en{direction:ltr;text-align:left}.hotera-invoice-en .hotera-invoice-title{text-align:right}.hotera-invoice-en .hotera-invoice-total-box{margin-left:0;margin-right:auto}.hotera-invoice-en .hotera-invoice-footer{direction:ltr}.hotera-invoice-lang{font-size:9px!important;padding:6px 10px!important}
+@media(max-width:650px){.hotera-official-sheet{padding:18px 14px}.hotera-invoice-grid{grid-template-columns:1fr}.hotera-invoice-box.wide{grid-column:auto}.hotera-invoice-total-box{width:100%}.hotera-invoice-head{gap:8px}.hotera-invoice-logo{font-size:23px}.hotera-invoice-title h2{font-size:19px}}
+@media print{body>*:not(#officialInvoiceModal){display:none!important}#officialInvoiceModal{display:block!important;position:static!important;background:#fff!important}.hotera-invoice-actions,#hoteraInvoicePaymentPanel,#hoteraInvoiceAuditLog{display:none!important}#officialInvoiceModal .modal-body{width:100%!important;max-width:none!important;padding:0!important;background:#fff!important}.hotera-official-sheet{box-shadow:none;border-radius:0;min-height:100vh}}
+</style></head>
 <body>
 
 
@@ -1271,57 +1277,28 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
   </div>
 </div>
 <div class="modal" id="officialInvoiceModal">
-  <div class="modal-body" style="max-width: 520px; padding: 12px;">
-    <div class="invoice-card-official">
-      <div class="invoice-header-flex">
-        <div>
-          <div class="invoice-brand" id="invBrandHotelName">HOTERA PALACE</div>
-          <div style="font-size:10px; color:#64748b; margin-top:2px;" id="invSubHotelDesc">نظام إدارة الفنادق والوحدات السكنية</div>
-        </div>
-        <div class="invoice-meta">
-          <div style="font-weight:bold; color:#b45309; font-size:12px;" id="invTitleTax">فاتورة ضريبية رسمية موحدة</div>
-          <div><strong id="invLabelRef">رقم الحجز:</strong> <span id="invBookingRefNum" style="color:#b45309; font-weight:bold;">-</span></div>
-          <div><strong id="invLabelNum">رقم الفاتورة:</strong> <span id="invIdNum">-</span></div>
-          <div><strong id="invLabelDate">التاريخ:</strong> <span id="invDateNum">-</span></div>
-        </div>
+  <div class="modal-body">
+    <div class="hotera-official-sheet" id="hoteraOfficialInvoiceSheet">
+      <div class="hotera-invoice-head">
+        <div><div class="hotera-invoice-logo">HOTERA ✦</div><div class="hotera-invoice-brand-sub" id="invSubHotelDesc">نظام إدارة المنشآت الفندقية الموحد · فاتورة إلكترونية رسمية</div><div class="hotera-invoice-title"><h2 id="invTitleTax">فاتورة ضريبية مبسطة</h2><small id="invInvoiceSubtitle">Simplified Tax Invoice · نسخة العميل</small></div></div>
+        <div class="hotera-invoice-qr"><img id="invQrCode" alt="QR invoice"><b id="invQrLabel">رمز التحقق QR</b><br><span id="invQrHint">امسح لعرض بيانات الفاتورة</span></div>
       </div>
-      <div class="invoice-details-grid" style="display:grid; grid-template-columns:1fr 1fr; gap:8px; background:#f8fafc; padding:12px; border-radius:8px; font-size:11px; color:#1e293b; margin-bottom:12px; border:1px solid #e2e8f0;">
-        <div><strong id="invLabelGuest">اسم النزيل / الجهة:</strong> <span id="invGuestName" style="color:#b45309; font-weight:bold;">-</span></div>
-        <div><strong id="invLabelType">نوع الحجز:</strong> <span id="invBookingType">-</span></div><div><strong>حالة الحجز:</strong> <span id="invBookingStatus">-</span></div>
-        <div><strong id="invLabelPhone">رقم الجوال:</strong> <span id="invGuestPhoneNum">-</span></div>
-        <div><strong>رقم الهوية:</strong> <span id="invGuestId">-</span></div>
-        <div><strong>الجنسية:</strong> <span id="invNationality">-</span></div>
-        <div><strong>عدد الضيوف:</strong> <span id="invGuestCount">-</span></div>
-        <div><strong id="invLabelStaff">مسؤول الإصدار:</strong> <span id="invStaffName">-</span></div>
-        <div><strong>طريقة/طرق السداد:</strong> <span id="invPaymentMethod">-</span></div>
-        <div style="grid-column: span 2;"><strong id="invLabelCar">بيانات السيارات:</strong> <span id="invCarDetails">-</span></div>
-        <div style="grid-column: span 2;"><strong>ملاحظات الحجز:</strong> <span id="invBookingNotes">-</span></div>
+      <div class="hotera-invoice-rule"></div>
+      <div class="hotera-invoice-grid">
+        <div class="hotera-invoice-box"><span class="hotera-invoice-label" id="invSellerLabel">بيانات البائع / المنشأة</span><strong class="hotera-invoice-value" id="invBrandHotelName">HOTERA</strong><div class="hotera-invoice-small" id="invSellerDetails">المملكة العربية السعودية<br>الرقم الضريبي: غير مسجل</div></div>
+        <div class="hotera-invoice-box"><span class="hotera-invoice-label" id="invInvoiceDataLabel">بيانات الفاتورة</span><strong class="hotera-invoice-value" id="invIdNum">-</strong><div class="hotera-invoice-small"><span id="invLabelRef">رقم الحجز:</span> <b id="invBookingRefNum">-</b><br><span id="invLabelDate">تاريخ الإصدار:</span> <span id="invDateNum">-</span><br><span id="invInvoiceTypeLabel">نوع الفاتورة:</span> <span id="invInvoiceType">مبسطة</span></div></div>
+        <div class="hotera-invoice-box wide"><span class="hotera-invoice-label" id="invBuyerLabel">بيانات المشتري / النزيل</span><strong class="hotera-invoice-value" id="invGuestName">-</strong><div class="hotera-invoice-small"><span id="invLabelPhone">الجوال:</span> <span id="invGuestPhoneNum">-</span> · <span id="invGuestIdLabel">الهوية:</span> <span id="invGuestId">-</span> · <span id="invNationalityLabel">الجنسية:</span> <span id="invNationality">-</span><br><span id="invGuestCountLabel">عدد الضيوف:</span> <span id="invGuestCount">-</span> · <span id="invPaymentMethodLabel">طريقة/طرق السداد:</span> <span id="invPaymentMethod">-</span></div></div>
       </div>
-      <h5 style="font-size:11px; color:#b45309; margin-bottom:4px; font-weight:bold;" id="invRoomsHeaderTitle">🛏️ تفاصيل الغرف المحجوزة تحت رقم الحجز:</h5>
-      <table class="table-box" style="margin:4px 0 12px 0; color:#1e293b;">
-        <thead>
-          <tr>
-            <th style="background:#e2e8f0; color:#1e293b;" id="thInvRoomNum">رقم الغرفة</th>
-            <th style="background:#e2e8f0; color:#1e293b;" id="thInvRoomType">نوع الغرفة</th>
-            <th style="background:#e2e8f0; color:#1e293b;" id="thInvNights">الليالي</th>
-            <th style="background:#e2e8f0; color:#1e293b;" id="thInvPrice">سعر الليلة</th>
-            <th style="background:#e2e8f0; color:#1e293b;" id="thInvTotalCol">الإجمالي</th>
-          </tr>
-        </thead>
-        <tbody id="invoiceRoomsTableBody"></tbody>
-      </table>
-      <div style="display:flex; justify-content:space-between; align-items:center; background:#fffbeb; padding:10px; border-radius:8px; border:1px solid #f59e0b; margin-top:8px;">
-        <span style="font-size:11px; color:#92400e; font-weight:bold;" id="invLabelGrandTotal">الإجمالي النهائي:</span>
-        <strong id="invGrandTotal" style="color:#b45309; font-size:15px; font-weight:900;">0.00 ر.س</strong>
-      </div><div id="hoteraInvoiceExpandedSummary" style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:7px;font-size:10px;color:#1e293b"><div style="background:#eff6ff;padding:7px;border-radius:6px"><small>الخدمات الإضافية</small><br><strong id="invServicesTotal">0.00 ر.س</strong></div><div style="background:#ecfdf5;padding:7px;border-radius:6px"><small>المدفوع</small><br><strong id="invPaidTotal">0.00 ر.س</strong></div><div style="background:#fff7ed;padding:7px;border-radius:6px"><small>المتبقي</small><br><strong id="invRemainingTotal">0.00 ر.س</strong></div></div><div id="hoteraInvoiceServicesList" style="font-size:9px;color:#64748b;margin-top:6px"></div><div id="hoteraInvoicePaymentPanel" style="margin-top:9px;padding:9px;border:1px solid #bbf7d0;background:#f0fdf4;border-radius:8px;color:#1e293b"><div style="display:flex;justify-content:space-between;align-items:center;gap:6px"><strong style="font-size:11px;color:#047857">💳 السداد من هذه الفاتورة</strong><span id="invPaymentStatus" style="font-size:9px;text-align:left"></span></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:7px"><input id="invoicePaymentAmount" class="form-input" type="number" min="0" step="0.01" placeholder="مبلغ الدفعة" style="margin:0;background:white"><select id="invoicePaymentMethodInput" class="form-select" style="margin:0;background:white"><option>نقدي</option><option>بطاقة</option><option>تحويل بنكي</option><option>رابط دفع</option></select></div><button class="btn btn-green" type="button" style="margin:7px 0 4px;width:100%" onclick="addInvoicePaymentFromActive()">تسجيل الدفعة واحتساب المتبقي تلقائيًا</button><div style="font-size:9px;font-weight:bold;color:#475569;margin-top:5px">سجل الدفعات على الفاتورة</div><div id="invPaymentHistory" style="font-size:9px;max-height:115px;overflow:auto;margin-top:3px"></div></div><div id="hoteraInvoiceAuditLog" style="margin-top:9px;padding:8px;border:1px solid #dbeafe;background:#eff6ff;border-radius:8px;color:#1e293b;font-size:9px"><strong style="color:#1d4ed8">📝 سجل تعديلات الحجز والفاتورة</strong><div style="margin-top:5px">لا توجد تعديلات مسجلة.</div></div><div class="invoice-footer-note">فاتورة صادرة من نظام HOTERA لإدارة المنشآت الفندقية.<br>نشكركم لاختياركم الفندق ونتمنى لكم إقامة سعيدة.</div>
+      <table><thead><tr><th id="thInvRoomNum">#</th><th id="thInvRoomType">الوصف التفصيلي</th><th id="thInvNights">الفترة / الليالي</th><th id="thInvPrice">سعر الوحدة</th><th id="thInvTotalCol">المبلغ</th></tr></thead><tbody id="invoiceRoomsTableBody"></tbody></table>
+      <div class="hotera-invoice-total-box"><div><span id="invSubtotalLabel">الإجمالي قبل الخدمات</span><b id="invSubtotal">0.00 ر.س</b></div><div><span id="invServicesLabel">الخدمات الإضافية</span><b id="invServicesTotal">0.00 ر.س</b></div><div class="grand"><span id="invLabelGrandTotal">الإجمالي النهائي</span><b id="invGrandTotal">0.00 ر.س</b></div></div>
+      <div class="hotera-invoice-payment-summary"><b id="invPaymentSummaryLabel">ملخص السداد:</b> <span id="invPaidTotal">0.00 ر.س</span> · <span id="invRemainingTotal">0.00 ر.س</span> · <strong id="invPaymentStatus">-</strong></div>
+      <div id="hoteraInvoiceServicesList" class="hotera-invoice-small" style="margin-top:7px"></div>
+      <div class="hotera-invoice-grid" style="margin-top:8px"><div class="hotera-invoice-box"><span class="hotera-invoice-label" id="invBookingDetailsLabel">تفاصيل الحجز</span><div class="hotera-invoice-small"><span id="invLabelType">نوع الحجز:</span> <span id="invBookingType">-</span><br><span id="invBookingStatusLabel">حالة الحجز:</span> <span id="invBookingStatus">-</span><br><span id="invLabelStaff">مسؤول الإصدار:</span> <span id="invStaffName">-</span></div></div><div class="hotera-invoice-box"><span class="hotera-invoice-label" id="invAdditionalLabel">بيانات إضافية</span><div class="hotera-invoice-small"><span id="invLabelCar">السيارة:</span> <span id="invCarDetails">-</span><br><span id="invNotesLabel">الملاحظات:</span> <span id="invBookingNotes">-</span></div></div></div>
+      <div id="hoteraInvoicePaymentPanel" style="margin-top:9px;padding:9px;border:1px solid #bbf7d0;background:#f0fdf4;border-radius:8px;color:#1e293b"><div style="display:flex;justify-content:space-between;align-items:center;gap:6px"><strong style="font-size:11px;color:#047857" id="invPaymentPanelTitle">💳 السداد من هذه الفاتورة</strong></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:7px"><input id="invoicePaymentAmount" class="form-input" type="number" min="0" step="0.01" placeholder="مبلغ الدفعة" style="margin:0;background:white"><select id="invoicePaymentMethodInput" class="form-select" style="margin:0;background:white"><option>نقدي</option><option>بطاقة</option><option>تحويل بنكي</option><option>رابط دفع</option></select></div><button class="btn btn-green" type="button" style="margin:7px 0 4px;width:100%" onclick="addInvoicePaymentFromActive()" id="btnInvoicePayment">تسجيل الدفعة واحتساب المتبقي تلقائيًا</button><div style="font-size:9px;font-weight:bold;color:#475569;margin-top:5px" id="invPaymentHistoryLabel">سجل الدفعات على الفاتورة</div><div id="invPaymentHistory" style="font-size:9px;max-height:115px;overflow:auto;margin-top:3px"></div></div>
+      <div id="hoteraInvoiceAuditLog" style="margin-top:9px;padding:8px;border:1px solid #dbeafe;background:#eff6ff;border-radius:8px;color:#1e293b;font-size:9px"><strong style="color:#1d4ed8" id="invAuditTitle">📝 سجل تعديلات الحجز والفاتورة</strong><div style="margin-top:5px">لا توجد تعديلات مسجلة.</div></div>
+      <div class="hotera-invoice-footer"><span id="invFooterThanks">HOTERA · شكراً لاختياركم</span><span id="invFooterSign">توقيع وختم المنشأة: __________________</span></div>
     </div>
-    <div style="display:flex; gap:6px; margin-top:10px;">
-      <button class="btn btn-gold" style="flex:1; margin-top:0;" onclick="window.print()" id="btnPrintInv">طباعة 🖨️</button>
-      <button class="btn btn-green" style="flex:1; margin-top:0;" onclick="sendInvoiceWhatsApp()" id="btnWaInv">إرسال واتساب 📱</button>
-      <button class="btn btn-blue" style="flex:1; margin-top:0; background:#0284c7;" onclick="openInvoiceQr()" id="btnInvoiceQr">QR الفاتورة</button>
-      <button class="btn btn-blue" style="flex:1; margin-top:0; background:#0284c7;" onclick="openRefundInvoiceModalFromActive()" id="btnRefundInv">استرجاع الفاتورة ↩️</button>
-    </div>
-    <button class="btn btn-gray" onclick="closeOfficialInvoiceModal()" id="btnCloseInvModal">إغلاق</button>
+    <div class="hotera-invoice-actions"><button class="btn btn-gold" onclick="window.print()" id="btnPrintInv">طباعة 🖨️</button><button class="btn btn-blue hotera-invoice-lang" onclick="toggleInvoiceLanguage()" id="btnInvoiceLanguage">English / العربية</button><button class="btn btn-green" onclick="sendInvoiceWhatsApp()" id="btnWaInv">إرسال واتساب 📱</button><button class="btn btn-blue" onclick="openInvoiceQr()" id="btnInvoiceQr">فتح QR الفاتورة</button><button class="btn btn-blue" onclick="openRefundInvoiceModalFromActive()" id="btnRefundInv">استرجاع الفاتورة ↩️</button><button class="btn btn-gray" onclick="closeOfficialInvoiceModal()" id="btnCloseInvModal">إغلاق</button></div>
   </div>
 </div>
 
@@ -2742,12 +2719,13 @@ function hoteraRecordInvoicePayment(inv,amount,method,source='invoice-payment'){
   return {ok:true,financial};
 }
 function renderHoteraInvoicePaymentPanel(inv,financial=hoteraGetInvoiceFinancialSummary(inv)){
-  const status=document.getElementById('invPaymentStatus'),history=document.getElementById('invPaymentHistory'),amount=document.getElementById('invoicePaymentAmount');
-  if(status)status.innerHTML=`<b style="color:${financial.remaining>0?'#b45309':'#047857'}">${hoteraInvoicePaymentNotice(financial)}</b><br><span>طريقة/طرق السداد: ${hoteraEscapeText(hoteraInvoicePaymentMethodsSummary(inv,financial))}</span>`;
+  const status=document.getElementById('invPaymentStatus'),history=document.getElementById('invPaymentHistory'),amount=document.getElementById('invoicePaymentAmount'),en=window.hoteraInvoiceLanguage==='en';
+  const statusText=financial.remaining<=0.01?(en?'Paid in full':'مدفوع بالكامل'):financial.paid>0?(en?'Partially paid':'دفعة جزئية'):(en?'Unpaid':'غير مدفوع');
+  if(status)status.innerHTML=`<b style="color:${financial.remaining>0?'#b45309':'#047857'}">${statusText}</b><br><span>${en?'Payment method(s)':'طريقة/طرق السداد'}: ${hoteraEscapeText(hoteraInvoicePaymentMethodsSummary(inv,financial).replace('نقدي','Cash').replace('بطاقة','Card').replace('تحويل بنكي','Bank transfer').replace('رابط دفع','Payment link'))}</span>`;
   if(amount)amount.value=financial.remaining>0?financial.remaining.toFixed(2):'';
   const method=document.getElementById('invoicePaymentMethodInput');if(method&&inv.paymentMethod&&[...method.options].some(option=>option.value===inv.paymentMethod))method.value=inv.paymentMethod;
-  const rows=financial.payments.length?financial.payments:[...(financial.paid>0?[{amount:financial.paid,method:inv.paymentMethod||'سجل سابق',createdAt:inv.financialUpdatedAt||inv.date||'',status:'رصيد مرحّل'}]:[])];
-  if(history)history.innerHTML=rows.length?rows.slice(0,12).map(row=>`<div style="display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px dashed #cbd5e1"><span><b>${hoteraEscapeText(row.method||'طريقة غير محددة')}</b><br><small>${hoteraEscapeText(String(row.createdAt||row.date||'').replace('T',' ').slice(0,16)||'—')} · ${hoteraEscapeText(row.createdBy||row.staff||'—')}</small></span><strong style="color:#047857">${Math.max(0,Number(row.amount||0)).toFixed(2)} ر.س</strong></div>`).join(''):'<span style="color:#64748b">لا توجد دفعات مسجلة على هذه الفاتورة حتى الآن.</span>';
+  const rows=financial.payments.length?financial.payments:[...(financial.paid>0?[{amount:financial.paid,method:inv.paymentMethod||(en?'Previous balance':'سجل سابق'),createdAt:inv.financialUpdatedAt||inv.date||'',status:en?'Carried balance':'رصيد مرحّل'}]:[])];
+  if(history)history.innerHTML=rows.length?rows.slice(0,12).map(row=>`<div style="display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px dashed #cbd5e1"><span><b>${hoteraEscapeText(row.method|| (en?'Unspecified method':'طريقة غير محددة'))}</b><br><small>${hoteraEscapeText(String(row.createdAt||row.date||'').replace('T',' ').slice(0,16)||'—')} · ${hoteraEscapeText(row.createdBy||row.staff||'—')}</small></span><strong style="color:#047857">${Math.max(0,Number(row.amount||0)).toFixed(2)} ${en?'SAR':'ر.س'}</strong></div>`).join(''):`<span style="color:#64748b">${en?'No payments recorded for this invoice yet.':'لا توجد دفعات مسجلة على هذه الفاتورة حتى الآن.'}</span>`;
 }
 function addInvoicePaymentFromActive(){
   const inv=lastActiveInvoice,amount=Math.max(0,Number(document.getElementById('invoicePaymentAmount')?.value||0)),method=document.getElementById('invoicePaymentMethodInput')?.value||'نقدي';
@@ -4210,50 +4188,20 @@ function viewSpecificInvoice(idx) {
   lastActiveInvoice = allInvoices[currentHotelId][idx];
   populateOfficialInvoiceModal(lastActiveInvoice);
 }
+function hoteraInvoiceQrUrl(inv,financial,h){const payload=`HOTERA|VAT:${h?.taxNumber||h?.vatNumber||''}|Invoice:${inv?.id||''}|Booking:${inv?.bookingRef||''}|Date:${inv?.date||hoteraLocalDateKey()}|Total:${Number(financial?.total||0).toFixed(2)}|Paid:${Number(financial?.paid||0).toFixed(2)}|Remaining:${Number(financial?.remaining||0).toFixed(2)}`;return `https://quickchart.io/qr?size=260&text=${encodeURIComponent(payload)}`;}
+function setInvoiceLanguage(lang){
+  const en=lang==='en'; window.hoteraInvoiceLanguage=en?'en':'ar'; const sheet=document.getElementById('hoteraOfficialInvoiceSheet'); if(sheet){sheet.classList.toggle('hotera-invoice-en',en);sheet.dir=en?'ltr':'rtl';} if(!lastActiveInvoice)return;
+  const t=en?{title:'Simplified Tax Invoice',sub:'Simplified Tax Invoice · Customer Copy',seller:'Seller / Establishment',invoice:'Invoice details',buyer:'Buyer / Guest',ref:'Booking reference:',date:'Issue date:',type:'Invoice type:',simple:'Simplified',phone:'Mobile:',id:'ID:',nationality:'Nationality:',count:'Guests:',method:'Payment method(s):',num:'#',desc:'Detailed description',period:'Period / nights',price:'Unit price',amount:'Amount',subtotal:'Subtotal before services',services:'Additional services',grand:'Grand total',summary:'Payment summary:',details:'Booking details',bookingType:'Booking type:',status:'Booking status:',staff:'Issued by:',extra:'Additional details',car:'Vehicle:',notes:'Notes:',paymentPanel:'💳 Pay this invoice',pay:'Record payment and recalculate balance',history:'Payment history',audit:'📝 Booking and invoice audit trail',thanks:'HOTERA · Thank you for choosing us',sign:'Establishment stamp / signature: __________________',qr:'QR verification code',qrHint:'Scan to view invoice data',wa:'Send WhatsApp 📱',print:'Print 🖨️',openQr:'Open invoice QR',refund:'Refund invoice ↩️',close:'Close'}:{title:'فاتورة ضريبية مبسطة',sub:'Simplified Tax Invoice · نسخة العميل',seller:'بيانات البائع / المنشأة',invoice:'بيانات الفاتورة',buyer:'بيانات المشتري / النزيل',ref:'رقم الحجز:',date:'تاريخ الإصدار:',type:'نوع الفاتورة:',simple:'مبسطة',phone:'الجوال:',id:'الهوية:',nationality:'الجنسية:',count:'عدد الضيوف:',method:'طريقة/طرق السداد:',num:'#',desc:'الوصف التفصيلي',period:'الفترة / الليالي',price:'سعر الوحدة',amount:'المبلغ',subtotal:'الإجمالي قبل الخدمات',services:'الخدمات الإضافية',grand:'الإجمالي النهائي',summary:'ملخص السداد:',details:'تفاصيل الحجز',bookingType:'نوع الحجز:',status:'حالة الحجز:',staff:'مسؤول الإصدار:',extra:'بيانات إضافية',car:'السيارة:',notes:'الملاحظات:',paymentPanel:'💳 السداد من هذه الفاتورة',pay:'تسجيل الدفعة واحتساب المتبقي تلقائيًا',history:'سجل الدفعات على الفاتورة',audit:'📝 سجل تعديلات الحجز والفاتورة',thanks:'HOTERA · شكراً لاختياركم',sign:'توقيع وختم المنشأة: __________________',qr:'رمز التحقق QR',qrHint:'امسح لعرض بيانات الفاتورة',wa:'إرسال واتساب 📱',print:'طباعة 🖨️',openQr:'فتح QR الفاتورة',refund:'استرجاع الفاتورة ↩️',close:'إغلاق'};
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.innerText=v}; ['invTitleTax','invInvoiceSubtitle','invSellerLabel','invInvoiceDataLabel','invBuyerLabel','invLabelRef','invLabelDate','invInvoiceTypeLabel','invLabelPhone','invGuestIdLabel','invNationalityLabel','invGuestCountLabel','invPaymentMethodLabel','thInvRoomNum','thInvRoomType','thInvNights','thInvPrice','thInvTotalCol','invSubtotalLabel','invServicesLabel','invLabelGrandTotal','invPaymentSummaryLabel','invBookingDetailsLabel','invLabelType','invBookingStatusLabel','invLabelStaff','invAdditionalLabel','invLabelCar','invNotesLabel','invPaymentPanelTitle','btnInvoicePayment','invPaymentHistoryLabel','invAuditTitle','invFooterThanks','invFooterSign','invQrLabel','invQrHint','btnPrintInv','btnWaInv','btnInvoiceQr','btnRefundInv','btnCloseInvModal'].forEach(id=>{const map={invTitleTax:'title',invInvoiceSubtitle:'sub',invSellerLabel:'seller',invInvoiceDataLabel:'invoice',invBuyerLabel:'buyer',invLabelRef:'ref',invLabelDate:'date',invInvoiceTypeLabel:'type',invLabelPhone:'phone',invGuestIdLabel:'id',invNationalityLabel:'nationality',invGuestCountLabel:'count',invPaymentMethodLabel:'method',thInvRoomNum:'num',thInvRoomType:'desc',thInvNights:'period',thInvPrice:'price',thInvTotalCol:'amount',invSubtotalLabel:'subtotal',invServicesLabel:'services',invLabelGrandTotal:'grand',invPaymentSummaryLabel:'summary',invBookingDetailsLabel:'details',invLabelType:'bookingType',invBookingStatusLabel:'status',invLabelStaff:'staff',invAdditionalLabel:'extra',invLabelCar:'car',invNotesLabel:'notes',invPaymentPanelTitle:'paymentPanel',btnInvoicePayment:'pay',invPaymentHistoryLabel:'history',invAuditTitle:'audit',invFooterThanks:'thanks',invFooterSign:'sign',invQrLabel:'qr',invQrHint:'qrHint',btnPrintInv:'print',btnWaInv:'wa',btnInvoiceQr:'openQr',btnRefundInv:'refund',btnCloseInvModal:'close'};set(id,t[map[id]])}); set('invInvoiceType',t.simple); const f=hoteraGetInvoiceFinancialSummary(lastActiveInvoice),unit=en?'SAR':'ر.س'; set('invPaidTotal',`${en?'Paid':'المدفوع'}: ${f.paid.toFixed(2)} ${unit}`); set('invRemainingTotal',`${en?'Remaining':'المتبقي'}: ${f.remaining.toFixed(2)} ${unit}`); set('invServicesTotal',`${f.services.toFixed(2)} ${unit}`); set('invGrandTotal',`${f.total.toFixed(2)} ${unit}`); renderHoteraInvoicePaymentPanel(lastActiveInvoice,f);
+}
+function toggleInvoiceLanguage(){setInvoiceLanguage(window.hoteraInvoiceLanguage==='en'?'ar':'en');}
 function populateOfficialInvoiceModal(inv) {
-  lastActiveInvoice = inv;
-  const h = hotelsList.find(item => item.id === currentHotelId);
-  document.getElementById('invBrandHotelName').innerText = h ? h.name.toUpperCase() : 'HOTERA PALACE';
-  document.getElementById('invBookingRefNum').innerText = inv.bookingRef || 'BKG-xxxx';
-  document.getElementById('invIdNum').innerText = inv.id;
-  document.getElementById('invDateNum').innerText = inv.date || hoteraLocalDateKey();
-  document.getElementById('invGuestName').innerText = inv.guest || '-';
-  document.getElementById('invGuestPhoneNum').innerText = inv.phone || 'غير متوفر';
-  document.getElementById('invGuestId').innerText = inv.guestId || 'غير متوفر';
-  document.getElementById('invNationality').innerText = inv.nationality || 'غير محدد';
-  document.getElementById('invGuestCount').innerText = `${inv.adults || 1} بالغ / ${inv.children || 0} طفل`;
-  document.getElementById('invPaymentMethod').innerText = inv.paymentMethod || 'نقدي';
-  document.getElementById('invBookingNotes').innerText = inv.bookingNotes || '-';
-  document.getElementById('invBookingType').innerText = inv.bookingType || 'فردي';
-  const bookingStatusLabels={confirmed:'مؤكد',pending:'قيد الانتظار',cancelled:'ملغى',no_show:'عدم حضور',completed:'مكتمل'}; if(document.getElementById('invBookingStatus')) document.getElementById('invBookingStatus').innerText=bookingStatusLabels[inv.bookingStatus]||'مؤكد';
-  document.getElementById('invStaffName').innerText = inv.staffName || 'مدير الفندق';
-  document.getElementById('invCarDetails').innerText = (inv.carType || inv.carPlate) ? `${inv.carType || ''} (لوحة: ${inv.carPlate || 'بدون'})` : 'لا توجد سيارة مسجلة';
-  
-  const roomsTbody = document.getElementById('invoiceRoomsTableBody');
-  roomsTbody.innerHTML = '';
-  let roomsArr = inv.roomsList || [{ id: inv.room, type: 'إقامة فندقية', nights: inv.nights, price: inv.nightPrice, total: inv.total }];
-  roomsArr.forEach(r => {
-    let rTotal = (r.nights || inv.nights || 1) * (r.price || inv.nightPrice || 200);
-    roomsTbody.innerHTML += `
-      <tr>
-        <td><strong>غرفة ${r.id}</strong></td>
-        <td>${r.type || 'إقامة فندقية'}</td>
-        <td>${r.nights || inv.nights || 1}</td>
-        <td>${r.price || inv.nightPrice || 200} ر.س</td>
-        <td style="font-weight:bold; color:#b45309;">${rTotal.toFixed(2)} ر.س</td>
-      </tr>
-    `;
-  });
-  const financial=hoteraGetInvoiceFinancialSummary(inv);
-  document.getElementById('invGrandTotal').innerText = `${financial.total.toFixed(2)} ر.س`;
-  if(document.getElementById('invServicesTotal'))document.getElementById('invServicesTotal').innerText=`${financial.services.toFixed(2)} ر.س`;
-  if(document.getElementById('invPaidTotal'))document.getElementById('invPaidTotal').innerText=`${financial.paid.toFixed(2)} ر.س`;
-  if(document.getElementById('invRemainingTotal'))document.getElementById('invRemainingTotal').innerText=`${financial.remaining.toFixed(2)} ر.س`;
-  if(document.getElementById('hoteraInvoiceServicesList'))document.getElementById('hoteraInvoiceServicesList').innerText=financial.serviceRows.length?`الخدمات: ${financial.serviceRows.map(x=>`${x.name} (${Number(x.amount||0).toFixed(2)} ر.س)`).join(' · ')}`:'لا توجد خدمات إضافية مسجلة';
-  document.getElementById('invPaymentMethod').innerText=hoteraInvoicePaymentMethodsSummary(inv,financial);
-  renderHoteraInvoicePaymentPanel(inv,financial);
-  hoteraRenderBookingAudit(inv.bookingRef);
-  document.getElementById('officialInvoiceModal').style.display = 'flex';
+  lastActiveInvoice=inv; const h=hotelsList.find(item=>item.id===currentHotelId)||{}; const financial=hoteraGetInvoiceFinancialSummary(inv); const en=window.hoteraInvoiceLanguage==='en';
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.innerText=v};
+  set('invBrandHotelName',h.name||'HOTERA'); set('invSellerDetails',`${h.city||'المملكة العربية السعودية'}\n${en?'VAT number':'الرقم الضريبي'}: ${h.taxNumber||h.vatNumber||'غير مسجل'}`); set('invBookingRefNum',inv.bookingRef||'BKG-xxxx'); set('invIdNum',inv.id||'-'); set('invDateNum',inv.date||hoteraLocalDateKey()); set('invGuestName',inv.guest||'-'); set('invGuestPhoneNum',inv.phone|| (en?'Not provided':'غير متوفر')); set('invGuestId',inv.guestId|| (en?'Not provided':'غير متوفر')); set('invNationality',inv.nationality|| (en?'Not specified':'غير محدد')); set('invGuestCount',`${inv.adults||1} ${en?'adult(s)':'بالغ'} / ${inv.children||0} ${en?'child(ren)':'طفل'}`); set('invPaymentMethod',hoteraInvoicePaymentMethodsSummary(inv,financial)); set('invBookingNotes',inv.bookingNotes||'-'); set('invBookingType',inv.bookingType|| (en?'Individual':'فردي')); const labels={confirmed:en?'Confirmed':'مؤكد',pending:en?'Pending':'قيد الانتظار',cancelled:en?'Cancelled':'ملغى',no_show:en?'No show':'عدم حضور',completed:en?'Completed':'مكتمل'};set('invBookingStatus',labels[inv.bookingStatus]||labels.confirmed);set('invStaffName',inv.staffName|| (en?'Hotel manager':'مدير الفندق'));set('invCarDetails',(inv.carType||inv.carPlate)?`${inv.carType||''} (${en?'Plate':'لوحة'}: ${inv.carPlate||'-'})`:(en?'No vehicle recorded':'لا توجد سيارة مسجلة'));
+  const tbody=document.getElementById('invoiceRoomsTableBody'); tbody.innerHTML=''; const roomsArr=inv.roomsList||[{id:inv.room,type:'إقامة فندقية',nights:inv.nights,price:inv.nightPrice}]; roomsArr.forEach((r,i)=>{const nights=r.nights||inv.nights||1,price=Number(r.price||inv.nightPrice||200),total=nights*price;tbody.innerHTML+=`<tr><td>${i+1}</td><td><strong>${en?'Room':'غرفة'} ${hoteraEscapeText(r.id)}</strong><br><small>${hoteraEscapeText(r.type|| (en?'Hotel stay':'إقامة فندقية'))}</small></td><td>${inv.checkIn||'-'} → ${inv.checkOut||'-'}<br>${nights} ${en?'night(s)':'ليلة'}</td><td class="hotera-invoice-num">${price.toFixed(2)}</td><td class="hotera-invoice-num"><b>${total.toFixed(2)}</b></td></tr>`});
+  set('invSubtotal',`${Math.max(0,financial.total- financial.services).toFixed(2)} ${en?'SAR':'ر.س'}`);set('invServicesTotal',`${financial.services.toFixed(2)} ${en?'SAR':'ر.س'}`);set('invGrandTotal',`${financial.total.toFixed(2)} ${en?'SAR':'ر.س'}`);set('invPaidTotal',`${en?'Paid':'المدفوع'}: ${financial.paid.toFixed(2)} ${en?'SAR':'ر.س'}`);set('invRemainingTotal',`${en?'Remaining':'المتبقي'}: ${financial.remaining.toFixed(2)} ${en?'SAR':'ر.س'}`);set('invPaymentStatus',financial.status|| (en?'Unpaid':'غير مدفوع'));set('hoteraInvoiceServicesList',financial.serviceRows.length?(en?'Services: ':'الخدمات: ')+financial.serviceRows.map(x=>`${x.name} (${Number(x.amount||0).toFixed(2)} ${en?'SAR':'ر.س'})`).join(' · '):(en?'No additional services recorded':'لا توجد خدمات إضافية مسجلة'));
+  const qr=document.getElementById('invQrCode');if(qr)qr.src=hoteraInvoiceQrUrl(inv,financial,h);renderHoteraInvoicePaymentPanel(inv,financial);hoteraRenderBookingAudit(inv.bookingRef);setInvoiceLanguage(window.hoteraInvoiceLanguage|| (currentLang==='en'?'en':'ar'));document.getElementById('officialInvoiceModal').style.display='flex';
 }
 function closeOfficialInvoiceModal() { document.getElementById('officialInvoiceModal').style.display = 'none'; }
 
