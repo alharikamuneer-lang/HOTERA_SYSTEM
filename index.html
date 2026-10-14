@@ -727,7 +727,7 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
       <button class="btn btn-blue" style="width:auto; margin-top:0; padding:8px 14px;" onclick="startFastPairingOnThisDevice()">ربط هذا الجهاز برمز</button>
       <span id="fastPairStatus" style="font-size:9px; color:#94a3b8;">الرمز مؤقت ولا يُستخدم إلا مرة واحدة</span>
     </div>
-    <div id="fastPairCodeDisplay" style="display:none;margin-top:7px;padding:10px;border:1px dashed rgba(52,211,153,.45);border-radius:10px;text-align:center;background:rgba(16,185,129,.07);font-size:20px;letter-spacing:7px;color:#86efac;font-weight:900;"></div>
+    <div id="fastPairCodeDisplay" style="display:none;margin-top:7px;padding:10px;border:1px dashed rgba(52,211,153,.45);border-radius:10px;text-align:center;background:rgba(16,185,129,.07);font-size:20px;letter-spacing:7px;color:#86efac;font-weight:900;"><div id="fastPairCodeText"></div><img id="fastPairQrImage" alt="QR رمز الاقتران" style="display:none;width:150px;height:150px;margin:9px auto 4px;background:#fff;padding:6px;border-radius:8px"><small id="fastPairQrHint" style="display:none;font-size:8px;letter-spacing:0;color:#bbf7d0;font-weight:normal">امسح QR من الجهاز الجديد لفتح النظام وتعبئة الرمز تلقائيًا</small></div>
     <div style="display:flex; gap:6px; align-items:center; margin-top:6px;">
       <button class="btn btn-gray" style="width:auto; margin-top:0; padding:6px 10px; font-size:9px;" onclick="generateDeviceInviteLink()">استخدام الرابط القديم كخيار احتياطي 🔗</button>
       <input id="generatedInviteLink" class="form-input" readonly style="margin:0; display:none; font-size:9px; direction:ltr;">
@@ -1695,6 +1695,13 @@ function renderDeviceApprovalPanel() {
   }).join('');
 }
 
+function renderFastPairQr(code){
+  const display=document.getElementById('fastPairCodeDisplay'),text=document.getElementById('fastPairCodeText'),img=document.getElementById('fastPairQrImage'),hint=document.getElementById('fastPairQrHint');
+  if(!display||!img)return;const clean=String(code||'').replace(/\D/g,'').slice(0,6);if(clean.length!==6)return;
+  const pairUrl=`${window.location.origin}${window.location.pathname}?hoteraPair=${encodeURIComponent(clean)}`;
+  if(text)text.textContent=`رمز الاقتران: ${clean}`;img.src=`https://quickchart.io/qr?size=220&margin=2&text=${encodeURIComponent(pairUrl)}`;img.style.display='block';if(hint)hint.style.display='block';display.style.display='block';
+}
+function readFastPairFromUrl(){try{const pair=new URLSearchParams(window.location.search).get('hoteraPair');if(!pair)return;const clean=String(pair).replace(/\D/g,'').slice(0,6);if(clean.length!==6)return;const input=document.getElementById('deviceJoinCodeInput');if(input)input.value=clean;setDeviceStatusText('تمت قراءة رمز الاقتران من QR؛ اضغط إرسال الطلب / اعتماد بالكود ✅','#38bdf8');hoteraSafeSetItem('hotera_pair_qr_code',clean);if(window.history?.replaceState)window.history.replaceState({},document.title,window.location.pathname);}catch(_){}}
 function readInviteFromUrl() {
   try {
     const raw = new URLSearchParams(window.location.search).get('hoteraInvite');
@@ -1744,7 +1751,7 @@ async function createFastPairingCode(){
     const deviceLabel=prompt('اسم الجهاز الجديد (مثلاً: استقبال الفندق):','جهاز جديد');if(deviceLabel===null)return;
     const result=await hoteraFastPairRequest('pairStart',{scopeKey:'hotera-default',sourceDeviceId:deviceId,sourceLabel:String(deviceLabel||'جهاز جديد').trim().slice(0,80),expiresMinutes:15});
     const code=String(result?.code||result?.pairingCode||'').replace(/\D/g,'').slice(0,6);if(code.length!==6)throw new Error('الخادم لم يُرجع رمز اقتران صالحًا');
-    const display=document.getElementById('fastPairCodeDisplay');if(display){display.textContent=code;display.style.display='block';}
+    renderFastPairQr(code);
     const status=document.getElementById('fastPairStatus');if(status)status.textContent='الرمز صالح 15 دقيقة ويُستخدم مرة واحدة';
     try{await navigator.clipboard.writeText(code)}catch(_){}
     hoteraRecordDeviceRequestEvent(deviceId,'fast_pair_code_created',{expiresMinutes:15});
@@ -1753,7 +1760,7 @@ async function createFastPairingCode(){
 }
 async function startFastPairingOnThisDevice(){
   const input=document.getElementById('deviceJoinCodeInput');
-  const code=prompt('أدخل رمز الاقتران المؤقت من السوبر أدمن:',input?.value||'');
+  const preset=String(input?.value||'').replace(/\D/g,'').slice(0,6);const code=preset.length===6?preset:prompt('أدخل رمز الاقتران المؤقت من السوبر أدمن:',preset);
   if(code===null)return;
   const clean=String(code).replace(/\D/g,'').slice(0,6);if(clean.length!==6)return alert('⚠️ يجب إدخال رمز من 6 أرقام.');
   if(input)input.value=clean;
@@ -4902,6 +4909,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const hasWelcomeIntro=!!hoteraWelcomeReadSavedMedia();
   if(luxuryEntry&&!hasWelcomeIntro){window.clearTimeout(window.hoteraLuxuryEntryTimer);showWelcomeScreen();}
   readInviteFromUrl();
+  readFastPairFromUrl();
   await syncAndFetchDataOnLoad();
   hoteraReconcileRoomStatusesFromBookings();
   if(!document.getElementById('hoteraWelcomeIntroScreen')?.classList.contains('open')) applyHoteraWelcomeMedia();
