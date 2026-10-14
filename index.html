@@ -405,9 +405,9 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 /* HOTERA Glass Edition — الحزمة السابعة: جاهزية الخادم والأجهزة */
 #deviceApprovalPanel{border-radius:18px}#deviceApprovalPanel>div{border-color:rgba(103,232,249,.22)!important;background:linear-gradient(145deg,rgba(14,35,57,.9),rgba(5,17,32,.96))!important;box-shadow:0 14px 32px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.1)}
 #hoteraServerStatusText,#commandCloudStatus,#commandLastSync{transition:color .2s ease,background .2s ease;letter-spacing:.1px}
-#hoteraServerUrlInput,#cloudApiUrlInput{direction:ltr;text-align:left;border-color:rgba(103,232,249,.28)!important;background:rgba(3,12,24,.72)!important}
+#cloudApiUrlInput{direction:ltr;text-align:left;border-color:rgba(103,232,249,.28)!important;background:rgba(3,12,24,.72)!important}
 #hoteraServerStatusText{display:inline-flex;align-items:center;gap:4px;padding:4px 7px;border-radius:8px;background:rgba(255,255,255,.035)}
-@media(max-width:600px){#deviceApprovalPanel{font-size:10px}#hoteraServerStatusText{display:block;margin-top:6px;line-height:1.6}#hoteraServerUrlInput,#cloudApiUrlInput{font-size:11px}}
+@media(max-width:600px){#deviceApprovalPanel{font-size:10px}#hoteraServerStatusText{display:block;margin-top:6px;line-height:1.6}#cloudApiUrlInput{font-size:11px}}
 /* HOTERA Glass Edition — الحزمة الثامنة: وضوح الأقسام والحالات */
 .section-card,.section-panel,.panel,.card-panel{box-shadow:0 14px 32px rgba(0,0,0,.22),inset 0 1px rgba(255,255,255,.1)}
 .hotera-audit-empty,.hotera-contract-alert.info{border-color:rgba(103,232,249,.22)!important;background:linear-gradient(145deg,rgba(14,35,57,.62),rgba(5,17,32,.72))!important;box-shadow:inset 0 1px rgba(255,255,255,.1)}
@@ -714,7 +714,7 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
       </div>
     </div>
     <div style="display:flex; gap:6px; align-items:center;">
-      <button class="btn btn-gold" style="width:auto; margin-top:0; padding:8px 14px;" onclick="saveCloudSettings()">حفظ واختبار الربط السحابي 🔗</button><div style="margin-top:8px;padding:8px;border:1px dashed rgba(245,158,11,.45);border-radius:8px;background:rgba(245,158,11,.05)"><label style="font-size:9px;color:#fbbf24">🛡️ رابط خادم HOTERA العام (ليس مفتاحًا سريًا):</label><input type="url" id="hoteraServerUrlInput" class="form-input" placeholder="https://api.example.com" style="margin:5px 0 4px;direction:ltr;text-align:left"><div style="display:flex;gap:6px;align-items:center"><button class="btn btn-blue" style="width:auto;margin:0;padding:6px 10px;background:#0284c7" onclick="saveHoteraServerUrl()">حفظ رابط الخادم</button><button class="btn btn-green" style="width:auto;margin:0;padding:6px 10px" onclick="checkHoteraServerHealth()">فحص الخادم</button><span id="hoteraServerStatusText" style="font-size:9px;color:#94a3b8">لم يتم إعداد خادم مركزي</span></div><small style="display:block;color:#94a3b8;font-size:8px;margin-top:4px">لا تضع API Key هنا أو داخل GitHub؛ يوضع المفتاح داخل خادم HOTERA كمتغير سري.</small></div>
+      <button class="btn btn-gold" style="width:auto; margin-top:0; padding:8px 14px;" onclick="saveCloudSettings()">حفظ واختبار الربط السحابي 🔗</button>
       <button class="btn btn-blue" style="width:auto; margin-top:0; padding:8px 14px; background:#10b981;" onclick="syncDataWithCloudNow()">مزامنة البيانات الآن 🔄</button><button class="btn btn-gold" style="width:auto; margin-top:0; padding:8px 14px;" onclick="downloadHoteraBackup()">تنزيل HOTERA_BACKUP 🛡️</button>
       <span id="cloudSyncStatusText" style="font-size:9px; color:#34d399; font-weight:bold;">الحالة: جاهز للربط المحلي/السحابي</span><div id="hoteraSyncDiagnostics" style="font-size:8px;color:#94a3b8;margin-top:6px;line-height:1.7">آخر جلب: لم ينفذ — آخر رفع: لم ينفذ</div><div style="display:flex;gap:6px;align-items:center;margin-top:4px"><span id="hoteraSyncQueueStatus" style="font-size:8px;color:#94a3b8">لا توجد تعديلات معلقة</span><button type="button" class="btn btn-gray" style="width:auto;margin:0;padding:3px 6px;font-size:8px" onclick="hoteraFlushSyncQueue()">إعادة إرسال المعلّق</button><button type="button" class="btn btn-gray" style="width:auto;margin:0;padding:3px 6px;font-size:8px" onclick="downloadHoteraSyncReport()">تقرير المزامنة</button></div>
     </div>
@@ -729,7 +729,7 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
     </div>
     <div id="fastPairCodeDisplay" style="display:none;margin-top:7px;padding:10px;border:1px dashed rgba(52,211,153,.45);border-radius:10px;text-align:center;background:rgba(16,185,129,.07);font-size:20px;letter-spacing:7px;color:#86efac;font-weight:900;"><div id="fastPairCodeText"></div><img id="fastPairQrImage" alt="QR رمز الاقتران" style="display:none;width:150px;height:150px;margin:9px auto 4px;background:#fff;padding:6px;border-radius:8px"><small id="fastPairQrHint" style="display:none;font-size:8px;letter-spacing:0;color:#bbf7d0;font-weight:normal">امسح QR من الجهاز الجديد لفتح النظام وتعبئة الرمز تلقائيًا</small></div>
     <div style="display:flex; gap:6px; align-items:center; margin-top:6px;">
-      <button class="btn btn-gray" style="width:auto; margin-top:0; padding:6px 10px; font-size:9px;" onclick="generateDeviceInviteLink()">استخدام الرابط القديم كخيار احتياطي 🔗</button>
+      <button class="btn btn-gray" style="width:auto; margin-top:0; padding:6px 10px; font-size:9px;" onclick="generateDeviceInviteLink()">إنشاء دعوة JSONBin جديدة 🔗</button>
       <input id="generatedInviteLink" class="form-input" readonly style="margin:0; display:none; font-size:9px; direction:ltr;">
     </div>
   </div>
@@ -820,7 +820,7 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
     <tbody id="hotelsTableBody"></tbody>
   </table>
   <div class="company-admin-panel" style="margin-top:14px;padding:12px;border:1px solid rgba(45,212,239,.28);border-radius:14px;background:rgba(14,165,233,.06);"><h4 style="margin:0 0 8px;color:#2dd4ef">🏢 الشركات ومالكوها</h4><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px"><input id="newCompanyName" class="form-input" placeholder="اسم الشركة"><input id="newCompanyOwnerName" class="form-input" placeholder="اسم مالك الشركة"><input id="newCompanyOwnerPin" class="form-input" placeholder="رمز مالك الشركة"></div><div id="companyHotelAssignment" style="display:flex;gap:5px;flex-wrap:wrap;margin:8px 0"></div><button class="btn btn-blue" style="width:auto;margin:0" onclick="createCompanyFromSuperAdmin()">إضافة الشركة وربط الفنادق</button><div id="companiesAdminList" style="margin-top:9px"></div><h4 style="margin:14px 0 7px;color:#fbbf24">🛡️ جدول الصلاحيات المعتمد</h4><div style="overflow:auto"><table id="permissionsMatrixTable" class="table-box" style="font-size:9px"><thead><tr><th>نوع الحساب</th><th>النطاق</th><th>القدرات الأساسية</th></tr></thead><tbody><tr><td>👑 السوبر أدمن</td><td>جميع الشركات والفنادق</td><td>إنشاء الشركات، ربط الفنادق، اعتماد الأجهزة، إدارة الصلاحيات</td></tr><tr><td>🏢 مالك الشركة</td><td>الشركة والفنادق المرتبطة فقط</td><td>لوحة إجمالية، متابعة كل فندق، الغرف، الحجوزات، الإيرادات والتنبيهات</td></tr><tr><td>⚡ مدير الفندق</td><td>الفندق المحدد فقط</td><td>الغرف، الحجوزات، الفواتير، التقارير وإدارة التشغيل</td></tr><tr><td>💼 الموظف</td><td>حسب الفندق والصلاحية</td><td>الوظائف التي يحددها مدير الفندق</td></tr></tbody></table></div></div>
-<div class="company-admin-panel" style="margin-top:14px;padding:12px;border:1px solid rgba(244,183,64,.28);border-radius:14px;background:rgba(244,183,64,.05);"><h4 style="margin:0 0 8px;color:#f4b740">🔐 المزامنة الآمنة الانتقالية</h4><p style="font-size:9px;color:#cbd5e1;margin:0 0 8px">تجهيز نسخة احتياطية وفحص خادم HOTERA دون حذف البيانات القديمة أو وضع مفتاح سري داخل GitHub.</p><input id="secureSyncServerUrlInput" class="form-input" placeholder="رابط خادم HOTERA الآمن — اختياري حالياً"><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="btn btn-blue" style="width:auto;margin:0" onclick="useHoteraCentralServer()">استخدام المنصة المركزية</button><button class="btn btn-blue" style="width:auto;margin:0" onclick="checkHoteraSecureServer()">فحص الخادم قراءة فقط</button><button class="btn btn-gold" style="width:auto;margin:0" onclick="downloadHoteraLocalBackup()">تنزيل نسخة احتياطية</button><button class="btn btn-green" style="width:auto;margin:0" onclick="pushHoteraSecureSnapshot()">رفع لقطة آمنة</button><button class="btn btn-gray" style="width:auto;margin:0" onclick="compareHoteraLatestSnapshot()">مقارنة أحدث لقطة</button></div><div id="secureSyncStatusText" style="font-size:9px;color:#94a3b8;margin-top:8px">الحالة: لم يتم فحص الخادم بعد</div></div>
+<div class="company-admin-panel" style="margin-top:14px;padding:12px;border:1px solid rgba(56,189,248,.35);border-radius:14px;background:rgba(56,189,248,.05);"><h4 style="margin:0 0 8px;color:#38bdf8">☁️ المزامنة والربط عبر JSONBin</h4><p style="font-size:9px;color:#cbd5e1;margin:0 0 8px">يعمل HOTERA الآن عبر JSONBin فقط. لا يحتاج النظام إلى خادم مركزي أو رابط إضافي. استخدم رابط JSONBin ومفتاحه في الأعلى، ثم أنشئ دعوة الجهاز من قسم طلبات الأجهزة.</p><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="btn btn-blue" style="width:auto;margin:0" onclick="syncDataWithCloudNow()">اختبار مزامنة JSONBin</button><button class="btn btn-gold" style="width:auto;margin:0" onclick="downloadHoteraLocalBackup()">تنزيل نسخة احتياطية</button><button class="btn btn-gray" style="width:auto;margin:0" onclick="hoteraStorageCleanupSafe()">تنظيف التخزين الآمن</button></div><div id="secureSyncStatusText" style="font-size:9px;color:#34d399;margin-top:8px">الحالة: JSONBin هو مسار المزامنة والربط الوحيد ✅</div></div>
 </div>
 
 <div id="companyOwnerView" class="view-section company-owner-view" style="display:none;"><div class="company-owner-hero"><div><span class="company-owner-kicker">🏢 لوحة الشركة</span><h2>متابعة فنادقك من مكان واحد</h2><p>تظهر هنا الفنادق المرتبطة بشركتك فقط، مع مؤشرات الإشغال والحجوزات والإيرادات والتنبيهات لكل فندق.</p></div><div class="company-owner-badge" id="companyOwnerNameBadge">مالك الشركة</div></div><div class="company-owner-summary"><div><small>الفنادق التابعة</small><strong id="companyHotelCount">0</strong></div><div><small>إجمالي الغرف</small><strong id="companyRoomCount">0</strong></div><div><small>إجمالي الحجوزات</small><strong id="companyBookingCount">0</strong></div><div><small>إجمالي الإيرادات</small><strong id="companyRevenueTotal">0 ر.س</strong></div></div><div id="companyHotelsGrid" class="company-hotels-grid"></div></div>
@@ -1590,11 +1590,6 @@ function hoteraSetSyncDiagnostic(kind,message,color='#94a3b8'){
   el.innerHTML=`آخر جلب: <span style="color:${kind==='get'?color:'#94a3b8'}">${hoteraEscapeText(get.message||'لم ينفذ')}</span> — آخر رفع: <span style="color:${kind==='put'?color:'#94a3b8'}">${hoteraEscapeText(put.message||'لم ينفذ')}</span>`;
 }
 
-function getHoteraServerUrl(){return (localStorage.getItem('hotera_server_url')||'').trim()}
-function saveHoteraServerUrl(){const input=document.getElementById('hoteraServerUrlInput'),url=(input?.value||'').trim();if(url){try{const u=new URL(url);if(!/^https?:$/.test(u.protocol))throw new Error('protocol')}catch(e){return alert('⚠️ رابط خادم HOTERA غير صحيح. استخدم https:// أو http:// للاختبار.')}}hoteraSafeSetItem('hotera_server_url',url);setHoteraServerStatus(url?'تم حفظ رابط الخادم العام ✅':'لم يتم إعداد خادم مركزي','#34d399');alert(url?'✅ تم حفظ رابط خادم HOTERA دون حفظ أي مفتاح سري.':'تم إلغاء رابط الخادم.');}
-function setHoteraServerStatus(message,color='#94a3b8'){const el=document.getElementById('hoteraServerStatusText');if(el){el.innerText=message;el.style.color=color}}
-async function checkHoteraServerHealth(){const url=getHoteraServerUrl();if(!/^https?:\/\//i.test(url))return setHoteraServerStatus('أدخل رابط الخادم أولاً','#fbbf24');setHoteraServerStatus('جارٍ فحص خادم HOTERA...','#fbbf24');try{const res=await fetch(url.replace(/\/$/,'')+'/health',{method:'GET',headers:{Accept:'application/json'}});if(!res.ok)throw new Error(`HTTP ${res.status}`);const data=await res.json().catch(()=>({}));setHoteraServerStatus(`الخادم يعمل ✅ ${data.service||'HOTERA Server'}`,'#34d399')}catch(e){setHoteraServerStatus('تعذر الوصول إلى الخادم أو مسار /health غير جاهز','#f87171');console.warn('HOTERA server health check failed',e)}}
-function hydrateHoteraServerSettings(){const input=document.getElementById('hoteraServerUrlInput');if(input)input.value=getHoteraServerUrl();}
 
 function getCloudConfig() {
   return {
@@ -1733,65 +1728,13 @@ function readInviteFromUrl() {
   } catch (e) { setDeviceStatusText('رابط الدعوة غير صالح؛ اطلب رابطاً جديداً.', '#f87171'); }
 }
 
-async function hoteraFastPairRequest(path,body){
-  const server=(localStorage.getItem('hotera_secure_sync_server')||localStorage.getItem('hotera_server_url')||HOTERA_CENTRAL_DEFAULT_URL||'').trim().replace(/\/$/,'');
-  if(!server)throw new Error('لم يتم إعداد رابط خادم HOTERA المركزي. احفظه من إعدادات الخادم أولاً.');
-  const token=localStorage.getItem('hotera_fast_pair_token')||'';
-  const headers={'Content-Type':'application/json','Accept':'application/json'};if(token)headers.Authorization=`Bearer ${token}`;
-  const response=await fetch(`${server}/api/trpc/hoteraSync.${path}`,{method:'POST',credentials:'include',headers,body:JSON.stringify({json:body})});
-  const text=await response.text();let data={};try{data=JSON.parse(text)}catch(_){}
-  if(!response.ok){const status=response.status;const detail=data?.error?.json?.message||data?.error?.message||'';if(status===401||status===403)throw new Error('الخادم يتطلب تسجيل دخول أو صلاحية اعتماد الربط (HTTP '+status+')');if(status===404)throw new Error('مسار الربط السريع غير مفعّل على الخادم (HTTP 404)');throw new Error(detail||`HTTP ${status}`);}
-  return data?.result?.data?.json||data?.result?.data||data;
-}
 async function createFastPairingCode(){
-  if(currentRole!=='superadmin')return alert('إنشاء رمز الاقتران متاح للسوبر أدمن فقط.');
-  const configured=localStorage.getItem('hotera_secure_sync_server')||localStorage.getItem('hotera_server_url')||'';
-  if(!configured) { const input=document.getElementById('hoteraServerUrlInput'); if(input&&HOTERA_CENTRAL_DEFAULT_URL)input.value=HOTERA_CENTRAL_DEFAULT_URL; hoteraSafeSetItem('hotera_secure_sync_server',HOTERA_CENTRAL_DEFAULT_URL); }
-
-  try{
-    const deviceLabel=prompt('اسم الجهاز الجديد (مثلاً: استقبال الفندق):','جهاز جديد');if(deviceLabel===null)return;
-    const result=await hoteraFastPairRequest('pairStart',{scopeKey:'hotera-default',sourceDeviceId:deviceId,sourceLabel:String(deviceLabel||'جهاز جديد').trim().slice(0,80),expiresMinutes:15});
-    const code=String(result?.code||result?.pairingCode||'').replace(/\D/g,'').slice(0,6);if(code.length!==6)throw new Error('الخادم لم يُرجع رمز اقتران صالحًا');
-    renderFastPairQr(code);
-    const status=document.getElementById('fastPairStatus');if(status)status.textContent='الرمز صالح 15 دقيقة ويُستخدم مرة واحدة';
-    try{await navigator.clipboard.writeText(code)}catch(_){}
-    hoteraRecordDeviceRequestEvent(deviceId,'fast_pair_code_created',{expiresMinutes:15});
-    alert(`✅ رمز الاقتران السريع هو: ${code}\\nأرسله للجهاز الجديد فقط. صالح لمدة 15 دقيقة.`);
-  }catch(e){
-    const reason=String(e?.message||e||'').toLowerCase();
-    const canFallback=!!cloudApiUrl&&!!cloudApiKey&&!/example\.com/i.test(String(cloudApiUrl));
-    if(canFallback&&(reason.includes('failed to fetch')||reason.includes('401')||reason.includes('403')||reason.includes('404')||reason.includes('cors')||reason.includes('الخادم'))){
-      try{await generateDeviceInviteLink({silent:true});const status=document.getElementById('fastPairStatus');if(status)status.textContent='الخادم المركزي غير متاح؛ تم تجهيز رابط JSONBin احتياطي مع QR صالح 15 دقيقة';return alert('⚠️ الخادم المركزي غير متاح حالياً. تم تجهيز رابط JSONBin الاحتياطي تلقائياً؛ أرسله للجهاز الجديد لإكمال الاعتماد دون فقدان البيانات.');}catch(fallbackError){return alert(`❌ تعذر إنشاء رمز الاقتران والرابط الاحتياطي: ${fallbackError.message}`);}
-    }
-    alert(`❌ تعذر إنشاء رمز الاقتران السريع. تحقق من اتصال الخادم المركزي أو إعدادات JSONBin.
-التفاصيل: ${e.message||e}`);
-  }
+  if(currentRole!=='superadmin')return alert('إنشاء دعوة الجهاز متاح للسوبر أدمن فقط.');
+  const label=prompt('اسم الجهاز الجديد (اختياري):','جهاز جديد');if(label===null)return;
+  hoteraSafeSetItem('hotera_invite_device_label',String(label||'جهاز جديد').trim().slice(0,80));
+  try{await generateDeviceInviteLink({silent:true});const status=document.getElementById('fastPairStatus');if(status)status.textContent='تم إنشاء دعوة JSONBin مباشرة؛ QR والرابط صالحان 15 دقيقة';return alert('✅ تم إنشاء دعوة JSONBin مباشرة. أرسل QR أو الرابط للجهاز الجديد؛ سيُرسل طلب الاعتماد تلقائيًا إلى السوبر أدمن.');}catch(e){return alert('❌ تعذر إنشاء دعوة JSONBin. تأكد من حفظ رابط JSONBin ومفتاحه أولاً.');}
 }
-async function startFastPairingOnThisDevice(){
-  const input=document.getElementById('deviceJoinCodeInput');
-  const preset=String(input?.value||'').replace(/\D/g,'').slice(0,6);const code=preset.length===6?preset:prompt('أدخل رمز الاقتران المؤقت من السوبر أدمن:',preset);
-  if(code===null)return;
-  const clean=String(code).replace(/\D/g,'').slice(0,6);if(clean.length!==6)return alert('⚠️ يجب إدخال رمز من 6 أرقام.');
-  if(input)input.value=clean;
-  return saveDeviceCloudAndRequest();
-}
-async function joinFastPairingCode(code){
-  try{
-    setDeviceStatusText('جارٍ ربط الجهاز بالرمز المؤقت...', '#fbbf24');
-    const result=await hoteraFastPairRequest('pairJoin',{scopeKey:'hotera-default',pairingCode:String(code),sourceDeviceId:deviceId,sourceLabel:deviceName});
-    const server=String(result?.serverUrl||result?.url||HOTERA_CENTRAL_DEFAULT_URL).replace(/\/$/,'');
-    hoteraSafeSetItem('hotera_secure_sync_server',server);
-    if(result?.deviceToken)hoteraSafeSetItem('hotera_fast_pair_token',String(result.deviceToken));
-    if(result?.cloudUrl)hoteraSafeSetItem('hotera_cloud_url',String(result.cloudUrl));
-    if(result?.cloudKey)hoteraSafeSetItem('hotera_cloud_key',String(result.cloudKey));
-    hoteraRecordDeviceRequestEvent(deviceId,'fast_pair_joined',{server});
-    setDeviceStatusText('تم ربط الجهاز؛ جارٍ إكمال الاعتماد والمزامنة ✅','#34d399');
-    if(typeof checkHoteraSecureServer==='function')await checkHoteraSecureServer();
-    if(result?.approved===true||result?.status==='approved'){setDeviceStatusText('الجهاز معتمد والمزامنة التلقائية مفعلة ✅','#34d399');return alert('✅ تم ربط الجهاز واعتماده والمزامنة تلقائية.');}
-    return alert('✅ تم إرسال طلب الربط السريع. اعتمد الجهاز من لوحة السوبر أدمن ثم أعد الضغط على ربط هذا الجهاز برمز.');
-  }catch(e){setDeviceStatusText('تعذر الربط السريع؛ استخدم الرابط الاحتياطي ⚠️','#fbbf24');return alert(`❌ تعذر الربط بالرمز: ${e.message}`);}
-}
-
+async function startFastPairingOnThisDevice(){return generateDeviceInviteLink();}
 async function generateDeviceInviteLink(options={}) {
   const silent=!!options.silent;
   if (!cloudApiUrl || !cloudApiKey) return alert('⚠️ احفظ رابط JSONBin ومفتاح المصادقة أولاً.');
@@ -4953,16 +4896,6 @@ setTimeout(hoteraRenderSyncQueueStatus,500);
     switchTab('ratingPortalView', null);
   }
 });
-const HOTERA_CENTRAL_DEFAULT_URL='https://hotera-saas-xpg6vu9f.manus.space';function useHoteraCentralServer(){const i=document.getElementById('secureSyncServerUrlInput');if(i)i.value=HOTERA_CENTRAL_DEFAULT_URL;hoteraSafeSetItem('hotera_secure_sync_server',HOTERA_CENTRAL_DEFAULT_URL);setSecureSyncStatus('تم اختيار منصة HOTERA المركزية. اضغط فحص الخادم للتحقق دون رفع بيانات','#fbbf24');}
-function getSecureSyncServerUrl(){return (document.getElementById('secureSyncServerUrlInput')?.value || localStorage.getItem('hotera_secure_sync_server') || '').trim().replace(/\/$/,'');}
-function setSecureSyncStatus(message,color='#94a3b8'){const el=document.getElementById('secureSyncStatusText');if(el){el.textContent=message;el.style.color=color;}}
-function rememberSecureSyncServer(){const url=getSecureSyncServerUrl();if(url)hoteraSafeSetItem('hotera_secure_sync_server',url);return url;}
-async function checkHoteraSecureServer(){const url=rememberSecureSyncServer();if(!url)return setSecureSyncStatus('أدخل رابط خادم HOTERA أولاً','#fbbf24');try{setSecureSyncStatus('جارٍ فحص الخادم...','#fbbf24');const r=await fetch(url+'/api/trpc/hoteraSync.health',{credentials:'include',cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);const body=await r.json();setSecureSyncStatus('الخادم جاهز — المزامنة append-only مفعلة ✅','#34d399');return body;}catch(e){setSecureSyncStatus('تعذر الاتصال بالخادم: '+e.message,'#f87171');return null;}}
-async function hoteraPayloadChecksum(payload){const raw=JSON.stringify(payload);if(window.crypto?.subtle){const bytes=new TextEncoder().encode(raw);const digest=await crypto.subtle.digest('SHA-256',bytes);return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,'0')).join('');}return 'legacy-'+raw.length+'-'+Date.now();}
-function downloadHoteraLocalBackup(){return downloadHoteraBackup();}
-async function pushHoteraSecureSnapshot(){const url=rememberSecureSyncServer();if(!url)return setSecureSyncStatus('أدخل رابط الخادم أولاً — لن يتم إرسال أي بيانات','#fbbf24');try{const payload=buildCloudPayload();const checksum=await hoteraPayloadChecksum(payload);setSecureSyncStatus('جارٍ إرسال لقطة جديدة دون حذف اللقطات السابقة...','#fbbf24');const r=await fetch(url+'/api/trpc/hoteraSync.push',{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify({json:{scopeKey:'hotera-default',sourceDeviceId:deviceId,sourceLabel:deviceName,schemaVersion:'legacy-v1',checksum,payload}})});if(r.status===401||r.status===403){setSecureSyncStatus('الخادم رفض الطلب: يلزم تسجيل دخول الخادم قبل الرفع الآمن','#f87171');return;}if(!r.ok)throw new Error('HTTP '+r.status);setSecureSyncStatus('تم حفظ لقطة آمنة جديدة دون حذف البيانات السابقة ✅','#34d399');}catch(e){setSecureSyncStatus('لم يتم الرفع الآمن: '+e.message,'#f87171');}}
-async function compareHoteraLatestSnapshot(){const url=rememberSecureSyncServer();if(!url)return setSecureSyncStatus('أدخل رابط الخادم أولاً — لن يتم جلب أي بيانات','#fbbf24');try{setSecureSyncStatus('جارٍ جلب بيانات المقارنة دون تطبيقها...','#fbbf24');const r=await fetch(url+'/api/trpc/hoteraSync.latest?input='+encodeURIComponent(JSON.stringify({json:{scopeKey:'hotera-default'}})),{credentials:'include',cache:'no-store'});if(r.status===401||r.status===403){setSecureSyncStatus('المقارنة تتطلب تسجيل دخول الخادم — لم تُغيّر البيانات ✅','#fbbf24');return;}if(!r.ok)throw new Error('HTTP '+r.status);const body=await r.json();const latest=body?.result?.data?.json;if(!latest){setSecureSyncStatus('لا توجد لقطة خادم للمقارنة بعد — البيانات المحلية كما هي ✅','#34d399');return;}const localChecksum=await hoteraPayloadChecksum(buildCloudPayload());const serverChecksum=latest.checksum||'';setSecureSyncStatus(localChecksum===serverChecksum?'المقارنة ناجحة: البيانات المحلية مطابقة لآخر لقطة ✅':'توجد فروقات: لم يتم تطبيق أي تغيير على البيانات المحلية ⚠️',localChecksum===serverChecksum?'#34d399':'#fbbf24');}catch(e){setSecureSyncStatus('تعذرت المقارنة: '+e.message,'#f87171');}}
-const secureSyncInput=document.getElementById('secureSyncServerUrlInput');if(secureSyncInput){secureSyncInput.value=localStorage.getItem('hotera_secure_sync_server')||'';}
 </script>
 
 <script>
