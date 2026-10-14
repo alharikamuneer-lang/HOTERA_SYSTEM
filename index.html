@@ -1695,10 +1695,10 @@ function renderDeviceApprovalPanel() {
   }).join('');
 }
 
-function renderFastPairQr(code){
+function renderFastPairQr(code,targetUrl){
   const display=document.getElementById('fastPairCodeDisplay'),text=document.getElementById('fastPairCodeText'),img=document.getElementById('fastPairQrImage'),hint=document.getElementById('fastPairQrHint');
   if(!display||!img)return;const clean=String(code||'').replace(/\D/g,'').slice(0,6);if(clean.length!==6)return;
-  const pairUrl=`${window.location.origin}${window.location.pathname}?hoteraPair=${encodeURIComponent(clean)}`;
+  const pairUrl=targetUrl||`${window.location.origin}${window.location.pathname}?hoteraPair=${encodeURIComponent(clean)}`;
   if(text)text.textContent=`رمز الاقتران: ${clean}`;img.src=`https://quickchart.io/qr?size=220&margin=2&text=${encodeURIComponent(pairUrl)}`;img.style.display='block';if(hint)hint.style.display='block';display.style.display='block';
 }
 function readFastPairFromUrl(){try{const pair=new URLSearchParams(window.location.search).get('hoteraPair');if(!pair)return;const clean=String(pair).replace(/\D/g,'').slice(0,6);if(clean.length!==6)return;const input=document.getElementById('deviceJoinCodeInput');if(input)input.value=clean;setDeviceStatusText('تمت قراءة رمز الاقتران من QR؛ اضغط إرسال الطلب / اعتماد بالكود ✅','#38bdf8');hoteraSafeSetItem('hotera_pair_qr_code',clean);if(window.history?.replaceState)window.history.replaceState({},document.title,window.location.pathname);}catch(_){}}
@@ -1756,7 +1756,15 @@ async function createFastPairingCode(){
     try{await navigator.clipboard.writeText(code)}catch(_){}
     hoteraRecordDeviceRequestEvent(deviceId,'fast_pair_code_created',{expiresMinutes:15});
     alert(`✅ رمز الاقتران السريع هو: ${code}\\nأرسله للجهاز الجديد فقط. صالح لمدة 15 دقيقة.`);
-  }catch(e){alert(`❌ تعذر إنشاء رمز الاقتران السريع: ${e.message}\\nيمكنك استخدام رابط الدعوة الاحتياطي.`);}
+  }catch(e){
+    const reason=String(e?.message||e||'').toLowerCase();
+    const canFallback=!!cloudApiUrl&&!!cloudApiKey&&!/example\.com/i.test(String(cloudApiUrl));
+    if(canFallback&&(reason.includes('failed to fetch')||reason.includes('401')||reason.includes('403')||reason.includes('404')||reason.includes('cors')||reason.includes('الخادم'))){
+      try{await generateDeviceInviteLink({silent:true});const status=document.getElementById('fastPairStatus');if(status)status.textContent='الخادم المركزي غير متاح؛ تم تجهيز رابط JSONBin احتياطي مع QR صالح 15 دقيقة';return alert('⚠️ الخادم المركزي غير متاح حالياً. تم تجهيز رابط JSONBin الاحتياطي تلقائياً؛ أرسله للجهاز الجديد لإكمال الاعتماد دون فقدان البيانات.');}catch(fallbackError){return alert(`❌ تعذر إنشاء رمز الاقتران والرابط الاحتياطي: ${fallbackError.message}`);}
+    }
+    alert(`❌ تعذر إنشاء رمز الاقتران السريع. تحقق من اتصال الخادم المركزي أو إعدادات JSONBin.
+التفاصيل: ${e.message||e}`);
+  }
 }
 async function startFastPairingOnThisDevice(){
   const input=document.getElementById('deviceJoinCodeInput');
@@ -1783,7 +1791,8 @@ async function joinFastPairingCode(code){
   }catch(e){setDeviceStatusText('تعذر الربط السريع؛ استخدم الرابط الاحتياطي ⚠️','#fbbf24');return alert(`❌ تعذر الربط بالرمز: ${e.message}`);}
 }
 
-async function generateDeviceInviteLink() {
+async function generateDeviceInviteLink(options={}) {
+  const silent=!!options.silent;
   if (!cloudApiUrl || !cloudApiKey) return alert('⚠️ احفظ رابط JSONBin ومفتاح المصادقة أولاً.');
   try { new URL(cloudApiUrl); } catch (_) { return alert('⚠️ رابط JSONBin غير صحيح.'); }
   if (/example\.com/i.test(cloudApiUrl)) return alert('⚠️ ما زال رابط الخادم تجريبيًا. استخدم رابط JSONBin الحقيقي الظاهر في إعدادات السحابة.');
@@ -1792,6 +1801,7 @@ async function generateDeviceInviteLink() {
   // إنشاء الدعوة محلي فقط؛ لا يوجد سبب لعمل PUT هنا، لذلك لن يمنع HTTP 403 إصدار الرابط.
   const payload = encodeURIComponent(btoa(JSON.stringify({ url: cloudApiUrl, key: cloudApiKey, code: cloudJoinCode, expiresAt: Date.now() + 15 * 60 * 1000, format: 'hotera-invite-v4' })));
   const link = `${window.location.origin}${window.location.pathname}?hoteraInvite=${payload}`;
+  renderFastPairQr(cloudJoinCode,link);
   const input = document.getElementById('generatedInviteLink');
   if (input) { input.value = link; input.style.display = 'block'; input.select(); }
   const notice = document.getElementById('inviteLinkStatus');
@@ -1799,7 +1809,8 @@ async function generateDeviceInviteLink() {
   try { await navigator.clipboard.writeText(link); } catch (_) {}
   const status = document.getElementById('inviteLinkStatus');
   if (status) status.innerText = `تم إنشاء رابط دعوة مؤقت ونسخه — رمز الدعوة: ${cloudJoinCode} — صالح لمدة 15 دقيقة`;
-  alert('✅ تم إنشاء رابط الدعوة ونسخه. أرسله للجهاز الجديد. إذا ظهر 401 أو 403 عند إرسال الطلب، تحقق من صلاحية مفتاح JSONBin.');
+  if(!silent)alert('✅ تم إنشاء رابط الدعوة ونسخه. أرسله للجهاز الجديد. إذا ظهر 401 أو 403 عند إرسال الطلب، تحقق من صلاحية مفتاح JSONBin.');
+  return link;
 }
 
 async function saveDeviceCloudAndRequest() {
