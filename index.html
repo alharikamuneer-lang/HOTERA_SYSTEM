@@ -1602,18 +1602,14 @@ function hoteraSetSyncDiagnostic(kind,message,color='#94a3b8'){
 }
 
 
-function getCloudConfig() {
-  return {
-    url: (cloudApiUrl || AUTO_CLOUD_URL || '').trim(),
-    key: (cloudApiKey || AUTO_API_KEY || '').trim()
-  };
+function hoteraNormalizeCloudUrl(raw, mode='base'){
+  let text=String(raw||'').trim().replace(/^['"`]|['"`]$/g,'').replace(/\s+/g,'');
+  if(!text)return '';
+  try{const u=new URL(text);u.hash='';u.search='';u.pathname=u.pathname.replace(/\/+$/,'').replace(/\/latest$/i,'');if(mode==='read')u.pathname+='/latest';return u.toString().replace(/\/$/,'');}catch(_){return text.replace(/\/latest$/i,'').replace(/\/+$/,'')}
 }
-function hoteraCloudAuthHeaders(key){
-  const value=String(key||'').trim();
-  // JSONBin يقبل X-Master-Key أو X-Access-Key؛ نستخدم المفتاح الرئيسي فقط هنا لتجنب تعارض النوعين.
-  return value ? {'X-Master-Key':value} : {};
-}
-
+function hoteraNormalizeCloudKey(raw){return String(raw||'').trim().replace(/^['"`]|['"`]$/g,'').replace(/^X-Master-Key\s*:\s*/i,'').replace(/^X-Access-Key\s*:\s*/i,'').trim();}
+function getCloudConfig(){return {url:hoteraNormalizeCloudUrl(cloudApiUrl||AUTO_CLOUD_URL||'','base'),key:hoteraNormalizeCloudKey(cloudApiKey||AUTO_API_KEY||'')}}
+function hoteraCloudAuthHeaders(key){const value=hoteraNormalizeCloudKey(key);return value?{'X-Master-Key':value}:{};}
 function getDeviceRegistryForUpload() {
   const registry = Array.isArray(cloudDevices) ? [...cloudDevices] : [];
   const existing = registry.find(d => d.id === deviceId);
@@ -1779,8 +1775,8 @@ async function saveDeviceCloudAndRequest() {
   if (!deviceJoinCode && !inviteVerified && !(existingRecord && existingRecord.approvalCodeHash)) return alert('⚠️ أدخل رمز الاقتران السريع أو افتح رابط الدعوة الاحتياطي.');
   if (!url) return alert('⚠️ لم يتم العثور على إعدادات الربط. افتح رابط الدعوة الأصلي أو اطلب دعوة جديدة.');
   try { new URL(url); } catch (_) { return alert('⚠️ تعذر التحقق من إعدادات الدعوة. اطلب رابطاً جديداً.'); }
-  cloudApiUrl = url;
-  cloudApiKey = key;
+  cloudApiUrl = normalizedUrl;
+  cloudApiKey = normalizedKey;
   hoteraSafeSetItem('hotera_cloud_url', cloudApiUrl);
   hoteraSafeSetItem('hotera_cloud_key', cloudApiKey);
   hoteraSafeSetItem('hotera_join_code', deviceJoinCode);
@@ -2132,13 +2128,13 @@ async function hoteraFetchWithRetry(url, options={}, attempts=3){
   throw lastError||new Error('فشل الاتصال');
 }
 function hoteraValidateCloudConfig(config){
-  if(!config?.url)return {ok:false,message:'لم يتم إدخال رابط JSONBin'};
-  try{const u=new URL(config.url);if(!/^https:$/.test(u.protocol)||!/jsonbin\.io$/i.test(u.hostname)||!/^\/v3\/b\//.test(u.pathname))return {ok:false,message:'رابط JSONBin غير صحيح'};}catch(_){return {ok:false,message:'رابط JSONBin غير صحيح'};}
-  if(!config.key)return {ok:false,message:'مفتاح JSONBin غير موجود'};
-  if(/example\.com/i.test(config.url))return {ok:false,message:'الرابط التجريبي غير صالح'};
-  return {ok:true};
+  const base=hoteraNormalizeCloudUrl(config?.url||'','base'),key=hoteraNormalizeCloudKey(config?.key||'');
+  if(!base)return {ok:false,message:'لم يتم إدخال رابط JSONBin'};
+  try{const u=new URL(base);if(!/^https:$/.test(u.protocol)||!/jsonbin\.io$/i.test(u.hostname)||!/^\/v3\/b\/[^/]+$/i.test(u.pathname))return {ok:false,message:'رابط JSONBin غير صحيح. استخدم https://api.jsonbin.io/v3/b/معرّف-bin'};}catch(_){return {ok:false,message:'رابط JSONBin غير صحيح'};}
+  if(!key)return {ok:false,message:'مفتاح JSONBin غير موجود'};
+  if(/example\.com/i.test(base))return {ok:false,message:'الرابط التجريبي غير صالح'};
+  return {ok:true,url:base,key};
 }
-
 async function fetchDataFromCloud(showError = false) {
   const config = getCloudConfig();
   if (!config.url) return false;
@@ -2150,7 +2146,7 @@ async function fetchDataFromCloud(showError = false) {
     const validation=hoteraValidateCloudConfig(config);
     if(!validation.ok)throw new Error(validation.message);
     hoteraSetSyncDiagnostic('get','جارٍ التنفيذ...','#fbbf24');
-    const response = await hoteraFetchWithRetry(config.url, { method: 'GET', headers, cache: 'no-store' });
+    const response = await hoteraFetchWithRetry(hoteraNormalizeCloudUrl(config.url,'read'), { method: 'GET', headers, cache: 'no-store' });
     if (!response.ok) {
       if(response.status===401||response.status===403)throw new Error(`GET HTTP ${response.status} — استخدم X-Master-Key الصحيح المرتبط بهذا الـ Bin`);
       throw new Error(`GET HTTP ${response.status}`);
@@ -2179,7 +2175,7 @@ async function fetchDataFromCloud(showError = false) {
 
 async function hoteraMergeLatestDevicesBeforeUpload(config, headers){
   try{
-    const response=await hoteraFetchWithRetry(config.url,{method:'GET',headers,cache:'no-store'});
+    const response=await hoteraFetchWithRetry(hoteraNormalizeCloudUrl(config.url,'read'),{method:'GET',headers,cache:'no-store'});
     if(!response.ok)throw new Error(`GET HTTP ${response.status}`);
     hoteraCloudEtag=response.headers.get('ETag')||hoteraCloudEtag;
     const result=await response.json(),remote=result.record||result;
@@ -2300,14 +2296,8 @@ async function saveCloudSettings() {
     return;
   }
 
-  const created = await uploadDataToCloud(false);
-  if (created) {
-    hoteraSafeSetItem('hotera_cloud_url', cloudApiUrl);
-    hoteraSafeSetItem('hotera_cloud_key', cloudApiKey);
-    alert('✅ تم اختبار الإعدادات وإنشاء/تحديث السجل المركزي بنجاح.');
-    return;
-  }
-
+  // لا نرفع بعد فشل القراءة؛ حمايةً للسجل السحابي من استبداله ببيانات محلية قديمة.
+  // أنشئ الـ Bin أولاً من JSONBin ثم اختبر الرابط هنا.
   // فشل الاختبار بالكامل: تراجع عن الإعداد الجديد فقط، ولا تلمس أي سجل بيانات.
   cloudApiUrl = previousUrl;
   cloudApiKey = previousKey;
@@ -2320,7 +2310,8 @@ async function saveCloudSettings() {
   if (urlInput) urlInput.value = previousUrl || '';
   if (keyInput) keyInput.value = previousKey || '';
   setCloudStatus('فشل الاختبار؛ تم الإبقاء على الإعداد السابق والبيانات المحلية سليمة', '#f87171');
-  alert('❌ تعذر اختبار الربط. لم يتم حفظ الإعداد الجديد ولم تتغير أي بيانات. تحقق من الرابط والمفتاح وصلاحية PUT في الخدمة السحابية.');
+  const diag=(()=>{try{return JSON.parse(localStorage.getItem('hotera_sync_diag_get')||'{}').message||''}catch(_){return ''}})();
+  alert(`❌ تعذر اختبار الربط. لم يتم حفظ الإعداد الجديد ولم تتغير أي بيانات.\n${diag||'تحقق من رابط Bin ومفتاح X-Master-Key وصلاحية القراءة.'}`);
 }
 
 let currentHotelId = 1;
