@@ -2836,8 +2836,9 @@ function hoteraBookingCollections(){
 }
 function hoteraBookingRoomsByRef(ref){return (allRooms?.[currentHotelId]||[]).filter(r=>String(r.bookingRef||'')===String(ref||''));}
 function hoteraBookingRefArg(ref){return encodeURIComponent(String(ref||''));}
-function openEditBookingByRef(ref){const rooms=hoteraBookingRoomsByRef(ref);if(!rooms.length)return alert('لم يتم العثور على غرف مرتبطة بهذا الحجز.');closeHoteraBookingManagement();openNewBookingModal(String(ref));}
-function openCancelBookingByRef(ref){const rooms=hoteraBookingRoomsByRef(ref);if(!rooms.length)return alert('لا يمكن إلغاء حجز غير مرتبط بغرفة نشطة.');window.hoteraBookingManagementActionContext=true;openCancelBookingModal(rooms[0].id,String(ref));window.hoteraBookingManagementActionContext=false;}
+function hoteraBookingInvoicesByRef(ref){return (allInvoices?.[currentHotelId]||[]).filter(i=>String(i.bookingRef||'')===String(ref||''));}
+function openEditBookingByRef(ref){const rooms=hoteraBookingRoomsByRef(ref),invoices=hoteraBookingInvoicesByRef(ref);if(!rooms.length&&!invoices.length)return alert('لم يتم العثور على الحجز أو الفاتورة المرتبطة به.');closeHoteraBookingManagement();openNewBookingModal(String(ref));}
+function openCancelBookingByRef(ref){const rooms=hoteraBookingRoomsByRef(ref),invoices=hoteraBookingInvoicesByRef(ref);if(!rooms.length&&!invoices.length)return alert('لم يتم العثور على الحجز أو الفاتورة المرتبطة به.');window.hoteraBookingManagementActionContext=true;openCancelBookingModal(rooms[0]?.id||0,String(ref));window.hoteraBookingManagementActionContext=false;}
 function openHoteraBookingManagement(tab='new'){const modal=document.getElementById('hoteraBookingManagementModal');if(!modal)return;window.hoteraBookingManagementTab=tab;modal.classList.add('open');renderHoteraBookingManagement()}
 function closeHoteraBookingManagement(){document.getElementById('hoteraBookingManagementModal')?.classList.remove('open')}
 function renderHoteraBookingManagement(){
@@ -4363,8 +4364,9 @@ function openNewBookingModal(editRef) {
   window.hoteraEditingBookingRef = editRef || null;
   renderHoteraContractCompanyOptions();
   const applyRate=document.getElementById('bookingApplyCompanyRate'); if(applyRate) applyRate.checked=false; const ratePreview=document.getElementById('bookingContractRatePreview'); if(ratePreview){ratePreview.style.display='none';ratePreview.innerText='';}
-  const editingRooms = editRef ? (allRooms[currentHotelId] || []).filter(r => r.bookingRef === editRef) : [];
-  const sourceRoom = editingRooms[0] || null;
+  const editingRooms = editRef ? (allRooms[currentHotelId] || []).filter(r => String(r.bookingRef||'') === String(editRef)) : [];
+  const invoiceSource = editRef ? ((allInvoices?.[currentHotelId]||[]).find(i=>String(i.bookingRef||'')===String(editRef)) || null) : null;
+  const sourceRoom = editingRooms[0] || invoiceSource || null;
   const grid = document.getElementById('bookingAvailableRoomsGrid');
   grid.innerHTML = '';
   const availableRooms = (allRooms[currentHotelId] || []).filter(r => hoteraRoomAvailableForNewBooking(r, editRef));
