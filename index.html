@@ -3409,12 +3409,20 @@ function addNewHotelFacility() {
   const housePin = document.getElementById('newHotelHousePin').value.trim() || "0000";
   if(!name || !cr) return alert("الرجاء إدخال اسم الفندق ورقم السجل!");
 
-  let expiryDate = new Date();
-  expiryDate.setDate(expiryDate.getDate() + subscriptionDays);
+  // احتساب تاريخ البداية والنهاية داخل الدالة نفسها؛ منعاً لخطأ متغيرات غير معرفة.
+  const subscriptionStartDate = hoteraLocalDateKey();
+  let expiryDate = new Date(`${subscriptionStartDate}T00:00:00`);
+  expiryDate.setDate(expiryDate.getDate() + subscriptionDays - 1);
+  const subscriptionEndDate = expiryDate.toISOString().slice(0, 10);
+  const normalizedManagerPin = pin || '1234';
+  const normalizedHousePin = housePin || '0000';
+  const hotelCreatedAt = new Date().toISOString();
 
-  const newId = hotelsList.length > 0 ? Math.max(...hotelsList.map(h => h.id)) + 1 : 1;
-  hotelsList.push({ 
-    id: newId, 
+  const newId = hotelsList.length > 0 ? Math.max(...hotelsList.map(h => Number(h.id) || 0)) + 1 : 1;
+  hotelsList.push({
+    id: newId,
+    createdAt: hotelCreatedAt,
+    updatedAt: hotelCreatedAt,
     name, 
     cr, 
     city: city || 'المملكة العربية السعودية', 
@@ -3425,9 +3433,9 @@ function addNewHotelFacility() {
     subscriptionStartDate,
     subscriptionEndDate,
     isActive: true,
-    managerPin: pin, 
+    managerPin: normalizedManagerPin, 
     hrPin: "3333", 
-    housePin: housePin, 
+    housePin: normalizedHousePin, 
     staffList: [{idNum: "EMP-101", name: "موظف الاستقبال الأول", pin: "1111"}], 
     floorsCount: 3, 
     roomsPerFloor: 10, 
@@ -3436,11 +3444,13 @@ function addNewHotelFacility() {
   
   generateRoomsForHotel(newId, 3, 10);
   allInvoices[newId] = []; hoteraInvoicePayments[newId] = []; hoteraInvoiceServices[newId] = []; cancelledBookingsData[newId] = []; refundedInvoicesData[newId] = []; allTransactions[newId] = []; attendanceRecords[newId] = {}; allExpenses[newId] = []; allInventory[newId] = [{name: "مناشف تنظيف", qty: 30, minLimit: 5}]; allMaintenanceTickets[newId] = []; allShifts[newId] = []; allRatings[newId] = [];
-  saveData(); 
-  uploadDataToCloud();
-  renderSuperAdminControlPanel(); 
+  saveData();
+  // الحفظ المحلي يتم أولاً دائماً؛ فشل JSONBin لا يلغي الفندق أو الأكواد.
+  const cloudUpload = typeof uploadDataToCloud === 'function' ? uploadDataToCloud(false) : Promise.resolve(false);
+  renderSuperAdminControlPanel();
   initLoginHotelDropdown();
-  alert(`✅ تم إنشاء الفندق وتحديد فترة الاشتراك ونوع الصلاحيات بنجاح!`);
+  const cloudNote = cloudUpload && typeof cloudUpload.then === 'function' ? ' وستتم إعادة مزامنته سحابياً عند نجاح الاتصال.' : '';
+  alert(`✅ تم إنشاء الفندق وتفعيل الأكواد بنجاح!\nالفندق: ${name}\nكود المدير: ${normalizedManagerPin}\nكود النظافة: ${normalizedHousePin}${cloudNote}`);
 }
 
 function renderSuperAdminControlPanel() {
