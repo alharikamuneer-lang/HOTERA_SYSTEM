@@ -556,6 +556,10 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
 .command-center-view .hotera-glass-room-grid .command-room.occupied{background:linear-gradient(145deg,#a62121,#681616)!important;color:#fff!important;border-color:#ef4444!important;box-shadow:0 7px 18px rgba(239,68,68,.28),inset 0 1px rgba(255,255,255,.14)}
 .command-center-view .hotera-glass-room-grid .command-room.occupied:hover{filter:brightness(1.14);box-shadow:0 9px 22px rgba(239,68,68,.38)}
 
+
+/* Company invoices: show room quantity, never room numbers */
+#invoiceRoomsTableBody small{color:#64748b;font-size:9px}
+
 </style></head>
 <body>
 
@@ -4114,6 +4118,9 @@ function renderReportsAndFinancials() {
   }
 }
 
+function hoteraIsCompanyBooking(inv){return /شركة|company/i.test(String(inv?.bookingType||'')) || !!inv?.companyContractId;}
+function hoteraInvoiceRoomCount(inv){const rooms=Array.isArray(inv?.roomsList)?inv.roomsList:[];return rooms.length || (inv?.room && inv.room !== 'مجموعة' ? 1 : 0);}
+function hoteraInvoiceRoomsLabel(inv,en=false){const count=hoteraInvoiceRoomCount(inv);return hoteraIsCompanyBooking(inv)?`${en?'Company booking — ': 'حجز شركة — '}${count} ${en?(count===1?'room':'rooms'):'غرفة'}`:(inv?.roomsList?inv.roomsList.map(r=>r.id).join(', '):inv?.room||'—');}
 function filterInvoicesTable(query) {
   const invoices = allInvoices[currentHotelId] || [];
   const tbody = document.getElementById('invoicesTableBody');
@@ -4128,7 +4135,7 @@ function filterInvoicesTable(query) {
   });
   filtered.forEach((inv) => {
     const realIdx = invoices.indexOf(inv);
-    let roomsStr = inv.roomsList ? inv.roomsList.map(r => r.id).join(', ') : inv.room;
+    let roomsStr = hoteraInvoiceRoomsLabel(inv);
     const financial=hoteraGetInvoiceFinancialSummary(inv);
     tbody.innerHTML += `
       <tr>
@@ -4184,7 +4191,7 @@ function exportReportsToExcel() {
   if (invoices.length === 0) return alert("لا توجد فواتير لتصديرها!");
   let csvContent = "data:text/csv;charset=utf-8,\uFEFFرقم الحجز,رقم الفاتورة,الغرف,النزيل,نوع الحجز,الإجمالي المستحق,المدفوع,المتبقي,حالة السداد,طريقة/طرق السداد\n";
   invoices.forEach(inv => {
-    let roomsStr = inv.roomsList ? inv.roomsList.map(r => r.id).join('-') : inv.room;
+    let roomsStr = hoteraIsCompanyBooking(inv) ? `${hoteraInvoiceRoomCount(inv)} غرفة` : (inv.roomsList ? inv.roomsList.map(r => r.id).join('-') : inv.room);
     const financial=hoteraGetInvoiceFinancialSummary(inv),methods=hoteraInvoicePaymentMethodsSummary(inv,financial).replace(/"/g,'""');
     csvContent += `${inv.bookingRef || ''},${inv.id},"${roomsStr}","${inv.guest}",${inv.bookingType || 'فردي'},${financial.total.toFixed(2)},${financial.paid.toFixed(2)},${financial.remaining.toFixed(2)},${financial.status},"${methods}"\n`;
   });
@@ -4210,7 +4217,7 @@ function populateOfficialInvoiceModal(inv) {
   lastActiveInvoice=inv; const h=hotelsList.find(item=>item.id===currentHotelId)||{}; const financial=hoteraGetInvoiceFinancialSummary(inv); const en=window.hoteraInvoiceLanguage==='en';
   const set=(id,v)=>{const el=document.getElementById(id);if(el)el.innerText=v};
   set('invBrandHotelName',h.name||'HOTERA'); set('invSellerDetails',`${h.city||'المملكة العربية السعودية'}\n${en?'VAT number':'الرقم الضريبي'}: ${h.taxNumber||h.vatNumber||'غير مسجل'}`); set('invBookingRefNum',inv.bookingRef||'BKG-xxxx'); set('invIdNum',inv.id||'-'); set('invDateNum',inv.date||hoteraLocalDateKey()); set('invGuestName',inv.guest||'-'); set('invGuestPhoneNum',inv.phone|| (en?'Not provided':'غير متوفر')); set('invGuestId',inv.guestId|| (en?'Not provided':'غير متوفر')); set('invNationality',inv.nationality|| (en?'Not specified':'غير محدد')); set('invGuestCount',`${inv.adults||1} ${en?'adult(s)':'بالغ'} / ${inv.children||0} ${en?'child(ren)':'طفل'}`); set('invPaymentMethod',hoteraInvoicePaymentMethodsSummary(inv,financial)); set('invBookingNotes',inv.bookingNotes||'-'); set('invBookingType',inv.bookingType|| (en?'Individual':'فردي')); const labels={confirmed:en?'Confirmed':'مؤكد',pending:en?'Pending':'قيد الانتظار',cancelled:en?'Cancelled':'ملغى',no_show:en?'No show':'عدم حضور',completed:en?'Completed':'مكتمل'};set('invBookingStatus',labels[inv.bookingStatus]||labels.confirmed);set('invStaffName',inv.staffName|| (en?'Hotel manager':'مدير الفندق'));set('invCarDetails',(inv.carType||inv.carPlate)?`${inv.carType||''} (${en?'Plate':'لوحة'}: ${inv.carPlate||'-'})`:(en?'No vehicle recorded':'لا توجد سيارة مسجلة'));
-  const tbody=document.getElementById('invoiceRoomsTableBody'); tbody.innerHTML=''; const roomsArr=inv.roomsList||[{id:inv.room,type:'إقامة فندقية',nights:inv.nights,price:inv.nightPrice}]; roomsArr.forEach((r,i)=>{const nights=r.nights||inv.nights||1,price=Number(r.price||inv.nightPrice||200),total=nights*price;tbody.innerHTML+=`<tr><td>${i+1}</td><td><strong>${en?'Room':'غرفة'} ${hoteraEscapeText(r.id)}</strong><br><small>${hoteraEscapeText(r.type|| (en?'Hotel stay':'إقامة فندقية'))}</small></td><td>${inv.checkIn||'-'} → ${inv.checkOut||'-'}<br>${nights} ${en?'night(s)':'ليلة'}</td><td class="hotera-invoice-num">${price.toFixed(2)}</td><td class="hotera-invoice-num"><b>${total.toFixed(2)}</b></td></tr>`});
+  const tbody=document.getElementById('invoiceRoomsTableBody'); tbody.innerHTML=''; const roomsArr=inv.roomsList||[{id:inv.room,type:'إقامة فندقية',nights:inv.nights,price:inv.nightPrice}]; if(hoteraIsCompanyBooking(inv)){const roomCount=hoteraInvoiceRoomCount(inv),roomSubtotal=roomsArr.reduce((sum,r)=>sum+(Number(r.nights||inv.nights||1)*Number(r.price||inv.nightPrice||200)),0),summaryNights=inv.nights||roomsArr[0]?.nights||1; tbody.innerHTML=`<tr><td>1</td><td><strong>${en?'Company booking':'حجز شركة'}</strong><br><small>${roomCount} ${en?(roomCount===1?'room':'rooms'):'غرفة'} · ${en?'room numbers omitted':'بدون ذكر أرقام الغرف'}</small></td><td>${inv.checkIn||'-'} → ${inv.checkOut||'-'}<br>${summaryNights} ${en?'night(s)':'ليلة'}</td><td class="hotera-invoice-num">—</td><td class="hotera-invoice-num"><b>${roomSubtotal.toFixed(2)}</b></td></tr>`;}else{roomsArr.forEach((r,i)=>{const nights=r.nights||inv.nights||1,price=Number(r.price||inv.nightPrice||200),total=nights*price;tbody.innerHTML+=`<tr><td>${i+1}</td><td><strong>${en?'Room':'غرفة'} ${hoteraEscapeText(r.id)}</strong><br><small>${hoteraEscapeText(r.type|| (en?'Hotel stay':'إقامة فندقية'))}</small></td><td>${inv.checkIn||'-'} → ${inv.checkOut||'-'}<br>${nights} ${en?'night(s)':'ليلة'}</td><td class="hotera-invoice-num">${price.toFixed(2)}</td><td class="hotera-invoice-num"><b>${total.toFixed(2)}</b></td></tr>`;});}
   set('invSubtotal',`${Math.max(0,financial.total- financial.services).toFixed(2)} ${en?'SAR':'ر.س'}`);set('invServicesTotal',`${financial.services.toFixed(2)} ${en?'SAR':'ر.س'}`);set('invGrandTotal',`${financial.total.toFixed(2)} ${en?'SAR':'ر.س'}`);set('invPaidTotal',`${en?'Paid':'المدفوع'}: ${financial.paid.toFixed(2)} ${en?'SAR':'ر.س'}`);set('invRemainingTotal',`${en?'Remaining':'المتبقي'}: ${financial.remaining.toFixed(2)} ${en?'SAR':'ر.س'}`);set('invPaymentStatus',financial.status|| (en?'Unpaid':'غير مدفوع'));set('hoteraInvoiceServicesList',financial.serviceRows.length?(en?'Services: ':'الخدمات: ')+financial.serviceRows.map(x=>`${x.name} (${Number(x.amount||0).toFixed(2)} ${en?'SAR':'ر.س'})`).join(' · '):(en?'No additional services recorded':'لا توجد خدمات إضافية مسجلة'));
   const qr=document.getElementById('invQrCode');if(qr)qr.src=hoteraInvoiceQrUrl(inv,financial,h);renderHoteraInvoicePaymentPanel(inv,financial);hoteraRenderBookingAudit(inv.bookingRef);setInvoiceLanguage(window.hoteraInvoiceLanguage|| (currentLang==='en'?'en':'ar'));document.getElementById('officialInvoiceModal').style.display='flex';
 }
@@ -4248,7 +4255,7 @@ function sendInvoiceWhatsApp() {
   if (!lastActiveInvoice) return;
   const h = hotelsList.find(item => item.id === currentHotelId);
   const hotelName = h ? h.name : 'الفندق';
-  let roomsStr = lastActiveInvoice.roomsList ? lastActiveInvoice.roomsList.map(r => r.id).join(', ') : lastActiveInvoice.room;
+  let roomsStr = hoteraInvoiceRoomsLabel(lastActiveInvoice);
   const financial=hoteraGetInvoiceFinancialSummary(lastActiveInvoice);
   const msg = `🌟 *${hotelName}* 🌟%0A` + `📄 *فاتورة ضريبية رسمية موحدة*%0A` + `--------------------------------%0A` + `🔖 رقم الحجز: ${lastActiveInvoice.bookingRef || '-'}%0A` + `🔢 رقم الفاتورة: ${lastActiveInvoice.id}%0A` + `👤 النزيل الكريم: ${lastActiveInvoice.guest}%0A` + `🛏️ الغرف المحجوزة: ${roomsStr}%0A` + `💰 الإجمالي المستحق: *${financial.total.toFixed(2)} ر.س*%0A` + `✅ المدفوع: *${financial.paid.toFixed(2)} ر.س*%0A` + `⚠️ المتبقي: *${financial.remaining.toFixed(2)} ر.س*%0A` + `💳 طريقة/طرق السداد: *${hoteraInvoicePaymentMethodsSummary(lastActiveInvoice,financial)}*%0A` + `--------------------------------%0A` + `🙏 شكراً لاختياركم إقامتنا!`;
   window.open(`https://wa.me/${lastActiveInvoice.phone || ''}?text=${msg}`, '_blank');
