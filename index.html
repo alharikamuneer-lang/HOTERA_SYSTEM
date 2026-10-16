@@ -549,6 +549,13 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
 @media(max-width:1050px){.command-center-view .hotera-glass-grid{grid-template-columns:1fr 1.35fr}.command-center-view .hotera-glass-grid .hotera-glass-panel:nth-child(3){grid-column:1 / span 2;grid-row:auto}.command-center-view .hotera-glass-grid .hotera-glass-panel:nth-child(4){grid-column:1 / span 2;grid-row:auto;min-height:300px}.command-center-view .hotera-glass-kpis{grid-template-columns:repeat(4,1fr)}}
 @media(max-width:680px){.command-center-view .hotera-glass-shell{padding:10px 7px 70px}.command-center-view .hotera-glass-header{margin-bottom:18px;padding:11px}.command-center-view .hotera-glass-intro{display:block;padding:0}.command-center-view .hotera-glass-intro h2{font-size:23px}.command-center-view .hotera-glass-health{margin-top:10px}.command-center-view .hotera-glass-kpis{grid-template-columns:repeat(2,1fr);gap:8px}.command-center-view .hotera-glass-kpi{min-height:92px;padding:12px}.command-center-view .hotera-glass-kpi strong{font-size:22px}.command-center-view .hotera-glass-grid{display:grid;grid-template-columns:1fr}.command-center-view .hotera-glass-grid .hotera-glass-panel:nth-child(n){grid-column:auto;grid-row:auto;min-height:190px}.command-center-view .hotera-glass-grid .hotera-glass-panel:nth-child(3){min-height:300px}.command-center-view .hotera-glass-room-grid{grid-template-columns:repeat(5,1fr);gap:5px}.command-center-view .hotera-glass-room-grid .command-room{min-height:36px;font-size:8px}.command-center-view .hotera-glass-donut-wrap{min-height:210px}.command-center-view .hotera-glass-meta{text-align:right}.command-center-view .hotera-glass-brand h1{font-size:17px}}
 
+
+/* Unified reserved-room state: red in Command Center and Rooms & Floors */
+.card.occupied{background:linear-gradient(145deg,#9f2020,#651515)!important;border-color:#ef4444!important;box-shadow:0 8px 22px rgba(239,68,68,.22),inset 0 1px rgba(255,255,255,.12)!important}
+.card.occupied .room-card-alert{color:#ff5b5b!important}.card.occupied .room-card-status{color:#ffe0e0!important}
+.command-center-view .hotera-glass-room-grid .command-room.occupied{background:linear-gradient(145deg,#a62121,#681616)!important;color:#fff!important;border-color:#ef4444!important;box-shadow:0 7px 18px rgba(239,68,68,.28),inset 0 1px rgba(255,255,255,.14)}
+.command-center-view .hotera-glass-room-grid .command-room.occupied:hover{filter:brightness(1.14);box-shadow:0 9px 22px rgba(239,68,68,.38)}
+
 </style></head>
 <body>
 
@@ -3643,7 +3650,7 @@ function renderCommandCenter() {
   set('cmdTotalRooms', total); set('cmdAvailableRooms', available); set('cmdOccupiedRooms', occupied); set('cmdRevenue', `${revenue.toFixed(2)} ر.س`); const arrivals=rooms.filter(r=>String(r.checkIn||'')===today&&r.bookingRef).length,departures=rooms.filter(r=>String(r.checkOut||'')===today&&r.bookingRef).length,outstanding=invoices.reduce((n,i)=>n+hoteraGetInvoiceFinancialSummary(i).remaining,0),avgInvoice=invoices.length?revenue/invoices.length:0; set('insightArrivals',arrivals); set('insightDepartures',departures); set('insightOutstanding',`${outstanding.toFixed(2)} ر.س`); set('insightAverageBooking',`${avgInvoice.toFixed(2)} ر.س`); const alertsCount=rooms.filter(r=>r.status==='cleaning'||r.status==='maintenance').length; set('insightOperationState',alertsCount?'يحتاج متابعة':'مستقر');
   const status = document.getElementById('commandCloudStatus'); if(status) status.innerText = `☁️ السحابة: ${(typeof cloudApiUrl !== 'undefined' && cloudApiUrl) ? 'متصل' : 'محلي'}`;
   const sync = document.getElementById('commandLastSync'); if(sync) sync.innerText = `⏱ آخر تحديث: ${new Date().toLocaleTimeString()}`;
-  const map = document.getElementById('commandRoomMap'); if(map) { map.innerHTML = rooms.slice(0, 80).map(r => `<div class="command-room ${r.status || 'vacant'}" onclick="openRoomModalByCommand(${r.id})"><strong>${r.id}</strong><br><span>${r.status==='occupied'?'محجوز':r.status==='maintenance'?'صيانة':r.status==='cleaning'?'خروج':'متاح'}</span></div>`).join('') || '<div style="font-size:10px;color:#94a3b8">لا توجد غرف</div>'; }
+  const map = document.getElementById('commandRoomMap'); if(map) { map.innerHTML = rooms.slice(0, 80).map(r => { const displayStatus=(r.status==='maintenance'||r.status==='cleaning')?r.status:((r.status==='occupied'||r.bookingRef)?'occupied':(r.status||'vacant')); return `<div class="command-room ${displayStatus}" onclick="openRoomModalByCommand(${r.id})"><strong>${r.id}</strong><br><span>${displayStatus==='occupied'?'محجوز':displayStatus==='maintenance'?'صيانة':displayStatus==='cleaning'?'خروج':'متاح'}</span></div>`; }).join('') || '<div style="font-size:10px;color:#94a3b8">لا توجد غرف</div>'; }
   const alerts=[]; rooms.filter(r=>r.status==='cleaning').slice(0,5).forEach(r=>alerts.push({icon:'🧹',text:`الغرفة ${r.id} بحالة خروج وتحتاج تنظيفاً`})); rooms.filter(r=>r.status==='maintenance').slice(0,5).forEach(r=>alerts.push({icon:'🛠️',text:`بلاغ صيانة للغرفة ${r.id}`})); const outstandingInvoices=invoices.map(inv=>({inv,financial:hoteraGetInvoiceFinancialSummary(inv)})).filter(item=>item.financial.remaining>0.01); outstandingInvoices.slice(0,3).forEach(item=>alerts.push({icon:'💳',text:`فاتورة ${item.inv.id||item.inv.bookingRef||'—'} لها رصيد متبقٍ ${item.financial.remaining.toFixed(2)} ر.س`}));
   const alertsEl=document.getElementById('commandAlertsList'); if(alertsEl) alertsEl.innerHTML=alerts.length?alerts.map(a=>`<div class="command-alert"><span>${a.icon} ${a.text}</span><span style="color:#fbbf24">تنبيه</span></div>`).join(''):'<div style="font-size:10px;color:#34d399">✅ لا توجد تنبيهات عاجلة حالياً</div>';
   const upcomingEl=document.getElementById('glassUpcomingBookings'); if(upcomingEl){ const upcoming=rooms.filter(r=>r&&r.guest&&r.checkIn&&String(r.checkIn)>=today).sort((a,b)=>String(a.checkIn).localeCompare(String(b.checkIn))).slice(0,5); upcomingEl.innerHTML=upcoming.length?upcoming.map(r=>`<div class="hotera-glass-list-row"><span>${hoteraEscapeText(r.guest||'نزيل')} · غرفة ${hoteraEscapeText(r.id)}<br><small style="color:#8dd8f5">${r.checkIn||'—'}</small></span><strong>${hoteraEscapeText(r.bookingRef||'حجز')}</strong></div>`).join(''):'<div class="hotera-glass-list-row"><span>لا توجد حجوزات قادمة</span><strong>—</strong></div>'; }
@@ -3711,6 +3718,7 @@ function filterRoomsByBookingRef(query) {
   const rooms = allRooms[currentHotelId] || [];
   const searchTerm = (query || '').trim().toLowerCase();
   const statusFilter = document.getElementById('roomStatusFilter')?.value || 'all';
+  const roomDisplayStatus = r => (r.status === 'maintenance' || r.status === 'cleaning') ? r.status : ((r.status === 'occupied' || r.bookingRef) ? 'occupied' : (r.status || 'vacant'));
   let filtered = rooms.filter(r => r.floor === selectedFloor);
   if(searchTerm) {
     filtered = rooms.filter(r => String(r.id || '').toLowerCase().includes(searchTerm) || (r.bookingRef || '').toLowerCase().includes(searchTerm) || (r.guest || '').toLowerCase().includes(searchTerm));
@@ -3719,7 +3727,7 @@ function filterRoomsByBookingRef(query) {
   let v = 0, o = 0, maint = 0, totalShown = 0;
   rooms.forEach(r => {
     if (r.status === 'vacant') v++;
-    else if (r.status === 'occupied') o++;
+    else if (roomDisplayStatus(r) === 'occupied') o++;
     else if (r.status === 'maintenance') maint++;
   });
   const statusText = {vacant:'متاحة',occupied:'محجوزة',cleaning:'خروج',maintenance:'صيانة',checkoutToday:'مغادرة اليوم'}[statusFilter] || '';
@@ -3735,7 +3743,7 @@ function filterRoomsByBookingRef(query) {
       maintenance: { label: currentLang === 'ar' ? 'صيانة' : 'Maintenance', icon: '🛠️', color: '#94a3b8' }
     }[r.status] || { label: currentLang === 'ar' ? 'متاحة' : 'Available', icon: '🛏️', color: '#22c55e' };
     const card = document.createElement('div');
-    card.className = `card ${r.status || 'vacant'}`;
+    card.className = `card ${roomDisplayStatus(r)}`;
     card.setAttribute('role', 'button');
     card.setAttribute('aria-label', `${currentLang === 'ar' ? 'الغرفة' : 'Room'} ${r.id} - ${statusMeta.label}`);
     card.onclick = () => openRoomModal(r);
