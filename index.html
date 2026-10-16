@@ -768,7 +768,7 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
     <div id="fastPairCodeDisplay" style="display:none;margin-top:7px;padding:10px;border:1px dashed rgba(52,211,153,.45);border-radius:10px;text-align:center;background:rgba(16,185,129,.07);font-size:20px;letter-spacing:7px;color:#86efac;font-weight:900;"><div id="fastPairCodeText"></div><img id="fastPairQrImage" alt="QR رمز الاقتران" style="display:none;width:150px;height:150px;margin:9px auto 4px;background:#fff;padding:6px;border-radius:8px"><small id="fastPairQrHint" style="display:none;font-size:8px;letter-spacing:0;color:#bbf7d0;font-weight:normal">امسح QR من الجهاز الجديد لفتح النظام وتعبئة الرمز تلقائيًا</small></div>
     <div style="display:flex; gap:6px; align-items:center; margin-top:6px;">
       <button class="btn btn-gray" style="width:auto; margin-top:0; padding:6px 10px; font-size:9px;" onclick="generateDeviceInviteLink()">إنشاء دعوة JSONBin جديدة 🔗</button>
-      <input id="generatedInviteLink" class="form-input" readonly style="margin:0; display:none; font-size:9px; direction:ltr;">
+      <input id="generatedInviteLink" class="form-input" readonly style="margin:0; display:none; font-size:9px; direction:ltr;"><span id="inviteLinkStatus" aria-live="polite" style="display:block;flex:1;min-width:180px;font-size:8px;color:#86efac;line-height:1.6"></span>
     </div>
   </div>
 
@@ -858,7 +858,7 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
     <tbody id="hotelsTableBody"></tbody>
   </table>
   <div class="company-admin-panel" style="margin-top:14px;padding:12px;border:1px solid rgba(45,212,239,.28);border-radius:14px;background:rgba(14,165,233,.06);"><h4 style="margin:0 0 8px;color:#2dd4ef">🏢 الشركات ومالكوها</h4><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px"><input id="newCompanyName" class="form-input" placeholder="اسم الشركة"><input id="newCompanyOwnerName" class="form-input" placeholder="اسم مالك الشركة"><input id="newCompanyOwnerPin" class="form-input" placeholder="رمز مالك الشركة"></div><div id="companyHotelAssignment" style="display:flex;gap:5px;flex-wrap:wrap;margin:8px 0"></div><button class="btn btn-blue" style="width:auto;margin:0" onclick="createCompanyFromSuperAdmin()">إضافة الشركة وربط الفنادق</button><div id="companiesAdminList" style="margin-top:9px"></div><h4 style="margin:14px 0 7px;color:#fbbf24">🛡️ جدول الصلاحيات المعتمد</h4><div style="overflow:auto"><table id="permissionsMatrixTable" class="table-box" style="font-size:9px"><thead><tr><th>نوع الحساب</th><th>النطاق</th><th>القدرات الأساسية</th></tr></thead><tbody><tr><td>👑 السوبر أدمن</td><td>جميع الشركات والفنادق</td><td>إنشاء الشركات، ربط الفنادق، اعتماد الأجهزة، إدارة الصلاحيات</td></tr><tr><td>🏢 مالك الشركة</td><td>الشركة والفنادق المرتبطة فقط</td><td>لوحة إجمالية، متابعة كل فندق، الغرف، الحجوزات، الإيرادات والتنبيهات</td></tr><tr><td>⚡ مدير الفندق</td><td>الفندق المحدد فقط</td><td>الغرف، الحجوزات، الفواتير، التقارير وإدارة التشغيل</td></tr><tr><td>💼 الموظف</td><td>حسب الفندق والصلاحية</td><td>الوظائف التي يحددها مدير الفندق</td></tr></tbody></table></div></div>
-<div class="company-admin-panel" style="margin-top:14px;padding:12px;border:1px solid rgba(56,189,248,.35);border-radius:14px;background:rgba(56,189,248,.05);"><h4 style="margin:0 0 8px;color:#38bdf8">☁️ المزامنة والربط عبر JSONBin</h4><p style="font-size:9px;color:#cbd5e1;margin:0 0 8px">يعمل HOTERA الآن عبر JSONBin فقط. لا يحتاج النظام إلى خادم مركزي أو رابط إضافي. استخدم رابط JSONBin ومفتاحه في الأعلى، ثم أنشئ دعوة الجهاز من قسم طلبات الأجهزة.</p><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="btn btn-blue" style="width:auto;margin:0" onclick="syncDataWithCloudNow()">اختبار مزامنة JSONBin</button><button class="btn btn-gold" style="width:auto;margin:0" onclick="downloadHoteraLocalBackup()">تنزيل نسخة احتياطية</button><button class="btn btn-gray" style="width:auto;margin:0" onclick="hoteraStorageCleanupSafe()">تنظيف التخزين الآمن</button></div><div id="secureSyncStatusText" style="font-size:9px;color:#34d399;margin-top:8px">الحالة: JSONBin هو مسار المزامنة والربط الوحيد ✅</div></div>
+<div class="company-admin-panel" style="margin-top:14px;padding:12px;border:1px solid rgba(56,189,248,.35);border-radius:14px;background:rgba(56,189,248,.05);"><h4 style="margin:0 0 8px;color:#38bdf8">☁️ المزامنة والربط عبر JSONBin</h4><p style="font-size:9px;color:#cbd5e1;margin:0 0 8px">يعمل HOTERA الآن عبر JSONBin فقط. لا يحتاج النظام إلى خادم مركزي أو رابط إضافي. استخدم رابط JSONBin ومفتاحه في الأعلى، ثم أنشئ دعوة الجهاز من قسم طلبات الأجهزة.</p><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button class="btn btn-blue" style="width:auto;margin:0" onclick="syncDataWithCloudNow()">اختبار مزامنة JSONBin</button><button class="btn btn-gold" style="width:auto;margin:0" onclick="downloadHoteraBackup()">تنزيل نسخة احتياطية</button><button class="btn btn-gray" style="width:auto;margin:0" onclick="hoteraStorageCleanupSafe()">تنظيف التخزين الآمن</button></div><div id="secureSyncStatusText" style="font-size:9px;color:#34d399;margin-top:8px">الحالة: JSONBin هو مسار المزامنة والربط الوحيد ✅</div></div>
 </div>
 
 <div id="companyOwnerView" class="view-section company-owner-view" style="display:none;"><div class="company-owner-hero"><div><span class="company-owner-kicker">🏢 لوحة الشركة</span><h2>متابعة فنادقك من مكان واحد</h2><p>تظهر هنا الفنادق المرتبطة بشركتك فقط، مع مؤشرات الإشغال والحجوزات والإيرادات والتنبيهات لكل فندق.</p></div><div class="company-owner-badge" id="companyOwnerNameBadge">مالك الشركة</div></div><div class="company-owner-summary"><div><small>الفنادق التابعة</small><strong id="companyHotelCount">0</strong></div><div><small>إجمالي الغرف</small><strong id="companyRoomCount">0</strong></div><div><small>إجمالي الحجوزات</small><strong id="companyBookingCount">0</strong></div><div><small>إجمالي الإيرادات</small><strong id="companyRevenueTotal">0 ر.س</strong></div></div><div id="companyHotelsGrid" class="company-hotels-grid"></div></div>
@@ -875,7 +875,7 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
       <section class="hotera-glass-panel"><h3>▦ خريطة الغرف التفاعلية</h3><div id="commandRoomMap" class="command-room-grid hotera-glass-room-grid"></div><div class="hotera-glass-footer"><span>● متاحة</span><span>● تنظيف</span><span>● محجوزة</span><span>● صيانة</span></div></section>
       <section class="hotera-glass-panel hotera-glass-wide"><h3>↘ الإيرادات والأداء</h3><div class="hotera-glass-bars" id="glassRevenueBars" aria-label="مخطط الإيرادات"><i style="height:76%"></i><i style="height:52%"></i><i style="height:68%"></i><i style="height:38%"></i><i style="height:61%"></i><i style="height:44%"></i><i style="height:28%"></i></div><div class="hotera-glass-footer"><span>الأسبوع الحالي</span><strong id="cmdRevenue">0 ر.س</strong></div></section>
       <section class="hotera-glass-panel"><h3>▤ أحدث الفواتير</h3><div class="hotera-glass-list"><div class="hotera-glass-list-row"><span>عدد الفواتير</span><strong id="premiumInvoiceCount">0</strong></div><div class="hotera-glass-list-row"><span>الإجمالي</span><strong id="premiumInvoiceTotal">0 ر.س</strong></div><div class="hotera-glass-list-row"><span>آخر فاتورة</span><strong id="premiumLastInvoice">—</strong></div></div><button class="btn btn-blue" style="margin-top:12px" onclick="switchMainFeature('invoices',document.getElementById('chipInvoices'))">عرض الفواتير</button></section>
-      <section class="hotera-glass-panel"><h3>▤ الوصول السريع</h3><div class="hotera-glass-list"><div class="hotera-glass-list-row"><span>الغرف والحجوزات</span><button class="btn btn-gray" style="width:auto;margin:0;padding:4px 8px" onclick="switchMainFeature('rooms',document.getElementById('chipRooms'))">فتح</button></div><div class="hotera-glass-list-row"><span>التقارير المالية</span><button class="btn btn-gray" style="width:auto;margin:0;padding:4px 8px" onclick="switchMainFeature('financial',document.getElementById('chipFinancial'))">فتح</button></div><div class="hotera-glass-list-row"><span>ملف النزيل</span><button class="btn btn-gray" style="width:auto;margin:0;padding:4px 8px" onclick="openCommandCustomerProfile()">فتح</button></div></div></section>
+      <section class="hotera-glass-panel"><h3>▤ الوصول السريع</h3><div class="hotera-glass-list"><div class="hotera-glass-list-row"><span>الغرف والحجوزات</span><button class="btn btn-gray" style="width:auto;margin:0;padding:4px 8px" onclick="switchMainFeature('rooms',document.getElementById('chipRooms'))">فتح</button></div><div class="hotera-glass-list-row"><span>التقارير المالية</span><button class="btn btn-gray" style="width:auto;margin:0;padding:4px 8px" onclick="switchMainFeature('financial',document.getElementById('chipFinancial'))">فتح</button></div><div class="hotera-glass-list-row" style="display:block"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span>ملف النزيل</span><button class="btn btn-gray" style="width:auto;margin:0;padding:4px 8px" onclick="openCommandCustomerProfile()">فتح</button></div><input id="commandCustomerSearch" class="form-input" style="margin:8px 0 4px;padding:7px;font-size:10px" placeholder="ابحث باسم العميل أو الجوال" oninput="searchCommandCustomer(this.value)"><div id="commandCustomerResult" style="font-size:9px;line-height:1.7;color:#94a3b8">اكتب رقم الجوال أو اسم العميل لعرض ملخص سريع.</div></div></div></section>
     </div>
     <footer class="hotera-glass-footer"><span><strong>HOTERA</strong> · SIGNATURE HOSPITALITY · PRIVATE COMMAND CENTER</span><span>تطوير وهندسة البرمجيات · <strong>م. منير الحارقة</strong></span></footer>
   </div>
@@ -2060,8 +2060,15 @@ function applyCloudPayload(cloudData) {
 
   // لا تستبدل الحالة المحلية بقائمة فنادق سحابية فارغة.
   if (Array.isArray(cloudData.hotels) && cloudData.hotels.length) {
-    hotelsList = hoteraMergeById(hotelsList, cloudData.hotels);
+    const localHotelsBeforeMerge = Array.isArray(hotelsList) ? hotelsList : [];
+    hotelsList = hoteraMergeById(localHotelsBeforeMerge, cloudData.hotels);
     hotelsList.forEach(h => {
+      const localHotel = localHotelsBeforeMerge.find(x => String(x?.id) === String(h?.id));
+      // لا تسمح لسجل سحابي ناقص بإخفاء مستخدمي الفندق أو أكواده المحلية.
+      if ((!Array.isArray(h.staffList) || !h.staffList.length) && Array.isArray(localHotel?.staffList) && localHotel.staffList.length) h.staffList = localHotel.staffList;
+      if ((h.managerPin === undefined || h.managerPin === '') && localHotel?.managerPin) h.managerPin = localHotel.managerPin;
+      if ((h.housePin === undefined || h.housePin === '') && localHotel?.housePin) h.housePin = localHotel.housePin;
+      if ((h.hrPin === undefined || h.hrPin === '') && localHotel?.hrPin) h.hrPin = localHotel.hrPin;
       if (h.status === undefined) h.status = 'active';
       if (h.isActive === undefined) h.isActive = true;
       if (!Array.isArray(h.staffList)) h.staffList = [];
@@ -3437,21 +3444,28 @@ function addNewHotelFacility() {
 }
 
 function renderSuperAdminControlPanel() {
+  hotelsList = Array.isArray(hotelsList) ? hotelsList.filter(Boolean) : [];
+  hotelsList.forEach(h => {
+    if (!Array.isArray(h.staffList)) h.staffList = [];
+    if (h.status === undefined) h.status = 'active';
+    if (h.isActive === undefined) h.isActive = h.status !== 'suspended';
+  });
   document.getElementById('editSuperDevName').value = developerName;
   document.getElementById('editSuperDevPhone').value = developerPhone;
   document.getElementById('editAboutTitleInput').value = aboutPageTitleText;
   document.getElementById('editAboutDescInput').value = aboutPageDescText;
   document.getElementById('cloudApiUrlInput').value = cloudApiUrl;
   document.getElementById('cloudApiKeyInput').value = cloudApiKey;
-  hydrateHoteraServerSettings();
-  handleDeviceAccess();
+  // تم إلغاء الخادم المركزي؛ لا تستدعِ دالة الإعدادات القديمة غير الموجودة.
+  if (typeof hydrateHoteraServerSettings === 'function') hydrateHoteraServerSettings();
+  if (typeof handleDeviceAccess === 'function') handleDeviceAccess();
 
   const usersTbody = document.getElementById('allUsersPinsTableBody');
   if(usersTbody) {
     usersTbody.innerHTML = '';
     hotelsList.forEach(h => {
       let staffHtml = '';
-      h.staffList.forEach((st, sIdx) => {
+      (Array.isArray(h.staffList) ? h.staffList : []).forEach((st, sIdx) => {
         let stPin = pinsAreRevealed ? st.pin : '••••';
         staffHtml += `<div style="font-size:9px; border-bottom:1px dashed rgba(255,255,255,0.1); padding:2px 0;">👤 [${st.idNum || '-'}] ${st.name}: <strong style="color:var(--accent-solid);">${stPin}</strong> <button onclick="resetStaffPinPrompt(${h.id}, ${sIdx})" style="background:#2563eb; color:white; border:none; padding:1px 4px; font-size:7px; border-radius:3px; cursor:pointer;">تغيير</button></div>`;
       });
@@ -3468,6 +3482,7 @@ function renderSuperAdminControlPanel() {
       `;
       usersTbody.appendChild(tr);
     });
+    if (!hotelsList.length) usersTbody.innerHTML = '<tr><td colspan="5" style="color:#fbbf24;text-align:center">لا توجد فنادق محفوظة بعد.</td></tr>';
   }
 
   const hotelsTbody = document.getElementById('hotelsTableBody');
@@ -3487,6 +3502,7 @@ function renderSuperAdminControlPanel() {
       `;
       hotelsTbody.appendChild(tr);
     });
+    if (!hotelsList.length) hotelsTbody.innerHTML = '<tr><td colspan="3" style="color:#fbbf24;text-align:center">لا توجد فنادق محفوظة بعد.</td></tr>';
   }
   renderCompaniesAdmin();
 }
@@ -3660,7 +3676,7 @@ function renderCommandCenter() {
   const upcomingEl=document.getElementById('glassUpcomingBookings'); if(upcomingEl){ const upcoming=rooms.filter(r=>r&&r.guest&&r.checkIn&&String(r.checkIn)>=today).sort((a,b)=>String(a.checkIn).localeCompare(String(b.checkIn))).slice(0,5); upcomingEl.innerHTML=upcoming.length?upcoming.map(r=>`<div class="hotera-glass-list-row"><span>${hoteraEscapeText(r.guest||'نزيل')} · غرفة ${hoteraEscapeText(r.id)}<br><small style="color:#8dd8f5">${r.checkIn||'—'}</small></span><strong>${hoteraEscapeText(r.bookingRef||'حجز')}</strong></div>`).join(''):'<div class="hotera-glass-list-row"><span>لا توجد حجوزات قادمة</span><strong>—</strong></div>'; }
   const hotelInvoices=allInvoices[currentHotelId]||[]; const todayInvoices=hotelInvoices.filter(i=>String(i.date||i.createdAt||'').startsWith(today)); const todayBookings=rooms.filter(r=>r.status==='occupied'&&String(r.checkIn||'').startsWith(today)); const guestCount=Object.keys(customerMemory||{}).length; const ratingsCount=(allRatings[currentHotelId]||[]).length; const invoiceTotal=hotelInvoices.reduce((sum,i)=>sum+hoteraGetInvoiceFinancialSummary(i).total,0); const todayRevenue=todayInvoices.reduce((sum,i)=>sum+hoteraGetInvoiceFinancialSummary(i).total,0); const avgBooking=todayBookings.length?todayRevenue/todayBookings.length:0; const occupancy=total?Math.round((occupied/total)*100):0; const lastInvoice=hotelInvoices.length?hotelInvoices[hotelInvoices.length-1]:null;
   set('premiumTodayBookings',todayBookings.length); set('premiumTodayRevenue',`${todayRevenue.toFixed(2)} ر.س`);
-  const revenueBars=document.getElementById('glassRevenueBars'); if(revenueBars){ const days=[]; for(let offset=6;offset>=0;offset--){const d=new Date();d.setDate(d.getDate()-offset);const key=hoteraDateKeyFromDate(d);days.push(hotelInvoices.filter(i=>String(i.date||i.createdAt||'').startsWith(key)).reduce((sum,i)=>sum+hoteraGetInvoiceFinancialSummary(i).total,0));} const maxDay=Math.max(...days,1); revenueBars.innerHTML=days.map((value,index)=>`<i title="${value.toFixed(2)} ر.س" style="height:${Math.max(12,Math.round((value/maxDay)*100))}%"></i>`).join(''); } set('premiumAvgBooking',`${avgBooking.toFixed(2)} ر.س`); set('premiumOccupancy',`${occupancy}%`); set('premiumOccupancyBar',`${occupancy}%`); const bar=document.getElementById('premiumOccupancyBar'); if(bar)bar.style.width=`${occupancy}%`; const donut=document.getElementById('glassOccupancyDonut'); if(donut){donut.style.setProperty('--occupancy',`${occupancy}%`);} const donutValue=document.getElementById('glassOccupancyValue'); if(donutValue)donutValue.innerText=`${occupancy}%`; set('premiumVacant',available); set('premiumBooked',occupied); set('premiumInvoiceTotal',`${invoiceTotal.toFixed(2)} ر.س`); set('premiumInvoiceCount',hotelInvoices.length); set('premiumLastInvoice',lastInvoice?.number||lastInvoice?.id||'—'); set('premiumGuestCount',guestCount); set('premiumActiveGuests',Object.values(customerMemory||{}).filter(c=>c&&c.name).length); set('premiumRatingsCount',ratingsCount); set('premiumOperationStatus',alerts.length?'يحتاج متابعة':'مستقر'); set('premiumDataUpdated',new Date().toLocaleTimeString());
+  const revenueBars=document.getElementById('glassRevenueBars'); if(revenueBars){ const days=[]; for(let offset=6;offset>=0;offset--){const d=new Date();d.setDate(d.getDate()-offset);const key=hoteraDateKeyFromDate(d);days.push(hotelInvoices.filter(i=>String(i.date||i.createdAt||'').startsWith(key)).reduce((sum,i)=>sum+hoteraGetInvoiceFinancialSummary(i).total,0));} const maxDay=Math.max(...days,1); revenueBars.innerHTML=days.map((value,index)=>`<i title="${value.toFixed(2)} ر.س" style="height:${Math.max(12,Math.round((value/maxDay)*100))}%"></i>`).join(''); } set('premiumAvgBooking',`${avgBooking.toFixed(2)} ر.س`); set('premiumOccupancy',`${occupancy}%`); const donut=document.getElementById('glassOccupancyDonut'); if(donut){donut.style.setProperty('--occupancy',`${occupancy}%`);} const donutValue=document.getElementById('glassOccupancyValue'); if(donutValue)donutValue.innerText=`${occupancy}%`; set('premiumVacant',available); set('premiumBooked',occupied); set('premiumInvoiceTotal',`${invoiceTotal.toFixed(2)} ر.س`); set('premiumInvoiceCount',hotelInvoices.length); set('premiumLastInvoice',lastInvoice?.number||lastInvoice?.id||'—'); set('premiumGuestCount',guestCount); set('premiumActiveGuests',Object.values(customerMemory||{}).filter(c=>c&&c.name).length); set('premiumRatingsCount',ratingsCount); set('premiumOperationStatus',alerts.length?'يحتاج متابعة':'مستقر'); set('premiumDataUpdated',new Date().toLocaleTimeString());
 }
 function openRoomModalByCommand(roomId) { const room=(allRooms[currentHotelId]||[]).find(r=>r.id===roomId); if(room && typeof openRoomModal==='function') openRoomModal(room); }
 function openCommandCustomerProfile(){const phones=Object.keys(customerMemory||{});if(phones.length&&typeof openCustomerProfile==='function'){openCustomerProfile(phones[0]);return;}const input=document.getElementById('commandCustomerSearch');if(input){input.focus();input.scrollIntoView({behavior:'smooth',block:'center'});}const result=document.getElementById('commandCustomerResult');if(result)result.innerText='ابحث أولاً باسم العميل أو رقم الجوال لفتح ملفه الكامل.';}
