@@ -373,6 +373,12 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .hotera-glass-kpi{transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}.hotera-glass-kpi:hover{transform:translateY(-3px);border-color:rgba(251,191,36,.52);box-shadow:0 18px 34px rgba(0,0,0,.3),0 0 22px rgba(56,189,248,.08)}
 .hotera-glass-donut{position:relative;border:1px solid rgba(251,191,36,.38);box-shadow:0 0 38px rgba(245,158,11,.18),inset 0 0 18px rgba(56,189,248,.08);animation:hoteraDonutBreath 4s ease-in-out infinite}
 .hotera-glass-room-grid .command-room{transition:transform .16s ease,filter .16s ease,box-shadow .16s ease}.hotera-glass-room-grid .command-room:hover{transform:translateY(-2px);filter:brightness(1.12);box-shadow:0 7px 16px rgba(0,0,0,.25)}
+/* خريطة الغرف: كل طابق بعنوان مستقل وغرفه مرتبة تحته */
+.command-floor-group{width:100%;margin:0 0 12px;padding:9px;border:1px solid rgba(56,189,248,.22);border-radius:12px;background:linear-gradient(145deg,rgba(9,28,48,.8),rgba(4,15,28,.72));box-sizing:border-box}
+.command-floor-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px;padding:7px 10px;border-right:3px solid #fbbf24;border-bottom:1px solid rgba(251,191,36,.2);color:#fbbf24;font-size:11px;font-weight:800}
+.command-floor-title small{color:#8dd8f5;font-size:9px;font-weight:500}.command-floor-rooms{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:6px}
+.command-floor-empty{color:#94a3b8;font-size:10px;padding:6px}.command-room strong{font-size:12px}.command-room span{font-size:8px}
+@media(max-width:650px){.command-floor-group{padding:7px;margin-bottom:8px}.command-floor-rooms{grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:4px}.command-floor-title{font-size:10px}}
 .hotera-glass-bars i{transition:filter .18s ease,box-shadow .18s ease}.hotera-glass-bars i:hover{filter:brightness(1.25);box-shadow:0 0 18px rgba(251,191,36,.35)}
 @keyframes hoteraDonutBreath{0%,100%{filter:brightness(.96)}50%{filter:brightness(1.08)}}
 @media(max-width:650px){.hotera-glass-kpi:hover{transform:none}.hotera-glass-donut{animation:none}}
@@ -1802,8 +1808,9 @@ async function saveDeviceCloudAndRequest() {
   if (!deviceJoinCode && !inviteVerified && !(existingRecord && existingRecord.approvalCodeHash)) return alert('⚠️ أدخل رمز الاقتران السريع أو افتح رابط الدعوة الاحتياطي.');
   if (!url) return alert('⚠️ لم يتم العثور على إعدادات الربط. افتح رابط الدعوة الأصلي أو اطلب دعوة جديدة.');
   try { new URL(url); } catch (_) { return alert('⚠️ تعذر التحقق من إعدادات الدعوة. اطلب رابطاً جديداً.'); }
-  cloudApiUrl = normalizedUrl;
-  cloudApiKey = normalizedKey;
+  // استخدم القيم التي تم تنظيفها والتحقق منها؛ كانت الأسماء القديمة غير معرفة وتوقف الطلب.
+  cloudApiUrl = hoteraNormalizeCloudUrl(url, 'base');
+  cloudApiKey = hoteraNormalizeCloudKey(key);
   hoteraSafeSetItem('hotera_cloud_url', cloudApiUrl);
   hoteraSafeSetItem('hotera_cloud_key', cloudApiKey);
   hoteraSafeSetItem('hotera_join_code', deviceJoinCode);
@@ -2237,7 +2244,7 @@ async function uploadDataToCloud(showError = false) {
     cloudDevices=hoteraMergeById(Array.isArray(cloudDevices)?cloudDevices:[],getDeviceRegistryForUpload());
     await hoteraMergeLatestDevicesBeforeUpload(config,headers);
     hoteraSetSyncDiagnostic('put','جارٍ التنفيذ...','#fbbf24');
-    const response = await hoteraFetchWithRetry(config.url, {
+    const response = await hoteraFetchWithRetry(hoteraNormalizeCloudUrl(config.url,'read'), {
       method: 'PUT',
       headers,
       body: JSON.stringify(buildCloudPayload())
@@ -3680,7 +3687,25 @@ function renderCommandCenter() {
   set('cmdTotalRooms', total); set('cmdAvailableRooms', available); set('cmdOccupiedRooms', occupied); set('cmdRevenue', `${revenue.toFixed(2)} ر.س`); const arrivals=rooms.filter(r=>String(r.checkIn||'')===today&&r.bookingRef).length,departures=rooms.filter(r=>String(r.checkOut||'')===today&&r.bookingRef).length,outstanding=invoices.reduce((n,i)=>n+hoteraGetInvoiceFinancialSummary(i).remaining,0),avgInvoice=invoices.length?revenue/invoices.length:0; set('insightArrivals',arrivals); set('insightDepartures',departures); set('insightOutstanding',`${outstanding.toFixed(2)} ر.س`); set('insightAverageBooking',`${avgInvoice.toFixed(2)} ر.س`); const alertsCount=rooms.filter(r=>r.status==='cleaning'||r.status==='maintenance').length; set('insightOperationState',alertsCount?'يحتاج متابعة':'مستقر');
   const status = document.getElementById('commandCloudStatus'); if(status) status.innerText = `☁️ السحابة: ${(typeof cloudApiUrl !== 'undefined' && cloudApiUrl) ? 'متصل' : 'محلي'}`;
   const sync = document.getElementById('commandLastSync'); if(sync) sync.innerText = `⏱ آخر تحديث: ${new Date().toLocaleTimeString()}`;
-  const map = document.getElementById('commandRoomMap'); if(map) { map.innerHTML = rooms.slice(0, 80).map(r => { const displayStatus=(r.status==='maintenance'||r.status==='cleaning')?r.status:((r.status==='occupied'||r.bookingRef)?'occupied':(r.status||'vacant')); return `<div class="command-room ${displayStatus}" onclick="openRoomModalByCommand(${r.id})"><strong>${r.id}</strong><br><span>${displayStatus==='occupied'?'محجوز':displayStatus==='maintenance'?'صيانة':displayStatus==='cleaning'?'خروج':'متاح'}</span></div>`; }).join('') || '<div style="font-size:10px;color:#94a3b8">لا توجد غرف</div>'; }
+  const map = document.getElementById('commandRoomMap'); if(map) {
+    const grouped = new Map();
+    rooms.filter(Boolean).forEach(r => {
+      const roomNumber = Number(r.id);
+      const floor = Math.max(1, Number(r.floor) || (Number.isFinite(roomNumber) ? Math.floor(roomNumber / 100) : 1));
+      if(!grouped.has(floor)) grouped.set(floor, []);
+      grouped.get(floor).push(r);
+    });
+    const floorGroups = [...grouped.entries()].sort((a,b)=>a[0]-b[0]).map(([floor, floorRooms]) => {
+      floorRooms.sort((a,b)=>Number(a.id)-Number(b.id));
+      const roomCards = floorRooms.map(r => {
+        const displayStatus=(r.status==='maintenance'||r.status==='cleaning')?r.status:((r.status==='occupied'||r.bookingRef)?'occupied':(r.status||'vacant'));
+        const label=displayStatus==='occupied'?'محجوز':displayStatus==='maintenance'?'صيانة':displayStatus==='cleaning'?'خروج':'متاح';
+        return `<div class="command-room ${displayStatus}" onclick="openRoomModalByCommand(${Number(r.id)})"><strong>${hoteraEscapeText(r.id)}</strong><br><span>${label}</span></div>`;
+      }).join('');
+      return `<section class="command-floor-group"><h4 class="command-floor-title"><span>🏢 الطابق ${floor}</span><small>${floorRooms.length} غرفة</small></h4><div class="command-floor-rooms">${roomCards || '<div class="command-floor-empty">لا توجد غرف في هذا الطابق</div>'}</div></section>`;
+    }).join('');
+    map.innerHTML = floorGroups || '<div style="font-size:10px;color:#94a3b8">لا توجد غرف</div>';
+  }
   const alerts=[]; rooms.filter(r=>r.status==='cleaning').slice(0,5).forEach(r=>alerts.push({icon:'🧹',text:`الغرفة ${r.id} بحالة خروج وتحتاج تنظيفاً`})); rooms.filter(r=>r.status==='maintenance').slice(0,5).forEach(r=>alerts.push({icon:'🛠️',text:`بلاغ صيانة للغرفة ${r.id}`})); const outstandingInvoices=invoices.map(inv=>({inv,financial:hoteraGetInvoiceFinancialSummary(inv)})).filter(item=>item.financial.remaining>0.01); outstandingInvoices.slice(0,3).forEach(item=>alerts.push({icon:'💳',text:`فاتورة ${item.inv.id||item.inv.bookingRef||'—'} لها رصيد متبقٍ ${item.financial.remaining.toFixed(2)} ر.س`}));
   const alertsEl=document.getElementById('commandAlertsList'); if(alertsEl) alertsEl.innerHTML=alerts.length?alerts.map(a=>`<div class="command-alert"><span>${a.icon} ${a.text}</span><span style="color:#fbbf24">تنبيه</span></div>`).join(''):'<div style="font-size:10px;color:#34d399">✅ لا توجد تنبيهات عاجلة حالياً</div>';
   const upcomingEl=document.getElementById('glassUpcomingBookings'); if(upcomingEl){ const upcoming=rooms.filter(r=>r&&r.guest&&r.checkIn&&String(r.checkIn)>=today).sort((a,b)=>String(a.checkIn).localeCompare(String(b.checkIn))).slice(0,5); upcomingEl.innerHTML=upcoming.length?upcoming.map(r=>`<div class="hotera-glass-list-row"><span>${hoteraEscapeText(r.guest||'نزيل')} · غرفة ${hoteraEscapeText(r.id)}<br><small style="color:#8dd8f5">${r.checkIn||'—'}</small></span><strong>${hoteraEscapeText(r.bookingRef||'حجز')}</strong></div>`).join(''):'<div class="hotera-glass-list-row"><span>لا توجد حجوزات قادمة</span><strong>—</strong></div>'; }
