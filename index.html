@@ -374,11 +374,14 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .hotera-glass-donut{position:relative;border:1px solid rgba(251,191,36,.38);box-shadow:0 0 38px rgba(245,158,11,.18),inset 0 0 18px rgba(56,189,248,.08);animation:hoteraDonutBreath 4s ease-in-out infinite}
 .hotera-glass-room-grid .command-room{transition:transform .16s ease,filter .16s ease,box-shadow .16s ease}.hotera-glass-room-grid .command-room:hover{transform:translateY(-2px);filter:brightness(1.12);box-shadow:0 7px 16px rgba(0,0,0,.25)}
 /* خريطة الغرف: كل طابق بعنوان مستقل وغرفه مرتبة تحته */
-.command-floor-group{width:100%;margin:0 0 12px;padding:9px;border:1px solid rgba(56,189,248,.22);border-radius:12px;background:linear-gradient(145deg,rgba(9,28,48,.8),rgba(4,15,28,.72));box-sizing:border-box}
-.command-floor-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px;padding:7px 10px;border-right:3px solid #fbbf24;border-bottom:1px solid rgba(251,191,36,.2);color:#fbbf24;font-size:11px;font-weight:800}
-.command-floor-title small{color:#8dd8f5;font-size:9px;font-weight:500}.command-floor-rooms{display:grid;grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:6px}
-.command-floor-empty{color:#94a3b8;font-size:10px;padding:6px}.command-room strong{font-size:12px}.command-room span{font-size:8px}
-@media(max-width:650px){.command-floor-group{padding:7px;margin-bottom:8px}.command-floor-rooms{grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:4px}.command-floor-title{font-size:10px}}
+#commandRoomMap.command-floor-map{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;align-items:stretch}
+.command-floor-group{width:auto;min-width:0;margin:0;padding:8px;border:1px solid rgba(56,189,248,.25);border-radius:12px;background:linear-gradient(145deg,rgba(12,39,61,.92),rgba(5,18,32,.9));box-sizing:border-box;box-shadow:inset 0 1px rgba(255,255,255,.06)}
+.command-floor-title{display:flex;align-items:center;justify-content:space-between;gap:6px;margin:0 0 7px;padding:6px 7px;border-right:3px solid #fbbf24;border-bottom:1px solid rgba(251,191,36,.22);color:#fbbf24;font-size:10px;font-weight:800}
+.command-floor-title small{color:#8dd8f5;font-size:8px;font-weight:500}.command-floor-rooms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
+.command-floor-rooms .command-room{min-width:0;height:42px;padding:4px;border-radius:8px}.command-floor-rooms .command-room strong{font-size:11px}.command-floor-rooms .command-room span{font-size:7px}
+.command-floor-empty{color:#94a3b8;font-size:9px;padding:6px}
+@media(max-width:1050px){#commandRoomMap.command-floor-map{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){#commandRoomMap.command-floor-map{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.command-floor-group{padding:6px}.command-floor-title{font-size:9px}.command-floor-rooms{gap:3px}.command-floor-rooms .command-room{height:38px}.command-floor-rooms .command-room strong{font-size:10px}}
 .hotera-glass-bars i{transition:filter .18s ease,box-shadow .18s ease}.hotera-glass-bars i:hover{filter:brightness(1.25);box-shadow:0 0 18px rgba(251,191,36,.35)}
 @keyframes hoteraDonutBreath{0%,100%{filter:brightness(.96)}50%{filter:brightness(1.08)}}
 @media(max-width:650px){.hotera-glass-kpi:hover{transform:none}.hotera-glass-donut{animation:none}}
@@ -3688,6 +3691,7 @@ function renderCommandCenter() {
   const status = document.getElementById('commandCloudStatus'); if(status) status.innerText = `☁️ السحابة: ${(typeof cloudApiUrl !== 'undefined' && cloudApiUrl) ? 'متصل' : 'محلي'}`;
   const sync = document.getElementById('commandLastSync'); if(sync) sync.innerText = `⏱ آخر تحديث: ${new Date().toLocaleTimeString()}`;
   const map = document.getElementById('commandRoomMap'); if(map) {
+    map.classList.add('command-floor-map');
     const grouped = new Map();
     rooms.filter(Boolean).forEach(r => {
       const roomNumber = Number(r.id);
