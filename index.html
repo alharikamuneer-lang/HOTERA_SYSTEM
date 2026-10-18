@@ -584,7 +584,34 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
 /* Company invoices: show room quantity, never room numbers */
 #invoiceRoomsTableBody small{color:#64748b;font-size:9px}
 
-</style></head>
+</style><style>
+/* HR KPI compact finance-card treatment */
+.hotera-hr-kpis{grid-template-columns:repeat(6,minmax(0,1fr));gap:7px;margin:8px 0}
+.hotera-hr-kpi{position:relative;overflow:hidden;padding:9px;border:1px solid rgba(56,189,248,.22);border-radius:11px;background:linear-gradient(145deg,rgba(20,47,73,.84),rgba(7,20,34,.86))}
+.hotera-hr-kpi:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(125deg,rgba(255,255,255,.06),transparent 45%)}
+.hotera-hr-kpi small{display:block;color:#b5c7d9;font-size:9px}.hotera-hr-kpi strong{display:block;margin-top:7px;color:#6ee7f7;font-size:16px;white-space:nowrap}.hotera-hr-kpi em{display:block;margin-top:4px;color:#819ab2;font-size:8px;font-style:normal}
+.hotera-hr-kpi:nth-child(1),.hotera-hr-kpi:nth-child(3),.hotera-hr-kpi:nth-child(5){border-top:2px solid #2dd4bf}.hotera-hr-kpi:nth-child(2),.hotera-hr-kpi:nth-child(4){border-top:2px solid #fbbf24}.hotera-hr-kpi:nth-child(6){border-top:2px solid #a78bfa}.hotera-hr-kpi:nth-child(5) strong{color:#fbbf24}.hotera-hr-kpi:nth-child(6) strong{color:#c4b5fd}
+@media(max-width:1100px){.hotera-hr-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:700px){.hotera-hr-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.hotera-hr-kpi{padding:8px}.hotera-hr-kpi strong{font-size:14px}}
+</style>
+<style>
+/* Command Center KPI compact finance-card treatment */
+.hotera-glass-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin-bottom:10px}
+.hotera-glass-kpi{position:relative;overflow:hidden;min-height:0;padding:9px;border:1px solid rgba(56,189,248,.22);border-radius:11px;background:linear-gradient(145deg,rgba(20,47,73,.84),rgba(7,20,34,.86));box-shadow:none;text-align:right}
+.hotera-glass-kpi:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(125deg,rgba(255,255,255,.06),transparent 45%)}
+.hotera-glass-kpi small{display:block;color:#b5c7d9;font-size:9px}.hotera-glass-kpi strong{display:block;margin-top:7px;color:#6ee7f7;font-size:16px;line-height:1.1;white-space:nowrap}.hotera-glass-kpi em{display:block;margin-top:4px;color:#819ab2;font-size:8px;font-style:normal}
+.hotera-glass-kpi:nth-child(1),.hotera-glass-kpi:nth-child(3),.hotera-glass-kpi:nth-child(5){border-top:2px solid #2dd4bf}.hotera-glass-kpi:nth-child(2),.hotera-glass-kpi:nth-child(4){border-top:2px solid #fbbf24}.hotera-glass-kpi:nth-child(4) strong{color:#fbbf24}.hotera-glass-kpi:nth-child(5) strong{color:#c4b5fd}
+@media(max-width:1050px){.hotera-glass-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:650px){.hotera-glass-kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.hotera-glass-kpi{padding:8px}.hotera-glass-kpi strong{font-size:14px}}
+</style>
+<style>
+/* Final command-center KPI sizing override */
+.command-center-view .hotera-glass-kpis{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-bottom:10px}
+.command-center-view .hotera-glass-kpi{position:relative;overflow:hidden;min-height:0;padding:9px;border:1px solid rgba(56,189,248,.22);border-radius:11px;background:linear-gradient(145deg,rgba(20,47,73,.84),rgba(7,20,34,.86));box-shadow:none;text-align:right}
+.command-center-view .hotera-glass-kpi:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(125deg,rgba(255,255,255,.06),transparent 45%)}
+.command-center-view .hotera-glass-kpi small{display:block;color:#b5c7d9;font-size:9px}.command-center-view .hotera-glass-kpi strong{display:block;margin-top:7px;color:#6ee7f7;font-size:16px;line-height:1.1;white-space:nowrap}.command-center-view .hotera-glass-kpi em{display:block;margin-top:4px;color:#819ab2;font-size:8px;font-style:normal}
+.command-center-view .hotera-glass-kpi:nth-child(1),.command-center-view .hotera-glass-kpi:nth-child(3){border-top:2px solid #2dd4bf}.command-center-view .hotera-glass-kpi:nth-child(2),.command-center-view .hotera-glass-kpi:nth-child(4){border-top:2px solid #fbbf24}.command-center-view .hotera-glass-kpi:nth-child(4) strong{color:#fbbf24}
+@media(max-width:1050px){.command-center-view .hotera-glass-kpis{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-width:650px){.command-center-view .hotera-glass-kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.command-center-view .hotera-glass-kpi{padding:8px}.command-center-view .hotera-glass-kpi strong{font-size:14px}}
+</style>
+</head>
 <body>
 
 
