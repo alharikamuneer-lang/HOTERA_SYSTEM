@@ -368,6 +368,13 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 @media(max-width:600px){.hotera-notification-item{font-size:10px!important;line-height:1.7}.hotera-connection-badge{font-size:10px!important}.hotera-connection-badge small{font-size:8px!important}}
 @media(prefers-reduced-motion:reduce){.hotera-topbar-btn,.hotera-settings-btn,.hotera-quick-grid button,.hotera-notification-item{transition:none!important}}
 /* HOTERA Glass Edition — الحزمة الثالثة: مركز قيادة أكثر فخامة */
+/* مركز القيادة المالي — إيرادات وخزينة ومشتريات ومصروفات */
+.hotera-command-finance{margin:10px 0 12px;padding:12px;border:1px solid rgba(245,158,11,.28);border-radius:16px;background:linear-gradient(145deg,rgba(15,38,62,.9),rgba(5,16,29,.94));box-shadow:inset 0 1px rgba(255,255,255,.06)}
+.hotera-command-section-heading{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:9px;color:#fbbf24;font-size:12px}.hotera-command-section-heading small{display:block;margin-top:3px;color:#8fa8c0;font-size:9px}.hotera-command-section-heading strong{color:#6ee7f7;font-size:9px;font-weight:500}
+.hotera-finance-revenue-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px}.hotera-finance-card,.hotera-tracking-card{position:relative;overflow:hidden;border:1px solid rgba(56,189,248,.22);border-radius:11px;padding:9px;background:linear-gradient(145deg,rgba(20,47,73,.84),rgba(7,20,34,.86))}.hotera-finance-card:before,.hotera-tracking-card:before{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(125deg,rgba(255,255,255,.06),transparent 45%)}.hotera-finance-card small,.hotera-tracking-card small{display:block;color:#b5c7d9;font-size:9px}.hotera-finance-card strong,.hotera-tracking-card>strong{display:block;margin-top:7px;color:#6ee7f7;font-size:16px;white-space:nowrap}.hotera-finance-card em{display:block;margin-top:4px;color:#819ab2;font-size:8px;font-style:normal}.hotera-finance-card.revenue{border-top:2px solid #2dd4bf}.hotera-finance-card.treasury{border-top:2px solid #fbbf24}.hotera-finance-card.treasury strong{color:#fbbf24}.hotera-finance-card.treasury.net{border-top-color:#a78bfa}.hotera-finance-card.treasury.net strong{color:#c4b5fd}
+.hotera-finance-tracking-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:8px}.hotera-tracking-card>div{display:flex;justify-content:space-between;gap:6px;align-items:center;color:#e2edf8;font-size:10px}.hotera-tracking-card>div small{color:#8dd8f5;font-size:8px;white-space:nowrap}.hotera-tracking-card p{margin:6px 0 0;color:#8da5bb;font-size:8px}.hotera-tracking-card p b{color:#fbbf24;font-weight:600}.hotera-tracking-card.purchases{border-right:3px solid #fbbf24}.hotera-tracking-card.expenses{border-right:3px solid #fb7185}.hotera-tracking-card.expenses>strong{color:#fb9aa1}.hotera-tracking-card.cashflow{border-right:3px solid #6ee7f7}.hotera-tracking-card.cashflow>strong{color:#6ee7f7}.hotera-tracking-card.cashflow p{line-height:1.6}
+@media(max-width:1050px){.hotera-finance-revenue-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:650px){.hotera-command-section-heading{align-items:flex-start}.hotera-finance-revenue-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.hotera-finance-tracking-grid{grid-template-columns:1fr;gap:5px}.hotera-finance-card strong{font-size:13px}.hotera-finance-card,.hotera-tracking-card{padding:8px}}
 .hotera-glass-intro,.hotera-glass-panel,.hotera-glass-kpi{position:relative;overflow:hidden;isolation:isolate}
 .hotera-glass-intro:before,.hotera-glass-panel:before,.hotera-glass-kpi:before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(125deg,rgba(255,255,255,.08),transparent 28%,transparent 72%,rgba(56,189,248,.05))}
 .hotera-glass-kpi{transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}.hotera-glass-kpi:hover{transform:translateY(-3px);border-color:rgba(251,191,36,.52);box-shadow:0 18px 34px rgba(0,0,0,.3),0 0 22px rgba(56,189,248,.08)}
@@ -878,6 +885,22 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
     <div class="hotera-glass-intro"><div><h2>غرفة التحكم الخاصة بك</h2><p>قرارات هادئة، تشغيل حاسم، وسيطرة كاملة على عمليات الفندق.</p></div><div class="hotera-glass-health"><span id="commandCloudStatus">☁️ السحابة: محلي</span><span id="commandLastSync">⏱ آخر تحديث: الآن</span><span>🛡️ البيانات محمية وآمنة</span></div></div>
     <div class="hotera-glass-kpis"><div class="hotera-glass-kpi"><small>إجمالي الغرف</small><strong id="cmdTotalRooms">0</strong><em>↗ حسب بيانات الفندق</em></div><div class="hotera-glass-kpi"><small>نسبة الإشغال</small><strong id="premiumOccupancy">0%</strong><em>↗ مقارنة مع أمس</em></div><div class="hotera-glass-kpi"><small>حجوزات اليوم</small><strong id="premiumTodayBookings">0</strong><em>↗ حجوزات جديدة</em></div><div class="hotera-glass-kpi"><small>إيرادات اليوم</small><strong id="premiumTodayRevenue">0 ر.س</strong><em>↗ أداء مالي</em></div><div class="hotera-glass-kpi"><small>تقييم النزلاء</small><strong id="premiumRatingsCount">0</strong><em>★ من السجلات الحالية</em></div></div>
     <section class="hotera-insights-strip" id="hoteraHotelInsights"><div><small>الوصول اليوم</small><strong id="insightArrivals">0</strong><em>حجوزات تبدأ اليوم</em></div><div><small>المغادرة اليوم</small><strong id="insightDepartures">0</strong><em>تحتاج متابعة</em></div><div><small>الرصيد المستحق</small><strong id="insightOutstanding">0 ر.س</strong><em>من الفواتير الحالية</em></div><div><small>متوسط الحجز</small><strong id="insightAverageBooking">0 ر.س</strong><em>حسب الفواتير المسجلة</em></div><div><small>حالة التشغيل</small><strong id="insightOperationState">مستقر</strong><em>آخر قراءة فورية</em></div></section>
+    <section class="hotera-command-finance" aria-label="الملخص المالي لمركز القيادة">
+      <div class="hotera-command-section-heading"><div><span>📊 لوحة الأداء المالي</span><small>الإيرادات المقبوضة والخزينة حسب البيانات المالية الحالية</small></div><strong id="cmdFinanceUpdated">—</strong></div>
+      <div class="hotera-finance-revenue-grid">
+        <div class="hotera-finance-card revenue"><small>إيرادات اليوم</small><strong id="cmdRevenueToday">0 ر.س</strong><em>المقبوض خلال اليوم</em></div>
+        <div class="hotera-finance-card revenue"><small>إيرادات الأسبوع</small><strong id="cmdRevenueWeek">0 ر.س</strong><em>من بداية الأسبوع</em></div>
+        <div class="hotera-finance-card revenue"><small>إيرادات الشهر</small><strong id="cmdRevenueMonth">0 ر.س</strong><em>من بداية الشهر</em></div>
+        <div class="hotera-finance-card revenue"><small>إيرادات السنة</small><strong id="cmdRevenueYear">0 ر.س</strong><em>من بداية السنة</em></div>
+        <div class="hotera-finance-card treasury"><small>إجمالي الخزينة</small><strong id="cmdTreasuryGross">0 ر.س</strong><em>إجمالي المقبوضات المسجلة</em></div>
+        <div class="hotera-finance-card treasury net"><small>صافي الخزينة</small><strong id="cmdTreasuryNet">0 ر.س</strong><em>المقبوضات ناقص المدفوعات</em></div>
+      </div>
+      <div class="hotera-finance-tracking-grid">
+        <div class="hotera-tracking-card purchases"><div><span>🛒 متابعة المشتريات</span><small id="cmdPurchaseInvoices">0 فاتورة</small></div><strong id="cmdPurchaseTotal">0 ر.س</strong><p>الإجمالي <b id="cmdPurchasePaid">0 ر.س</b> · المتبقي <b id="cmdPurchaseDue">0 ر.س</b></p></div>
+        <div class="hotera-tracking-card expenses"><div><span>💸 متابعة المصروفات</span><small>المصروفات التشغيلية</small></div><strong id="cmdExpenseTotal">0 ر.س</strong><p>اليوم <b id="cmdExpenseToday">0 ر.س</b> · الشهر <b id="cmdExpenseMonth">0 ر.س</b></p></div>
+        <div class="hotera-tracking-card cashflow"><div><span>⚖️ قراءة التدفق النقدي</span><small>آخر حالة مالية</small></div><strong id="cmdCashflowState">مستقر</strong><p id="cmdCashflowNote">لا توجد حركات مالية مسجلة.</p></div>
+      </div>
+    </section>
     <div class="hotera-glass-grid">
       <section class="hotera-glass-panel"><h3>🔔 التنبيهات الذكية</h3><div id="commandAlertsList"></div></section><section class="hotera-glass-panel"><h3>▤ الحجوزات القادمة</h3><div id="glassUpcomingBookings" class="hotera-glass-list"><div class="hotera-glass-list-row"><span>لا توجد حجوزات قادمة</span><strong>—</strong></div></div></section>
       <section class="hotera-glass-panel"><h3>◉ مؤشر الإشغال</h3><div class="hotera-glass-donut-wrap"><div class="hotera-glass-donut" id="glassOccupancyDonut"><span id="glassOccupancyValue">0%</span></div></div><div class="hotera-glass-list-row"><span>متاحة</span><strong id="premiumVacant">0</strong></div><div class="hotera-glass-list-row"><span>محجوزة</span><strong id="premiumBooked">0</strong></div></section>
@@ -3677,6 +3700,33 @@ function hoteraRenderOperationsSummary(rooms,invoices){
   const today=hoteraLocalDateKey(),arrivals=rooms.filter(r=>String(r.checkIn||'')===today&&r.bookingRef).length,departures=rooms.filter(r=>String(r.checkOut||'')===today&&r.bookingRef).length,upcoming=rooms.filter(r=>String(r.checkIn||'')>today&&r.bookingRef).length,vacant=rooms.filter(r=>r.status==='vacant').length,occupied=rooms.filter(r=>r.status==='occupied').length,occ=rooms.length?Math.round(occupied/rooms.length*100):0;
   box.innerHTML=`<div class="hotera-glass-kpi"><small>الغرف الشاغرة</small><strong>${vacant}</strong><em>متاحة الآن</em></div><div class="hotera-glass-kpi"><small>الوصول اليوم</small><strong>${arrivals}</strong><em>حجوزات تبدأ اليوم</em></div><div class="hotera-glass-kpi"><small>المغادرة اليوم</small><strong>${departures}</strong><em>تحتاج متابعة</em></div><div class="hotera-glass-kpi"><small>الحجوزات القادمة</small><strong>${upcoming}</strong><em>الإشغال الحالي ${occ}%</em></div>`;
 }
+function hoteraCommandFinanceDateKey(value){
+  const raw=String(value||'');
+  if(/^\d{4}-\d{2}-\d{2}/.test(raw))return raw.slice(0,10);
+  const parsed=new Date(value);return Number.isNaN(parsed.getTime())?'':hoteraLocalDateKey(parsed);
+}
+function hoteraRenderCommandFinance(invoices){
+  const money=value=>`${Number(value||0).toFixed(2)} ر.س`;
+  const now=new Date(),today=hoteraLocalDateKey(now),weekStart=new Date(now);weekStart.setDate(now.getDate()-((now.getDay()+6)%7));
+  const monthStart=`${today.slice(0,7)}-01`,yearStart=`${today.slice(0,4)}-01-01`,weekKey=hoteraLocalDateKey(weekStart);
+  const inflows=[],outflows=[],transactions=allTransactions[currentHotelId]||[];
+  const invoicePayments=Array.isArray(hoteraInvoicePayments[currentHotelId])?hoteraInvoicePayments[currentHotelId]:[];
+  (invoices||[]).forEach(inv=>{const financial=hoteraGetInvoiceFinancialSummary(inv),linked=invoicePayments.filter(pay=>String(pay.invoiceId||'')===String(inv.id||''));if(linked.length)linked.forEach(pay=>inflows.push({date:pay.createdAt||pay.date||inv.date||inv.createdAt,amount:Number(pay.amount||0)}));else if(Number(financial.paid||0)>0)inflows.push({date:inv.paidAt||inv.paymentDate||inv.date||inv.createdAt,amount:Number(financial.paid||0)});});
+  transactions.forEach(t=>{const record={date:t.date||t.createdAt,amount:Number(t.amount||0)};if(t.type==='قبض')inflows.push(record);else outflows.push(record);});
+  (allFinancialAdjustments[currentHotelId]||[]).forEach(a=>{if(transactions.some(t=>String(t.adjustmentId||'')===String(a.id||'')))return;const record={date:a.date||a.createdAt,amount:Number(a.amount||0)};if(a.type==='دخل')inflows.push(record);else outflows.push(record);});
+  (allExpenses[currentHotelId]||[]).forEach(e=>outflows.push({date:e.date||e.createdAt,amount:Number(e.amount||0)}));
+  (refundedInvoicesData[currentHotelId]||[]).forEach(r=>outflows.push({date:r.date||r.createdAt,amount:Number(r.amount||0)}));
+  const sumFrom=(records,start)=>records.reduce((total,r)=>{const key=hoteraCommandFinanceDateKey(r.date);return total+(key&&key>=start&&key<=today?Number(r.amount||0):0)},0);
+  const allIn=inflows.reduce((n,r)=>n+Number(r.amount||0),0),allOut=outflows.reduce((n,r)=>n+Number(r.amount||0),0);
+  const revenue={today:sumFrom(inflows,today),week:sumFrom(inflows,weekKey),month:sumFrom(inflows,monthStart),year:sumFrom(inflows,yearStart)};
+  const expenses={today:sumFrom(outflows,today),month:sumFrom(outflows,monthStart),total:allOut};
+  const purchases=Array.isArray(allPurchases[currentHotelId])?allPurchases[currentHotelId]:[];
+  const purchaseTotal=purchases.reduce((n,p)=>n+Number(p.total||0),0),purchasePaid=purchases.reduce((n,p)=>n+Number(p.paid||0),0),purchaseDue=purchases.reduce((n,p)=>n+Number(p.remaining||0),0);
+  const set=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=value;};
+  set('cmdRevenueToday',money(revenue.today));set('cmdRevenueWeek',money(revenue.week));set('cmdRevenueMonth',money(revenue.month));set('cmdRevenueYear',money(revenue.year));set('cmdTreasuryGross',money(allIn));set('cmdTreasuryNet',money(allIn-allOut));
+  set('cmdPurchaseInvoices',`${purchases.length} فاتورة`);set('cmdPurchaseTotal',money(purchaseTotal));set('cmdPurchasePaid',money(purchasePaid));set('cmdPurchaseDue',money(purchaseDue));set('cmdExpenseTotal',money(expenses.total));set('cmdExpenseToday',money(expenses.today));set('cmdExpenseMonth',money(expenses.month));
+  const net=allIn-allOut;set('cmdCashflowState',net>=0?'إيجابي':'يحتاج متابعة');set('cmdCashflowNote',`${inflows.length+outflows.length} حركة مالية · صافي ${money(net)}`);set('cmdFinanceUpdated',`آخر تحديث ${new Date().toLocaleTimeString()}`);
+}
 function renderCommandCenter() {
   const rooms = allRooms[currentHotelId] || [];
   const available = rooms.filter(r => r.status === 'vacant').length;
@@ -3687,6 +3737,7 @@ function renderCommandCenter() {
   const revenue = invoices.reduce((sum, inv) => sum + hoteraGetInvoiceFinancialSummary(inv).total, 0);
   hoteraRenderOperationsSummary(rooms,invoices);
   const set = (id, value) => { const el=document.getElementById(id); if(el) el.innerText=value; };
+  hoteraRenderCommandFinance(invoices);
   set('cmdTotalRooms', total); set('cmdAvailableRooms', available); set('cmdOccupiedRooms', occupied); set('cmdRevenue', `${revenue.toFixed(2)} ر.س`); const arrivals=rooms.filter(r=>String(r.checkIn||'')===today&&r.bookingRef).length,departures=rooms.filter(r=>String(r.checkOut||'')===today&&r.bookingRef).length,outstanding=invoices.reduce((n,i)=>n+hoteraGetInvoiceFinancialSummary(i).remaining,0),avgInvoice=invoices.length?revenue/invoices.length:0; set('insightArrivals',arrivals); set('insightDepartures',departures); set('insightOutstanding',`${outstanding.toFixed(2)} ر.س`); set('insightAverageBooking',`${avgInvoice.toFixed(2)} ر.س`); const alertsCount=rooms.filter(r=>r.status==='cleaning'||r.status==='maintenance').length; set('insightOperationState',alertsCount?'يحتاج متابعة':'مستقر');
   const status = document.getElementById('commandCloudStatus'); if(status) status.innerText = `☁️ السحابة: ${(typeof cloudApiUrl !== 'undefined' && cloudApiUrl) ? 'متصل' : 'محلي'}`;
   const sync = document.getElementById('commandLastSync'); if(sync) sync.innerText = `⏱ آخر تحديث: ${new Date().toLocaleTimeString()}`;
