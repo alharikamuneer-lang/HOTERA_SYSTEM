@@ -3463,6 +3463,8 @@ function applyPermissions() {
   document.querySelectorAll('.hr-allowed').forEach(el => el.style.display = (currentRole === 'superadmin' || hotelManagerRole || currentRole === 'hr_supervisor') ? 'block' : 'none');
   document.querySelectorAll('.staff-only').forEach(el => el.style.display = (currentRole !== 'housekeeper' && currentRole !== 'company_owner') ? 'block' : 'none');
   document.querySelectorAll('.quick-access-chip').forEach(el => { if (currentRole === 'company_owner') { el.style.display = ['chipCommandCenter','chipAbout'].includes(el.id) ? 'block' : 'none'; } else if (el.id === 'chipShops') { el.style.display = (loginEntityType === 'shop' && hoteraHasPermission('shops')) ? 'block' : 'none'; } else if (el.id !== 'chipSuper') { el.style.display = ''; } });
+  const restrictedChips={chipFinancial:'financial',chipExpenses:'expense',chipInventory:'inventory',chipPurchases:'purchase',chipShifts:'shift',chipAttendance:'staffAdmin',chipMaintenance:'maintenance',chipHR:'staffAdmin'};
+  Object.entries(restrictedChips).forEach(([id,permission])=>{const el=document.getElementById(id);if(el)el.style.display=hoteraHasPermission(permission)?'':'none';});
 }
 
 function toggleAllPinsVisibility() {
@@ -4010,8 +4012,10 @@ function renderHRManagement(){const staff=hoteraHRCurrentStaff(),contracts=Array
 
 function switchMainFeature(featureKey, chipElement) {
   if (typeof syncHoteraSettingsVisibility === 'function') syncHoteraSettingsVisibility();
+  const featurePermissions={financial:'financial',expenses:'expense',inventory:'inventory',purchases:'purchase',shifts:'shift',attendance:'staffAdmin',human_resources:'staffAdmin',maintenance:'maintenance'};
+  const requiredPermission=featurePermissions[featureKey];
+  if(requiredPermission && !hoteraHasPermission(requiredPermission)){alert('🔒 لا تملك صلاحية فتح هذه الوحدة حسب الدور الحالي.');return;}
   if (featureKey === 'shops' && (loginEntityType !== 'shop' || !hoteraHasPermission('shops'))) { alert('🔒 وحدة المحلات منفصلة عن نظام الفنادق. اختر إدارة المحلات التجارية من شاشة الدخول.'); return; }
-  if (featureKey === 'human_resources' && !hoteraHasPermission('staffAdmin')) { alert('🔒 وحدة الموارد البشرية متاحة لمدير الفندق أو مشرف الموارد البشرية فقط.'); return; }
   if (chipElement) {
     document.querySelectorAll('.quick-access-chip').forEach(el => el.classList.remove('active'));
     chipElement.classList.add('active');
@@ -4065,14 +4069,14 @@ function switchMainFeature(featureKey, chipElement) {
   if (typeof syncHoteraSettingsVisibility === 'function') syncHoteraSettingsVisibility();
 }
 
-function openExpenseModal() { document.getElementById('expenseModal').style.display = 'flex'; }
+function openExpenseModal() { if(!hoteraRequirePermission('expense'))return; document.getElementById('expenseModal').style.display = 'flex'; }
 function closeExpenseModal() { document.getElementById('expenseModal').style.display = 'none'; }
 
 /* Permission guards: deny only unauthorized mutations; never alter stored records. */
 const hoteraPermissionMatrix={
   shops:['superadmin','manager','company_owner_manager','front_desk','hr_supervisor','shop_manager','shop_employee','shop_supervisor','shop_company_owner'],
   booking:['superadmin','manager','company_owner_manager','front_desk'],
-  financial:['superadmin','manager','company_owner_manager','front_desk'],
+  financial:['superadmin','manager','company_owner_manager'],
   expense:['superadmin','manager','company_owner_manager'],
   inventory:['superadmin','manager','company_owner_manager','housekeeper'],
   purchase:['superadmin','manager','company_owner_manager'],
@@ -4099,7 +4103,7 @@ function saveNewExpense() {
   alert('✅ تم حفظ المصروف وتحديث المؤشرات بنجاح!');
 }
 
-function openInventoryModal() { document.getElementById('inventoryModal').style.display = 'flex'; }
+function openInventoryModal() { if(!hoteraRequirePermission('inventory'))return; document.getElementById('inventoryModal').style.display = 'flex'; }
 function closeInventoryModal() { document.getElementById('inventoryModal').style.display = 'none'; }
 function saveNewInventoryItem() {
   if(!hoteraRequirePermission('inventory')) return;
@@ -4125,7 +4129,7 @@ function reduceInventoryQty(idx) {
   }
 }
 
-function openShiftHandoverModal() { document.getElementById('shiftModal').style.display = 'flex'; }
+function openShiftHandoverModal() { if(!hoteraRequirePermission('shift'))return; document.getElementById('shiftModal').style.display = 'flex'; }
 function closeShiftHandoverModal() { document.getElementById('shiftModal').style.display = 'none'; }
 function saveShiftHandoverRecord() {
   if(!hoteraRequirePermission('shift')) return;
