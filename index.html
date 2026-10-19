@@ -537,7 +537,7 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
 #loginOverlay #lblLoginSubtitle{color:#8fdcff!important;}
 #loginOverlay label{color:#f6d477!important;}
 #loginOverlay .form-select,#loginOverlay .form-input{border-color:rgba(245,211,117,.68);background:rgba(11,31,68,.84);color:#f8fafc;min-height:42px;}
-#loginOverlay #deviceCloudConnectBox,#loginOverlay #btnLoginForgot{display:none!important;}
+#loginOverlay #deviceCloudConnectBox{display:block!important;margin-top:10px!important;padding:9px!important;border-color:rgba(56,189,248,.55)!important;background:linear-gradient(135deg,rgba(14,165,233,.10),rgba(245,190,70,.06))!important;}#loginOverlay #btnLoginForgot{display:none!important;}
 #loginOverlay #btnLoginSubmit{margin-top:15px;min-height:48px;border-radius:13px;background:linear-gradient(135deg,#f6b943,#ffe08a,#e78a21);color:#14203a;box-shadow:0 0 24px rgba(245,179,55,.45);font-size:14px;font-weight:950;}
 #loginOverlay .pin-input-group{display:flex;gap:5px;}
 #loginOverlay .toggle-eye-btn{background:rgba(245,190,70,.18);border:1px solid rgba(245,190,70,.5);color:#fbd36b;}
@@ -704,10 +704,10 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
     </div>
 
     <div id="deviceCloudConnectBox" style="margin-top:8px; padding:8px; border:1px dashed rgba(56,189,248,0.45); border-radius:8px; text-align:inherit; background:rgba(14,165,233,0.06);">
-      <div style="font-size:9px; color:#38bdf8; margin-bottom:5px;">📱 طلب اعتماد جهاز جديد برمز مؤقت</div>
-      <div style="font-size:9px; color:var(--text-muted); line-height:1.7; margin-bottom:6px;">افتح رابط الدعوة ثم اضغط إرسال الطلب والخانة فارغة. بعد موافقة السوبر أدمن سيُرسل لك رمز اعتماد مؤقت من 6 أرقام لإكمال الربط والمزامنة.</div>
-      <input type="text" id="deviceJoinCodeInput" class="form-input" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="رمز الاعتماد بعد الموافقة — 6 أرقام" style="margin-bottom:5px; direction:ltr; text-align:center; letter-spacing:3px;">
-      <button type="button" class="btn btn-blue" onclick="saveDeviceCloudAndRequest()" style="margin-top:0; background:#0284c7;">إرسال الطلب / اعتماد بالكود 🔐</button>
+      <div style="font-size:10px; color:#38bdf8; margin-bottom:5px; font-weight:800;">📱 رمز اقتران واعتماد جهاز جديد</div>
+      <div style="font-size:9px; color:var(--text-muted); line-height:1.65; margin-bottom:6px;">أدخل رمز الاعتماد المؤقت المكوّن من 6 أرقام بعد موافقة السوبر أدمن. اتركه فارغاً لإرسال طلب جهاز جديد.</div>
+      <input type="text" id="deviceJoinCodeInput" class="form-input" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="أدخل رمز الاقتران — 6 أرقام" style="margin-bottom:5px; direction:ltr; text-align:center; letter-spacing:3px;">
+      <button type="button" class="btn btn-blue" onclick="saveDeviceCloudAndRequest()" style="margin-top:0; background:#0284c7;">إرسال الطلب أو اعتماد الجهاز 🔐</button>
       <div id="deviceAccessStatusText" style="font-size:9px; color:#fbbf24; margin-top:5px;">الجهاز غير مربوط بعد</div>
       <input type="hidden" id="deviceCloudUrlInput" autocomplete="off">
       <input type="hidden" id="deviceCloudKeyInput" autocomplete="off">
@@ -828,7 +828,7 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
   <div class="card" style="padding:10px; margin-bottom:10px; text-align:inherit; background:rgba(18,26,43,0.95); border-color:#38bdf8;">
     <h4 style="font-size:11px; color:#38bdf8; margin-bottom:6px;">📱 طلبات اعتماد الأجهزة الجديدة <span id="devicePendingCount" style="display:inline-block;background:#fbbf24;color:#071426;border-radius:10px;padding:2px 7px;font-size:9px;margin-right:5px;">0</span></h4>
     <p style="font-size:9px; color:var(--text-muted); margin-bottom:6px;">عند فتح رابط الدعوة يُرسل الطلب تلقائيًا. لن يستطيع أي جهاز جديد الدخول أو تعديل البيانات حتى تتم الموافقة عليه من هذه اللوحة.</p>
-    <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px;"><button type="button" class="btn btn-blue" style="width:auto;margin:0;padding:5px 8px;font-size:9px" onclick="retryPendingDeviceRequest()">إعادة إرسال الطلب المعلق 🔄</button><button type="button" class="btn btn-gray" style="width:auto;margin:0;padding:5px 8px;font-size:9px" onclick="fetchDataFromCloud(true).then(renderDeviceApprovalPanel)">تحديث الطلبات</button><span id="pendingDeviceRequestStatus" style="font-size:8px;color:#94a3b8"></span></div><div id="deviceApprovalPanel"></div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;border-top:1px dashed rgba(255,255,255,.12);padding-top:6px"><strong style="font-size:9px;color:#c084fc">سجل طلبات الأجهزة</strong><button type="button" class="btn btn-gray" style="width:auto;margin:0;padding:4px 7px;font-size:8px" onclick="renderDeviceRequestLogPanel()">تحديث السجل</button></div><div id="deviceRequestLogPanel" style="max-height:160px;overflow:auto;margin-top:5px"></div>
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:6px;"><button type="button" class="btn btn-blue" style="width:auto;margin:0;padding:5px 8px;font-size:9px" onclick="retryPendingDeviceRequest()">إعادة إرسال الطلب المعلق 🔄</button><button type="button" class="btn btn-gray" style="width:auto;margin:0;padding:5px 8px;font-size:9px" onclick="fetchDataFromCloud(true).then(renderDeviceApprovalPanel)">تحديث الطلبات</button><button type="button" class="btn btn-gold" style="width:auto;margin:0;padding:5px 8px;font-size:9px" onclick="addDemoDevicesForTesting()">إضافة أجهزة تجريبية 🧪</button><span id="pendingDeviceRequestStatus" style="font-size:8px;color:#94a3b8"></span></div><div id="deviceApprovalPanel"></div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;border-top:1px dashed rgba(255,255,255,.12);padding-top:6px"><strong style="font-size:9px;color:#c084fc">سجل طلبات الأجهزة</strong><button type="button" class="btn btn-gray" style="width:auto;margin:0;padding:4px 7px;font-size:8px" onclick="renderDeviceRequestLogPanel()">تحديث السجل</button></div><div id="deviceRequestLogPanel" style="max-height:160px;overflow:auto;margin-top:5px"></div>
   </div>
 
   <div class="card" style="padding:10px;margin-bottom:10px;text-align:inherit;background:rgba(18,26,43,.95);border-color:#a855f7"><div style="display:flex;justify-content:space-between;align-items:center"><h4 style="font-size:11px;color:#c084fc;margin-bottom:6px">🧾 سجل نشاط المستخدمين والأجهزة</h4><button class="btn btn-gray" style="width:auto;margin:0;padding:4px 7px;font-size:9px" onclick="renderActivityLog()">تحديث</button></div><div id="activityLogPanel" style="max-height:190px;overflow:auto;font-size:9px;color:#cbd5e1"></div></div>
@@ -1951,6 +1951,28 @@ async function retryPendingDeviceRequest(){
   const raw=localStorage.getItem('hotera_pending_device_request');
   if(!raw){if(status)status.textContent='لا يوجد طلب محلي معلق.';return alert('لا يوجد طلب جهاز معلق محفوظ محلياً.');}
   try{const pending=JSON.parse(raw);if(pending.deviceId&&pending.deviceId!==deviceId)return alert('الطلب المحفوظ يعود لجهاز آخر.');if(status)status.textContent='جارٍ إعادة الإرسال...';await saveDeviceCloudAndRequest();if(status)status.textContent='تمت محاولة إعادة الإرسال.';}catch(e){if(status)status.textContent='تعذر إعادة الإرسال.';alert('تعذر إعادة إرسال الطلب دون حذف النسخة المحلية.');}
+}
+
+async function addDemoDevicesForTesting(){
+  if(currentRole!=='superadmin')return alert('إضافة الأجهزة التجريبية متاحة للسوبر أدمن فقط.');
+  if(!confirm('سيتم إضافة جهازين تجريبيين فقط داخل لوحة اعتماد الأجهزة لاختبار الموافقة والرفض. لن يتم تعديل الحجوزات أو الفواتير أو حذف أي بيانات. هل تريد المتابعة؟'))return;
+  const now=new Date().toISOString();
+  const demoDevices=[
+    {id:'HOTERA-DEMO-FRONTDESK',name:'جهاز تجريبي — الاستقبال',platform:'HOTERA-DEMO / Front Desk',requestedAt:now,lastSeen:now,status:'pending',demo:true,updatedAt:now},
+    {id:'HOTERA-DEMO-HOUSEKEEPING',name:'جهاز تجريبي — الهاوس كيبنج',platform:'HOTERA-DEMO / Housekeeping',requestedAt:now,lastSeen:now,status:'pending',demo:true,updatedAt:now}
+  ];
+  const before=Array.isArray(cloudDevices)?cloudDevices.map(x=>({...x})):[];
+  const existingIds=new Set(before.map(x=>String(x?.id||'')));
+  const added=demoDevices.filter(x=>!existingIds.has(x.id));
+  if(!added.length){renderDeviceApprovalPanel();return alert('الأجهزة التجريبية موجودة بالفعل. يمكنك الآن اختبار الموافقة أو الرفض عليها.');}
+  hoteraCreateLocalSnapshot('قبل إضافة أجهزة تجريبية');
+  cloudDevices=hoteraMergeById(before,added);
+  added.forEach(x=>hoteraRecordDeviceRequestEvent(x.id,'demo_device_created',{name:x.name,testingOnly:true}));
+  renderDeviceApprovalPanel();
+  const uploaded=await uploadDataToCloud(false);
+  renderDeviceApprovalPanel();
+  if(uploaded)alert('✅ تمت إضافة جهازين تجريبيين ورفع الطلبات إلى JSONBin. يمكنك اختبار الموافقة على أحدهما ورفض الآخر.');
+  else alert('⚠️ تمت إضافة الأجهزة التجريبية محلياً مع الحفاظ على البيانات. تعذر رفعها حالياً، ويمكن إعادة المزامنة لاحقاً.');
 }
 
 async function renameDevicePrompt(id) {
