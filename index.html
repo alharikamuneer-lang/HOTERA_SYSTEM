@@ -2299,19 +2299,26 @@ async function fetchDataFromCloud(showError = false) {
   }
 }
 
-async function hoteraMergeLatestDevicesBeforeUpload(config, headers){
+async function hoteraMergeLatestCloudBeforeUpload(config, headers){
   try{
     const response=await hoteraFetchWithRetry(hoteraNormalizeCloudUrl(config.url,'read'),{method:'GET',headers,cache:'no-store'});
     if(!response.ok)throw new Error(`GET HTTP ${response.status}`);
     hoteraCloudEtag=response.headers.get('ETag')||hoteraCloudEtag;
     const result=await response.json(),remote=result.record||result;
-    if(Array.isArray(remote.devices))cloudDevices=hoteraMergeById(Array.isArray(cloudDevices)?cloudDevices:[],remote.devices);
+    if(!remote||typeof remote!=='object')throw new Error('الحمولة السحابية غير صالحة');
+    // دمج كامل الحمولة يمنع جهازاً من استبدال حجوزات أو فواتير جهاز آخر.
+    // دوال الدمج الحالية تحتفظ بالسجل المحلي الأحدث وتضيف السجلات الجديدة.
+    const localLog=hoteraReadDeviceRequestLog();
+    applyCloudPayload(remote);
+    hoteraMergeDeviceRequestLog([...(Array.isArray(remote.deviceRequestLog)?remote.deviceRequestLog:[]),...localLog]);
     return true;
   }catch(error){
-    console.warn('تعذر دمج أحدث طلبات الأجهزة قبل الرفع؛ ستبقى البيانات المحلية كما هي:',error);
+    console.warn('تعذر دمج أحدث الحمولة السحابية قبل الرفع؛ لم يتم حذف أي بيانات محلية:',error);
     return false;
   }
 }
+// توافق مع أي استدعاء قديم من نسخ سابقة.
+async function hoteraMergeLatestDevicesBeforeUpload(config, headers){return hoteraMergeLatestCloudBeforeUpload(config,headers)}
 
 async function uploadDataToCloud(showError = false) {
   const config = getCloudConfig();
@@ -2327,7 +2334,10 @@ async function uploadDataToCloud(showError = false) {
     if(hoteraCloudEtag)headers['If-Match']=hoteraCloudEtag;
     // تحديث سجل الجهاز الحالي ثم دمج آخر سجل سحابي قبل الكتابة؛ هذا يمنع جهازاً جديداً من استبدال طلبات الأجهزة الأخرى.
     cloudDevices=hoteraMergeById(Array.isArray(cloudDevices)?cloudDevices:[],getDeviceRegistryForUpload());
-    await hoteraMergeLatestDevicesBeforeUpload(config,headers);
+    const mergedLatest=await hoteraMergeLatestCloudBeforeUpload(config,headers);
+    if(!mergedLatest) hoteraRecordSyncConflict({kind:'pre-upload-read',recordId:'cloud-payload',summary:'تعذر قراءة أحدث نسخة قبل الرفع',resolution:'تم الاحتفاظ بالبيانات المحلية ولم يتم حذفها'});
+    // إعادة تثبيت طلب الجهاز الحالي وسجل أحداثه بعد الدمج وقبل بناء الحمولة.
+    cloudDevices=hoteraMergeById(Array.isArray(cloudDevices)?cloudDevices:[],getDeviceRegistryForUpload());
     hoteraSetSyncDiagnostic('put','جارٍ التنفيذ...','#fbbf24');
     const response = await hoteraFetchWithRetry(hoteraNormalizeCloudUrl(config.url,'read'), {
       method: 'PUT',
