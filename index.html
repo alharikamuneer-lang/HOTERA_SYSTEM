@@ -809,6 +809,15 @@ body{background-color:#040b16;background-image:radial-gradient(circle at 12% 4%,
       <button class="btn btn-blue" style="width:auto; margin-top:0; padding:8px 14px; background:#10b981;" onclick="syncDataWithCloudNow()">مزامنة البيانات الآن 🔄</button><button class="btn btn-gold" style="width:auto; margin-top:0; padding:8px 14px;" onclick="downloadHoteraBackup()">تنزيل HOTERA_BACKUP 🛡️</button>
       <span id="cloudSyncStatusText" style="font-size:9px; color:#34d399; font-weight:bold;">الحالة: جاهز للربط المحلي/السحابي</span><div id="hoteraSyncDiagnostics" style="font-size:8px;color:#94a3b8;margin-top:6px;line-height:1.7">آخر جلب: لم ينفذ — آخر رفع: لم ينفذ</div><div style="display:flex;gap:6px;align-items:center;margin-top:4px"><span id="hoteraSyncQueueStatus" style="font-size:8px;color:#94a3b8">لا توجد تعديلات معلقة</span><button type="button" class="btn btn-gray" style="width:auto;margin:0;padding:3px 6px;font-size:8px" onclick="hoteraFlushSyncQueue()">إعادة إرسال المعلّق</button><button type="button" class="btn btn-gray" style="width:auto;margin:0;padding:3px 6px;font-size:8px" onclick="downloadHoteraSyncReport()">تقرير المزامنة</button></div>
     </div>
+    <div style="margin-top:10px;padding:10px;border:1px solid rgba(52,211,153,.35);border-radius:12px;background:rgba(16,185,129,.06);">
+      <h4 style="font-size:11px;color:#6ee7b7;margin-bottom:5px;">🟢 تجهيز Supabase — اتصال اختباري فقط</h4>
+      <p style="font-size:9px;color:var(--text-muted);margin:0 0 6px;line-height:1.6;">هذه المرحلة لا تغيّر مصدر البيانات ولا ترفع الحجوزات. يبقى JSONBin هو المسار النشط حتى اكتمال الاختبارات.</p>
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:6px;margin-bottom:6px;">
+        <input type="url" id="supabaseUrlInput" class="form-input" placeholder="https://project.supabase.co" style="margin:0;direction:ltr;text-align:left;">
+        <input type="password" id="supabaseAnonKeyInput" class="form-input" placeholder="Publishable / anon key" style="margin:0;direction:ltr;text-align:left;">
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;"><button type="button" class="btn btn-green" style="width:auto;margin:0;padding:7px 11px;font-size:9px" onclick="testHoteraSupabaseConnection()">اختبار اتصال Supabase 🧪</button><span id="supabaseConnectionStatus" style="font-size:8px;color:#94a3b8">غير مختبر</span></div>
+    </div>
   </div>
   <div class="card" style="padding:10px; margin-bottom:10px; text-align:inherit; background:rgba(18,26,43,0.95); border-color:#34d399;">
     <h4 style="font-size:11px; color:#34d399; margin-bottom:6px;">🔗 إضافة جهاز جديد بسرعة</h4>
@@ -2500,6 +2509,33 @@ async function syncDataWithCloudNow() {
   }
 }
 
+function getHoteraSupabaseConfig(){
+  const url=String(localStorage.getItem('hotera_supabase_url')||'').trim().replace(/\/+$/,'');
+  const key=String(localStorage.getItem('hotera_supabase_anon_key')||'').trim();
+  return {url,key};
+}
+function hoteraSupabaseUrlIsValid(url){try{const u=new URL(String(url||''));return u.protocol==='https:'&&/\.supabase\.co$/i.test(u.hostname);}catch(_){return false;}}
+async function testHoteraSupabaseConnection(){
+  if(currentRole!=='superadmin'&&currentRole!=='manager')return alert('🔒 اختبار Supabase متاح للسوبر أدمن أو المدير فقط.');
+  const url=String(document.getElementById('supabaseUrlInput')?.value||'').trim().replace(/\/+$/,'');
+  const key=String(document.getElementById('supabaseAnonKeyInput')?.value||'').trim();
+  const status=document.getElementById('supabaseConnectionStatus');
+  if(!hoteraSupabaseUrlIsValid(url))return alert('⚠️ أدخل Project URL صحيحًا مثل https://project.supabase.co');
+  if(!key)return alert('⚠️ أدخل Publishable key أو anon public key.');
+  if(status)status.textContent='جارٍ الاختبار دون كتابة بيانات...';
+  try{
+    const response=await fetch(`${url}/rest/v1/hotels?select=id&limit=1`,{method:'GET',headers:{apikey:key,Authorization:`Bearer ${key}`,Accept:'application/json'},cache:'no-store'});
+    if(response.status===404)throw new Error('جدول hotels غير موجود؛ نفّذ ملف 001_hotera_core.sql أولاً.');
+    if(!response.ok){let detail='';try{detail=(await response.json()).message||''}catch(_){}throw new Error(`HTTP ${response.status}${detail?` — ${detail}`:''}`);}
+    localStorage.setItem('hotera_supabase_url',url);localStorage.setItem('hotera_supabase_anon_key',key);
+    if(status){status.textContent='✅ الاتصال ناجح — لم يتم رفع أو تعديل أي بيانات';status.style.color='#34d399';}
+    alert('✅ تم الاتصال بـ Supabase بنجاح. ما زال JSONBin هو المسار النشط ولم يتم نقل أي بيانات.');
+  }catch(error){
+    if(status){status.textContent=`تعذر الاتصال: ${error.message}`;status.style.color='#fbbf24';}
+    alert(`⚠️ تعذر اختبار Supabase دون تغيير بيانات HOTERA.\n${error.message}`);
+  }
+}
+
 async function saveCloudSettings() {
   const url = document.getElementById('cloudApiUrlInput')?.value.trim() || '';
   const key = document.getElementById('cloudApiKeyInput')?.value.trim() || '';
@@ -3667,6 +3703,11 @@ function renderSuperAdminControlPanel() {
   document.getElementById('editAboutDescInput').value = aboutPageDescText;
   document.getElementById('cloudApiUrlInput').value = cloudApiUrl;
   document.getElementById('cloudApiKeyInput').value = cloudApiKey;
+  const supabaseConfig=getHoteraSupabaseConfig();
+  const supabaseUrlInput=document.getElementById('supabaseUrlInput');
+  const supabaseKeyInput=document.getElementById('supabaseAnonKeyInput');
+  if(supabaseUrlInput)supabaseUrlInput.value=supabaseConfig.url;
+  if(supabaseKeyInput)supabaseKeyInput.value=supabaseConfig.key;
   // تم إلغاء الخادم المركزي؛ لا تستدعِ دالة الإعدادات القديمة غير الموجودة.
   if (typeof hydrateHoteraServerSettings === 'function') hydrateHoteraServerSettings();
   if (typeof handleDeviceAccess === 'function') handleDeviceAccess();
