@@ -1603,7 +1603,11 @@ function hoteraSafeSetItem(key,value){
     hoteraReclaimSecondaryStorage(true);
     try{localStorage.setItem(key,value);return true;}catch(_){
       const h=hoteraStorageHealth();console.error('تعذر الحفظ المحلي:',error,{hoteraKeys:h.keys,approxMB:h.megabytes,key});
-      alert(`تعذر حفظ البيانات محلياً. تم الحفاظ على بيانات النظام، لكن مساحة التخزين ممتلئة (${h.megabytes} MB). نزّل نسخة HOTERA_BACKUP ثم امسح بيانات الموقع من إعدادات المتصفح فقط بعد التأكد من النسخة.`);
+      // لا نفتح نافذة متكررة أثناء كل عملية حفظ؛ الحفظ الفاشل يبقى مسجلاً
+      // ويظهر كتلميح هادئ في حالة المزامنة، مع عدم حذف أي سجل تشغيلي.
+      window.hoteraStorageWriteBlocked={key,megabytes:h.megabytes,at:new Date().toISOString()};
+      const message=`التخزين المحلي ممتلئ (${h.megabytes} MB) — لم تُحذف البيانات، وقد يحتاج الحفظ الجديد إلى تنظيف آمن.`;
+      ['cloudSyncStatusText','secureSyncStatusText'].forEach(id=>{const el=document.getElementById(id);if(el){el.textContent=`الحالة: ${message}`;el.style.color='#fbbf24';}});
       return false;
     }
   }
